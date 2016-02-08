@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROPERTY_FILE xmlns="http://www.csiberkeley.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.csiberkeley.com CSIExtendedSectionPropertyFile.xsd">
+   <EbrahimRaeyat_Presents>
+      <Comment_on_CopyRight> This database is provided by: EbrahimRaeyat, (2015); http://www.ebrahimraeyat.blog.ir </Comment_on_CopyRight>
+      <Comment_on_CopyRight> Prepared by M.Heidari &amp; R.KamraniRad &amp; P.Zakian </Comment_on_CopyRight>
+   </EbrahimRaeyat_Presents>
+  <CONTROL>
+      <FILE_ID>CSI Frame Properties</FILE_ID>
+      <VERSION>1</VERSION>
+      <LENGTH_UNITS>mm</LENGTH_UNITS>
+      <FORCE_UNITS>kgf</FORCE_UNITS>
+  </CONTROL>
+
+
+  <STEEL_I_SECTION>
+	<LABEL>2IPE27PL230X4</LABEL>
+	<EDI_STD>2IPE27PL230X4</EDI_STD>
+	<D>540.0</D>
+	<BF>460.0</BF>
+	<TF>4.0</TF>
+	<TW>13.1999998093</TW>
+	<KDES>17</KDES>
+	<A>11020</A>
+	<AS2>3670</AS2>
+	<AS3>6123</AS3>
+	<I33>150337408</I33>
+	<I22>58337708</I22>
+	<S33POS>1081564</S33POS>
+	<S33NEG>1081564</S33NEG>
+	<S22POS>432131</S22POS>
+	<S22NEG>432131</S22NEG>
+	<R33>116.8</R33>
+	<R22>72.8</R22>
+	<Z33>1220080</Z33>
+	<Z22>699984</Z22>
+	<J>0</J>
+  </STEEL_I_SECTION>
+
+</PROPERTY_FILE>

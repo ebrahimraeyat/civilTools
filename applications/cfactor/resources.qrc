@@ -1,0 +1,19 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+<file alias="filenew.png">images/filenew.png</file>
+<file alias="filerun.png">images/run.png</file>
+<file alias="fileopen.png">images/fileopen.png</file>
+<file alias="filesave.png">images/filesave.png</file>
+<file alias="filesaveas.png">images/filesaveas.png</file>
+<file alias="fileprint.png">images/fileprint.png</file>
+<file alias="filequit.png">images/filequit.png</file>
+<file alias="icon.png">images/icon.png</file>
+
+<file alias="file_extension_doc.png">images/file_extension_doc.png</file>
+<file alias="file_extension_jpg.png">images/file_extension_jpg.png</file>
+<file alias="file_extension_xls.png">images/file_extension_xls.png</file>
+<file alias="word_exports.png">images/word_exports.png</file>
+<file alias="file_extension_html.png">images/file_extension_html.png</file>
+<file alias="file_extension_pdf.png">images/file_extension_pdf.png</file>
+</qresource>
+</RCC>
