@@ -4,21 +4,22 @@ import os
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtWebKit import QWebView
-#from PyQt4 import QtSql
+
 import qrc_resources
 from db import db, ostanha
-#import building
+
 from building.build import *
 import pyqtgraph as pg
 import pyqtgraph.exporters
 from plots.plotB import PlotB as pl
-#import numpy as np
+from guiSaveRestore import *
+
 
 rTable = RFactorTable()
 systemTypes = rTable.getSystemTypes()
 
 __url__ = "http://ebrahimraeyat.blog.ir"
-__version__ = "4.1"
+__version__ = "4.3"
 link_ebrahim = ('Website: <a href="%s"><span style=" '
     'text-decoration: underline; color:#0000ff;">'
     '%s</span></a>') % (__url__, __url__)
@@ -58,6 +59,10 @@ class Cfactor(QMainWindow):
         self.setPalette(p)
         self.setLayoutDirection(Qt.RightToLeft)
         self.setWindowTitle(u"ضریب زلزله ویرایش چهارم ۲۸۰۰")
+        programName = os.path.basename(__file__)
+        programBase, ext = os.path.splitext(programName)
+        self.settings = QSettings("cfactor", programBase)
+        guirestore(self, self.settings)
         #self.updateFileMenu()
         #QTimer.singleShot(0, self.loadInitialFile)
 
@@ -109,83 +114,92 @@ class Cfactor(QMainWindow):
         self.connect(self.shahrBox, SIGNAL(
                 "currentIndexChanged(QString)"), self.accept)
 
-    def load(self):
-        exception = None
-        fh = None
-        try:
-            if self.filename.isEmpty():
-                raise IOError, "no filename specified for loading"
-            fh = QFile(self.filename)
-            if not fh.open(QIODevice.ReadOnly):
-                raise IOError, unicode(fh.errorString())
-            stream = QDataStream(fh)
-            magic = stream.readInt32()
-            if magic != MAGIC_NUMBER:
-                raise IOError, "unrecognized file type"
-            fileVersion = stream.readInt16()
-            if fileVersion != FILE_VERSION:
-                raise IOError, "unrecognized file type version"
+    #def save(self):
+        #exception = None
+        #fh = None
+        #filters = "cfactor(*.cfa)"
+        #self.filename = QFileDialog.getSaveFileName(self, u' ذخیره مشخصات ساختمان فعلی',
+                                               #self.lastDirectory, filters)
 
-            stream.writeInt16(build.noStory)
-            stream.writeFloat(build.height)
-            stream.writeFloat(build.xTan)
-            stream.writeFloat(build.yTan)
-            risk = QString()
-            soilType = QString()
-            infill = QString()
-            xSystem = QString()
-            ySystem = QString()
-            city = QString()
-            useTan = QString()
-            stream >> risk >> soilType >> infill
-            stream >> xSystem >> ySystem >> city >> useTan
-            karbari = stream.readFloat()
-            noStory = stream.readInt16()
-            height = stream.readFloat()
-            xTan = stream.readFloat()
-            yTan = stream.readFloat()
-            self.build = Building(risk, karbari, soilType, noStory, height,
-                 infill, xSystem, ySystem, city, xTan, yTan, useTan)
-            self.systems.append(xSystem)
-            self.systems.append(ySystem)
-            self.dirty = False
-        except IOError, err:
-            exception = err
-        finally:
-            if fh is not None:
-                fh.close()
-            if exception is not None:
-                raise exception
+        ##if self.filename == '':
+            ##return
+        #try:
+            #if self.filename.isEmpty():
+                #raise IOError, "no filename specified for saving"
+            #fh = QFile(self.filename)
+            #if not fh.open(QIODevice.WriteOnly):
+                #raise IOError, unicode(fh.errorString())
 
+            #stream = QDataStream(fh)
+            #stream.writeInt32(MAGIC_NUMBER)
+            #stream.writeInt16(FILE_VERSION)
+            #stream.setVersion(QDataStream.Qt_4_7)
+            #stream.writeInt16(self.finalBuilding.noStory)
+            #stream.writeFloat(self.finalBuilding.height)
+            #stream.writeFloat(self.finalBuilding.karbari)
+            #stream.writeFloat(self.finalBuilding.xTan)
+            #stream.writeFloat(self.finalBuilding.yTan)
+            #stream << self.finalBuilding.risk
+            #stream << self.finalBuilding.soilType << self.finalBuilding.infill
+            #stream << self.finalBuilding.xSystem << self.finalBuilding.ySystem << self.finalBuilding.city << self.finalBuilding.useTan
+            #self.dirty = False
+        #except IOError, err:
+            #exception = err
+        #finally:
+            #if fh is not None:
+                #fh.close()
+            #if exception is not None:
+                #raise exception
 
-    def save(self):
-        exception = None
-        fh = None
-        try:
-            if self.filename.isEmpty():
-                raise IOError, "no filename specified for saving"
-            fh = QFile(self.filename)
-            if not fh.open(QIODevice.WriteOnly):
-                raise IOError, unicode(fh.errorString())
-            stream = QDataStream(fh)
-            stream.writeInt32(MAGIC_NUMBER)
-            stream.writeInt16(FILE_VERSION)
-            stream.setVersion(QDataStream.Qt_4_7)
-            stream << build.risk << build.soilType << build.infill
-            stream << build.xSystem << build.ySystem << build.city << build.useTan
-            stream.writeFloat(build.karbari)
-            stream.writeInt16(build.noStory)
-            stream.writeFloat(build.height)
-            stream.writeFloat(build.xTan)
-            stream.writeFloat(build.yTan)
-            self.dirty = False
-        except IOError, err:
-            exception = err
-        finally:
-            if fh is not None:
-                fh.close()
-            if exception is not None:
-                raise exception
+    #def load(self):
+        #exception = None
+        #fh = None
+        #filters = "cfactor(*.cfa)"
+        #self.filename = QFileDialog.getOpenFileName(self, u'بارگذاری مشخصات ساختمان',
+                                               #self.lastDirectory, filters)
+        #try:
+            #if self.filename.isEmpty():
+                #raise IOError, "no filename specified for loading"
+            #fh = QFile(self.filename)
+            #if not fh.open(QIODevice.ReadOnly):
+                #raise IOError, unicode(fh.errorString())
+
+            #stream = QDataStream(fh)
+            #magic = stream.readInt32()
+            #if magic != MAGIC_NUMBER:
+                #raise IOError, "unrecognized file type"
+            #fileVersion = stream.readInt16()
+            #if fileVersion != FILE_VERSION:
+                #raise IOError, "unrecognized file type version"
+
+            #noStory = stream.readInt16()
+            #height = stream.readFloat()
+            #karbari = stream.readFloat()
+            #xTan = stream.readFloat()
+            #yTan = stream.readFloat()
+            #risk = QString()
+            #soilType = QString()
+            #infill = QString()
+            #xSystem = QString()
+            #ySystem = QString()
+            #city = QString()
+            #useTan = QString()
+            #stream >> risk >> soilType >> infill
+            #stream >> xSystem >> ySystem >> city >> useTan
+            #build = Building(risk, karbari, soilType, noStory, height,
+                 #infill, xSystem, ySystem, city, xTan, yTan, useTan)
+            #self.accept(build)
+            #self.systems.append(xSystem)
+            #self.systems.append(ySystem)
+            #self.dirty = False
+        #except IOError, err:
+            #exception = err
+        #finally:
+            #if fh is not None:
+                #fh.close()
+            #if exception is not None:
+                #raise exception
+
 
     def resizeColumns(self):
         for column in (X, Y):
@@ -203,10 +217,8 @@ class Cfactor(QMainWindow):
         yTAnalaticalLabel = QLabel('Ty<sub>an</sub>')
         systemLabel = QLabel(u'سیستم سازه')
         lateralLabel = QLabel(u'سیستم مقاوم جانبی')
-        #accLabel = QLabel(u"شتاب مبنای طرح")
         ostanLabel = QLabel(u"استان")
         shahrLabel = QLabel(u"شهر")
-        #ostanLabel.setAlignment(Qt.AlignRight)
         shahrLabel.setAlignment(Qt.AlignRight)
         ILabel = QLabel(u'ضریب اهمیت')
         self.resultX = QLabel()
@@ -217,14 +229,19 @@ class Cfactor(QMainWindow):
         self.soilType.addItems(['I', 'II', 'III', 'IV'])
         self.soilType.setCurrentIndex(2)
         self.soilType.setMaximumSize(90, 30)
+        self.soilType.setObjectName('SOILTYPE')
         self.xSystemBox = QComboBox()
         self.xSystemBox.setFixedWidth(400)
+        #self.xSystemBox.setObjectName('XSYSTEMBOX')
         self.xLateralBox = QComboBox()
         self.xLateralBox.setFixedWidth(400)
+        #self.xLateralBox.setObjectName('XLATERALBOX')
         self.ySystemBox = QComboBox()
         self.ySystemBox.setFixedWidth(400)
+        #self.ySystemBox.setObjectName('YSYSTEMBOX')
         self.yLateralBox = QComboBox()
         self.yLateralBox.setFixedWidth(400)
+        #self.yLateralBox.setObjectName('YLATERALBOX')
         self.accText = QLineEdit()
         self.accText.setEnabled(False)
         self.accText.setMaximumWidth(90)
@@ -232,8 +249,11 @@ class Cfactor(QMainWindow):
         self.IBox.addItems(['0.8', '1.0', '1.2', '1.4'])
         self.IBox.setCurrentIndex(1)
         self.IBox.setMaximumWidth(90)
+        self.IBox.setObjectName('IBOX')
         self.ostanBox = QComboBox()
+        self.ostanBox.setObjectName('OSTANBOX')
         self.shahrBox = QComboBox()
+        self.shahrBox.setObjectName('SHAHRBOX')
         ostans = ostanha.ostans.keys()
         ostans.sort()
         self.ostanBox.addItems(ostans)
@@ -318,7 +338,7 @@ class Cfactor(QMainWindow):
         self.textExport.setReadOnly(True)
         #
         # TABLE WIDGET
-        self.rTableWidget = db.storeWindow()
+        #self.rTableWidget = db.storeWindow()
         #self.rTableWidget.setStyleSheet("font: 75 12pt \"B Nazanin\";\n")
         #self.mapper = QDataWidgetMapper(self)
         #self.mapper.setSubmitPolicy(QDataWidgetMapper.AutoSubmit)
@@ -334,15 +354,9 @@ class Cfactor(QMainWindow):
         self.curveBWidget.setMinimumSize(450, 300)
 
         # structure properties table
-        headers = ['system', 'lateral', "Hmax", u'Ru', u"\u2126 0",
-                    "Cd", "Texp", "1.25*Texp", "Tan", "K"]
+        #headers = ['system', 'lateral', "Hmax", u'Ru', u"\u2126 0",
+                    #"Cd", "Texp", "1.25*Texp", "Tan", "K"]
         self.structurePropertiesTable = QTableView()
-        #self.structurePropertiesTable = QTableWidget(len(headers), 2)
-        #self.structurePropertiesTable.setAlternatingRowColors(True)
-        #self.structurePropertiesTable.setHorizontalHeaderLabels(["X", "Y"])
-
-        #self.structurePropertiesTable.setVerticalHeaderLabels(headers)
-        #self.structurePropertiesTable.resizeColumnsToContents()
         self.structurePropertiesTable.setLayoutDirection(Qt.LeftToRight)
 
         # soil properties table
@@ -378,7 +392,6 @@ class Cfactor(QMainWindow):
         inputLayout.addWidget(systemLabel, 4, 0)
         inputLayout.addWidget(lateralLabel, 5, 0)
         inputLayout.addWidget(self.tAnalaticalGroupBox, 3, 3, 3, 2)
-        #inputLayout.addWidget(self.browser, 0, 5, 6, 1)
 
         # stacked widget
         self.stackedWidget = QStackedWidget()
@@ -470,8 +483,8 @@ class Cfactor(QMainWindow):
         self.tabWidget = QTabWidget()
         #self.tabWidget.setTabPosition(QTabWidget.East)
         self.tabWidget.insertTab(0, self.mainSplitter, u'مشخصات ساختمان')
-        self.tabWidget.insertTab(1, self.rTableWidget, u'جدول ضریب رفتار')
-        self.tabWidget.insertTab(2, self.textExport, u'خروجی word')
+        #self.tabWidget.insertTab(1, self.rTableWidget, u'جدول ضریب رفتار')
+        self.tabWidget.insertTab(1, self.textExport, u'word خروجی')
 
         #
         # central widget
@@ -482,11 +495,17 @@ class Cfactor(QMainWindow):
 
     def create_actions(self):
         # File Actions
+        loadText = u'بارگذاری'
+        saveText = u'ذخیره'
         exportToPdfText = u'Pdf خروجی به'
         exportToWordText = u'Word خروجی به'
         exportToHtmlText = u'Html خروجی به'
         exportBCurveToImage = u'خروجی به تصویر'
         exportBCurveToCsv = u'خروجی به اکسل'
+        #fileLoad = self.createAction(loadText, self.load,
+                #QKeySequence.Open, "", loadText)
+        #fileSave = self.createAction(saveText, self.save,
+                #QKeySequence.Save, "", saveText)
         filePdfAction = self.createAction(exportToPdfText, self.exportToPdf,
                 QKeySequence.Print, "file_extension_pdf", exportToPdfText)
         fileOfficeAction = self.createAction(exportToWordText,
@@ -552,18 +571,20 @@ class Cfactor(QMainWindow):
                 target.addAction(action)
 
     def closeEvent(self, event):
+        guisave(self, self.settings)
+        #self.deleteLater()
         #if self.okToContinue():
-        settings = QSettings()
+        #settings = QSettings()
         #filename = (QVariant(QString(self.filename))
                     #if self.filename is not None else QVariant())
         #settings.setValue("LastFile", filename)
         #recentFiles = (QVariant(self.recentFiles)
                        #if self.recentFiles else QVariant())
-        #settings.setValue("RecentFiles", recentFiles)
-        settings.setValue("MainWindow/Geometry", QVariant(self.saveGeometry()))
-        settings.setValue("MainWindow/State", QVariant(self.saveState()))
-        settings.setValue("InputSplitter", QVariant(self.inputSplitter.saveState()))
-        settings.setValue("MainSplitter", QVariant(self.mainSplitter.saveState()))
+        #settings.setValue("RecentFiles", Files)
+        self.settings.setValue("MainWindow/Geometry", QVariant(self.saveGeometry()))
+        self.settings.setValue("MainWindow/State", QVariant(self.saveState()))
+        self.settings.setValue("InputSplitter", QVariant(self.inputSplitter.saveState()))
+        self.settings.setValue("MainSplitter", QVariant(self.mainSplitter.saveState()))
 
     def setWidgetStack(self):
         index = self.directionButtonGroup.checkedId() - 1
@@ -662,31 +683,6 @@ class Cfactor(QMainWindow):
 
     def isInfill(self):
         return self.infillCheckBox.isChecked()
-
-    def setStructureProp(self, build):
-        xSystem = build.xSystem
-        ySystem = build.ySystem
-        xSystemProp = [xSystem.systemType, xSystem.lateralType, xSystem.maxHeight, xSystem.Ru,
-                       xSystem.phi0, xSystem.cd, build.xTexp, 1.25 * build.xTexp, build.xTan, build.kx]
-        ySystemProp = [ySystem.systemType, ySystem.lateralType, ySystem.maxHeight, ySystem.Ru,
-                       ySystem.phi0, ySystem.cd, build.yTexp, 1.25 * build.yTexp, build.yTan, build.ky]
-        for row, item in enumerate(xSystemProp):
-            if row < 3:
-                item = QTableWidgetItem("%s " % item)
-            else:
-                item = QTableWidgetItem("%.2f " % item)
-            item.setTextAlignment(Qt.AlignCenter)
-            self.structurePropertiesTable.setItem(row, 0, item)
-
-        for row, item in enumerate(ySystemProp):
-            if row < 3:
-                item = QTableWidgetItem("%s " % item)
-            else:
-                item = QTableWidgetItem("%.2f " % item)
-            item.setTextAlignment(Qt.AlignCenter)
-            self.structurePropertiesTable.setItem(row, 1, item)
-
-        #xK, yK = xSystem.K, ySystem.k
 
     #def setDEngheta(self):
         #dEngheta = self.getDEngheta()
@@ -811,19 +807,6 @@ class Cfactor(QMainWindow):
                               xSystem, ySystem, city, xTan, yTan, useTan)
         return build
 
-    def reject(self):
-        if (self.dirty and
-            QMessageBox.question(self, "structure - Save?",
-                    "Save unsaved changes?",
-                    QMessageBox.Yes|QMessageBox.No) ==
-                    QMessageBox.Yes):
-            try:
-                self.save()
-            except IOError, err:
-                QMessageBox.warning(self, "structure - Error",
-                        "Failed to save: {0}".format(err))
-        QDialog.accept(self)
-
     def accept(self):
         self.dirty = False
         self.html = ''
@@ -832,7 +815,6 @@ class Cfactor(QMainWindow):
         self.structureModel.build = self.finalBuilding
         self.structureModel.reset()
         self.resizeColumns()
-        #self.setStructureProp(self.finalBuilding)
         self.setTAnalaticalDefaultValue(self.finalBuilding)
         results = self.finalBuilding.results
         if results[0] is True:

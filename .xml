@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PROPERTY_FILE xmlns="http://www.csiberkeley.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.csiberkeley.com CSIExtendedSectionPropertyFile.xsd">
    <EbrahimRaeyat_Presents>
-      <Comment_on_CopyRight> This database is provided by: EbrahimRaeyat, (2015); http://www.ebrahimraeyat.blog.ir </Comment_on_CopyRight>
-      <Comment_on_CopyRight> Prepared by M.Heidari &amp; R.KamraniRad &amp; P.Zakian </Comment_on_CopyRight>
+      <Comment_on_CopyRight> This database is provided by: EbrahimRaeyat, (2016); http://www.ebrahimraeyat.blog.ir </Comment_on_CopyRight>
    </EbrahimRaeyat_Presents>
   <CONTROL>
       <FILE_ID>CSI Frame Properties</FILE_ID>
@@ -11,5 +10,3 @@
       <FORCE_UNITS>kgf</FORCE_UNITS>
   </CONTROL>
 
-
-</PROPERTY_FILE>

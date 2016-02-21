@@ -13,6 +13,8 @@ FILE_VERSION = 1
 
 
 class Section(object):
+    sectionType = {'IPE': 'STEEL_I_SECTION',
+                   'UNP': 'STEEL_DOUBLE_CHANNEL'}
 
     def __init__(self, **kwargs):
         self.type = QString(kwargs['_type'])
@@ -47,7 +49,8 @@ class Section(object):
         self.sectionProp = kwargs
 
     def __str__(self):
-        s = ('\n\n  <STEEL_I_SECTION>\n'
+        secType = self.sectionType[str(self.type)]
+        s = ('\n\n  <{}>\n'
                '\t<LABEL>{}</LABEL>\n'
                '\t<EDI_STD>{}</EDI_STD>\n'
                '\t<D>{}</D>\n'
@@ -69,11 +72,11 @@ class Section(object):
                '\t<Z33>{:.0f}</Z33>\n'
                '\t<Z22>{:.0f}</Z22>\n'
                '\t<J>0</J>\n'
-               '  </STEEL_I_SECTION>'
-              ).format(self.name, self.name, self.h, self.bf, self.tf,
+               '  </{}>'
+              ).format(secType, self.name, self.name, self.h, self.bf, self.tf,
                                        self.tw, self.area, self.AS2, self.AS3, self.I33, self.I22,
                                        self.S33POS, self.S33NEG, self.S22POS, self.S22NEG, self.R33,
-                                       self.R22, self.Z33, self.Z22)
+                                       self.R22, self.Z33, self.Z22, secType)
         return s
 
     @staticmethod
@@ -89,8 +92,7 @@ class Section(object):
         stream << ('<?xml version="1.0" encoding="utf-8"?>\n'
         '<PROPERTY_FILE xmlns="http://www.csiberkeley.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.csiberkeley.com CSIExtendedSectionPropertyFile.xsd">\n'
         '   <EbrahimRaeyat_Presents>\n'
-        '      <Comment_on_CopyRight> This database is provided by: EbrahimRaeyat, (2015); http://www.ebrahimraeyat.blog.ir </Comment_on_CopyRight>\n'
-        '      <Comment_on_CopyRight> Prepared by M.Heidari &amp; R.KamraniRad &amp; P.Zakian </Comment_on_CopyRight>\n'
+        '      <Comment_on_CopyRight> This database is provided by: EbrahimRaeyat, (2016); http://www.ebrahimraeyat.blog.ir </Comment_on_CopyRight>\n'
         '   </EbrahimRaeyat_Presents>\n'
         '  <CONTROL>\n'
         '      <FILE_ID>CSI Frame Properties</FILE_ID>\n'
@@ -248,16 +250,11 @@ class SectionTableModel(QAbstractTableModel):
         self.sections = sorted(self.sections)
         self.reset()
 
-    def sortByCountryOwner(self):
-        self.sections = sorted(self.sections,
-                            key=lambda x: (x.country, x.owner, x.name))
-        self.reset()
-
     def flags(self, index):
         if not index.isValid():
             return Qt.ItemIsEnabled
         return Qt.ItemFlags(
-                QAbstractTableModel.flags(self, index)|
+                QAbstractTableModel.flags(self, index) |
                 Qt.ItemIsEditable)
 
     def data(self, index, role=Qt.DisplayRole):
@@ -443,7 +440,6 @@ class SectionTableModel(QAbstractTableModel):
         self.dirty = True
         return True
 
-
     def load(self):
         exception = None
         fh = None
@@ -480,12 +476,6 @@ class SectionTableModel(QAbstractTableModel):
                 TF = stream.readFloat()
                 H = stream.readFloat()
                 TW = stream.readFloat()
-                S33POS = stream.readFloat()
-                S33NEG = stream.readFloat()
-                S22POS = stream.readFloat()
-                S22NEG = stream.readFloat()
-                R33 = stream.readFloat()
-                R22 = stream.readFloat()
                 section = Section(_type=_type, name=name, area=area, xm=xm, ym=ym,
                              xmax=xmax, ymax=ymax, AS2=AS2, AS3=AS3, I33=I33, I22=I22,
                              Z33=Z33, Z22=Z22, bf=BF, tf=TF, h=H, tw=TW)
@@ -500,7 +490,6 @@ class SectionTableModel(QAbstractTableModel):
                 fh.close()
             if exception is not None:
                 raise exception
-
 
     def save(self):
         exception = None
@@ -553,7 +542,7 @@ class DoubleSection(Section):
     def __init__(self, section, dist=0):
         '''dist = distance between two sections, 0 mean that there is no
         distance between sections'''
-        _type = '2' + section.type
+        _type = section.type
         if dist == 0:
             name = '2' + section.name
         else:
@@ -570,7 +559,6 @@ class DoubleSection(Section):
         Z33 = 2 * section.Z33
         af = section.bf * section.tf
         aw = section.tw * (section.h - 2 * section.tf)
-        # Z22 must be calculated
         Z22 = 2 * (2 * af * (section.bf + dist) / 2) + 2 * aw * (section.xm + dist / 2)
         BF = 2 * section.bf
         TF = 2 * section.tf
@@ -586,7 +574,7 @@ class AddPlateTB(Section):
        is equal to center of section'''
 
     def __init__(self, section, plate):
-        _type = section.type + plate.type
+        _type = section.type
         name = section.name + plate.name
         area = section.area + 2 * plate.area
         xmax = max(section.xmax, plate.xmax)
@@ -629,18 +617,21 @@ class Ipe(Section):
         #Z33 = 2 * (af * (ymax - tf) / 2) + tw * (ymax - 2 * tf) ** 2 / 4
         #Z22 = 2 * (tf * bf ** 2 / 4) + (ymax - 2 * tf) * tw ** 2 / 4
 
-        super(Ipe, self).__init__(_type='STEEL_I_SECTION', name=name, area=area, xm=xm, ym=ym,
+        super(Ipe, self).__init__(_type='IPE', name=name, area=area, xm=xm, ym=ym,
                                   xmax=xmax, ymax=ymax, AS2=AS2, AS3=AS3, I33=I33, I22=I22,
                                   Z33=Z33, Z22=Z22, bf=bf, tf=tf, h=h, tw=tw)
 
     @staticmethod
     def createStandardIpes():
+        IPE14 = Ipe("IPE14", 1640, 73, 140, 5410000, 449000, 88300, 19200, 6.9, 4.7)
+        IPE16 = Ipe("IPE16", 2010, 82, 160, 8690000, 683000, 124000, 26100, 7.4, 5.0)
         IPE18 = Ipe("IPE18", 2390, 91, 180, 13170000, 1010000, 166000, 34600, 8.0, 5.3)
         IPE20 = Ipe("IPE20", 2850, 100, 200, 19400000, 1420000, 221000, 44600, 8.5, 5.6)
         IPE22 = Ipe("IPE22", 3340, 110, 220, 27770000, 2050000, 285000, 58100, 9.2, 5.9)
         IPE24 = Ipe("IPE24", 3910, 120, 240, 38900000, 2840000, 367000, 73900, 9.8, 6.2)
         IPE27 = Ipe("IPE27", 4590, 135, 270, 57900000, 4200000, 484000, 96900, 10.2, 6.6)
-        IPE = {18: IPE18, 20: IPE20, 22: IPE22, 24: IPE24, 27: IPE27}
+        IPE30 = Ipe("IPE30", 5380, 150, 300, 83600000, 6040000, 628000, 125000, 10.7, 7.1)
+        IPE = {14: IPE14, 16: IPE16, 18: IPE18, 20: IPE20, 22: IPE22, 24: IPE24, 27: IPE27, 30: IPE30}
         return IPE
 
     def double(self, dist=0):
@@ -665,7 +656,7 @@ class Unp(Section):
         Z33 = 2 * (af * (ymax - tf) / 2 + tw * (ymax / 2 - tf) ** 2)
         Z22 = 2 * (tf * bf ** 2 / 4) + (ymax - 2 * tf) * tw ** 2 / 4
 
-        super(Unp, self).__init__(_type='STEEL_I_SECTION', name=name, area=area, xm=xm, ym=ym,
+        super(Unp, self).__init__(_type='UNP', name=name, area=area, xm=xm, ym=ym,
                                   xmax=xmax, ymax=ymax, AS2=AS2, AS3=AS3, I33=I33, I22=I22,
                                   Z33=Z33, Z22=Z22, bf=bf, tf=tf, h=h, tw=tw)
 
@@ -675,17 +666,11 @@ class Unp(Section):
         UNP10 = Unp("UNP10", 2850, 100, 200, 19400000, 1420000, 8.5, 5.6)
         UNP12 = Unp("UNP12", 3340, 110, 220, 27770000, 2050000, 9.2, 5.9)
         UNP14 = Unp("UNP14", 3910, 120, 240, 38900000, 2840000, 9.8, 6.2)
-        UNP = [UNP8, UNP10, UNP12, UNP14]
+        UNP = {8: UNP8, 10: UNP10, 12: UNP12, 14: UNP14}
         return UNP
 
     def double(self, dist=0):
-        newSection = super(Unp, self).double(dist)
-        Z33 = 2 * self.Z33
-        # Z22 must be calculate !!!
-        Z22 = 2 * self.Z22
-        newSection.Z33 = Z33
-        newSection.Z22 = Z22
-        return newSection
+        return DoubleSection(self, dist)
 
     def addPlateTB(self, plate):
         return AddPlateTB(self, plate)

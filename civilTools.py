@@ -76,8 +76,8 @@ class CivilTools(QMainWindow):
         size_policy.setHeightForWidth(self.btn_quit.sizePolicy().hasHeightForWidth())
         self.btn_quit.setSizePolicy(size_policy)
         self.btn_quit.setMinimumSize(100, 25)
-        btn_font = QPushButton(u'فونت نرم افزار', self.main_widget)
-        btn_font.clicked.connect(self.setfont)
+        #btn_font = QPushButton(u'فونت نرم افزار', self.main_widget)
+        #btn_font.clicked.connect(self.setfont)
 
         #
         # Layouts
@@ -86,7 +86,7 @@ class CivilTools(QMainWindow):
         btn_layout = QHBoxLayout()
         btn_layout.sizeConstraint = QLayout.SetDefaultConstraint
         btn_layout.addItem(h_spacer)
-        btn_layout.addWidget(btn_font)
+        #btn_layout.addWidget(btn_font)
         btn_layout.addWidget(self.btn_about)
         btn_layout.addWidget(self.btn_quit)
 
@@ -108,18 +108,19 @@ class CivilTools(QMainWindow):
 
     def action_about_triggered(self):
         msg = self.win_title + u" - مجموعه ابزارها برای استفاده مهندسین عمران."
-        msg += u"ورژن " + versions.ver_civilTools + "\n\n"
+        msg += u"ورژن   " + versions.ver_civilTools + "\n\n"
 
         msg += u"ویژگی ها:\n\n"
 
-        msg += u"- محاسبه ضریب زلزله مطابق با آخرین ویرایش آیین نامه ۲۸۰۰ زلزله ویرایش ۴\n"
-        msg += u"- محاسبه مشخصات مقاطع دوبل با ورق برای استفاده در ETABS 2013-2015\n"
+        msg += u"- محاسبه ضریب زلزله مطابق با آخرین ویرایش آیین نامه ۲۸۰۰ زلزله ویرایش ۴ (ورژن {})\n".format(versions.ver_cfactor)
+        msg += u"- محاسبه مشخصات مقاطع دوبل با ورق برای استفاده در ETABS 2013-2015 (ورژن {})\n".format(versions.ver_section)
 
         msg += "\n"
 
         msg += u"- نوشته شده با پیتون و کیوت\n"
         msg += u"- عدم وابستگی به سیستم عامل ( در لینوکس و ویندوز تست شده)\n"
         msg += u"- تحت لیسانس " + versions.license + "\n\n"
+        msg += u"- توسعه دهنده: ابراهیم رعیت رکن آبادی"
         QMessageBox.about(self, u"درباره - " + self.win_title, msg)
 
     def setfont(self):

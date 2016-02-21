@@ -74,6 +74,11 @@ class FormWidget(QWidget):
         size_policy.setVerticalStretch(0)
 
         s = u"<b>ابزارهای مهندسین عمران</b><br />مجموعه ابزارهای کدباز برای مهندسین عمران تحت لیسانس  GPLv3"
+        __url__ = "http://ebrahimraeyat.blog.ir"
+        link_ebrahim = ('\n<a href="%s"><span style=" '
+            'text-decoration: underline; color:#0000ff;">'
+            '%s</span></a>') % (__url__, __url__)
+        s += link_ebrahim
         self.lb_app = QLabel(self.img)
         self.lb_app.setTextFormat(Qt.RichText)
         self.lb_app.setText(s)

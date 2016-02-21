@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
-#from __future__ import absolute_import
+
+
+import re
+import sys
+import os
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 import sec
-import sys
-import os
+
 ipesProp = sec.Ipe.createStandardIpes()
 unpsProp = sec.Unp.createStandardUnps()
 
-MAC = True
-try:
-    from PyQt4.QtGui import qt_mac_set_native_menubar
-except ImportError:
-    MAC = False
 
 class Window(QMainWindow):
+
+    sectionProp = {'IPE': ipesProp, 'UNP': unpsProp}
 
     def __init__(self, parent=None):
         super(Window, self).__init__(parent)
@@ -23,7 +23,7 @@ class Window(QMainWindow):
         #self.filename = None
         self.printer = None
         self.createWidgets()
-        #self.create_connections()
+        self.create_connections()
         #self.create_actions()
         #self.accept()
         #self.load_settings()
@@ -78,24 +78,25 @@ class Window(QMainWindow):
         #index = self.tableView.currentIndex()
         #name = self.model.data(
                         #self.model.index(row, sec.NAME)).toString()
-        if (QMessageBox.question(self, "sections - Remove",
-                (QString("Remove section?")),
-                QMessageBox.Yes|QMessageBox.No) ==
-                QMessageBox.No):
+        #if (QMessageBox.question(self, "sections - Remove",
+                #(QString("Remove section?")),
+                #QMessageBox.Yes|QMessageBox.No) ==
+                #QMessageBox.No):
+            #return
+        index = self.tableView.currentIndex()
+        #print 'indexes is:{}'.format(indexes)
+        #print 'len indexes is{}'.format(len(indexes))
+        #for i in range(len(indexes)):
+        if not index.isValid():
             return
-        indexes = self.tableView.selectedIndexes()
-        print indexes
-        for i in range(len(indexes)):
-            if not indexes[i].isValid():
-                return
-            row = indexes[i].row()
-            print row
-            self.model.removeRows(row)
+        row = index.row()
+        print row
+        self.model.removeRows(row)
         self.resizeColumns()
 
     def create_connections(self):
-        self.connect(self.sectionsBox, SIGNAL(
-                    "currentIndexChanged(QString)"), self.accept)
+        #self.connect(self.sectionsBox, SIGNAL(
+                    #"currentIndexChanged(QString)"), self.accept)
         self.connect(self.sectionTypeBox, SIGNAL(
                     "currentIndexChanged(QString)"), self.setSectionLabels)
 
@@ -112,27 +113,18 @@ class Window(QMainWindow):
         self.tableView.setColumnHidden(sec.S33NEG, True)
         self.tableView.setColumnHidden(sec.S22NEG, True)
 
-        addSectionButton = QPushButton("&Add Section")
-        removeSectionButton = QPushButton("&Remove Section")
-        quitButton = QPushButton("&Quit")
-        if not MAC:
-            addSectionButton.setFocusPolicy(Qt.NoFocus)
-            removeSectionButton.setFocusPolicy(Qt.NoFocus)
-            quitButton.setFocusPolicy(Qt.NoFocus)
-
-        sectionTypeLabel = QLabel(u'نوع مقطع')
         sectionLabel = QLabel(u'مقطع انتخابی')
-        doubleDistLabel = QLabel(u'فاصله لب به لب مقاطع')
+        doubleDistLabel = QLabel(u'(cm) فاصله لب به لب مقاطع')
         self.img = QLabel()
         self.img.setMinimumSize(400, 400)
         self.img.setAlignment(Qt.AlignCenter)
-        plateWidthLabel = QLabel(u'عرض ورق')
-        plateThickLabel = QLabel(u'ضخامت ورق')
+        plateWidthLabel = QLabel(u'(cm) عرض ورق')
+        plateThickLabel = QLabel(u'(mm) ضخامت ورق')
         self.fileNameLine = QLineEdit()
         fileOpen = QPushButton(u'بازکردن')
         exportXml = QPushButton(u' xml ذخیره در')
         self.sectionTypeBox = QComboBox()
-        self.sectionTypeBox.addItems(['IPE'])
+        self.sectionTypeBox.addItems(['IPE', 'UNP'])
         self.sectionsBox = QComboBox()
         self.sectionsBox.addItems(self.getSectionLabels())
         self.doubleDistSpinBox = QSpinBox()
@@ -143,15 +135,11 @@ class Window(QMainWindow):
         self.plateThickSpinBox.setSuffix(' mm')
         self.result = QTextEdit()
 
-        # multiSectionWidget
-        #self.sectionsList = QListWidget()
-        #self.sectionsList.addItems(self.getSectionLabels())
-        #self.sectionsList.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.sectionsList = Window.creatList(self.getSectionLabels())
         self.sectionsList.sortItems()
         self.distsList = Window.creatList([str(i) for i in range(21)])
         self.plateWidthList = Window.creatList([str(i) for i in range(5, 41)])
-        self.plateThickList = Window.creatList([str(i) for i in range(21)])
+        self.plateThickList = Window.creatList([str(i) for i in (0, 4, 5, 6, 8, 9, 10, 12, 15)])
         calculateButton = QPushButton(u'محاسبه')
         saveToXmlButton = QPushButton(u' xml ذخیره در')
         saveToFileButton = QPushButton(u'دخیره')
@@ -168,6 +156,7 @@ class Window(QMainWindow):
         removeButton.clicked.connect(self.removeSection)
 
         sectionButtonLayout = QVBoxLayout()
+        sectionButtonLayout.addWidget(self.sectionTypeBox)
         sectionButtonLayout.addWidget(calculateButton)
         sectionButtonLayout.addWidget(saveToFileButton)
         sectionButtonLayout.addWidget(saveToXmlButton)
@@ -299,19 +288,19 @@ class Window(QMainWindow):
         #settings.setValue("MainSplitter", QVariant(self.mainSplitter.saveState()))
 
     def setSectionLabels(self):
-        self.sectionsBox.clear()
+        self.sectionsList.clear()
         sectionType = self.currentSectionType()
-        if sectionType == 'IPE':
-            self.sectionsBox.addItems(self.getSectionLabels())
+        ##if sectionType == 'IPE':
+        self.sectionsList.addItems(self.getSectionLabels(sectionType))
 
-        elif sectionType == 'UNP':
-            self.sectionsBox.addItems([unp.name for unp in unpsProp])
+        #elif sectionType == 'UNP':
+            #self.sectionsBox.addItems([unp.name for unp in unpsProp])
 
     def getSectionLabels(self, sectionType='IPE'):
         if sectionType == 'IPE':
             sections = ipesProp.values()
-        #elif sectionType == 'UNP':
-            #sectionNames = unpsProp.values()
+        elif sectionType == 'UNP':
+            sections = unpsProp.values()
 
         sectionNames = [section.name for section in sections]
         #print sectionNames
@@ -360,9 +349,10 @@ class Window(QMainWindow):
         dists = self.distsList.selectedItems()
         platesWidth = self.plateWidthList.selectedItems()
         platesThick = self.plateThickList.selectedItems()
+        sectionsName = re.sub("[^A-Z]", "", str(sections[0].text()))
         for sectionName in sections:
-            sectionSize = sectionName.text()[-2:]
-            section = ipesProp[int(sectionSize)]
+            sectionSize = int(re.sub("[^0-9]", "", str(sectionName.text())))
+            section = self.sectionProp[sectionsName][sectionSize]
 
             for dist in dists:
                 dist = int(dist.text()) * 10

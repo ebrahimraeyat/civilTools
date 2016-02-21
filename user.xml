@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PROPERTY_FILE xmlns="http://www.csiberkeley.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.csiberkeley.com CSIExtendedSectionPropertyFile.xsd">
    <EbrahimRaeyat_Presents>
-      <Comment_on_CopyRight> This database is provided by: EbrahimRaeyat, (2015); http://www.ebrahimraeyat.blog.ir </Comment_on_CopyRight>
-      <Comment_on_CopyRight> Prepared by M.Heidari &amp; R.KamraniRad &amp; P.Zakian </Comment_on_CopyRight>
+      <Comment_on_CopyRight> This database is provided by: EbrahimRaeyat, (2016); http://www.ebrahimraeyat.blog.ir </Comment_on_CopyRight>
    </EbrahimRaeyat_Presents>
   <CONTROL>
       <FILE_ID>CSI Frame Properties</FILE_ID>
@@ -12,28 +11,100 @@
   </CONTROL>
 
 
-  <STEEL_I_SECTION>
-	<LABEL>2IPE27PL230X4</LABEL>
-	<EDI_STD>2IPE27PL230X4</EDI_STD>
-	<D>540.0</D>
-	<BF>460.0</BF>
-	<TF>4.0</TF>
-	<TW>13.1999998093</TW>
-	<KDES>17</KDES>
-	<A>11020</A>
-	<AS2>3670</AS2>
-	<AS3>6123</AS3>
-	<I33>150337408</I33>
-	<I22>58337708</I22>
-	<S33POS>1081564</S33POS>
-	<S33NEG>1081564</S33NEG>
-	<S22POS>432131</S22POS>
-	<S22NEG>432131</S22NEG>
-	<R33>116.8</R33>
-	<R22>72.8</R22>
-	<Z33>1220080</Z33>
-	<Z22>699984</Z22>
-	<J>0</J>
-  </STEEL_I_SECTION>
 
+  <STEEL_DOUBLE_CHANNEL>
+	<LABEL>2UNP08</LABEL>
+	<EDI_STD>2UNP08</EDI_STD>
+	<D>360</D>
+	<BF>182</BF>
+	<TF>16.0</TF>
+	<TW>10.6</TW>
+	<KDES>17</KDES>
+	<A>4780</A>
+	<AS2>1908</AS2>
+	<AS3>2427</AS3>
+	<I33>26340000</I33>
+	<I22>11915795</I22>
+	<S33POS>292667</S33POS>
+	<S33NEG>292667</S33NEG>
+	<S22POS>130943</S22POS>
+	<S22NEG>130943</S22NEG>
+	<R33>74.2</R33>
+	<R22>49.9</R22>
+	<Z33>392981</Z33>
+	<Z22>211593</Z22>
+	<J>0</J>
+  </STEEL_DOUBLE_CHANNEL>
+
+  <STEEL_DOUBLE_CHANNEL>
+	<LABEL>2UNP10</LABEL>
+	<EDI_STD>2UNP10</EDI_STD>
+	<D>400</D>
+	<BF>200</BF>
+	<TF>17.0</TF>
+	<TW>11.2</TW>
+	<KDES>17</KDES>
+	<A>5700</A>
+	<AS2>2240</AS2>
+	<AS3>2833</AS3>
+	<I33>38800000</I33>
+	<I22>17090000</I22>
+	<S33POS>388000</S33POS>
+	<S33NEG>388000</S33NEG>
+	<S22POS>170900</S22POS>
+	<S22NEG>170900</S22NEG>
+	<R33>82.5</R33>
+	<R22>54.8</R22>
+	<Z33>513088</Z33>
+	<Z22>272480</Z22>
+	<J>0</J>
+  </STEEL_DOUBLE_CHANNEL>
+
+  <STEEL_DOUBLE_CHANNEL>
+	<LABEL>2UNP12</LABEL>
+	<EDI_STD>2UNP12</EDI_STD>
+	<D>440</D>
+	<BF>220</BF>
+	<TF>18.4</TF>
+	<TW>11.8</TW>
+	<KDES>17</KDES>
+	<A>6680</A>
+	<AS2>2596</AS2>
+	<AS3>3373</AS3>
+	<I33>55540000</I33>
+	<I22>24307000</I22>
+	<S33POS>504909</S33POS>
+	<S33NEG>504909</S33NEG>
+	<S22POS>220973</S22POS>
+	<S22NEG>220973</S22NEG>
+	<R33>91.2</R33>
+	<R22>60.3</R22>
+	<Z33>666450</Z33>
+	<Z22>353478</Z22>
+	<J>0</J>
+  </STEEL_DOUBLE_CHANNEL>
+
+  <STEEL_DOUBLE_CHANNEL>
+	<LABEL>2UNP14</LABEL>
+	<EDI_STD>2UNP14</EDI_STD>
+	<D>480</D>
+	<BF>240</BF>
+	<TF>19.6</TF>
+	<TW>12.4</TW>
+	<KDES>17</KDES>
+	<A>7820</A>
+	<AS2>2976</AS2>
+	<AS3>3920</AS3>
+	<I33>77800000</I33>
+	<I22>33832000</I22>
+	<S33POS>648333</S33POS>
+	<S33NEG>648333</S33NEG>
+	<S22POS>281933</S22POS>
+	<S22NEG>281933</S22NEG>
+	<R33>99.7</R33>
+	<R22>65.8</R22>
+	<Z33>842603</Z33>
+	<Z22>446218</Z22>
+	<J>0</J>
+  </STEEL_DOUBLE_CHANNEL>
 </PROPERTY_FILE>

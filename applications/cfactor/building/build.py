@@ -5,7 +5,10 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
 X, Y = range(2)
-SYSTEM, LATERAL, HMAX, RU, OMEGA0, CD, TEXP, TEXP125, TAN, K, CFACTOR= range(11)
+SYSTEM, LATERAL, HMAX, RU, OMEGA0, CD, TEXP, TEXP125, TAN, K, CFACTOR = range(11)
+MAGIC_NUMBER = 0x570C4
+FILE_VERSION = 1
+
 class Building(object):
 
     ID1 = (3, 23, 33, 36)
@@ -17,6 +20,7 @@ class Building(object):
     def __init__(self, risk, karbari, soilType, noStory, height,
                  infill, xSystem, ySystem, city, xTan=0, yTan=0, useTan=False):
 
+        self.filename = ''
         self.risk = risk
         self.acc = self.acceleration()
         self.city = city
@@ -510,15 +514,15 @@ class StructureModel(QAbstractTableModel):
             if row == CD:
                 return QVariant(system.cd)
             if row == TEXP:
-                return QVariant(Texp)
+                return QString.number(Texp, 'f', 2)
             if row == TEXP125:
-                return QVariant(Texp * 1.25)
+                return QString.number(Texp * 1.25, 'f', 2)
             if row == TAN:
-                return QVariant(Tan)
+                return QString.number(Tan, 'f', 2)
             if row == K:
-                return QVariant(k)
+                return QString.number(k, 'f', 2)
             if row == CFACTOR:
-                return QVariant(c)
+                return QString.number(c, 'f', 4)
         if role == Qt.BackgroundColorRole:
             if row in (HMAX, TEXP125):
                 return QVariant(QColor(250, 60, 0))

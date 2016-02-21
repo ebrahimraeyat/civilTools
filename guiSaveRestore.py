@@ -6,6 +6,7 @@
 #===================================================================
 
 import sys
+import os
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 import inspect
@@ -29,6 +30,7 @@ def guisave(ui, settings):
             index  = obj.currentIndex()    # get current index from combobox
             text   = obj.itemText(index)   # get the text for current index
             settings.setValue(name, text)   # save combobox selection to registry
+            print '{} index and value is: {}, {}'.format(name, index, text)
 
         if isinstance(obj, QLineEdit):
             name = obj.objectName()
@@ -53,14 +55,14 @@ def guisave(ui, settings):
 def guirestore(ui, settings):
 
     for name, obj in inspect.getmembers(ui):
-        try: print 'object name is:{}'.format(obj.objectName())
-        except: pass
         if isinstance(obj, QComboBox):
             index  = obj.currentIndex()    # get current region from combobox
             #text   = obj.itemText(index)   # get the text for new selected index
             name   = obj.objectName()
 
-            value = unicode(settings.value(name))
+
+            value = unicode(settings.value(name).toString())
+            print '{} index and value is: {}, {}'.format(name, index, value)
 
             if value == "":
                 continue
@@ -74,14 +76,15 @@ def guirestore(ui, settings):
             else:
                 obj.setCurrentIndex(index)   # preselect a combobox value by index
 
+
         if isinstance(obj, QLineEdit):
             name = obj.objectName()
-            value = unicode(settings.value(name))  # get stored value from registry
+            value = unicode(settings.value(name).toString())  # get stored value from registry
             obj.setText(value)  # restore lineEditFile
 
         if isinstance(obj, QCheckBox):
             name = obj.objectName()
-            value = settings.value(name)   # get stored value from registry
+            value = settings.value(name).toString()   # get stored value from registry
             if value != None:
                 obj.setCheckState(value)   # restore checkbox
 
@@ -95,18 +98,20 @@ class MainWindow(QMainWindow):
         self.setWindowTitle('PyQtConfig Demo')
         gd = QGridLayout()
 
-        sb = QSpinBox()
-        gd.addWidget(sb, 0, 1)
+        self.sb = QSpinBox()
+        gd.addWidget(self.sb, 0, 1)
 
         self.te = QLineEdit()
+        self.te.setObjectName('lineEdit')
         gd.addWidget(self.te, 1, 1)
 
         cb = QCheckBox()
         gd.addWidget(cb, 2, 1)
 
-        cmb = QComboBox()
-        cmb.addItems([u'علیرضا', u'ابراهیم', u'حسن کچل'])
-        gd.addWidget(cmb, 3, 1)
+        self.cmb = QComboBox()
+        self.cmb.setObjectName('cmbBox')
+        self.cmb.addItems(['ali', 'ebi', 'kobi'])
+        gd.addWidget(self.cmb, 3, 1)
 
         self.current_config_output = QTextEdit()
         gd.addWidget(self.current_config_output, 0, 3, 3, 1)
@@ -115,11 +120,17 @@ class MainWindow(QMainWindow):
         self.window = QWidget()
         self.window.setLayout(gd)
         self.setCentralWidget(self.window)
-        guirestore(self, QSettings('saved.ini', QSettings.IniFormat))
+        programname = os.path.basename(__file__)
+        programbase, ext = os.path.splitext(programname)
+        settings = QSettings("company", programbase)
+        guirestore(self, settings)
 
 
     def closeEvent(self, event):
-        guisave(self, QSettings('saved.ini', QSettings.IniFormat))
+        programname = os.path.basename(__file__)
+        programbase, ext = os.path.splitext(programname)
+        settings = QSettings("company", programbase)
+        guisave(self, settings)
         self.deleteLater()
 
 
@@ -136,6 +147,10 @@ if __name__ == "__main__":
     # Create a Qt application
     app = QApplication(sys.argv)
     w = MainWindow()
+    for name, obj in inspect.getmembers(w):
+        try:
+            print obj.objectName()
+        except: pass
     w.show()
     app.exec_()  # Enter Qt application main loop
 

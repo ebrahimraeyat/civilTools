@@ -7,8 +7,8 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{E40881AD-E344-4C2D-9BE5-F3B3948D35B7}
 AppName=civilTools
-AppVersion=0.1
-;AppVerName=civilTools 0.1
+AppVersion=0.2
+;AppVerName=civilTools 0.2
 AppPublisher=Ebrahim Raeyat Roknabadi
 AppPublisherURL=www.ebrahimraeyat.blog.ir
 AppSupportURL=www.ebrahimraeyat.blog.ir
