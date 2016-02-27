@@ -43,8 +43,8 @@ class Window(QMainWindow):
 
     def resizeColumns(self):
         for column in (sec.NAME, sec.TYPE, sec.AREA,
-                       sec.XM, sec.YM, sec.XMAX, sec.YMAX, sec.AS2, sec.AS3, sec.I33, sec.I22, sec.Z33, sec.Z22, \
- sec.BF, sec.TF, sec.H, sec.TW, sec.S33POS, sec.S33NEG, sec.S22POS, sec.S22NEG, sec.R33, sec.R22):
+                       sec.XM, sec.YM, sec.XMAX, sec.YMAX, sec.ASY, sec.ASX, sec.IX, sec.IY, sec.ZX, sec.ZY, \
+ sec.BF, sec.TF, sec.H, sec.TW, sec.SXPOS, sec.SXNEG, sec.SYPOS, sec.SYNEG, sec.RX, sec.RY):
             self.tableView.resizeColumnToContents(column)
 
     def reject(self):
@@ -110,8 +110,8 @@ class Window(QMainWindow):
         self.tableView.setColumnHidden(sec.YM, True)
         self.tableView.setColumnHidden(sec.XMAX, True)
         self.tableView.setColumnHidden(sec.YMAX, True)
-        self.tableView.setColumnHidden(sec.S33NEG, True)
-        self.tableView.setColumnHidden(sec.S22NEG, True)
+        self.tableView.setColumnHidden(sec.SXNEG, True)
+        self.tableView.setColumnHidden(sec.SYNEG, True)
 
         sectionLabel = QLabel(u'مقطع انتخابی')
         doubleDistLabel = QLabel(u'(cm) فاصله لب به لب مقاطع')
@@ -355,8 +355,8 @@ class Window(QMainWindow):
             section = self.sectionProp[sectionsName][sectionSize]
 
             for dist in dists:
-                dist = int(dist.text()) * 10
-                section2 = section.double(dist)
+                dist = int(dist.text())
+                section = section.double(dist)
 
                 if len(platesWidth) == 0:
                     for plateThick in platesThick:
@@ -364,19 +364,19 @@ class Window(QMainWindow):
                         if plateThick == 0:
                             self.model.sections.append(section2)
                         else:
-                            section2PL = sec.AddPlateTBThick(section2, plateThick)
-                            self.model.sections.append(section2PL)
+                            sectionPL = sec.AddPlateTBThick(section, plateThick)
+                            self.model.sections.append(sectionPL)
                 else:
                     for plateThick in platesThick:
                         plateThick = int(plateThick.text())
                         if plateThick == 0:
-                            self.model.sections.append(section2)
+                            self.model.sections.append(section)
                         else:
                             for plateWidth in platesWidth:
                                 plateWidth = int(plateWidth.text()) * 10
                                 plate = sec.Plate(plateWidth, plateThick)
-                                section2PL = sec.AddPlateTB(section2, plate)
-                                self.model.sections.append(section2PL)
+                                sectionPL = sec.AddPlateTB(section, plate)
+                                self.model.sections.append(sectionPL)
         self.model.reset()
         self.resizeColumns()
         self.model.dirty = True

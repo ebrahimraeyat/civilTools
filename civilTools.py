@@ -31,6 +31,7 @@ from formwidget import FormWidget
 import sys
 import versions
 
+
 class CivilTools(QMainWindow):
     def __init__(self, parent = None):
         super(CivilTools, self).__init__(parent)
