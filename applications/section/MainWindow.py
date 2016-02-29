@@ -22,6 +22,7 @@ class Window(QMainWindow):
         self.lastDirectory = ''
         #self.filename = None
         self.printer = None
+        self.createWidgetsOne()
         self.createWidgets()
         self.create_connections()
         #self.create_actions()
@@ -36,16 +37,16 @@ class Window(QMainWindow):
             try:
                 self.model.load()
                 self.model.sortByName()
-                self.resizeColumns()
+                self.resizeColumns(self.tableView)
             except IOError, err:
                 QMessageBox.warning(self, "Sections - Error",
                         "Failed to load: {0}".format(err))
 
-    def resizeColumns(self):
+    def resizeColumns(self, tableView=None):
         for column in (sec.NAME, sec.TYPE, sec.AREA,
-                       sec.XM, sec.YM, sec.XMAX, sec.YMAX, sec.ASY, sec.ASX, sec.IX, sec.IY, sec.ZX, sec.ZY, \
+                       sec.XM, sec.YM, sec.XMAX, sec.YMAX, sec.ASY, sec.ASX, sec.IX, sec.IY, sec.ZX, sec.ZY,
  sec.BF, sec.TF, sec.H, sec.TW, sec.SXPOS, sec.SXNEG, sec.SYPOS, sec.SYNEG, sec.RX, sec.RY):
-            self.tableView.resizeColumnToContents(column)
+            tableView.resizeColumnToContents(column)
 
     def reject(self):
         self.accept()
@@ -54,7 +55,7 @@ class Window(QMainWindow):
         if (self.model.dirty and
             QMessageBox.question(self, "sections - Save?",
                     "Save unsaved changes?",
-                    QMessageBox.Yes|QMessageBox.No) ==
+                    QMessageBox.Yes | QMessageBox.No) ==
                     QMessageBox.Yes):
             try:
                 self.model.save()
@@ -92,13 +93,76 @@ class Window(QMainWindow):
         row = index.row()
         print row
         self.model.removeRows(row)
-        self.resizeColumns()
+        #self.resizeColumns()
 
     def create_connections(self):
         #self.connect(self.sectionsBox, SIGNAL(
                     #"currentIndexChanged(QString)"), self.accept)
         self.connect(self.sectionTypeBox, SIGNAL(
                     "currentIndexChanged(QString)"), self.setSectionLabels)
+
+    def createWidgetsOne(self):
+        self.model1 = sec.SectionTableModel(QString("section.dat"))
+        self.tableView1 = QTableView()
+        self.tableView1.setLayoutDirection(Qt.LeftToRight)
+        self.tableView1.setModel(self.model1)
+        self.tableView1.setColumnHidden(sec.TYPE, True)
+        self.tableView1.setColumnHidden(sec.XM, True)
+        self.tableView1.setColumnHidden(sec.YM, True)
+        self.tableView1.setColumnHidden(sec.XMAX, True)
+        self.tableView1.setColumnHidden(sec.YMAX, True)
+        self.tableView1.setColumnHidden(sec.SXNEG, True)
+        self.tableView1.setColumnHidden(sec.SYNEG, True)
+
+        sectionLabel = QLabel(u'مقطع انتخابی')
+        distLable = QLabel(u'فاصله لب به لب مقطع')
+        calculateOneButton = QPushButton(u'محاسبه')
+        calculateOneButton.clicked.connect(self.acceptOne)
+
+        self.addTBPLCheckBox = QCheckBox(u'ورق بالا و پایین')
+        self.addTBPLCheckBox.setChecked(True)
+        self.addLRPLCheckBox = QCheckBox(u'ورق چپ و راست')
+        self.addLRPLCheckBox.setChecked(True)
+        self.lhSpinBox = QSpinBox()
+        self.lhSpinBox.setSuffix(' cm')
+        self.lhSpinBox.setValue(15)
+        self.thSpinBox = QSpinBox()
+        self.thSpinBox.setSuffix(' mm')
+        self.thSpinBox.setValue(8)
+        self.lvSpinBox = QSpinBox()
+        self.lvSpinBox.setSuffix(' cm')
+        self.lvSpinBox.setValue(24)
+        self.tvSpinBox = QSpinBox()
+        self.tvSpinBox.setSuffix(' mm')
+        self.tvSpinBox.setValue(8)
+        self.distSpinBox = QSpinBox()
+        self.distSpinBox.setSuffix(' cm')
+        self.distSpinBox.setValue(6)
+        saveToXml1Button = QPushButton(u' xml ذخیره در')
+        saveToXml1Button.clicked.connect(self.saveToXml1)
+
+        self.sectionTypeBox1 = QComboBox()
+        self.sectionTypeBox1.addItems(self.sectionProp.keys())
+        self.sectionsBox = QComboBox()
+        self.sectionsBox.addItems(self.getSectionLabels())
+
+        oneSectionLayout = QGridLayout()
+        oneSectionLayout.addWidget(sectionLabel, 0, 0)
+        #oneSectionLayout.addWidget(self.sectionTypeBox1, 0, 1)
+        oneSectionLayout.addWidget(calculateOneButton, 0, 3)
+        oneSectionLayout.addWidget(self.sectionsBox, 0, 2)
+        oneSectionLayout.addWidget(self.lhSpinBox, 1, 0)
+        oneSectionLayout.addWidget(self.thSpinBox, 1, 1)
+        oneSectionLayout.addWidget(self.addTBPLCheckBox, 1, 2)
+        oneSectionLayout.addWidget(saveToXml1Button, 1, 3)
+        oneSectionLayout.addWidget(self.lvSpinBox, 2, 0)
+        oneSectionLayout.addWidget(self.tvSpinBox, 2, 1)
+        oneSectionLayout.addWidget(self.addLRPLCheckBox, 2, 2)
+        oneSectionLayout.addWidget(distLable, 3, 2)
+        oneSectionLayout.addWidget(self.distSpinBox, 3, 1)
+        oneSectionLayout.addWidget(self.tableView1, 4, 0, 1, 4)
+        self.oneWidget = QWidget()
+        self.oneWidget.setLayout(oneSectionLayout)
 
     def createWidgets(self):
         self.model = sec.SectionTableModel(QString("sections.dat"))
@@ -125,8 +189,6 @@ class Window(QMainWindow):
         exportXml = QPushButton(u' xml ذخیره در')
         self.sectionTypeBox = QComboBox()
         self.sectionTypeBox.addItems(['IPE', 'UNP'])
-        self.sectionsBox = QComboBox()
-        self.sectionsBox.addItems(self.getSectionLabels())
         self.doubleDistSpinBox = QSpinBox()
         self.doubleDistSpinBox.setSuffix(' cm')
         self.plateWidthSpinBox = QSpinBox()
@@ -189,11 +251,11 @@ class Window(QMainWindow):
         multiSectionSplitter.addWidget(multiSectionWidget)
         multiSectionSplitter.addWidget(tableWidget)
 
-        #tabWidget = QTabWidget()
-        #tabWidget.addTab(multiSectionSplitter, u'محاسبات چندین مقطع')
-        #tabWidget.addTab(oneSectionWidget, u'محاسبات یک مقطع')
+        tabWidget = QTabWidget()
+        tabWidget.addTab(multiSectionSplitter, u'محاسبات چندین مقطع')
+        tabWidget.addTab(self.oneWidget, u'محاسبات یک مقطع')
 
-        self.setCentralWidget(multiSectionSplitter)
+        self.setCentralWidget(tabWidget)
 
     @staticmethod
     def creatList(listItems):
@@ -343,6 +405,30 @@ class Window(QMainWindow):
         #self.section = section2
         #self.dirty = True
 
+    def acceptOne(self):
+        lh = self.lhSpinBox.value() * 10
+        th = self.thSpinBox.value()
+        lv = self.lvSpinBox.value() * 10
+        tv = self.tvSpinBox.value()
+        dist = self.distSpinBox.value()
+        isTBPlate = self.addTBPLCheckBox.isChecked()
+        isLRPlate = self.addLRPLCheckBox.isChecked()
+        sectionSize = int(re.sub("[^0-9]", "", str(self.sectionsBox.currentText())))
+
+        section = ipesProp[sectionSize]
+        section = sec.DoubleSection(section, dist)
+        if isTBPlate:
+            p1 = sec.Plate(lh, th)
+            section = sec.AddPlateTB(section, p1)
+        if isLRPlate:
+            p2 = sec.Plate(tv, lv)
+            section = sec.AddPlateLR(section, p2)
+        self.model1.sections.append(section)
+        self.model1.reset()
+        self.resizeColumns(self.tableView1)
+        self.model1.dirty = True
+        #print section
+
     def multiAccept(self):
         self.model.sections = []
         sections = self.sectionsList.selectedItems()
@@ -356,7 +442,7 @@ class Window(QMainWindow):
 
             for dist in dists:
                 dist = int(dist.text())
-                section = section.double(dist)
+                section2 = sec.DoubleSection(section, dist)
 
                 if len(platesWidth) == 0:
                     for plateThick in platesThick:
@@ -364,21 +450,21 @@ class Window(QMainWindow):
                         if plateThick == 0:
                             self.model.sections.append(section2)
                         else:
-                            sectionPL = sec.AddPlateTBThick(section, plateThick)
+                            sectionPL = sec.AddPlateTBThick(section2, plateThick)
                             self.model.sections.append(sectionPL)
                 else:
                     for plateThick in platesThick:
                         plateThick = int(plateThick.text())
                         if plateThick == 0:
-                            self.model.sections.append(section)
+                            self.model.sections.append(section2)
                         else:
                             for plateWidth in platesWidth:
                                 plateWidth = int(plateWidth.text()) * 10
                                 plate = sec.Plate(plateWidth, plateThick)
-                                sectionPL = sec.AddPlateTB(section, plate)
+                                sectionPL = sec.AddPlateTB(section2, plate)
                                 self.model.sections.append(sectionPL)
         self.model.reset()
-        self.resizeColumns()
+        self.resizeColumns(self.tableView)
         self.model.dirty = True
 
     def acceptSave(self):
@@ -415,6 +501,10 @@ class Window(QMainWindow):
     def saveToXml(self):
         fname = self.getXmlFilename()
         sec.Section.exportXml(fname, self.model.sections)
+
+    def saveToXml1(self):
+        fname = self.getXmlFilename()
+        sec.Section.exportXml(fname, self.model1.sections)
 
     def getLastSaveDirectory(self, f):
         f = str(f)

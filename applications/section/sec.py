@@ -36,24 +36,6 @@ class Section(object):
         self.tw = kwargs['tw']
         self.calculateSectionProp()
 
-    def ASx(self):
-        return self.bf * self.tf
-
-    def ASy(self):
-        return 2 * self.ymax * self.tw
-
-    def Ix(self):
-        return self.Ix
-
-    def Iy(self):
-        return self.Iy
-
-    def Zx(self):
-        return self.Zx
-
-    def Zy(self):
-        return self.Zy
-
     def calculateSectionProp(self):
         self.SxPOS = self.Ix / self.ym
         self.SxNEG = self.SxPOS
@@ -328,14 +310,22 @@ class SectionTableModel(QAbstractTableModel):
         elif role == Qt.TextAlignmentRole:
             return QVariant(int(Qt.AlignCenter | Qt.AlignVCenter))
         elif role == Qt.BackgroundColorRole:
-            if 'IPE18' in section.name:
+            if 'IPE14' in section.name:
+                return QVariant(QColor(150, 200, 150))
+            elif 'IPE16' in section.name:
+                return QVariant(QColor(150, 200, 250))
+            elif 'IPE18' in section.name:
                 return QVariant(QColor(250, 200, 250))
             elif 'IPE20' in section.name:
                 return QVariant(QColor(250, 250, 130))
             elif 'IPE22' in section.name:
-                return QVariant(QColor(130, 250, 250))
+                return QVariant(QColor(10, 250, 250))
             elif 'IPE24' in section.name:
                 return QVariant(QColor(210, 230, 230))
+            elif 'IPE27' in section.name:
+                return QVariant(QColor(110, 230, 230))
+            elif 'IPE30' in section.name:
+                return QVariant(QColor(210, 130, 230))
             else:
                 return QVariant(QColor(150, 150, 250))
 
@@ -592,7 +582,7 @@ class AddPlateTB(Section):
 
     def __init__(self, section, plate):
         _type = section.type
-        name = section.name + plate.name
+        name = section.name + 'F' + plate.name
         area = section.area + 2 * plate.area
         xmax = max(section.xmax, plate.xmax)
         ymax = section.ymax + 2 * plate.ymax
@@ -612,11 +602,12 @@ class AddPlateTB(Section):
             xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy,
             Zx=Zx, Zy=Zy, bf=bf, tf=tf, h=h, tw=tw)
 
+
 class AddPlateLR(Section):
 
     def __init__(self, section, plate):
         _type = section.type
-        name = section.name + plate.name
+        name = section.name + 'W' + plate.name
         area = section.area + 2 * plate.area
         ymax = max(section.ymax, plate.ymax)
         xmax = section.xmax + 2 * plate.xmax
@@ -630,14 +621,13 @@ class AddPlateLR(Section):
         Zx = section.Zx + 2 * plate.Zx
         tw = section.tw
         h = section.h
-        if plate.tw < tw:
-            tw = plate.tw
+        if plate.bf < tw:
+            tw = 2 * plate.bf
         bf = section.bf
         tf = section.tf
         super(AddPlateLR, self).__init__(_type=_type, name=name, area=area, xm=xm, ym=ym,
             xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy,
             Zx=Zx, Zy=Zy, bf=bf, tf=tf, h=h, tw=tw)
-
 
 
 class AddPlateTBThick(AddPlateTB):
@@ -674,11 +664,11 @@ class Ipe(Section):
         IPE = {14: IPE14, 16: IPE16, 18: IPE18, 20: IPE20, 22: IPE22, 24: IPE24, 27: IPE27, 30: IPE30}
         return IPE
 
-    def double(self, dist=0):
-        return DoubleSection(self, dist)
+    #def double(self, dist=0):
+        #return DoubleSection(self, dist)
 
-    def addPlateTB(self, plate):
-        return AddPlateTB(self, plate)
+    #def addPlateTB(self, plate):
+        #return AddPlateTB(self, plate)
 
 
 class Unp(Section):
