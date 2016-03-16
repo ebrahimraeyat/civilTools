@@ -32,30 +32,6 @@ class PlotB(QWidget):
         p.setYRange(0, 4, padding=0)
         return p
 
-    #def updateBCurve(self, build):
-        #self.p.setTitle(u'منحنی ضریب بازتاب، خاک نوع {0}، پهنه با خطر نسبی {1}'.format(
-                            #build.soilType, build.risk))
-        #penB1 = pg.mkPen('r', width=2, style=Qt.DashLine)
-        #penN = pg.mkPen('g', width=2)
-        #penB = pg.mkPen('b', width=5)
-        #penTx = pg.mkPen((153, 0, 153), width=1, style=Qt.DashDotLine)
-        #penTy = pg.mkPen((153, 0, 0), width=1, style=Qt.DashDotDotLine)
-        #dt = build.xReflectionFactor.dt
-        #x = np.arange(0, 4.5, dt)
-        #B1 = build.xReflectionFactor.B1Curve()
-        #N = build.xReflectionFactor.NCurve()
-        #B = B1 * N
-        #self.p.legend.items = []
-        #self.p.plot(x, B1, pen=penB1, name="B1", clear=True)
-        #self.p.plot(x, N, pen=penN, name="N")
-        #self.p.plot(x, B, pen=penB, name="B")
-        #if build.useTan:
-            #self.p.addLine(x=build.xTan, pen=penTx)
-            #self.p.addLine(x=build.yTan, pen=penTy)
-        #else:
-            #self.p.addLine(x=build.Tx, pen=penTx)
-            #self.p.addLine(x=build.Ty, pen=penTy)
-
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
