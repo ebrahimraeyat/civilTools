@@ -6,8 +6,14 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtXml import *
 
+import numpy as np
+import pyqtgraph as pg
+## Switch to using white background and black foreground
+pg.setConfigOption('background', 'w')
+pg.setConfigOption('foreground', 'c')
+
 NAME, TYPE, AREA, XM, YM, XMAX, YMAX, ASX, ASY, IX, IY, ZX, ZY, \
- SXPOS, SXNEG, SYPOS, SYNEG, RX, RY, BF, TF, D, TW, SLENDER= range(24)
+SXPOS, SXNEG, SYPOS, SYNEG, RX, RY, BF, TF, D, TW, V2, V3, SLENDER = range(26)
 MAGIC_NUMBER = 0x570C4
 FILE_VERSION = 1
 
@@ -35,6 +41,11 @@ class Section(object):
         self.d = kwargs['d']
         self.tw = kwargs['tw']
         self.r1 = kwargs['r1']
+
+        try:
+            self.cc = kwargs['cc']
+        except:
+            self.cc = None
 
         try:
             self.composite = QString(kwargs['composite'])
@@ -101,17 +112,17 @@ class Section(object):
                                 'TF': ('(BF*t1)/(B1)', '(BF*tf)/bf'), 'D': 'd+2*t1',
                                 'twCriteria': 'True', 'TW': ('(D-2*TF)/(d-2*(tf+r))*tw', '')}}},
                         'LRPlate': {'Beam': {'M': {'BF': 'c+bf+2*t2', 'tfCriteria': 't1<(.76*B1*tf)/(1.12*bf)',
-                            'TF': ('(1.12*BF*t1)/(.76*B1)', '(BF*tf)/bf'), 'D': 'd+2*t1',
-                            'twCriteria': 't2<(d*tw)/(d-2*(tf+r))', 'TW': ('t2*(D-2*TF)/d', 'tw*(D-2*TF)/(d-2*(tf+r))')},
-                            'H': {'BF': 'c+bf+2*t2', 'tfCriteria': 't1<(.6*B1*tf)/(0.55*bf)',
-                            'TF': ('(0.55*BF*t1)/(.60*B1)', '(BF*tf)/bf'), 'D': 'd+2*t1',
-                            'twCriteria': 't2<(d*tw)/(d-2*(tf+r))', 'TW': ('t2*(D-2*TF)/d', 'tw*(D-2*TF)/(d-2*(tf+r))')}},
-                            'Column': {'M': {'BF': 'c+bf+2*t2', 'tfCriteria': 't1<(.76*B1*tf)/(1.12*bf)',
-                            'TF': ('(1.12*BF*t1)/(.76*B1)', '(BF*tf)/bf'), 'D': 'd+2*t1',
-                            'twCriteria': 't2<(d*tw)/(d-2*(tf+r))', 'TW': ('t2*(D-2*TF)/d', 'tw*(D-2*TF)/(d-2*(tf+r))')},
-                            'H': {'BF': 'c+bf+2*t2', 'tfCriteria': 't1<(B1*tf)/(bf)',
-                            'TF': ('(BF*t1)/(B1)', '(BF*tf)/bf'), 'D': 'd+2*t1',
-                            'twCriteria': 't2<(d*tw)/(d-2*(tf+r))', 'TW': ('t2*(D-2*TF)/d', 'tw*(D-2*TF)/(d-2*(tf+r))')}}}}
+                        'TF': ('(1.12*BF*t1)/(.76*B1)', '(BF*tf)/bf'), 'D': 'd+2*t1',
+                        'twCriteria': 't2<(d*tw)/(d-2*(tf+r))', 'TW': ('t2*(D-2*TF)/d', 'tw*(D-2*TF)/(d-2*(tf+r))')},
+                        'H': {'BF': 'c+bf+2*t2', 'tfCriteria': 't1<(.6*B1*tf)/(0.55*bf)',
+                        'TF': ('(0.55*BF*t1)/(.60*B1)', '(BF*tf)/bf'), 'D': 'd+2*t1',
+                        'twCriteria': 't2<(d*tw)/(d-2*(tf+r))', 'TW': ('t2*(D-2*TF)/d', 'tw*(D-2*TF)/(d-2*(tf+r))')}},
+                        'Column': {'M': {'BF': 'c+bf+2*t2', 'tfCriteria': 't1<(.76*B1*tf)/(1.12*bf)',
+                        'TF': ('(1.12*BF*t1)/(.76*B1)', '(BF*tf)/bf'), 'D': 'd+2*t1',
+                        'twCriteria': 't2<(d*tw)/(d-2*(tf+r))', 'TW': ('t2*(D-2*TF)/d', 'tw*(D-2*TF)/(d-2*(tf+r))')},
+                        'H': {'BF': 'c+bf+2*t2', 'tfCriteria': 't1<(B1*tf)/(bf)',
+                        'TF': ('(BF*t1)/(B1)', '(BF*tf)/bf'), 'D': 'd+2*t1',
+                        'twCriteria': 't2<(d*tw)/(d-2*(tf+r))', 'TW': ('t2*(D-2*TF)/d', 'tw*(D-2*TF)/(d-2*(tf+r))')}}}}
 
         composite = str(self.composite)
         useAs = str(self.useAs)
@@ -122,9 +133,9 @@ class Section(object):
         d = self.baseSection.d
         tw = self.baseSection.tw
         r = self.baseSection.r1
-        try:
+        if self.cc:
             c = self.cc
-        except:
+        else:
             c = 0
         try:
             B1 = self.TBPlate.bf
@@ -156,15 +167,19 @@ class Section(object):
         self.tf = TF
         self.d = D
         self.tw = TW
-
-        #self.equalSlendersParamsEtabs()
-
         if self.isEquivalenIpeSlender():
             self.slender = u'لاغر'
         else:
             self.slender = u'غیرلاغر'
+        self.V2, self.V3 = self.etabsShearCoef()
+        #self.equalSlendersParamsEtabs()
 
-        #return section
+    def etabsShearCoef(self):
+        ASyEtabs = self.d * self.tw
+        ASxEtabs = 2 * self.bf * self.tf
+        v1 = self.ASy / ASyEtabs
+        v2 = self.ASx / ASxEtabs
+        return v1, v2
 
     #def equalSlendersParams(BF, TF, D, TW):
         #'''Return BF, TF, D, TW for equivalent I section to
@@ -183,23 +198,24 @@ class Section(object):
 
         #return BF, TF, D, TW
 
-    def equalSlendersParamsEtabs(self):
-        '''Return BF, TF, D, TW for equivalent I section to
-        correct calculation of AS2 and AS3 that etabs calculate
-        automatically and change user input for this parameters.'''
+    #def equalSlendersParamsEtabs(self):
+        #'''Return BF, TF, D, TW for equivalent I section to
+        #correct calculation of AS2 and AS3 that etabs calculate
+        #automatically and change user input for this parameters.
+        #FS = flange slender
+        #WS = web slender'''
 
-        FS = self.bf / (2 * self.tf)
-        TF = sqrt((.25 * self.ASx) / FS)
-        BF = 2 * FS * TF
-        WS = (self.d - 2 * TF) / self.tw
-        delta = 4 * TF ** 2 + 4 * WS * self.ASy
-        D = TF + sqrt(delta) / 2
-        TW = (D - 2 * TF) / WS
+        #FS = self.bf / (2 * self.tf)
+        #WS = (self.d - 2 * self.tf) / self.tw
+        #TF = sqrt((.25 * self.ASx) / FS)
+        #BF = 2 * FS * TF
+        #D = TF + sqrt(TF ** 2 + WS * self.ASy)
+        #TW = (D - 2 * TF) / WS
 
-        self.bf = BF
-        self.tf = TF
-        self.d = D
-        self.tw = TW
+        #self.bf = BF
+        #self.tf = TF
+        #self.d = D
+        #self.tw = TW
 
     def isEquivalenIpeSlender(self):
         '''This function gives a equivalent ipe section and
@@ -225,6 +241,105 @@ class Section(object):
             return  True
         else:
             return False
+
+    def plotSectionAndEqSection(self):
+
+        #drawBaseSection = {'IPE': drawIpe, 'UNP': drawUnp}
+        baseSection = self.baseSection
+        xm = baseSection.xm
+        ym = baseSection.ym
+        xmax = baseSection.xmax
+        ymax = baseSection.ymax
+
+        win = pg.PlotWidget()
+        win.setXRange(-0.2 * self.xmax, 2.4 * self.xmax)
+        win.setYRange(-0.3 * self.ymax, 1.1 * self.ymax)
+        win.showGrid(x=True, y=True)
+        p1 = Point(0, 0)
+        #pl1 = pg.PolyLineROI([[0,0], [10,10], [10,30], [30,10]], closed=True)
+        #win.addItem(pl1)
+        win.addItem(Section.drawIpe(baseSection, p1))
+        ipeText = pg.TextItem(html=baseSection.name, anchor=(-0.3, 0), border='k', fill=(0, 0, 255, 100))
+        if self.cc:
+            p2 = Point(p1.x + self.cc, p1.y)
+            win.addItem(Section.drawIpe(baseSection, p2))
+            xmax = xmax + self.cc
+            xm = xmax / 2
+            html = 'cc = {} cm'.format(int(self.cc / 10))
+            Section.textItem(win, html, pos=Point(xm, 0), anchor=(.5, -1))
+            ipeText = pg.TextItem(html='2' + baseSection.name, anchor=(-.3, 0), border='k', fill=(0, 0, 255, 100))
+
+        if self.TBPlate:
+            p3 = Point(xm, ymax + self.TBPlate.tf / 2)
+            p4 = Point(xm, - (self.TBPlate.tf / 2))
+            win.addItem(Section.drawPlate(self.TBPlate, p3))
+            win.addItem(Section.drawPlate(self.TBPlate, p4))
+            ym = ymax / 2
+            ymax = ymax + 2 * self.TBPlate.tf
+            Section.textItem(win, html=self.TBPlate.name + ' mm', pos=Point(xm, ymax), anchor=(.5, 1))
+
+        if self.LRPlate:
+            p5 = Point(- (self.LRPlate.bf / 2), ym)
+            p6 = Point(xmax + self.LRPlate.bf / 2, ym)
+            win.addItem(Section.drawPlate(self.LRPlate, p5, 'g'))
+            win.addItem(Section.drawPlate(self.LRPlate, p6, 'g'))
+            ymax = max(ymax, self.LRPlate.tf)
+            Section.textItem(win, html=self.LRPlate.name + ' mm', pos=Point(xmax, ym), anchor=(.5, 2), isRotate=True)
+
+        p7 = Point(1.3 * self.xmax, ym - self.d / 2)
+        win.addItem(Section.drawIpe(self, p7, 'm', 3))
+
+        win.addItem(ipeText)
+        ipeText.setPos(baseSection.xm, ym)
+
+        Section.textItem(win, html='bf = {:.0f}, tf = {:.1f} mm'.format(self.bf, self.tf),
+                        pos=Point(p7.x + self.bf / 2, ymax), anchor=(.5, 1))
+        Section.textItem(win, html='d = {:.0f}, tw = {:.1f} mm'.format(self.d, self.tw),
+                        pos=Point(p7.x + self.bf, ym), anchor=(.5, 1.2), isRotate=True)
+        win.setAspectLocked()
+        return win
+
+    @staticmethod
+    def textItem(win, html, pos=None, anchor=(0, 0), isFill=True, isRotate=False):
+        if isFill:
+            text = pg.TextItem(html=html, anchor=anchor, border='k', fill=(0, 0, 255, 100))
+        else:
+            text = pg.TextItem(html=html, anchor=anchor)
+        if isRotate:
+            text.setRotation(90)
+        win.addItem(text)
+        if pos:
+            text.setPos(pos.x, pos.y)
+        else:
+            text.setPos(0, 0)
+
+    @staticmethod
+    def drawIpe(ipe, p1, color='r', width=2):
+        pen = pg.mkPen(color, width=width)
+        x1 = p1.x
+        x2 = p1.x + (ipe.bf - ipe.tw) / 2
+        x3 = p1.x + (ipe.bf + ipe.tw) / 2
+        x4 = p1.x + ipe.bf
+        y1 = p1.y
+        y2 = p1.y + ipe.tf
+        y3 = p1.y + ipe.d - ipe.tf
+        y4 = p1.y + ipe.d
+        a = np.array([x1, x4, x4, x3, x3, x4, x4, x1, x1, x2, x2, x1, x1])
+        b = np.array([y4, y4, y3, y3, y2, y2, y1, y1, y2, y2, y3, y3, y4])
+        finitecurve = pg.PlotDataItem(a, b, connect="finite", pen=pen)
+        return finitecurve
+
+    @staticmethod
+    def drawPlate(pl, cp, color='b'):
+        pen = pg.mkPen(color, width=2)
+        x1 = cp.x - pl.bf / 2
+        x2 = cp.x + pl.bf / 2
+        y1 = cp.y - pl.tf / 2
+        y2 = cp.y + pl.tf / 2
+        a = np.array([x1, x2, x2, x1, x1])
+        b = np.array([y1, y1, y2, y2, y1])
+        finitecurve = pg.PlotDataItem(a, b, connect="finite", pen=pen)
+        return finitecurve
 
     def __str__(self):
         secType = self.sectionType[str(self.type)]
@@ -291,10 +406,6 @@ class DoubleSection(Section):
         '''dist = distance between two sections, 0 mean that there is no
         distance between sections'''
         _type = section.type
-        if dist == 0:
-            name = '2' + section.name
-        else:
-            name = '2' + section.name + 'c{}'.format(dist)
         dist *= 10
         area = 2 * section.area
         xm = section.xmax + dist / 2
@@ -307,19 +418,23 @@ class DoubleSection(Section):
         Iy = 2 * (section.Iy + section.area * (section.xm + dist / 2) ** 2)
         Zx = 2 * section.Zx
         Zy = section.area * (section.bf + dist)
-        BF = 2 * section.bf
-        TF = 2 * section.tf
-        D = 2 * section.d
-        TW = 2 * section.tw
-        r1 = section.r1
         baseSection = section.baseSection
+        bf = baseSection.bf
+        tf = baseSection.tf
+        d = baseSection.d
+        tw = baseSection.tw
+        r1 = baseSection.r1
         useAs = baseSection.useAs
         ductility = baseSection.ductility
-        self.cc = dist + 2 * (baseSection.bf - baseSection.xm)
+        cc = dist + 2 * (baseSection.bf - baseSection.xm)
+        if dist == 0:
+            name = '2' + section.name
+        else:
+            name = '2' + section.name + 'c{:.0f}'.format(cc / 10)
         super(DoubleSection, self).__init__(_type=_type, name=name, area=area, xm=xm, ym=ym,
                              xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy,
-                             Zx=Zx, Zy=Zy, bf=BF, tf=TF, d=D, tw=TW, r1=r1, isDouble=True,
-                             useAs=useAs, ductility=ductility, baseSection=baseSection, TBPlate=None, LRPlate=None)
+                             Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=d, tw=tw, r1=r1, isDouble=True, cc=cc,
+                             useAs=useAs, ductility=ductility, baseSection=baseSection)
 
 
 class AddPlateTB(Section):
@@ -342,21 +457,19 @@ class AddPlateTB(Section):
         Iy = section.Iy + 2 * plate.Iy
         Zx = section.Zx + 2 * (plate.area * (section.ym + plate.ym))
         Zy = section.Zy + 2 * plate.Zy
-        tf = plate.tf
-        bf = plate.bf
-        d = section.d
-        tw = section.tw
-        r1 = section.r1
+        isDouble = section.isDouble
         baseSection = section.baseSection
+        bf = baseSection.bf
+        tf = baseSection.tf
+        d = baseSection.d
+        tw = baseSection.tw
+        r1 = baseSection.r1
         useAs = baseSection.useAs
         ductility = baseSection.ductility
-        try:
-            self.cc = section.cc
-        except:
-            self.cc = 0
+        cc = section.cc
         super(AddPlateTB, self).__init__(_type=_type, name=name, area=area, xm=xm, ym=ym,
-            xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy,
-            Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=d, tw=tw, r1=r1, baseSection=baseSection,
+            xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy, Zx=Zx, Zy=Zy, bf=bf, tf=tf,
+            d=d, tw=tw, r1=r1, isDouble=isDouble, baseSection=baseSection, cc=cc,
             useAs=useAs, TBPlate=plate, ductility=ductility, composite='TBPlate')
 
 
@@ -366,34 +479,30 @@ class AddPlateLR(Section):
         _type = section.type
         name = section.name + 'W' + plate.name
         area = section.area + 2 * plate.area
-        ymax = section.ymax
+        ymax = max(section.ymax, plate.ymax)
         xmax = section.xmax + 2 * plate.xmax
         xm = xmax / 2
-        ym = ymax / 2
+        ym = section.ym
         ASx = section.ASx
         ASy = section.ASy + 2 * plate.area
         Iy = section.Iy + 2 * (plate.Iy + plate.area * (section.xm + plate.xm) ** 2)
         Ix = section.Ix + 2 * plate.Ix
         Zy = section.Zy + 2 * (plate.area * (section.xm + plate.xm))
         Zx = section.Zx + 2 * plate.Zx
-        tw = section.tw
-        d = section.d
-        r1 = section.r1
-        #if plate.bf < tw:
-            #tw = 2 * plate.bf
-        bf = section.bf
-        tf = section.tf
-        if section.TBPlate:
-            TBPlate = section.TBPlate
-        else:
-            TBPlate = None
+        isDouble = section.isDouble
         baseSection = section.baseSection
+        bf = baseSection.bf
+        tf = baseSection.tf
+        d = baseSection.d
+        tw = baseSection.tw
+        r1 = baseSection.r1
+        TBPlate = section.TBPlate
         useAs = baseSection.useAs
         ductility = baseSection.ductility
-        self.cc = section.cc
+        cc = section.cc
         super(AddPlateLR, self).__init__(_type=_type, name=name, area=area, xm=xm, ym=ym,
-            xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy,
-            Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=d, tw=tw, r1=r1, baseSection=baseSection,
+            xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy, Zx=Zx, Zy=Zy, bf=bf, tf=tf,
+            d=d, tw=tw, r1=r1, isDouble=isDouble, baseSection=baseSection, cc=cc,
             useAs=useAs, TBPlate=TBPlate, LRPlate=plate, ductility=ductility, composite='LRPlate')
 
 
@@ -514,6 +623,14 @@ class Plate(Section):
             Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=0, tw=0, r1=0)
 
 
+class Point(object):
+
+    def __init__(self, x, y):
+        super(Point, self).__init__()
+        self.x = x
+        self.y = y
+
+
 class SectionTableModel(QAbstractTableModel):
 
     def __init__(self, filename=QString()):
@@ -589,6 +706,10 @@ class SectionTableModel(QAbstractTableModel):
                 return QVariant(QString("%L1").arg(section.Ry))
             elif column == SLENDER:
                 return QVariant(QString("%L1").arg(section.slender))
+            elif column == V2:
+                return QVariant(QString("%L1").arg(section.V2))
+            elif column == V3:
+                return QVariant(QString("%L1").arg(section.V3))
 
         elif role == Qt.TextAlignmentRole:
             return QVariant(int(Qt.AlignCenter | Qt.AlignVCenter))
@@ -678,6 +799,10 @@ class SectionTableModel(QAbstractTableModel):
                 return QVariant("ry (mm)")
             elif section == SLENDER:
                 return QVariant("Slender")
+            elif section == V2:
+                return QVariant("V2 coef.")
+            elif section == V3:
+                return QVariant("V3 coef.")
 
         return QVariant(int(section + 1))
 
@@ -685,7 +810,7 @@ class SectionTableModel(QAbstractTableModel):
         return len(self.sections)
 
     def columnCount(self, index=QModelIndex()):
-        return 24
+        return 26
 
     def setData(self, index, value, role=Qt.EditRole):
         if index.isValid() and 0 <= index.row() < len(self.sections):
@@ -836,16 +961,28 @@ class SectionTableModel(QAbstractTableModel):
             if exception is not None:
                 raise exception
 
+class Plot(QWidget):
+
+        def __init__(self, section):
+            super(Plot, self).__init__()
+            drawing = section.plotSectionAndEqSection()
+            my_layout = QVBoxLayout()
+            my_layout.addWidget(drawing)
+            self.setLayout(my_layout)
+
+
+
 
 if __name__ == '__main__':
+    import sys
 
     IPE = Ipe.createStandardIpes()
     IPE22 = IPE[22]
-    IPE22.ductility = 'O'
-    #IPE22.useAs = 'beam'
+    IPE22.ductility = 'M'
+    IPE22.useAs = 'Column'
 
 
-    IPE22_2 = DoubleSection(IPE22, 8)
+    IPE22 = DoubleSection(IPE22, 8)
     #print IPE18_2.isDouble
     #print IPE18_2.baseSection
     #IPE20_2 = IPE20.doubleIpe()
@@ -853,16 +990,27 @@ if __name__ == '__main__':
     #IPE24_2 = IPE24.doubleIpe()
     #IPE27_2 = IPE27.doubleIpe()
 
-    plate1 = Plate(250, 5)
-    IPE22PL = AddPlateTB(IPE22_2, plate1)
+    plate1 = Plate(250, 10)
+    IPE22 = AddPlateTB(IPE22, plate1)
+
+    print IPE22.isDouble
+    print IPE22.cc
 
     plate2 = Plate(10, 250)
-    IPE22PL2 = AddPlateLR(IPE22PL, plate2)
+    IPE22 = AddPlateLR(IPE22, plate2)
 
-    IPE22PL2.equivalentSectionI()
-    print IPE22PL2.isEquivalenIpeSlender()
+    #IPE22.equivalentSectionI()
 
-    print IPE22PL2.useAs
+
+
+    app = QApplication(sys.argv)
+    form = Plot(IPE22)
+    #normalcurve = pg.PlotDataItem(a, c, pen=(255, 0, 0))
+    form.show()
+    app.exec_()
+    #print IPE22PL2.isEquivalenIpeSlender()
+
+    #print IPE22PL2.useAs
 
 
     #pg1 = EquivalentSectionI(IPE18PL2)

@@ -25,9 +25,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 from PyQt4 import QtCore, QtGui
 
-ver_civilTools = u"۰.۳"
+ver_civilTools = u"۰.۵"
 ver_cfactor = u"۴.۳"
-ver_section = u"۰.۳"
+ver_section = u"۰.۵"
 
 copyright = u"\u00A9 ۲۰۱۴-۲۰۱۶ , ابراهیم رعیت رکن آبادی"
 license = u"GPL V. 3"
