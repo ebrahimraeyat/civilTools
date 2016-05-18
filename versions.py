@@ -8,7 +8,7 @@ Program:
 Author:
     Ebrahim Raeyat Roknabadi <>
 
-Copyright (c) 2014-2015 Ebrahim Raeyat Roknabadi
+Copyright (c) 2014-2016 Ebrahim Raeyat Roknabadi
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -25,9 +25,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 from PyQt4 import QtCore, QtGui
 
-ver_civilTools = u"۰.۵"
+ver_civilTools = u"۰.۶"
 ver_cfactor = u"۴.۳"
-ver_section = u"۰.۵"
+ver_section = u"۰.۶"
 
 copyright = u"\u00A9 ۲۰۱۴-۲۰۱۶ , ابراهیم رعیت رکن آبادی"
 license = u"GPL V. 3"

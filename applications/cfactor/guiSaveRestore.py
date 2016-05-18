@@ -4,9 +4,6 @@
 # Written by: Alan Lilly
 # Website: http://panofish.net
 #===================================================================
-
-import sys
-import os
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 import inspect
@@ -18,17 +15,19 @@ import inspect
 # settings = qsettings object
 #===================================================================
 
+
 def guisave(ui, settings):
 
-    #for child in ui.children():  # works like getmembers, but because it traverses the hierarachy, you would have to call guisave recursively to traverse down the tree
+    #for child in ui.children():  # works like getmembers, but because it traverses the hierarachy,
+    #you would have to call guisave recursively to traverse down the tree
 
     for name, obj in inspect.getmembers(ui):
         #if type(obj) is QComboBox:  # this works similar to isinstance, but missed some field... not sure why?
         if isinstance(obj, QComboBox):
-            name   = obj.objectName()      # get combobox name
+            name = obj.objectName()
             if not name:
                 continue
-            index  = obj.currentIndex()    # get current index from combobox
+            index = obj.currentIndex()
             #text   = obj.itemText(index)   # get the text for current index
             settings.setValue(name, index)   # save combobox selection to registry
 
@@ -49,13 +48,14 @@ def guisave(ui, settings):
 # settings = QSettings object
 #===================================================================
 
+
 def guirestore(ui, settings):
 
     for name, obj in inspect.getmembers(ui):
         if isinstance(obj, QComboBox):
             #index  = obj.currentIndex()    # get current region from combobox
             #text   = obj.itemText(index)   # get the text for new selected index
-            name   = obj.objectName()
+            name = obj.objectName()
             if not name:
                 continue
             index = settings.value(name).toInt()[0]
@@ -74,7 +74,6 @@ def guirestore(ui, settings):
             #else:
             obj.setCurrentIndex(index)   # preselect a combobox value by index
 
-
         if isinstance(obj, QLineEdit):
             name = obj.objectName()
             value = unicode(settings.value(name).toString())  # get stored value from registry
@@ -89,18 +88,15 @@ def guirestore(ui, settings):
         #if isinstance(obj, QRadioButton):
 
 
+ #Very useful little module. Thanks! It works nicely when saving QSettings to an ini file, e.g.
+ #guisave(self.ui, QtCore.QSettings('saved.ini', QtCore.QSettings.IniFormat)) which creates a
+ #file that can be shared between users. – Snorfalorpagus Oct 3 '14 at 8:59
 
+#I had to change a couple of lines to value = unicode(settings.value(name).toString())
+#as settings.value was returning a QVariant. – Snorfalorpagus Oct 3 '14 at 9:16
 
- #Very useful little module. Thanks! It works nicely when saving QSettings to an ini file, e.g. guisave(self.ui, QtCore.QSettings('saved.ini', QtCore.QSettings.IniFormat)) which creates a file that can be shared between users. – Snorfalorpagus Oct 3 '14 at 8:59
-   	 #
-	#
-#I had to change a couple of lines to value = unicode(settings.value(name).toString()) as settings.value was returning a QVariant. – Snorfalorpagus Oct 3 '14 at 9:16
-   	 #
-	#
-#Cool improvements Snorfalorpagus! Me likey :) – panofish Oct 3 '14 at 13:22
-   	 #
-	#
-#Just noticed that the use of obj.setCheckState(value) for QCheckBox objects enables tristate, which may not be desired. In my case I know I never wanted tristate I used obj.setChecked(value) instead. I'm not sure how to detect this on load, and restore correctly for both cases. – Snorfalorpagus Nov 17 '14 at 16:17
+#Just noticed that the use of obj.setCheckState(value) for QCheckBox objects enables tristate,
+#which may not be desired. In my case I know I never wanted tristate I used obj.setChecked(value)
+#instead. I'm not sure how to detect this on load, and restore correctly for both cases.
 
-s = QVariant(QString.number(2., 'f', 2))
-print s
+#s = QVariant(QString.number(2., 'f', 2))

@@ -42,6 +42,7 @@ class Cfactor(QMainWindow):
         self.create_connections()
         self.create_actions()
         self.accept()
+        settings = QSettings()
         self.load_settings()
         self.setWindowIcon(QIcon(":/icon.png"))
         font = QFont()
@@ -59,10 +60,11 @@ class Cfactor(QMainWindow):
         self.setPalette(p)
         self.setLayoutDirection(Qt.RightToLeft)
         self.setWindowTitle(u"ضریب زلزله ویرایش چهارم ۲۸۰۰")
-        programName = os.path.basename(__file__)
-        programBase, ext = os.path.splitext(programName)
-        self.settings = QSettings("cfactor", programBase)
-        guirestore(self, self.settings)
+        #programName = os.path.basename(__file__)
+        #programBase, ext = os.path.splitext(programName)
+        #self.settings = QSettings("cfactor", programBase)
+
+        guirestore(self, settings)
         #self.updateFileMenu()
         #QTimer.singleShot(0, self.loadInitialFile)
 
@@ -350,8 +352,8 @@ class Cfactor(QMainWindow):
         self.mainSplitter = QSplitter(Qt.Horizontal)
         self.mainSplitter.addWidget(self.inputSplitter)
         self.mainSplitter.addWidget(soilStrucPropertiesWidget)
-        self.inputSplitter.setObjectName("InputSplitter")
-        self.mainSplitter.setObjectName("MainSplitter")
+        self.inputSplitter.setObjectName("InputSplitter2")
+        self.mainSplitter.setObjectName("MainSplitter2")
 
         self.setLateralTypes(self.xSystemBox, self.xLateralBox)
         self.setLateralTypes(self.ySystemBox, self.yLateralBox)
@@ -371,7 +373,6 @@ class Cfactor(QMainWindow):
 
     def create_actions(self):
         # File Actions
-        saveText = u'ذخیره'
         exportToPdfText = u'Pdf خروجی به'
         exportToWordText = u'Word خروجی به'
         exportToHtmlText = u'Html خروجی به'
@@ -414,10 +415,10 @@ class Cfactor(QMainWindow):
     def load_settings(self):
         settings = QSettings()
         self.restoreGeometry(
-                settings.value("MainWindow/Geometry").toByteArray())
-        self.restoreState(settings.value("MainWindow/State").toByteArray())
-        self.inputSplitter.restoreState(settings.value("InputSplitter").toByteArray())
-        self.mainSplitter.restoreState(settings.value("MainSplitter").toByteArray())
+                settings.value("MainWindow/Geometry2").toByteArray())
+        self.restoreState(settings.value("MainWindow/State2").toByteArray())
+        self.inputSplitter.restoreState(settings.value("InputSplitter2").toByteArray())
+        self.mainSplitter.restoreState(settings.value("MainSplitter2").toByteArray())
 
     def createAction(self, text, slot=None, shortcut=None, icon=None,
                      tip=None, checkable=False):
@@ -443,7 +444,8 @@ class Cfactor(QMainWindow):
                 target.addAction(action)
 
     def closeEvent(self, event):
-        guisave(self, self.settings)
+        settings = QSettings()
+        guisave(self, settings)
         #self.deleteLater()
         #if self.okToContinue():
         #settings = QSettings()
@@ -453,10 +455,10 @@ class Cfactor(QMainWindow):
         #recentFiles = (QVariant(self.recentFiles)
                        #if self.recentFiles else QVariant())
         #settings.setValue("RecentFiles", Files)
-        self.settings.setValue("MainWindow/Geometry", QVariant(self.saveGeometry()))
-        self.settings.setValue("MainWindow/State", QVariant(self.saveState()))
-        self.settings.setValue("InputSplitter", QVariant(self.inputSplitter.saveState()))
-        self.settings.setValue("MainSplitter", QVariant(self.mainSplitter.saveState()))
+        settings.setValue("MainWindow/Geometry2", QVariant(self.saveGeometry()))
+        settings.setValue("MainWindow/State2", QVariant(self.saveState()))
+        settings.setValue("InputSplitter2", QVariant(self.inputSplitter.saveState()))
+        settings.setValue("MainSplitter2", QVariant(self.mainSplitter.saveState()))
 
     def setWidgetStack(self):
         index = self.directionButtonGroup.checkedId() - 1
@@ -523,7 +525,7 @@ class Cfactor(QMainWindow):
         sotoh = [u'خیلی زیاد', u'زیاد', u'متوسط', u'کم']
         ostan = unicode(self.ostanBox.currentText())
         shahr = unicode(self.shahrBox.currentText())
-        A = ostanha.ostans[ostan][shahr][0]
+        A = int(ostanha.ostans[ostan][shahr][0])
         self.accText.setText(sotoh[A - 1])
 
     def getA(self):

@@ -33,7 +33,7 @@ import versions
 
 
 class CivilTools(QMainWindow):
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         super(CivilTools, self).__init__(parent)
 
         if sys.platform == "win32":
@@ -113,8 +113,10 @@ class CivilTools(QMainWindow):
 
         msg += u"ویژگی ها:\n\n"
 
-        msg += u"- محاسبه ضریب زلزله مطابق با آخرین ویرایش آیین نامه ۲۸۰۰ زلزله ویرایش ۴ (ورژن {})\n".format(versions.ver_cfactor)
-        msg += u"- محاسبه مشخصات مقاطع دوبل با ورق برای استفاده در ETABS 2013-2015 (ورژن {})\n".format(versions.ver_section)
+        msg += u"- محاسبه ضریب زلزله مطابق با آخرین ویرایش آیین نامه ۲۸۰۰ زلزله ویرایش ۴ (ورژن {})\n".format(
+                versions.ver_cfactor)
+        msg += u"- محاسبه مشخصات مقاطع دوبل با ورق برای استفاده در ETABS 2013-2015 (ورژن {})\n".format(
+                versions.ver_section)
 
         msg += "\n"
 
@@ -127,7 +129,7 @@ class CivilTools(QMainWindow):
     def setfont(self):
         font, ok = QFontDialog.getFont(self.font(), self)
         if ok:
-            self.setFont(font);
+            self.setFont(font)
 
         #self.setFont(QFontDialog.getFont(QFont("Helvetica [Cronyx]", 10), self.font()));
 
@@ -144,8 +146,8 @@ if __name__ == '__main__':
         font.setPointSize(defaultPointsize)
     app.setFont(font)
 
-    #if sys.platform == "win32":
-    #app.setStyle("plastique")
+    if sys.platform == "win32":
+        app.setStyle("plastique")
     main_windows = []
     for a in sys.argv[1:] or [None]:
         win = CivilTools(a)

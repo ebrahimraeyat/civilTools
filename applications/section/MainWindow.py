@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-
 import re
 import sys
 import os
@@ -8,10 +7,11 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 import qrc_resources
 import sec
+from plot.plotIpe import PlotSectionAndEqSection
 
 
 __url__ = "http://ebrahimraeyat.blog.ir"
-__version__ = "0.5"
+__version__ = "0.6"
 link_ebrahim = ('Website: <a href="%s"><span style=" '
     'text-decoration: underline; color:#0000ff;">'
     '%s</span></a>') % (__url__, __url__)
@@ -23,9 +23,9 @@ unpsProp = sec.Unp.createStandardUnps()
 class Window(QMainWindow):
 
     sectionProp = {'IPE': ipesProp, 'UNP': unpsProp}
-    useAsDict = {u'تیر': 'Beam', u'ستون': 'Column'}
+    useAsDict = {u'تیر': 'B', u'ستون': 'C'}
     ductilityDict = {u'متوسط': 'M', u'زیاد': 'H'}
-    doubleDict = {u'تک': False, u'دوبل': True}
+    doubleDict = {u'تک': [False, False], u'دوبل': [True, False], u'سوبل':[False, True]}
 
     def __init__(self, parent=None):
         super(Window, self).__init__(parent)
@@ -42,7 +42,7 @@ class Window(QMainWindow):
         self.load_settings()
         self.setLayoutDirection(Qt.RightToLeft)
         self.setWindowTitle(u'محاسبه مشخصات پروفیلهای ساختمانی')
-        QTimer.singleShot(0, self.initialLoad)
+        #QTimer.singleShot(0, self.initialLoad)
 
     def initialLoad(self):
         if  QFile.exists(self.model1.filename):
@@ -55,9 +55,9 @@ class Window(QMainWindow):
                         "Failed to load: {0}".format(err))
 
     def resizeColumns(self, tableView=None):
-        for column in (sec.NAME, sec.TYPE, sec.AREA,
-                       sec.XM, sec.YM, sec.XMAX, sec.YMAX, sec.ASY, sec.ASX, sec.IX, sec.IY, sec.ZX, sec.ZY,
- sec.BF, sec.TF, sec.D, sec.TW, sec.SXPOS, sec.SXNEG, sec.SYPOS, sec.SYNEG, sec.RX, sec.RY):
+        for column in (sec.NAME, sec.AREA,
+                       sec.ASY, sec.ASX, sec.IX, sec.IY, sec.ZX, sec.ZY,
+                         sec.BF, sec.TF, sec.D, sec.TW, sec.Sx, sec.Sy, sec.RX, sec.RY):
             tableView.resizeColumnToContents(column)
 
     def reject(self):
@@ -81,37 +81,36 @@ class Window(QMainWindow):
         self.resizeColumns()
 
     def addSection(self):
-        row = self.model.rowCount()
-        self.model.insertRows(row)
-        index = self.model.index(row, 0)
-        self.tableView.setCurrentIndex(index)
-        self.tableView.edit(index)
+        row = self.model1.rowCount()
+        self.model1.insertRows(row)
+        index = self.model1.index(row, 0)
+        self.tableView1.setCurrentIndex(index)
+        self.tableView1.edit(index)
 
     def removeSection(self):
-        #index = self.tableView.currentIndex()
-        #name = self.model.data(
-                        #self.model.index(row, sec.NAME)).toString()
-        #if (QMessageBox.question(self, "sections - Remove",
-                #(QString("Remove section?")),
-                #QMessageBox.Yes|QMessageBox.No) ==
-                #QMessageBox.No):
-            #return
-        index = self.tableView.currentIndex()
-        #print 'indexes is:{}'.format(indexes)
-        #print 'len indexes is{}'.format(len(indexes))
-        #for i in range(len(indexes)):
+        index = self.tableView1.currentIndex()
         if not index.isValid():
             return
         row = index.row()
-        print row
-        self.model.removeRows(row)
-        #self.resizeColumns()
+        name = self.model1.data(
+                        self.model1.index(row, sec.NAME)).toString()
+        if (QMessageBox.question(self, "sections - Remove",
+                (QString("Remove section {}?".format(name))),
+                QMessageBox.Yes|QMessageBox.No) ==
+                QMessageBox.No):
+            return
+        #print 'indexes is:{}'.format(indexes)
+        #print 'len indexes is{}'.format(len(indexes))
+        #for i in range(len(indexes)):
+
+        self.model1.removeRows(row)
+        self.resizeColumns(self.tableView1)
 
     def create_connections(self):
         #self.connect(self.sectionsBox, SIGNAL(
                     #"currentIndexChanged(QString)"), self.accept)
-        #self.connect(self.sectionTypeBox, SIGNAL(
-                    #"currentIndexChanged(QString)"), self.setSectionLabels)
+        self.connect(self.sectionTypeBox1, SIGNAL(
+                    "currentIndexChanged(QString)"), self.setSectionLabels)
         self.connect(self.lhSpinBox, SIGNAL(
                 "valueChanged(int)"), self.updateSectionShape)
         self.connect(self.thSpinBox, SIGNAL(
@@ -127,26 +126,19 @@ class Window(QMainWindow):
         self.connect(self.addLRPLCheckBox, SIGNAL(
                 "stateChanged(int)"), self.updateSectionShape)
         self.connect(self.sectionsBox, SIGNAL(
-                "currentIndexChanged(int)"), self. updateSectionShape)
+                "currentIndexChanged(int)"), self.updateSectionShape)
         self.connect(self.doubleBox, SIGNAL(
-                "currentIndexChanged(int)"), self. updateSectionShape)
+                "currentIndexChanged(int)"), self.updateSectionShape)
         self.connect(self.ductilityBox, SIGNAL(
-                "currentIndexChanged(int)"), self. updateSectionShape)
+                "currentIndexChanged(int)"), self.updateSectionShape)
         self.connect(self.useAsBox, SIGNAL(
-                "currentIndexChanged(int)"), self. updateSectionShape)
+                "currentIndexChanged(int)"), self.updateSectionShape)
 
     def createWidgetsOne(self):
         self.model1 = sec.SectionTableModel(QString("section.dat"))
         self.tableView1 = QTableView()
         self.tableView1.setLayoutDirection(Qt.LeftToRight)
         self.tableView1.setModel(self.model1)
-        self.tableView1.setColumnHidden(sec.TYPE, True)
-        self.tableView1.setColumnHidden(sec.XM, True)
-        self.tableView1.setColumnHidden(sec.YM, True)
-        self.tableView1.setColumnHidden(sec.XMAX, True)
-        self.tableView1.setColumnHidden(sec.YMAX, True)
-        self.tableView1.setColumnHidden(sec.SXNEG, True)
-        self.tableView1.setColumnHidden(sec.SYNEG, True)
 
         sectionLabel = QLabel(u'مقطع انتخابی')
         distLable = QLabel(u'فاصله لب به لب مقطع')
@@ -154,13 +146,16 @@ class Window(QMainWindow):
         useAsLabel = QLabel(u'موقعیت')
         calculateOneButton = QPushButton(u'F5 محاسبه')
         calculateOneButton.clicked.connect(self.acceptOne)
-        clearSectionButton = QPushButton(u'پاک کردن همه')
+        clearSectionButton = QPushButton(u'حذف همه')
         clearSectionButton.clicked.connect(self.clearSectionOne)
-        imgLabel = QLabel()
-        pic = QPixmap(':/2IPEPL.png')
-        pic.scaledToWidth(.1)
-        imgLabel.setPixmap(pic)
-
+        deleteSectionButton = QPushButton(u'حذف مقطع انتخابی')
+        deleteSectionButton.clicked.connect(self.removeSection)
+        saveToXml1Button = QPushButton(u' xml ذخیره در')
+        saveToXml1Button.clicked.connect(self.saveToXml1)
+        saveToFileButton = QPushButton(u'ذخیره در نرم افزار')
+        saveToFileButton.clicked.connect(self.save)
+        addSectionButton = QPushButton(u'اضافه کردن مقطع')
+        addSectionButton.clicked.connect(self.addSection)
         self.addTBPLCheckBox = QCheckBox(u'ورق بالا و پایین')
         self.addTBPLCheckBox.setChecked(True)
         self.addLRPLCheckBox = QCheckBox(u'ورق چپ و راست')
@@ -186,13 +181,11 @@ class Window(QMainWindow):
         self.useAsBox.addItems([u'تیر', u'ستون'])
         self.useAsBox.setCurrentIndex(1)
         self.doubleBox = QComboBox()
-        self.doubleBox.addItems([u'تک', u'دوبل'])
+        self.doubleBox.addItems([u'تک', u'دوبل', u'سوبل'])
         self.doubleBox.setCurrentIndex(1)
-        saveToXml1Button = QPushButton(u' xml ذخیره در')
-        saveToXml1Button.clicked.connect(self.saveToXml1)
 
         self.sectionTypeBox1 = QComboBox()
-        self.sectionTypeBox1.addItems(self.sectionProp.keys())
+        self.sectionTypeBox1.addItems(sorted(self.sectionProp.keys()))
         self.sectionsBox = QComboBox()
         self.sectionsBox.addItems(self.getSectionLabels())
         self.sectionsBox.setCurrentIndex(4)
@@ -204,10 +197,9 @@ class Window(QMainWindow):
         frameLayout.addWidget(ductilityLabel, 1, 0)
         frameLayout.addWidget(self.ductilityBox, 1, 1)
         frameGroup.setLayout(frameLayout)
-        #oneSectionLayout.addWidget(self.sectionTypeBox1, 0, 1)
         inputPropGroup = QGroupBox(u'مشخصات مقطع')
         inputPropLayout = QGridLayout()
-        inputPropLayout.addWidget(self.doubleBox, 0, 0)
+        inputPropLayout.addWidget(self.sectionTypeBox1, 0, 0)
         inputPropLayout.addWidget(self.sectionsBox, 0, 1)
         inputPropLayout.addWidget(sectionLabel, 0, 2)
         inputPropLayout.addWidget(self.lhSpinBox, 1, 1)
@@ -216,6 +208,7 @@ class Window(QMainWindow):
         inputPropLayout.addWidget(self.lvSpinBox, 2, 1)
         inputPropLayout.addWidget(self.tvSpinBox, 2, 0)
         inputPropLayout.addWidget(self.addLRPLCheckBox, 2, 2)
+        inputPropLayout.addWidget(self.doubleBox, 3, 0)
         inputPropLayout.addWidget(distLable, 3, 2)
         inputPropLayout.addWidget(self.distSpinBox, 3, 1)
         inputPropGroup.setLayout(inputPropLayout)
@@ -228,10 +221,14 @@ class Window(QMainWindow):
 
         pushButtonFrame = QFrame()
         pushButtonLayout = QVBoxLayout()
+        pushButtonLayout.addWidget(addSectionButton)
+        pushButtonLayout.addWidget(deleteSectionButton)
+        pushButtonLayout.addWidget(clearSectionButton)
+        #pushButtonLayout.addWidget(saveToFileButton)
+
+        pushButtonLayout.addStretch()
         pushButtonLayout.addWidget(calculateOneButton)
         pushButtonLayout.addWidget(saveToXml1Button)
-        pushButtonLayout.addWidget(clearSectionButton)
-        pushButtonLayout.addStretch()
         pushButtonFrame.setLayout(pushButtonLayout)
 
         inputWidget = QWidget()
@@ -251,94 +248,87 @@ class Window(QMainWindow):
         self.mainSplitter.addWidget(inputWidget)
         self.mainSplitter.addWidget(self.tableView1)
         #self.inputSplitter.setObjectName = 'InputSplitter'
-        self.mainSplitter.setObjectName = 'MainSplitter'
+        self.mainSplitter.setObjectName = 'MainSplitter1'
 
     def createWidgets(self):
-        self.model = sec.SectionTableModel(QString("sections.dat"))
-        self.tableView = QTableView()
-        self.tableView.setLayoutDirection(Qt.LeftToRight)
-        self.tableView.setModel(self.model)
-        self.tableView.setColumnHidden(sec.TYPE, True)
-        self.tableView.setColumnHidden(sec.XM, True)
-        self.tableView.setColumnHidden(sec.YM, True)
-        self.tableView.setColumnHidden(sec.XMAX, True)
-        self.tableView.setColumnHidden(sec.YMAX, True)
-        self.tableView.setColumnHidden(sec.SXNEG, True)
-        self.tableView.setColumnHidden(sec.SYNEG, True)
+        #self.model = sec.SectionTableModel(QString("sections.dat"))
+        #self.tableView = QTableView()
+        #self.tableView.setLayoutDirection(Qt.LeftToRight)
+        #self.tableView.setModel(self.model)
 
-        sectionLabel = QLabel(u'مقطع انتخابی')
-        doubleDistLabel = QLabel(u'(cm) فاصله لب به لب مقاطع')
-        self.img = QLabel()
-        self.img.setMinimumSize(400, 400)
-        self.img.setAlignment(Qt.AlignCenter)
-        plateWidthLabel = QLabel(u'(cm) عرض ورق')
-        plateThickLabel = QLabel(u'(mm) ضخامت ورق')
-        self.fileNameLine = QLineEdit()
-        fileOpen = QPushButton(u'بازکردن')
-        exportXml = QPushButton(u' xml ذخیره در')
-        self.sectionTypeBox = QComboBox()
-        self.sectionTypeBox.addItems(['IPE', 'UNP'])
-        self.doubleDistSpinBox = QSpinBox()
-        self.doubleDistSpinBox.setSuffix(' cm')
-        self.plateWidthSpinBox = QSpinBox()
-        self.plateWidthSpinBox.setSuffix(' cm')
-        self.plateThickSpinBox = QSpinBox()
-        self.plateThickSpinBox.setSuffix(' mm')
-        self.result = QTextEdit()
+        #sectionLabel = QLabel(u'مقطع انتخابی')
+        #doubleDistLabel = QLabel(u'(cm) فاصله لب به لب مقاطع')
+        #self.img = QLabel()
+        #self.img.setMinimumSize(400, 400)
+        #self.img.setAlignment(Qt.AlignCenter)
+        #plateWidthLabel = QLabel(u'(cm) عرض ورق')
+        #plateThickLabel = QLabel(u'(mm) ضخامت ورق')
+        #self.fileNameLine = QLineEdit()
+        #fileOpen = QPushButton(u'بازکردن')
+        #exportXml = QPushButton(u' xml ذخیره در')
+        #self.sectionTypeBox = QComboBox()
+        #self.sectionTypeBox.addItems(['IPE', 'UNP'])
+        #self.doubleDistSpinBox = QSpinBox()
+        #self.doubleDistSpinBox.setSuffix(' cm')
+        #self.plateWidthSpinBox = QSpinBox()
+        #self.plateWidthSpinBox.setSuffix(' cm')
+        #self.plateThickSpinBox = QSpinBox()
+        #self.plateThickSpinBox.setSuffix(' mm')
+        #self.result = QTextEdit()
 
-        self.sectionsList = Window.creatList(self.getSectionLabels())
-        self.sectionsList.sortItems()
-        self.distsList = Window.creatList([str(i) for i in range(21)])
-        self.plateWidthList = Window.creatList([str(i) for i in range(5, 41)])
-        self.plateThickList = Window.creatList([str(i) for i in (0, 4, 5, 6, 8, 9, 10, 12, 15)])
-        calculateButton = QPushButton(u'محاسبه')
-        saveToXmlButton = QPushButton(u' xml ذخیره در')
-        saveToFileButton = QPushButton(u'دخیره')
-        saveToFileButton.clicked.connect(self.save)
-        loadButton = QPushButton(u'بارگذاری')
-        addButton = QPushButton(u'اضافه')
-        removeButton = QPushButton(u'حذف مقطع')
-        loadButton.clicked.connect(self.load)
-        fileOpen.clicked.connect(self.getXmlFilename)
-        exportXml.clicked.connect(self.exportToXml)
-        calculateButton.clicked.connect(self.multiAccept)
-        saveToXmlButton.clicked.connect(self.saveToXml)
-        addButton.clicked.connect(self.addSection)
-        removeButton.clicked.connect(self.removeSection)
+        #self.sectionsList = Window.creatList(self.getSectionLabels())
+        #self.sectionsList.sortItems()
+        #self.distsList = Window.creatList([str(i) for i in range(21)])
+        #self.plateWidthList = Window.creatList([str(i) for i in range(5, 41)])
+        #self.plateThickList = Window.creatList([str(i) for i in (0, 4, 5, 6, 8, 9, 10, 12, 15)])
+        #calculateButton = QPushButton(u'محاسبه')
+        #saveToXmlButton = QPushButton(u' xml ذخیره در')
+        #saveToFileButton = QPushButton(u'دخیره')
+        #saveToFileButton.clicked.connect(self.save)
+        #loadButton = QPushButton(u'بارگذاری')
+        #addButton = QPushButton(u'اضافه')
+        #removeButton = QPushButton(u'حذف مقطع')
+        #loadButton.clicked.connect(self.load)
+        #fileOpen.clicked.connect(self.getXmlFilename)
+        #exportXml.clicked.connect(self.exportToXml)
+        #calculateButton.clicked.connect(self.multiAccept)
+        #saveToXmlButton.clicked.connect(self.saveToXml)
+        #addButton.clicked.connect(self.addSection)
+        #removeButton.clicked.connect(self.removeSection)
 
-        sectionButtonLayout = QVBoxLayout()
-        sectionButtonLayout.addWidget(self.sectionTypeBox)
-        sectionButtonLayout.addWidget(calculateButton)
-        sectionButtonLayout.addWidget(saveToFileButton)
-        sectionButtonLayout.addWidget(saveToXmlButton)
-        sectionButtonLayout.addStretch()
+        #sectionButtonLayout = QVBoxLayout()
+        #sectionButtonLayout.addWidget(self.sectionTypeBox)
+        #sectionButtonLayout.addWidget(calculateButton)
+        #sectionButtonLayout.addWidget(saveToFileButton)
+        #sectionButtonLayout.addWidget(saveToXmlButton)
+        #sectionButtonLayout.addStretch()
 
-        tableButtonLayout = QVBoxLayout()
-        tableButtonLayout.addWidget(addButton)
-        tableButtonLayout.addWidget(removeButton)
-        tableButtonLayout.addStretch()
+        #tableButtonLayout = QVBoxLayout()
+        #tableButtonLayout.addWidget(addButton)
+        #tableButtonLayout.addWidget(removeButton)
+        #tableButtonLayout.addStretch()
 
-        tableWidget = QWidget()
-        tableLayout = QHBoxLayout()
-        tableLayout.addWidget(self.tableView)
-        tableLayout.addItem(tableButtonLayout)
-        tableWidget.setLayout(tableLayout)
+        #tableWidget = QWidget()
+        #tableLayout = QHBoxLayout()
+        #tableLayout.addWidget(self.tableView)
+        #tableLayout.addItem(tableButtonLayout)
+        #tableWidget.setLayout(tableLayout)
 
-        multiSectionLayout = QGridLayout()
-        multiSectionLayout.addWidget(sectionLabel, 0, 0)
-        multiSectionLayout.addWidget(doubleDistLabel, 0, 1)
-        multiSectionLayout.addWidget(plateWidthLabel, 0, 2)
-        multiSectionLayout.addWidget(plateThickLabel, 0, 3)
-        multiSectionLayout.addWidget(self.sectionsList, 1, 0)
-        multiSectionLayout.addWidget(self.distsList, 1, 1)
-        multiSectionLayout.addWidget(self.plateWidthList, 1, 2)
-        multiSectionLayout.addWidget(self.plateThickList, 1, 3)
-        multiSectionLayout.addItem(sectionButtonLayout, 1, 4)
-        multiSectionWidget = QWidget()
-        multiSectionWidget.setLayout(multiSectionLayout)
-        multiSectionSplitter = QSplitter(Qt.Vertical)
-        multiSectionSplitter.addWidget(multiSectionWidget)
-        multiSectionSplitter.addWidget(tableWidget)
+        #multiSectionLayout = QGridLayout()
+        #multiSectionLayout.addWidget(sectionLabel, 0, 0)
+        #multiSectionLayout.addWidget(doubleDistLabel, 0, 1)
+        #multiSectionLayout.addWidget(plateWidthLabel, 0, 2)
+        #multiSectionLayout.addWidget(plateThickLabel, 0, 3)
+        #multiSectionLayout.addWidget(self.sectionsList, 1, 0)
+        #multiSectionLayout.addWidget(self.distsList, 1, 1)
+        #multiSectionLayout.addWidget(self.plateWidthList, 1, 2)
+        #multiSectionLayout.addWidget(self.plateThickList, 1, 3)
+        #multiSectionLayout.addItem(sectionButtonLayout, 1, 4)
+        #multiSectionWidget = QWidget()
+        #multiSectionWidget.setLayout(multiSectionLayout)
+        #multiSectionSplitter = QSplitter(Qt.Vertical)
+        #multiSectionSplitter.addWidget(multiSectionWidget)
+        #multiSectionSplitter.addWidget(tableWidget)
 
         tabWidget = QTabWidget()
         #tabWidget.addTab(multiSectionSplitter, u'محاسبات چندین مقطع')
@@ -379,10 +369,10 @@ class Window(QMainWindow):
     def load_settings(self):
         settings = QSettings()
         self.restoreGeometry(
-                settings.value("MainWindow/Geometry").toByteArray())
-        self.restoreState(settings.value("MainWindow/State").toByteArray())
+                settings.value("MainWindow/Geometry1").toByteArray())
+        self.restoreState(settings.value("MainWindow/State1").toByteArray())
         #self.inputSplitter.restoreState(settings.value("InputSplitter").toByteArray())
-        self.mainSplitter.restoreState(settings.value("MainSplitter").toByteArray())
+        self.mainSplitter.restoreState(settings.value("MainSplitter1").toByteArray())
 
     def createAction(self, text, slot=None, shortcut=None, icon=None,
                      tip=None, checkable=False):
@@ -416,19 +406,15 @@ class Window(QMainWindow):
         #recentFiles = (QVariant(self.recentFiles)
                        #if self.recentFiles else QVariant())
         #settings.setValue("RecentFiles", recentFiles)
-        settings.setValue("MainWindow/Geometry", QVariant(self.saveGeometry()))
-        settings.setValue("MainWindow/State", QVariant(self.saveState()))
+        settings.setValue("MainWindow/Geometry1", QVariant(self.saveGeometry()))
+        settings.setValue("MainWindow/State1", QVariant(self.saveState()))
         #settings.setValue("InputSplitter", QVariant(self.inputSplitter.saveState()))
-        settings.setValue("MainSplitter", QVariant(self.mainSplitter.saveState()))
+        settings.setValue("MainSplitter1", QVariant(self.mainSplitter.saveState()))
 
     def setSectionLabels(self):
-        self.sectionsList.clear()
+        self.sectionsBox.clear()
         sectionType = self.currentSectionType()
-        ##if sectionType == 'IPE':
-        self.sectionsList.addItems(self.getSectionLabels(sectionType))
-
-        #elif sectionType == 'UNP':
-            #self.sectionsBox.addItems([unp.name for unp in unpsProp])
+        self.sectionsBox.addItems(self.getSectionLabels(sectionType))
 
     def getSectionLabels(self, sectionType='IPE'):
         if sectionType == 'IPE':
@@ -437,21 +423,15 @@ class Window(QMainWindow):
             sections = unpsProp.values()
 
         sectionNames = [section.name for section in sections]
-        #print sectionNames
-        #sectionNames = sectionNames.sort()
-        #print sectionNames
         return sorted(sectionNames)
 
     def currentSectionType(self):
-        return self.sectionTypeBox.currentText()
+        return str(self.sectionTypeBox1.currentText())
 
     def currentSection(self):
         sectionIndex = self.sectionsBox.currentIndex()
         sectionType = self.currentSectionType()
-        if sectionType == 'IPE':
-            return ipesProp.values()[sectionIndex]
-        elif sectionType == 'UNP':
-            return unpsProp[sectionIndex]
+        return self.sectionProp[sectionType].values()[sectionIndex]
 
     def ipesProp(self):
         return sec.Ipe.createStandardIpes()
@@ -469,20 +449,24 @@ class Window(QMainWindow):
         isLRPlate = self.addLRPLCheckBox.isChecked()
         useAs = self.useAsDict[unicode(self.useAsBox.currentText())]
         ductility = self.ductilityDict[unicode(self.ductilityBox.currentText())]
-        isDouble = self.doubleDict[unicode(self.doubleBox.currentText())]
+        isDouble = self.doubleDict[unicode(self.doubleBox.currentText())][0]
+        isSouble = self.doubleDict[unicode(self.doubleBox.currentText())][1]
         sectionSize = int(re.sub("[^0-9]", "", str(self.sectionsBox.currentText())))
-        section = ipesProp[sectionSize]
+        sectionType = self.currentSectionType()
+        section = self.sectionProp[sectionType][sectionSize]
         section.useAs = useAs
         section.ductility = ductility
         if isDouble:
             section = sec.DoubleSection(section, dist)
+        if isSouble:
+            section = sec.SoubleSection(section, dist)
         if isTBPlate:
             p1 = sec.Plate(lh, th)
             section = sec.AddPlateTB(section, p1)
         if isLRPlate:
             p2 = sec.Plate(tv, lv)
             section = sec.AddPlateLR(section, p2)
-        if isDouble or isTBPlate or isLRPlate:
+        if isSouble or isDouble or isTBPlate or isLRPlate:
             section.equivalentSectionI()
             section.name = '{}{}{}'.format(section.name, useAs, ductility)
 
@@ -498,6 +482,13 @@ class Window(QMainWindow):
         self.model1.dirty = True
 
     def clearSectionOne(self):
+        if self.model1.sections == []:
+            return
+        if (QMessageBox.question(self, "sections - Remove",
+                (QString(u"همه مقاطع حذف شوند؟")),
+                QMessageBox.Yes|QMessageBox.No) ==
+                QMessageBox.No):
+            return
         self.model1.sections = []
         self.model1.reset()
         self.model1.dirty = False
@@ -544,7 +535,8 @@ class Window(QMainWindow):
 
     def updateSectionShape(self):
         section = self.currentSectionOne()
-        self.drawLayout.addWidget(section.plotSectionAndEqSection(), 0, 0)
+        plotWidget = PlotSectionAndEqSection(section)
+        self.drawLayout.addWidget(plotWidget.plot(), 0, 0)
 
     def acceptSave(self):
         #if (self.model.dirty and
@@ -560,19 +552,19 @@ class Window(QMainWindow):
 
     def load(self):
         try:
-            self.model.load()
+            self.model1.load()
         except IOError, err:
             QMessageBox.warning(self, "Sections - Error",
                     "Failed to load: {0}".format(err))
 
     def save(self):
-        if (self.model.dirty and
+        if (self.model1.dirty and
             QMessageBox.question(self, "Section - Save?",
                     "Save unsaved changes?",
                     QMessageBox.Yes|QMessageBox.No) ==
                     QMessageBox.Yes):
             try:
-                self.model.save()
+                self.model1.save()
             except IOError, err:
                 QMessageBox.warning(self, "Sections - Error",
                         "Failed to save: {0}".format(err))
@@ -618,7 +610,7 @@ class Window(QMainWindow):
 
     def helpAbout(self):
         QMessageBox.about(self, u"درباره نرم افزار محاسبه مشخصات مقاطع",
-                u"""<b>SectionPro</b> v {0}   ۱۳۹۵/۱/۲
+                u"""<b>SectionPro</b> v {0}   ۱۳۹۵/۲/۲۰
                 <p>توسعه دهنده: ابراهیم رعیت رکن آبادی
                 <p>این نرم افزار برای محاسبه مشخصات مقاطع برای استفاده در ایتبز ۲۰۱۳ و ۲۰۱۵ تهیه شده است.
                 <p>از مهندسین عزیز خواهش میکنم با بررسی این برنامه ضعفها و ایرادات برنامه رو
