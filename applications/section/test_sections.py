@@ -30,77 +30,92 @@ class TestIpeSections(unittest.TestCase):
         plate2 = Plate(12, 250)
         self.IPE22_double_4sidePlate = AddPlateLR(self.IPE22_double_TBPlate, plate2)
 
+        plate3 = Plate(10, 150)
+        self.IPE22_double_TBPlate_webPlate = AddPlateWeb(self.IPE22_double_TBPlate, plate3)
+
     def test_IPE22_double(self):
         self.assertFalse(self.IPE22.isDouble)
         self.assertTrue(self.IPE22_double.isDouble)
         self.assertTrue(self.IPE22_double_TBPlate.isDouble)
         self.assertTrue(self.IPE22_double_4sidePlate.isDouble)
+        self.assertTrue(self.IPE22_double_TBPlate_webPlate.isDouble)
 
     def test_IPE22_useAs(self):
         self.assertEqual(self.IPE22.useAs, self.__useAs)
         self.assertEqual(self.IPE22_double.useAs, self.__useAs)
         self.assertEqual(self.IPE22_double_TBPlate.useAs, self.__useAs)
         self.assertEqual(self.IPE22_double_4sidePlate.useAs, self.__useAs)
+        self.assertEqual(self.IPE22_double_TBPlate_webPlate.useAs, self.__useAs)
 
     def test_IPE22_ductility(self):
         self.assertEqual(self.IPE22.ductility, self.__ductility)
         self.assertEqual(self.IPE22_double.ductility, self.__ductility)
         self.assertEqual(self.IPE22_double_TBPlate.ductility, self.__ductility)
         self.assertEqual(self.IPE22_double_4sidePlate.ductility, self.__ductility)
+        self.assertEqual(self.IPE22_double_TBPlate_webPlate.ductility, self.__ductility)
 
     def test_IPE22_composite(self):
         self.assertFalse(self.IPE22.composite)
         self.assertEqual(self.IPE22_double.composite, 'notPlate')
         self.assertEqual(self.IPE22_double_TBPlate.composite, 'TBPlate')
         self.assertEqual(self.IPE22_double_4sidePlate.composite, 'LRPlate')
+        self.assertEqual(self.IPE22_double_TBPlate_webPlate.composite, 'LRPlate')
 
     def test_IPE22_baseSection(self):
         self.assertEqual(self.IPE22.baseSection, self.IPE22)
         self.assertEqual(self.IPE22_double.baseSection, self.IPE22)
         self.assertEqual(self.IPE22_double_TBPlate.baseSection, self.IPE22)
         self.assertEqual(self.IPE22_double_4sidePlate.baseSection, self.IPE22)
+        self.assertEqual(self.IPE22_double_TBPlate_webPlate.baseSection, self.IPE22)
 
     def test_IPE22_area(self):
         self.assertAlmostEqual(self.IPE22.area, 3340, places=1)
         self.assertAlmostEqual(self.IPE22_double.area, 6680, places=1)
         self.assertAlmostEqual(self.IPE22_double_TBPlate.area, 12680, places=1)
         self.assertAlmostEqual(self.IPE22_double_4sidePlate.area, 18680, places=1)
+        self.assertAlmostEqual(self.IPE22_double_TBPlate_webPlate.area, 15680, places=1)
 
     def test_IPE22_ASx(self):
         self.assertAlmostEqual(self.IPE22.ASx, 1686.67, places=1)
         self.assertAlmostEqual(self.IPE22_double.ASx, 3373.33, places=1)
         self.assertAlmostEqual(self.IPE22_double_TBPlate.ASx, 9373.33, places=1)
         self.assertAlmostEqual(self.IPE22_double_4sidePlate.ASx, 9373.33, places=1)
+        self.assertAlmostEqual(self.IPE22_double_TBPlate_webPlate.ASx, 9373.33, places=1)
 
     def test_IPE22_ASy(self):
         self.assertAlmostEqual(self.IPE22.ASy, 1243.72, places=1)
         self.assertAlmostEqual(self.IPE22_double.ASy, 2487.44, places=1)
         self.assertAlmostEqual(self.IPE22_double_TBPlate.ASy, 2487.44, places=1)
         self.assertAlmostEqual(self.IPE22_double_4sidePlate.ASy, 8487.44, places=1)
+        self.assertAlmostEqual(self.IPE22_double_TBPlate_webPlate.ASy, 5487.44, places=1)
 
     def test_IPE22_Ix(self):
         self.assertEqual(self.IPE22.Ix, 27770000)
         self.assertEqual(self.IPE22_double.Ix, 55540000)
         self.assertEqual(self.IPE22_double_TBPlate.Ix, 1.36348e8)
         self.assertEqual(self.IPE22_double_4sidePlate.Ix, 1.67598e8)
+        self.assertEqual(self.IPE22_double_TBPlate_webPlate.Ix, 141973000)
 
     def test_IPE22_Iy(self):
         self.assertEqual(self.IPE22.Iy, 2050000)
         self.assertEqual(self.IPE22_double.Iy, 6.4387e7)
         self.assertEqual(self.IPE22_double_TBPlate.Iy, 9.5637e7)
         self.assertEqual(self.IPE22_double_4sidePlate.Iy, 2.41725e8)
+        self.assertAlmostEqual(self.IPE22_double_TBPlate_webPlate.Iy, 127458107.5, places=1)
 
     def test_IPE22_Zx(self):
         self.assertEqual(self.IPE22.Zx, 285000)
         self.assertEqual(self.IPE22_double.Zx, 570000)
         self.assertEqual(self.IPE22_double_TBPlate.Zx, 1.266e6)
         self.assertEqual(self.IPE22_double_4sidePlate.Zx, 1.641e6)
+        self.assertEqual(self.IPE22_double_TBPlate_webPlate.Zx, 1378500)
 
     def test_IPE22_Zy(self):
         self.assertEqual(self.IPE22.Zy, 58100)
         self.assertEqual(self.IPE22_double.Zy, 634600)
         self.assertEqual(self.IPE22_double_TBPlate.Zy, 1.0096e6)
         self.assertEqual(self.IPE22_double_4sidePlate.Zy, 1.9456e6)
+        self.assertEqual(self.IPE22_double_TBPlate_webPlate.Zy, 1318450)
 
     def test_IPE22_Sx(self):
         self.assertAlmostEqual(self.IPE22.Sx, 252454.5454, places=1)
@@ -133,7 +148,7 @@ class TestIpeSections(unittest.TestCase):
         self.assertAlmostEqual(self.IPE22_double_4sidePlate.xmax, 324, places=1)
 
     def test_IPE22_center_to_center(self):
-        self.assertIsNone(self.IPE22.cc)
+        self.assertEqual(self.IPE22.cc, 0)
         self.assertAlmostEqual(self.IPE22_double.cc, 190, places=1)
         self.assertAlmostEqual(self.IPE22_double_TBPlate.cc, 190, places=1)
         self.assertAlmostEqual(self.IPE22_double_4sidePlate.cc, 190, places=1)

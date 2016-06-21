@@ -18,7 +18,6 @@ class PlotSectionAndEqSection(object):
 
         baseSection = self.section.baseSection
         baseSectionType = str(baseSection.type)
-        #drawBaseSection = self.drawBaseSection[baseSectionType]
         xm = baseSection.xm
         ym = baseSection.ym
         xmax = baseSection.xmax
@@ -71,6 +70,22 @@ class PlotSectionAndEqSection(object):
             ymax = max(ymax, self.section.LRPlate.tf)
             PlotSectionAndEqSection.textItem(win, html=self.section.LRPlate.name +
                                              ' mm', pos=Point(xmax, ym), anchor=(.5, 2), isRotate=True)
+
+        if self.section.webPlate:
+            p8 = Point((self.section.bf - self.section.tw - self.section.webPlate.bf) / 2, ym)
+            multiplier = 0
+            if self.section.isDouble:
+                multiplier = 1
+            elif self.section.isSouble:
+                multiplier = 2
+            #if multiplier:
+            p9 = Point(multiplier * self.section.cc + (self.section.bf + self.section.tw + self.section.webPlate.bf) / 2, ym)
+            win.addItem(PlotSectionAndEqSection.drawPlate(self.section.webPlate, p9, 'g'))
+
+            win.addItem(PlotSectionAndEqSection.drawPlate(self.section.webPlate, p8, 'g'))
+
+            #PlotSectionAndEqSection.textItem(win, html=self.section.LRPlate.name +
+                                             #' mm', pos=Point(xmax, ym), anchor=(.5, 2), isRotate=True)
         xmax1 = self.section.xmax
         if self.section.TBPlate:
             xmax1 = max(self.section.xmax, self.section.TBPlate.xmax)
@@ -161,3 +176,15 @@ class Point(object):
         super(Point, self).__init__()
         self.x = x
         self.y = y
+
+    def __add__(self, other):
+        return Point(self.x + other.x, self.y + other.y)
+
+    def __str__(self):
+        return 'x = {}, y = {}'.format(self.x, self.y)
+
+
+if __name__ == '__main__':
+    p1 = Point(2, 3)
+    p2 = Point(3, 4)
+    print p1 + p2

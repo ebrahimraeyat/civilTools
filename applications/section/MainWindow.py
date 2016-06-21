@@ -25,12 +25,15 @@ class Window(QMainWindow):
     sectionProp = {'IPE': ipesProp, 'UNP': unpsProp}
     useAsDict = {u'تیر': 'B', u'ستون': 'C'}
     ductilityDict = {u'متوسط': 'M', u'زیاد': 'H'}
-    doubleDict = {u'تک': [False, False], u'دوبل': [True, False], u'سوبل':[False, True]}
+    doubleList1 = [u'تک', u'دوبل', u'سوبل']
+    doubleList2 = [[False, False], [True, False], [False, True]]
+    doubleDict = dict(zip(doubleList1, doubleList2))
 
     def __init__(self, parent=None):
         super(Window, self).__init__(parent)
         self.dirty = False
         self.lastDirectory = ''
+        self.last_sectionBox_index = {'IPE': 4, 'UNP': 4}
         #self.filename = None
         self.printer = None
         self.createWidgetsOne()
@@ -42,7 +45,7 @@ class Window(QMainWindow):
         self.load_settings()
         self.setLayoutDirection(Qt.RightToLeft)
         self.setWindowTitle(u'محاسبه مشخصات پروفیلهای ساختمانی')
-        #QTimer.singleShot(0, self.initialLoad)
+        QTimer.singleShot(0, self.initialLoad)
 
     def initialLoad(self):
         if  QFile.exists(self.model1.filename):
@@ -76,9 +79,11 @@ class Window(QMainWindow):
                         "Failed to save: {0}".format(err))
         QDialog.accept(self)
 
-    def sortTable(self):
-        self.model.sortByName()
-        self.resizeColumns()
+    def sortTable(self, section):
+        if section == sec.AREA:
+            self.model1.sortByArea()
+        #self.model.sortByName()l;
+        self.resizeColumns(self.tableView1)
 
     def addSection(self):
         row = self.model1.rowCount()
@@ -111,9 +116,15 @@ class Window(QMainWindow):
                     #"currentIndexChanged(QString)"), self.accept)
         self.connect(self.sectionTypeBox1, SIGNAL(
                     "currentIndexChanged(QString)"), self.setSectionLabels)
+        self.connect(self.sectionTypeBox1, SIGNAL(
+                    "currentIndexChanged(QString)"), self.updateGui)
         self.connect(self.lhSpinBox, SIGNAL(
                 "valueChanged(int)"), self.updateSectionShape)
         self.connect(self.thSpinBox, SIGNAL(
+                "valueChanged(int)"), self.updateSectionShape)
+        self.connect(self.lwSpinBox, SIGNAL(
+                "valueChanged(int)"), self.updateSectionShape)
+        self.connect(self.twSpinBox, SIGNAL(
                 "valueChanged(int)"), self.updateSectionShape)
         self.connect(self.lvSpinBox, SIGNAL(
                 "valueChanged(int)"), self.updateSectionShape)
@@ -121,10 +132,12 @@ class Window(QMainWindow):
                 "valueChanged(int)"), self.updateSectionShape)
         self.connect(self.distSpinBox, SIGNAL(
                 "valueChanged(int)"), self.updateSectionShape)
-        self.connect(self.addTBPLCheckBox, SIGNAL(
-                "stateChanged(int)"), self.updateSectionShape)
-        self.connect(self.addLRPLCheckBox, SIGNAL(
-                "stateChanged(int)"), self.updateSectionShape)
+        self.connect(self.addTBPLGroupBox, SIGNAL(
+                "clicked()"), self.updateSectionShape)
+        self.connect(self.addLRPLGroupBox, SIGNAL(
+                "clicked()"), self.updateSectionShape)
+        self.connect(self.addWebPLGroupBox, SIGNAL(
+                "toggled(bool)"), self.updateSectionShape)
         self.connect(self.sectionsBox, SIGNAL(
                 "currentIndexChanged(int)"), self.updateSectionShape)
         self.connect(self.doubleBox, SIGNAL(
@@ -133,6 +146,7 @@ class Window(QMainWindow):
                 "currentIndexChanged(int)"), self.updateSectionShape)
         self.connect(self.useAsBox, SIGNAL(
                 "currentIndexChanged(int)"), self.updateSectionShape)
+        self.connect(self.tableView1.horizontalHeader(), SIGNAL("sectionClicked(int)"), self.sortTable)
 
     def createWidgetsOne(self):
         self.model1 = sec.SectionTableModel(QString("section.dat"))
@@ -156,10 +170,15 @@ class Window(QMainWindow):
         saveToFileButton.clicked.connect(self.save)
         addSectionButton = QPushButton(u'اضافه کردن مقطع')
         addSectionButton.clicked.connect(self.addSection)
-        self.addTBPLCheckBox = QCheckBox(u'ورق بالا و پایین')
-        self.addTBPLCheckBox.setChecked(True)
-        self.addLRPLCheckBox = QCheckBox(u'ورق چپ و راست')
-        self.addLRPLCheckBox.setChecked(True)
+        self.addTBPLGroupBox = QGroupBox(u'ورق بالا و پایین')
+        self.addTBPLGroupBox.setCheckable(True)
+        self.addTBPLGroupBox.setChecked(True)
+        self.addLRPLGroupBox = QGroupBox(u'ورق چپ و راست')
+        self.addLRPLGroupBox.setCheckable(True)
+        self.addLRPLGroupBox.setChecked(True)
+        self.addWebPLGroupBox = QGroupBox(u'ورق جان')
+        self.addWebPLGroupBox.setCheckable(True)
+        self.addWebPLGroupBox.setChecked(True)
         self.lhSpinBox = QSpinBox()
         self.lhSpinBox.setSuffix(' cm')
         self.lhSpinBox.setValue(25)
@@ -172,6 +191,14 @@ class Window(QMainWindow):
         self.tvSpinBox = QSpinBox()
         self.tvSpinBox.setSuffix(' mm')
         self.tvSpinBox.setValue(12)
+
+        self.lwSpinBox = QSpinBox()
+        self.lwSpinBox.setSuffix(' cm')
+        self.lwSpinBox.setValue(15)
+        self.twSpinBox = QSpinBox()
+        self.twSpinBox.setSuffix(' mm')
+        self.twSpinBox.setValue(10)
+
         self.distSpinBox = QSpinBox()
         self.distSpinBox.setSuffix(' cm')
         self.distSpinBox.setValue(9)
@@ -181,7 +208,7 @@ class Window(QMainWindow):
         self.useAsBox.addItems([u'تیر', u'ستون'])
         self.useAsBox.setCurrentIndex(1)
         self.doubleBox = QComboBox()
-        self.doubleBox.addItems([u'تک', u'دوبل', u'سوبل'])
+        self.doubleBox.addItems(self.doubleList1)
         self.doubleBox.setCurrentIndex(1)
 
         self.sectionTypeBox1 = QComboBox()
@@ -202,15 +229,24 @@ class Window(QMainWindow):
         inputPropLayout.addWidget(self.sectionTypeBox1, 0, 0)
         inputPropLayout.addWidget(self.sectionsBox, 0, 1)
         inputPropLayout.addWidget(sectionLabel, 0, 2)
-        inputPropLayout.addWidget(self.lhSpinBox, 1, 1)
-        inputPropLayout.addWidget(self.thSpinBox, 1, 0)
-        inputPropLayout.addWidget(self.addTBPLCheckBox, 1, 2)
-        inputPropLayout.addWidget(self.lvSpinBox, 2, 1)
-        inputPropLayout.addWidget(self.tvSpinBox, 2, 0)
-        inputPropLayout.addWidget(self.addLRPLCheckBox, 2, 2)
-        inputPropLayout.addWidget(self.doubleBox, 3, 0)
-        inputPropLayout.addWidget(distLable, 3, 2)
-        inputPropLayout.addWidget(self.distSpinBox, 3, 1)
+        tbPlateLayout = QVBoxLayout()
+        tbPlateLayout.addWidget(self.lhSpinBox)
+        tbPlateLayout.addWidget(self.thSpinBox)
+        self.addTBPLGroupBox.setLayout(tbPlateLayout)
+        inputPropLayout.addWidget(self.addTBPLGroupBox, 1, 2)
+        lrPlateLayout = QVBoxLayout()
+        lrPlateLayout.addWidget(self.lvSpinBox)
+        lrPlateLayout.addWidget(self.tvSpinBox)
+        self.addLRPLGroupBox.setLayout(lrPlateLayout)
+        inputPropLayout.addWidget(self.addLRPLGroupBox, 1, 1)
+        webPlateLayout = QVBoxLayout()
+        webPlateLayout.addWidget(self.lwSpinBox)
+        webPlateLayout.addWidget(self.twSpinBox)
+        self.addWebPLGroupBox.setLayout(webPlateLayout)
+        inputPropLayout.addWidget(self.addWebPLGroupBox, 1, 0)
+        inputPropLayout.addWidget(self.doubleBox, 4, 0)
+        inputPropLayout.addWidget(distLable, 4, 2)
+        inputPropLayout.addWidget(self.distSpinBox, 4, 1)
         inputPropGroup.setLayout(inputPropLayout)
 
         # curve widget
@@ -224,7 +260,7 @@ class Window(QMainWindow):
         pushButtonLayout.addWidget(addSectionButton)
         pushButtonLayout.addWidget(deleteSectionButton)
         pushButtonLayout.addWidget(clearSectionButton)
-        #pushButtonLayout.addWidget(saveToFileButton)
+        pushButtonLayout.addWidget(saveToFileButton)
 
         pushButtonLayout.addStretch()
         pushButtonLayout.addWidget(calculateOneButton)
@@ -412,9 +448,26 @@ class Window(QMainWindow):
         settings.setValue("MainSplitter1", QVariant(self.mainSplitter.saveState()))
 
     def setSectionLabels(self):
-        self.sectionsBox.clear()
         sectionType = self.currentSectionType()
+        #self.last_sectionBox_index[sectionType] = self.sectionsBox.currentIndex()
+        self.sectionsBox.clear()
         self.sectionsBox.addItems(self.getSectionLabels(sectionType))
+        self.sectionsBox.setCurrentIndex(self.last_sectionBox_index[sectionType])
+        #print self.last_sectionBox_index
+
+    def updateGui(self):
+        index = self.doubleBox.currentIndex()
+        sectionType = self.currentSectionType()
+        if sectionType == 'UNP':
+            self.doubleBox.removeItem(2)
+            if index == 2:
+                self.doubleBox.setCurrentIndex(index - 1)
+            self.addWebPLGroupBox.setChecked(False)
+            self.addWebPLGroupBox.setCheckable(False)
+
+        elif sectionType == 'IPE':
+            self.doubleBox.addItem(self.doubleList1[-1])
+            self.addWebPLGroupBox.setCheckable(True)
 
     def getSectionLabels(self, sectionType='IPE'):
         if sectionType == 'IPE':
@@ -444,9 +497,12 @@ class Window(QMainWindow):
         th = self.thSpinBox.value()
         lv = self.lvSpinBox.value() * 10
         tv = self.tvSpinBox.value()
+        lw = self.lwSpinBox.value() * 10
+        tw = self.twSpinBox.value()
         dist = self.distSpinBox.value()
-        isTBPlate = self.addTBPLCheckBox.isChecked()
-        isLRPlate = self.addLRPLCheckBox.isChecked()
+        isTBPlate = self.addTBPLGroupBox.isChecked()
+        isLRPlate = self.addLRPLGroupBox.isChecked()
+        isWebPlate = self.addWebPLGroupBox.isChecked()
         useAs = self.useAsDict[unicode(self.useAsBox.currentText())]
         ductility = self.ductilityDict[unicode(self.ductilityBox.currentText())]
         isDouble = self.doubleDict[unicode(self.doubleBox.currentText())][0]
@@ -466,7 +522,10 @@ class Window(QMainWindow):
         if isLRPlate:
             p2 = sec.Plate(tv, lv)
             section = sec.AddPlateLR(section, p2)
-        if isSouble or isDouble or isTBPlate or isLRPlate:
+        if isWebPlate:
+            p3 = sec.Plate(tw, lw)
+            section = sec.AddPlateWeb(section, p3)
+        if isSouble or isDouble or isTBPlate or isLRPlate or isWebPlate:
             section.equivalentSectionI()
             section.name = '{}{}{}'.format(section.name, useAs, ductility)
 
@@ -486,8 +545,7 @@ class Window(QMainWindow):
             return
         if (QMessageBox.question(self, "sections - Remove",
                 (QString(u"همه مقاطع حذف شوند؟")),
-                QMessageBox.Yes|QMessageBox.No) ==
-                QMessageBox.No):
+                QMessageBox.Yes|QMessageBox.No) == QMessageBox.No):
             return
         self.model1.sections = []
         self.model1.reset()

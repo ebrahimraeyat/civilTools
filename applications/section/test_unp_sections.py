@@ -133,7 +133,7 @@ class TestUnpSections(unittest.TestCase):
         self.assertAlmostEqual(self.UNP22_double_4sidePlate.xmax, 264, places=1)
 
     def test_UNP22_center_to_center(self):
-        self.assertIsNone(self.UNP22.cc)
+        self.assertEqual(self.UNP22.cc, 0)
         self.assertAlmostEqual(self.UNP22_double.cc, 197.28, places=1)
         self.assertAlmostEqual(self.UNP22_double_TBPlate.cc, 197.28, places=1)
         self.assertAlmostEqual(self.UNP22_double_4sidePlate.cc, 197.28, places=1)

@@ -522,7 +522,10 @@ class StructureModel(QAbstractTableModel):
             if row == K:
                 return QString.number(k, 'f', 2)
             if row == CFACTOR:
-                return QString.number(c, 'f', 4)
+                try:
+                    return QString.number(c, 'f', 4)
+                except:
+                    pass
         if role == Qt.BackgroundColorRole:
             if row in (HMAX, TEXP125):
                 return QVariant(QColor(250, 60, 0))

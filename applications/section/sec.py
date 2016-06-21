@@ -14,9 +14,10 @@ FILE_VERSION = 1
 
 class Section(object):
     sectionType = {'IPE': 'STEEL_I_SECTION',
-                   'UNP': 'STEEL_BOX'}
+                   'UNP': 'STEEL_I_SECTION'}
 
-    def __init__(self, **kwargs):
+    def __init__(self, cc=0, composite=None, useAs='B', ductility='M',
+                TBPlate=None, LRPlate=None, webPlate=None, slender=None, isDouble=None, isSouble=None, **kwargs):
         self.type = QString(kwargs['_type'])
         self.name = QString(kwargs['name'])
         self.area = kwargs['area']
@@ -35,44 +36,16 @@ class Section(object):
         self.d = kwargs['d']
         self.tw = kwargs['tw']
         self.r1 = kwargs['r1']
-
-        try:
-            self.cc = kwargs['cc']
-        except:
-            self.cc = None
-
-        try:
-            self.composite = QString(kwargs['composite'])
-        except:
-            self.composite = None
-        try:
-            self.useAs = QString(kwargs['useAs'])
-        except:
-            self.useAs = QString('B')
-        try:
-            self.ductility = QString(kwargs['ductility'])
-        except:
-            self.ductility = QString('M')
-        try:
-            self.TBPlate = kwargs['TBPlate']
-        except:
-            self.TBPlate = None
-        try:
-            self.LRPlate = kwargs['LRPlate']
-        except:
-            self.LRPlate = None
-        try:
-            self.slender = kwargs['slender']
-        except:
-            self.slender = 'None'
-        try:
-            self.isDouble = kwargs['isDouble']
-        except:
-            self.isDouble = False
-        try:
-            self.isSouble = kwargs['isSouble']
-        except:
-            self.isSouble = False
+        self.cc = cc
+        self.composite = composite
+        self.useAs = QString(useAs)
+        self.ductility = QString('M')
+        self.TBPlate = TBPlate
+        self.LRPlate = LRPlate
+        self.webPlate = webPlate
+        self.slender = slender
+        self.isDouble = isDouble
+        self.isSouble = isSouble
         self.calculateSectionProp()
         try:
             self.baseSection = kwargs['baseSection']
@@ -217,6 +190,13 @@ class Section(object):
         except:
             pass
 
+        try:
+            B2 = self.webPlate.tf
+            t2 = self.webPlate.bf
+        except:
+            pass
+
+
         parameters = slenderParameters[composite][useAs][ductility]
         #BF = eval(parameters['BF'])
         BF = self.xmax
@@ -247,15 +227,16 @@ class Section(object):
             V2 = 1
             V3 = 1
 
+        #self.equalSlendersParamsEtabs()
+
         return V2, V3
 
-        if isEquivalenIpeSlender(self):
+
+        if self.isEquivalenIpeSlender():
             self.slender = u'لاغر'
         else:
             self.slender = u'غیرلاغر'
 
-
-    #self.equalSlendersParamsEtabs()
 
 
 #def equalSlendersParams(BF, TF, D, TW):
@@ -275,24 +256,24 @@ class Section(object):
 
     #return BF, TF, D, TW
 
-#def equalSlendersParamsEtabs(self):
-    #'''Return BF, TF, D, TW for equivalent I section to
-    #correct calculation of AS2 and AS3 that etabs calculate
-    #automatically and change user input for this parameters.
-    #FS = flange slender
-    #WS = web slender'''
+    #def equalSlendersParamsEtabs(self):
+        #'''Return BF, TF, D, TW for equivalent I section to
+        #correct calculation of AS2 and AS3 that etabs calculate
+        #automatically and change user input for this parameters.
+        #FS = flange slender
+        #WS = web slender'''
 
-    #FS = self.bf / (2 * self.tf)
-    #WS = (self.d - 2 * self.tf) / self.tw
-    #TF = sqrt((.25 * self.ASx) / FS)
-    #BF = 2 * FS * TF
-    #D = TF + sqrt(TF ** 2 + WS * self.ASy)
-    #TW = (D - 2 * TF) / WS
+        #FS = self.bf / (2 * self.tf)
+        #WS = (self.d - 2 * self.tf) / self.tw
+        #TF = sqrt((.25 * self.ASx) / FS)
+        #BF = 2 * FS * TF
+        #D = TF + sqrt(TF ** 2 + WS * self.ASy)
+        #TW = (D - 2 * TF) / WS
 
-    #self.bf = BF
-    #self.tf = TF
-    #self.d = D
-    #self.tw = TW
+        #self.bf = BF
+        #self.tf = TF
+        #self.d = D
+        #self.tw = TW
 
     def isEquivalenIpeSlender(self):
         '''This function gives a equivalent ipe section and
@@ -309,8 +290,8 @@ class Section(object):
         FS = slenderParameters['flang'][useAs][ductility] * w
         WS = slenderParameters['web'][useAs][ductility] * w
 
-        fs = self.bf / self.tf
-        ws = (self.d - 2 * self.tf) / self.tw
+        fs = self.bf_equivalentI / self.tf_equivalentI
+        ws = (self.d_equivalentI - 2 * self.tf_equivalentI) / self.tw_equivalentI
 
         #print 'FS = {}, WS = {}\nfs = {}, ws = {}'.format(FS, WS, fs, ws)
 
@@ -398,7 +379,7 @@ def AddPlateTB(section, plate):
        section equal to bf/(2*tf)'''
 
     _type = section.type
-    name = section.name + 'F' + plate.name
+    name = section.name + 'TB' + plate.name
     area = section.area + 2 * plate.area
     xmax = section.xmax
     #xmax = max(section.xmax, plate.xmax)
@@ -431,7 +412,7 @@ def AddPlateTB(section, plate):
 def AddPlateLR(section, plate):
 
     _type = section.type
-    name = section.name + 'W' + plate.name
+    name = section.name + 'LR' + plate.name
     area = section.area + 2 * plate.area
     ymax = max(section.ymax, plate.ymax)
     xmax = section.xmax + 2 * plate.xmax
@@ -460,6 +441,39 @@ def AddPlateLR(section, plate):
         d=d, tw=tw, r1=r1, isDouble=isDouble, isSouble=isSouble, baseSection=baseSection, cc=cc,
         useAs=useAs, TBPlate=TBPlate, LRPlate=plate, ductility=ductility, composite='LRPlate')
 
+
+def AddPlateWeb(section, plate):
+
+    _type = section.type
+    name = section.name + 'W' + plate.name
+    area = section.area + 2 * plate.area
+    ymax = section.ymax
+    xmax = section.xmax
+    xm = xmax / 2
+    ym = section.ym
+    ASx = section.ASx
+    ASy = section.ASy + 2 * plate.area
+    Iy = section.Iy + 2 * (plate.Iy + plate.area * ((section.cc + section.tw) / 2 + plate.xm) ** 2)
+    Ix = section.Ix + 2 * plate.Ix
+    Zy = section.Zy + 2 * (plate.area * ((section.cc + section.tw) / 2 + plate.xm))
+    Zx = section.Zx + 2 * plate.Zx
+    isDouble = section.isDouble
+    isSouble = section.isSouble
+    baseSection = section.baseSection
+    bf = baseSection.bf
+    tf = baseSection.tf
+    d = baseSection.d
+    tw = baseSection.tw
+    r1 = baseSection.r1
+    TBPlate = section.TBPlate
+    LRPlate = section.LRPlate
+    useAs = baseSection.useAs
+    ductility = baseSection.ductility
+    cc = section.cc
+    return Section(_type=_type, name=name, area=area, xm=xm, ym=ym,
+        xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy, Zx=Zx, Zy=Zy, bf=bf, tf=tf,
+        d=d, tw=tw, r1=r1, isDouble=isDouble, isSouble=isSouble, baseSection=baseSection, cc=cc,
+        useAs=useAs, TBPlate=TBPlate, LRPlate=LRPlate, webPlate = plate, ductility=ductility, composite='LRPlate')
 
 #class AddPlateTBThick(AddPlateTB):
 
@@ -592,6 +606,15 @@ class SectionTableModel(QAbstractTableModel):
         self.sections = sorted(self.sections)
         self.reset()
 
+    def sortByArea(self):
+        def compare(a, b):
+            if a.area > b.area:
+                return 1
+            else:
+                return -1
+        self.sections = sorted(self.sections, compare)
+        self.reset()
+
     def flags(self, index):
         if not index.isValid():
             return Qt.ItemIsEnabled
@@ -604,6 +627,7 @@ class SectionTableModel(QAbstractTableModel):
             not (0 <= index.row() < len(self.sections))):
             return QVariant()
         section = self.sections[index.row()]
+        baseSection = section.baseSection
         column = index.column()
         if role == Qt.DisplayRole:
             if column == NAME:
@@ -657,21 +681,21 @@ class SectionTableModel(QAbstractTableModel):
                     return QVariant(QColor(250, 40, 0))
                 else:
                     return QVariant(QColor(100, 250, 0))
-            elif 'IPE14' in section.name:
+            elif '14' in baseSection.name:
                 return QVariant(QColor(150, 200, 150))
-            elif 'IPE16' in section.name:
+            elif '16' in baseSection.name:
                 return QVariant(QColor(150, 200, 250))
-            elif 'IPE18' in section.name:
+            elif '18' in baseSection.name:
                 return QVariant(QColor(250, 200, 250))
-            elif 'IPE20' in section.name:
+            elif '20' in baseSection.name:
                 return QVariant(QColor(250, 250, 130))
-            elif 'IPE22' in section.name:
+            elif '22' in baseSection.name:
                 return QVariant(QColor(10, 250, 250))
-            elif 'IPE24' in section.name:
+            elif '24' in baseSection.name:
                 return QVariant(QColor(210, 230, 230))
-            elif 'IPE27' in section.name:
+            elif '27' in baseSection.name:
                 return QVariant(QColor(110, 230, 230))
-            elif 'IPE30' in section.name:
+            elif '30' in baseSection.name:
                 return QVariant(QColor(210, 130, 230))
             else:
                 return QVariant(QColor(150, 150, 250))
@@ -706,13 +730,13 @@ class SectionTableModel(QAbstractTableModel):
             elif section == ZY:
                 return QVariant("Zy (mm3)")
             elif section == BF:
-                return QVariant("eq_bf (mm)")
+                return QVariant("bf_eq (mm)")
             elif section == TF:
-                return QVariant("eq_tf (mm)")
+                return QVariant("tf_eq (mm)")
             elif section == D:
-                return QVariant("eq_d (mm)")
+                return QVariant("d_eq (mm)")
             elif section == TW:
-                return QVariant("eq_tw (mm)")
+                return QVariant("tw_eq (mm)")
             elif section == Sx:
                 return QVariant("Sx (mm3)")
             elif section == Sy:

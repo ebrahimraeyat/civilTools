@@ -145,7 +145,7 @@ class TestIpeSoubleSections(unittest.TestCase):
         self.assertAlmostEqual(self.IPE22_souble_4sidePlate.xm, 177, places=1)
 
     def test_IPE22_center_to_center(self):
-        self.assertIsNone(self.IPE22.cc)
+        self.assertEqual(self.IPE22.cc, 0)
         self.assertAlmostEqual(self.IPE22_souble.cc, 110, places=1)
         self.assertAlmostEqual(self.IPE22_souble_TBPlate.cc, 110, places=1)
         self.assertAlmostEqual(self.IPE22_souble_4sidePlate.cc, 110, places=1)
