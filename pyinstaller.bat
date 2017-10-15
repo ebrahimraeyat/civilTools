@@ -1,1 +1,0 @@
-c:\Python27\Scripts\pyinstaller.exe --onedir  --name=civilTools --windowed e:\python\civilTools\civilTools.py

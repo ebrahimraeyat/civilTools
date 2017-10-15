@@ -1,1 +1,0 @@
-c:\Python27\Scripts\pyinstaller.exe --onedir  --name=cfactor --windowed e:\python\cfactor\2800_class\MainWindow.py
