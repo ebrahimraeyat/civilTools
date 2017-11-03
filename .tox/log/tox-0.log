@@ -1,0 +1,13 @@
+actionid: tox
+msg: packaging
+cmdargs: ['/usr/bin/python2', local('/home/ebi/python/civilTools/setup.py'), 'sdist', '--formats=zip', '--dist-dir', local('/home/ebi/python/civilTools/.tox/dist')]
+env: None
+
+running sdist
+running egg_info
+creating civiltools.egg-info
+writing civiltools.egg-info/PKG-INFO
+writing top-level names to civiltools.egg-info/top_level.txt
+writing dependency_links to civiltools.egg-info/dependency_links.txt
+writing manifest file 'civiltools.egg-info/SOURCES.txt'
+error: package directory 'civiltools' does not exist

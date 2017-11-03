@@ -1,0 +1,50 @@
+<RCC>
+    <qresource prefix="/main_resources">
+		<file>icons/libreengineering.png</file>
+		<file>icons/qt.png</file>
+		<file>icons/main/about.png</file>
+		<file>icons/main/add.png</file>
+		<file>icons/main/bold.png</file>
+		<file>icons/main/calc.png</file>
+		<file>icons/main/cancel.png</file>
+		<file>icons/main/center.png</file>
+		<file>icons/main/check.png</file>
+		<file>icons/main/clear.png</file>
+		<file>icons/main/color.png</file>
+		<file>icons/main/config.png</file>
+		<file>icons/main/copy.png</file>
+		<file>icons/main/cut.png</file>
+		<file>icons/main/folder.png</file>
+		<file>icons/main/font.png</file>
+		<file>icons/main/italic.png</file>
+		<file>icons/main/just.png</file>
+		<file>icons/main/left.png</file>
+		<file>icons/main/load.png</file>
+		<file>icons/main/open.png</file>
+		<file>icons/main/paste.png</file>
+		<file>icons/main/pdf.png</file>
+		<file>icons/main/print.png</file>
+		<file>icons/main/quit.png</file>
+		<file>icons/main/redo.png</file>
+		<file>icons/main/remove.png</file>
+		<file>icons/main/right.png</file>
+		<file>icons/main/run.png</file>
+		<file>icons/main/save.png</file>
+		<file>icons/main/saveas.png</file>
+		<file>icons/main/search.png</file>
+		<file>icons/main/select.png</file>
+		<file>icons/main/spellcheck.png</file>
+		<file>icons/main/underline.png</file>
+		<file>icons/main/undo.png</file>
+		<file>icons/main/view.png</file>
+    </qresource>
+    <qresource prefix="/cfactor_resources">
+    	<file>icons/cfactor/cfactor.png</file>
+    </qresource>
+    <qresource prefix="/section_resources">
+    	<file>icons/section/2IPEPL.png</file>
+    	<file>icons/section/autocad.png</file>
+    	<file>icons/section/xml.png</file>
+    	<file>images/section/2IPEPL.png</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,12 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+<file alias="2IPEPL.png">images/2IPEPL.png</file>
+<file alias="equivalentIPE.png">images/equivalentIPE.png</file>
+<file alias="filerun.png">images/run.png</file>
+<file alias="fileopen.png">images/fileopen.png</file>
+<file alias="filesave.png">images/filesave.png</file>
+<file alias="filequit.png">images/filequit.png</file>
+<file alias="icon.png">images/icon.png</file>
+
+</qresource>
+</RCC>

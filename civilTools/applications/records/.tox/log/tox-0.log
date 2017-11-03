@@ -1,0 +1,8 @@
+actionid: tox
+msg: packaging
+cmdargs: ['/usr/bin/python2', local('/home/ebi/olomTahghighat/random/records/setup.py'), 'sdist', '--formats=zip', '--dist-dir', local('/home/ebi/olomTahghighat/random/records/.tox/dist')]
+env: None
+
+  File "setup.py", line 61
+    from __future__ import print_function
+SyntaxError: from __future__ imports must occur at the beginning of the file
