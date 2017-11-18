@@ -78,6 +78,8 @@ class CivilTools(QMainWindow):
         size_policy.setHeightForWidth(self.btn_quit.sizePolicy().hasHeightForWidth())
         self.btn_quit.setSizePolicy(size_policy)
         self.btn_quit.setMinimumSize(100, 25)
+        self.btn_check_for_updates = QPushButton('چک بروزرسانی', self.main_widget)
+        self.btn_check_for_updates.clicked.connect(self.check_for_updates)
         # btn_font = QPushButton('فونت نرم افزار', self.main_widget)
         # btn_font.clicked.connect(self.setfont)
 
@@ -90,6 +92,7 @@ class CivilTools(QMainWindow):
         btn_layout.addItem(h_spacer)
         # btn_layout.addWidget(btn_font)
         btn_layout.addWidget(self.btn_about)
+        btn_layout.addWidget(self.btn_check_for_updates)
         btn_layout.addWidget(self.btn_quit)
 
         main_layout = QVBoxLayout(self.main_widget)
@@ -125,6 +128,19 @@ class CivilTools(QMainWindow):
         msg += "- تحت لیسانس " + versions.license + "\n\n"
         msg += "- توسعه دهنده: ابراهیم رعیت رکن آبادی"
         QMessageBox.about(self, "درباره - " + self.win_title, msg)
+
+    def check_for_updates(self):
+        try:
+            status = checkupdate.check_one('civiltools')
+            if status[0]:
+                msg_info = 'Check for packages update - OK'
+                msg_text = status[1]
+            else:
+                msg_info = 'Check for packages update - !!! out to date !!!'
+                msg_text = status[1]
+            QMessageBox.information(None, msg_info, status[1])
+        except:
+            QMessageBox.information(None, 'Check for packages update', 'Checking failed !! ')
 
     # def setfont(self):
     #     font, ok = QFontDialog.getFont(self.font(), self)
