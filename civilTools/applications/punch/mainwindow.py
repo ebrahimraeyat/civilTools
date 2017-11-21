@@ -1,13 +1,13 @@
 from PyQt5 import uic, QtWidgets
 import sys
-from punch import Column, Foundation, Punch
+from .punch import Column, Foundation, Punch, ShearSteel
 
  
 class Ui(QtWidgets.QMainWindow):
 
     def __init__(self):
         super(Ui, self).__init__()
-        uic.loadUi('mainwindow.ui', self)
+        uic.loadUi('./mainwindow.ui', self)
         self.run_Button.clicked.connect(self.update_result)
 
     def get_column(self):
@@ -24,17 +24,41 @@ class Ui(QtWidgets.QMainWindow):
         cover = self.cover_spinBox.value()
         height = self.height_spinBox.value()
         return Foundation(fc, height, dl, ds, cover)
-        
-    def calculate_Vc(self):
+
+    def get_punch(self):
         curr_column = self.get_column()
         curr_foundation = self.get_foundation()
-        punch = Punch(curr_foundation, curr_column)
-        return punch.calculate_Vc()
+        if self.b0_groupBox.isChecked():
+            b0 = self.b0_spinBox.value()
+            return Punch(curr_foundation, curr_column, b0=b0)
+        return Punch(curr_foundation, curr_column)
+        
+    def calculate_punch(self):
+        punch = self.get_punch()
+        punch.calculate_Vc()
+        return punch
+
+    def get_shear_steel(self):
+        curr_column = self.get_column()
+        curr_foundation = self.get_foundation()
+        b0 = None
+        if self.b0_groupBox.isChecked():
+            b0 = self.b0_spinBox.value()
+        Vu = self.vu_spinBox.value()
+        fys = int(self.fys_comboBox.currentText())
+        return ShearSteel(curr_foundation, curr_column, Vu=Vu, b0=b0, fy=fys)
+
+    def calculate_shear_Vc(self):
+        shear_steel = self.get_shear_steel()
+        shear_steel.calculate_Vc()
+        return shear_steel
 
     def update_result(self):
-        Vc = self.calculate_Vc()
-        text = 'Vc = {:0.0f} \tKn'.format(Vc/1000)
-        self.plainTextEdit.setPlainText(text)
+        if self.shear_groupBox.isChecked():
+            result = self.calculate_shear_Vc()
+        else:
+            result = self.calculate_punch()
+        self.plainTextEdit.setPlainText(result.__str__())
 
 
  

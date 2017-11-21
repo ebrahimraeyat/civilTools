@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>731</width>
-    <height>636</height>
+    <width>880</width>
+    <height>799</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>punch</string>
   </property>
   <property name="windowIcon">
    <iconset>
@@ -26,8 +26,8 @@
      <rect>
       <x>213</x>
       <y>20</y>
-      <width>481</width>
-      <height>561</height>
+      <width>661</width>
+      <height>721</height>
      </rect>
     </property>
     <property name="readOnly">
@@ -38,9 +38,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>11</y>
+      <y>20</y>
       <width>181</width>
-      <height>571</height>
+      <height>721</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -93,7 +93,7 @@
             <number>50</number>
            </property>
            <property name="value">
-            <number>400</number>
+            <number>300</number>
            </property>
           </widget>
          </item>
@@ -125,7 +125,7 @@
             <number>50</number>
            </property>
            <property name="value">
-            <number>400</number>
+            <number>700</number>
            </property>
           </widget>
          </item>
@@ -182,7 +182,7 @@
        <property name="title">
         <string>Foundation</string>
        </property>
-       <widget class="QWidget" name="">
+       <widget class="QWidget" name="layoutWidget">
         <property name="geometry">
          <rect>
           <x>16</x>
@@ -217,7 +217,7 @@
             <number>50</number>
            </property>
            <property name="value">
-            <number>600</number>
+            <number>400</number>
            </property>
           </widget>
          </item>
@@ -246,7 +246,7 @@
             <number>10</number>
            </property>
            <property name="value">
-            <number>70</number>
+            <number>20</number>
            </property>
           </widget>
          </item>
@@ -275,7 +275,7 @@
             <number>5</number>
            </property>
            <property name="value">
-            <number>20</number>
+            <number>30</number>
            </property>
           </widget>
          </item>
@@ -297,8 +297,11 @@
            <property name="toolTip">
             <string>foundation  main rebars diameter</string>
            </property>
+           <property name="currentText">
+            <string>10</string>
+           </property>
            <property name="currentIndex">
-            <number>3</number>
+            <number>0</number>
            </property>
            <item>
             <property name="text">
@@ -437,17 +440,156 @@
       </widget>
      </item>
      <item>
-      <spacer name="verticalSpacer">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
+      <widget class="QGroupBox" name="shear_groupBox">
+       <property name="title">
+        <string>shear reinforcement</string>
        </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>88</height>
-        </size>
+       <property name="checkable">
+        <bool>true</bool>
        </property>
-      </spacer>
+       <widget class="QWidget" name="layoutWidget">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>40</y>
+          <width>147</width>
+          <height>72</height>
+         </rect>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_3">
+         <item row="0" column="0">
+          <widget class="QLabel" name="vu_label_2">
+           <property name="text">
+            <string>Vu</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QSpinBox" name="vu_spinBox">
+           <property name="suffix">
+            <string>  KN</string>
+           </property>
+           <property name="minimum">
+            <number>0</number>
+           </property>
+           <property name="maximum">
+            <number>20000000</number>
+           </property>
+           <property name="singleStep">
+            <number>10</number>
+           </property>
+           <property name="value">
+            <number>200</number>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="fys_label_2">
+           <property name="text">
+            <string>fys</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QComboBox" name="fys_comboBox">
+           <property name="mouseTracking">
+            <bool>false</bool>
+           </property>
+           <property name="toolTip">
+            <string>foundation  main rebars diameter</string>
+           </property>
+           <property name="currentText">
+            <string>340</string>
+           </property>
+           <property name="currentIndex">
+            <number>1</number>
+           </property>
+           <item>
+            <property name="text">
+             <string>300</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>340</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>400</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="b0_groupBox">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="title">
+        <string>p&amp;unch Area</string>
+       </property>
+       <property name="flat">
+        <bool>false</bool>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <widget class="QWidget" name="layoutWidget">
+        <property name="geometry">
+         <rect>
+          <x>19</x>
+          <y>30</y>
+          <width>141</width>
+          <height>34</height>
+         </rect>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QLabel" name="b0_label">
+           <property name="text">
+            <string>b0</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="b0_spinBox">
+           <property name="suffix">
+            <string>  mm</string>
+           </property>
+           <property name="minimum">
+            <number>100</number>
+           </property>
+           <property name="maximum">
+            <number>10000</number>
+           </property>
+           <property name="singleStep">
+            <number>10</number>
+           </property>
+           <property name="value">
+            <number>250</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </widget>
      </item>
      <item>
       <widget class="QPushButton" name="run_Button">
@@ -470,7 +612,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>731</width>
+     <width>880</width>
      <height>30</height>
     </rect>
    </property>

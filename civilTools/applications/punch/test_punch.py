@@ -1,5 +1,5 @@
 import unittest
-from punch import Column, Foundation, Punch, ShearSteel
+from .punch import Column, Foundation, Punch, ShearSteel
 
 
 class Column_Test(unittest.TestCase):
@@ -52,7 +52,7 @@ class ShearSteel_Test(unittest.TestCase):
 		self.column = Column(c1=400, c2=400)
 		fou = Foundation(fc=25, h=200, dl=10, ds=10, cover=20)
 		self.punch = Punch(fou, self.column)
-		self.shear_steel = ShearSteel(fou, self.column, 671200, 300)
+		self.shear_steel = ShearSteel(fou, self.column, Vu=671200, fy=300)
 
 	def test_beta(self):
 		self.assertEqual(self.column.beta, 1)

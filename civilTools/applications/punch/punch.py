@@ -5,12 +5,33 @@ pi = 3.14
 
 class Punch:
 
-	def __init__(self, foundation, column, phi=0.75):
+	def __init__(self, foundation, column, b0=None, phi=0.75):
 		self.foundation = foundation
 		self.column = column
+		self.b0 = b0
 		self.phi = phi
 
-	def _calculate_b0(self):
+	def __str__(self):
+		def _title(title):
+			line = '\n' + 20 * '-' + '\n'
+			return line + title + line
+
+		# foundation
+		s = ''
+		s += _title('Foundation')
+		s += 'fc = {}\t MPa\n'.format(self.foundation.fc)
+		s += 'd = {:0.0f}\t mm\n'.format(self.foundation.d)
+		# punch
+		s += _title('Punch Result')
+		s += 'b0 = {:0.0f}\t mm\n'.format(self.b0)
+		s += 'phi = {}\t\n'.format(self.phi)
+		s += 'Vc1 = {:0.0f}\t KN\n'.format(self.__Vc1 / 1000)
+		s += 'Vc2 = {:0.0f}\t KN\n'.format(self.__Vc2 / 1000)
+		s += 'Vc3 = {:0.0f}\t KN\n'.format(self.__Vc3 / 1000)
+		s += 'Vc = min(Vc1, Vc2, Vc3) = {:0.0f}\t KN\n'.format(self.__Vc / 1000)
+		return s
+
+	def calculate_b0(self):
 		if self.column.shape == 'rec':
 			if self.column.pos == 'center':
 				a = self.column.c1 + self.foundation.d
@@ -31,30 +52,54 @@ class Punch:
 			return 2 * pi * r
 
 	def calculate_Vc(self):
-		b0 = self._calculate_b0()
+		if not self.b0:
+			self.b0 = self.calculate_b0()
 		d = self.foundation.d
 		beta = self.column.beta
 		alpha_s = self.column.alpha_s
 		fc = self.foundation.fc
-		one_way_shear_capacity = math.sqrt(fc) * b0 * d / 6
-		Vc1 = one_way_shear_capacity * 2
-		Vc2 = one_way_shear_capacity * (1 + 2 / beta)
-		Vc3 = one_way_shear_capacity * (2 + alpha_s * d / b0) / 2
-		return min(Vc1, Vc2, Vc3) * self.phi
+		one_way_shear_capacity = math.sqrt(fc) * self.b0 * d / 6  * self.phi
+		self.__Vc1 = one_way_shear_capacity * 2
+		self.__Vc2 = one_way_shear_capacity * (1 + 2 / beta)
+		self.__Vc3 = one_way_shear_capacity * (2 + alpha_s * d / self.b0) / 2
+		self.__Vc = min(self.__Vc1, self.__Vc2, self.__Vc3)
+		return self.__Vc
 
 
 class ShearSteel(Punch):
-	def __init__(self, foundation, column, Vu, fy=340, phi=0.75):
-		super().__init__(foundation, column, phi)
+	def __init__(self, foundation, column, Vu, b0=None, fy=340, phi=0.75):
+		super().__init__(foundation, column, b0=b0, phi=phi)
 		self.Vu = Vu
 		self.fy = fy
 
+	def __str__(self):
+		def _title(title):
+			line = '\n' + 20 * '-' + '\n'
+			return line + title + line
+
+		# foundation
+		s = ''
+		s += _title('Foundation')
+		s += 'fc = {}\t MPa\n'.format(self.foundation.fc)
+		s += 'd = {:0.0f}\t mm\n'.format(self.foundation.d)
+		# punch
+		s += _title('Punch Result')
+		s += 'b0 = {:0.0f}\t mm\n'.format(self.b0)
+		s += 'phi = {}\t\n'.format(self.phi)
+		s += 'Vc = {:0.0f}\t KN\n'.format(self.__Vc / 1000)
+		return s
+
 	def calculate_Vc(self):
-		b0 = self.calculate_b0()
+		if not self.b0:
+			self.b0 = self.calculate_b0()
 		d = self.foundation.d
 		fc = self.foundation.fc
-		one_way_shear_capacity = math.sqrt(fc) * b0 * d / 6
-		return one_way_shear_capacity
+		self.__Vc = math.sqrt(fc) * self.b0 * d / 6
+		return self.__Vc
+
+	def calculate_shear_steel(self):
+		# TODO
+		pass
 
 
 class Column:
@@ -93,8 +138,10 @@ class Column:
 
 
 class Foundation:
-	def __init__(self, fc, h, dl, ds, cover, shape=None):
+	def __init__(self, fc, h, dl, ds, cover, d=None, shape=None):
 		self.fc = fc
 		self.shape = shape
-		self.d = h - cover - ds - dl / 2
+		self.d = d
+		if not d:
+			self.d = h - cover - ds - dl / 2
 
