@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>880</width>
-    <height>799</height>
+    <height>874</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,7 +27,7 @@
       <x>213</x>
       <y>20</y>
       <width>661</width>
-      <height>721</height>
+      <height>791</height>
      </rect>
     </property>
     <property name="readOnly">
@@ -40,12 +40,18 @@
       <x>10</x>
       <y>20</y>
       <width>181</width>
-      <height>721</height>
+      <height>791</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <widget class="QGroupBox" name="column_groupBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="minimumSize">
         <size>
          <width>0</width>
@@ -173,6 +179,12 @@
      </item>
      <item>
       <widget class="QGroupBox" name="foundation_groupBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="minimumSize">
         <size>
          <width>0</width>
@@ -441,6 +453,18 @@
      </item>
      <item>
       <widget class="QGroupBox" name="shear_groupBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>200</height>
+        </size>
+       </property>
        <property name="title">
         <string>shear reinforcement</string>
        </property>
@@ -453,7 +477,7 @@
           <x>20</x>
           <y>40</y>
           <width>147</width>
-          <height>72</height>
+          <height>134</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout_3">
@@ -486,7 +510,7 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="0">
+         <item row="3" column="0">
           <widget class="QLabel" name="fys_label_2">
            <property name="text">
             <string>fys</string>
@@ -496,7 +520,7 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="1">
+         <item row="3" column="1">
           <widget class="QComboBox" name="fys_comboBox">
            <property name="mouseTracking">
             <bool>false</bool>
@@ -527,6 +551,81 @@
            </item>
           </widget>
          </item>
+         <item row="1" column="1">
+          <widget class="QComboBox" name="ds_punch_comboBox">
+           <property name="toolTip">
+            <string>foundation shear rebars diameter</string>
+           </property>
+           <property name="currentIndex">
+            <number>0</number>
+           </property>
+           <item>
+            <property name="text">
+             <string>10</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>12</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>14</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>16</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>18</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>20</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>22</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>25</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>28</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>30</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>32</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="ds_labels_2">
+           <property name="text">
+            <string>ds</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </widget>
@@ -535,6 +634,18 @@
       <widget class="QGroupBox" name="b0_groupBox">
        <property name="enabled">
         <bool>true</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>70</height>
+        </size>
        </property>
        <property name="title">
         <string>p&amp;unch Area</string>
@@ -593,6 +704,12 @@
      </item>
      <item>
       <widget class="QPushButton" name="run_Button">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="minimumSize">
         <size>
          <width>0</width>
@@ -700,6 +817,24 @@
    </property>
   </action>
  </widget>
+ <tabstops>
+  <tabstop>plainTextEdit</tabstop>
+  <tabstop>c1_spinBox</tabstop>
+  <tabstop>c2_spinBox</tabstop>
+  <tabstop>pos_comboBox</tabstop>
+  <tabstop>height_spinBox</tabstop>
+  <tabstop>cover_spinBox</tabstop>
+  <tabstop>fc_spinBox</tabstop>
+  <tabstop>dl_comboBox</tabstop>
+  <tabstop>ds_comboBox</tabstop>
+  <tabstop>shear_groupBox</tabstop>
+  <tabstop>vu_spinBox</tabstop>
+  <tabstop>ds_punch_comboBox</tabstop>
+  <tabstop>fys_comboBox</tabstop>
+  <tabstop>b0_groupBox</tabstop>
+  <tabstop>b0_spinBox</tabstop>
+  <tabstop>run_Button</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

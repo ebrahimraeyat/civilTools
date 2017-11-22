@@ -1,5 +1,5 @@
 import unittest
-from .punch import Column, Foundation, Punch, ShearSteel
+from punch import Column, Foundation, Punch, ShearSteel
 
 
 class Column_Test(unittest.TestCase):
@@ -47,12 +47,14 @@ class Punch_Test(unittest.TestCase):
 		self.assertAlmostEqual(Vc, 558060.8, delta=0.1)
 
 
-class ShearSteel_Test(unittest.TestCase):
+class ShearSteel_Vc_Test(unittest.TestCase):
 	def setUp(self):
 		self.column = Column(c1=400, c2=400)
 		fou = Foundation(fc=25, h=200, dl=10, ds=10, cover=20)
 		self.punch = Punch(fou, self.column)
-		self.shear_steel = ShearSteel(fou, self.column, Vu=671200, fy=300)
+		self.shear_steel = ShearSteel(fou, self.column, Vu=671.200, fy=300)
+		self.Vc = self.shear_steel.calculate_Vc()
+		self.require_Av_per_s = self.shear_steel.require_Av_per_s()
 
 	def test_beta(self):
 		self.assertEqual(self.column.beta, 1)
@@ -66,9 +68,19 @@ class ShearSteel_Test(unittest.TestCase):
 		self.assertAlmostEqual(Vc, 466125.0, delta=0.1)
 
 	def test_Vc_with_shear_steel(self):
-		Vc = self.shear_steel.calculate_Vc()
-		self.assertAlmostEqual(Vc, 310750.0, delta=.1)
+		self.assertAlmostEqual(self.Vc, 310750.0, delta=.1)
 
+	def test_require_Av_per_s(self):
+		self.assertAlmostEqual(self.require_Av_per_s, 11.8, delta=.01)
 
+	def test_max_Av_per_s(self):
+		max_Av_per_s = self.shear_steel.max_Av_per_s()
+		self.assertLess(self.require_Av_per_s, max_Av_per_s)
 
+	def test_curr_Av(self):
+		curr_Av = self.shear_steel.curr_Av()
+		self.assertAlmostEqual(curr_Av, 904, delta=1.0)
 
+	def test_require_dist_between_shear_reinforcement(self):
+		s_req = self.shear_steel.require_dist_between_shear_reinforcement()
+		self.assertAlmostEqual(s_req, 76.6, delta=.1)

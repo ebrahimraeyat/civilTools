@@ -1,13 +1,13 @@
 from PyQt5 import uic, QtWidgets
 import sys
-from .punch import Column, Foundation, Punch, ShearSteel
+from punch import Column, Foundation, Punch, ShearSteel
 
  
 class Ui(QtWidgets.QMainWindow):
 
     def __init__(self):
         super(Ui, self).__init__()
-        uic.loadUi('./mainwindow.ui', self)
+        uic.loadUi('mainwindow.ui', self)
         self.run_Button.clicked.connect(self.update_result)
 
     def get_column(self):
@@ -46,7 +46,8 @@ class Ui(QtWidgets.QMainWindow):
             b0 = self.b0_spinBox.value()
         Vu = self.vu_spinBox.value()
         fys = int(self.fys_comboBox.currentText())
-        return ShearSteel(curr_foundation, curr_column, Vu=Vu, b0=b0, fy=fys)
+        ds = int(self.ds_punch_comboBox.currentText())
+        return ShearSteel(curr_foundation, curr_column, Vu=Vu, b0=b0, fy=fys, rebar=ds)
 
     def calculate_shear_Vc(self):
         shear_steel = self.get_shear_steel()
