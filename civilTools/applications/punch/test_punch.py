@@ -1,5 +1,5 @@
 import unittest
-from punch import Column, Foundation, Punch, ShearSteel
+from .punch import Column, Foundation, Punch, ShearSteel
 
 
 class Column_Test(unittest.TestCase):

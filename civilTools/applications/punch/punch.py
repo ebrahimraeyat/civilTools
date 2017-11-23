@@ -1,5 +1,5 @@
 import math
-from rebar import Rebar
+from .rebar import Rebar
 
 pi = math.pi
 
@@ -135,7 +135,7 @@ class ShearSteel(Punch):
 
 	def require_dist_between_shear_reinforcement(self):
 		s_req = self.curr_Av() / self.require_Av_per_s()
-		return s_req
+		return max(0, s_req)
 
 
 class Column:

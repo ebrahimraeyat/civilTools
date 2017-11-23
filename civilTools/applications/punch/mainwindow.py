@@ -1,13 +1,13 @@
 from PyQt5 import uic, QtWidgets
 import sys
-from punch import Column, Foundation, Punch, ShearSteel
+from .punch import Column, Foundation, Punch, ShearSteel
 
  
 class Ui(QtWidgets.QMainWindow):
 
     def __init__(self):
         super(Ui, self).__init__()
-        uic.loadUi('mainwindow.ui', self)
+        uic.loadUi('applications/punch/mainwindow.ui', self)
         self.run_Button.clicked.connect(self.update_result)
 
     def get_column(self):
@@ -62,7 +62,6 @@ class Ui(QtWidgets.QMainWindow):
         self.plainTextEdit.setPlainText(result.__str__())
 
 
- 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     window = Ui()
