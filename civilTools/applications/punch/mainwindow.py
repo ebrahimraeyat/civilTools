@@ -1,4 +1,4 @@
-from PyQt5 import uic, QtWidgets
+from PyQt5 import uic, QtWidgets, QtCore
 import sys
 from .punch import Column, Foundation, Punch, ShearSteel
 
@@ -64,6 +64,9 @@ class Ui(QtWidgets.QMainWindow):
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
+    translator = QtCore.QTranslator()
+    translator.load("applications/punch/mainwindow.qm")
+    app.installTranslator(translator)
     window = Ui()
     window.show()
     sys.exit(app.exec_())

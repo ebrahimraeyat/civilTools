@@ -3,7 +3,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 
 X, Y = range(2)
-CFACTOR, K, CDRIFT, KDRIFT, SYSTEM, LATERAL, HMAX, RU, OMEGA0, CD, TEXP, TEXP125, TAN = range(13)
+CFACTOR, K, CDRIFT, KDRIFT, TAN, TEXP125, TEXP, HMAX, SYSTEM, LATERAL, RU, OMEGA0, CD = range(13)
 MAGIC_NUMBER = 0x570C4
 FILE_VERSION = 1
 
@@ -84,17 +84,17 @@ class StructureModel(QAbstractTableModel):
                 except:
                     pass
         if role == Qt.BackgroundColorRole:
-            if row == HMAX:
-                return QVariant(QColor(255, 140, 140))
+            # if row == HMAX:
+            #     return QVariant(QColor(255, 140, 140))
             if row in (K, CFACTOR):
                 return QVariant(QColor(140, 255, 140))
             if row in (KDRIFT, CDRIFT):
                 return QVariant(QColor(140, 140, 255))
-            if row == TAN:
-                if Tan <= 1.25 * Texp:
-                    return QVariant(QColor(200, 200, 250))
-                else:
-                    return QVariant(QColor(Qt.yellow))
+            # if row == TAN:
+            #     if Tan <= 1.25 * Texp:
+            #         return QVariant(QColor(200, 200, 250))
+            #     else:
+            #         return QVariant(QColor(Qt.yellow))
             else:
                 return QVariant(QColor(230, 230, 250))
         if role == Qt.FontRole:
@@ -114,8 +114,8 @@ class StructureModel(QAbstractTableModel):
             return QVariant(int(Qt.AlignCenter | Qt.AlignVCenter))
         if role == Qt.BackgroundColorRole:
             if orientation == Qt.Vertical:
-                if section == HMAX:
-                    return QVariant(QColor(255, 80, 80))
+                # if section == HMAX:
+                #     return QVariant(QColor(255, 80, 80))
                 if section in (K, CFACTOR):
                     return QVariant(QColor(80, 255, 80))
                 if section in (KDRIFT, CDRIFT):

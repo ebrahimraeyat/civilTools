@@ -1,6 +1,6 @@
 import sys
 import subprocess
-from PyQt5 import uic, QtWidgets
+from PyQt5 import uic, QtWidgets, QtCore
 import checkupdate
 
 _appname = 'civiltools'
@@ -72,6 +72,9 @@ class FormWidget(QtWidgets.QWidget):
     
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
+    # translator = QtCore.QTranslator()
+    # translator.load("main_form.qm")
+    # app.installTranslator(translator)
     window = FormWidget()
     window.setWindowTitle(_appname + ' ' + _version)
     window.show()

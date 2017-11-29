@@ -1,14 +1,10 @@
-include AUTHORS.rst
-include CONTRIBUTING.rst
-include HISTORY.rst
-include LICENSE
-include README.rst
 include civilTools/RSN139_TABAS_DAY-L1.AT2
 
-recursive-include tests *
-recursive-include civilTools/resources *
+recursive-exclude tests *
 recursive-include civilTools/applications *
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]
-
-recursive-include docs *.rst conf.py Makefile make.bat
+recursive-exclude * test_*.py
+recursive-include * *.ui *.qm *.png
+recursive-exclude docs *
+recursive-exclude dist *

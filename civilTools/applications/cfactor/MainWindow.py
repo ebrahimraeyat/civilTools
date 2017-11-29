@@ -3,6 +3,7 @@ import sys
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+from PyQt5 import uic
 from . import qrc_resources
 from .db import ostanha
 from .building.build import *
@@ -23,13 +24,13 @@ link_ebrahim = ('Website: <a href="%s"><span style=" '
     '%s</span></a>') % (__url__, __url__)
 
 
-class Cfactor(QMainWindow):
+class Ui(QMainWindow):
 
-    def __init__(self, filename=None, parent=None):
-        super(Cfactor, self).__init__(parent)
+    def __init__(self):
+        super(Ui, self).__init__()
+        uic.loadUi('applications/cfactor/mainwindow.ui', self)
         self.dirty = False
         self.lastDirectory = ''
-        self.filename = filename
         self.html = ''
         self.printer = None
         self.create_widgets()
@@ -39,36 +40,12 @@ class Cfactor(QMainWindow):
         #self.__userH = 200
         #self.setMaxAllowedHeight()
         self.create_connections()
-        self.create_actions()
+        self.accept()
+        # self.create_actions()
         # settings = QSettings()
         #self.load_settings()
-        self.setWindowIcon(QIcon(":/icon.png"))
-        # font = QFont()
-        # font.setFamily("Tahoma")
-        # if sys.platform.startswith('linux'):
-        #     self.defaultPointsize = 10
-        # else:
-        #     self.defaultPointsize = 9
-        # font.setPointSize(self.defaultPointsize)
-        # self.setFont(font)
-        # p = self.palette()
-        # color = QColor()
-        # color.setRgb(255, 255, 170)
-        # p.setColor(self.backgroundRole(), color)
-        # self.setPalette(p)
-        self.setLayoutDirection(Qt.RightToLeft)
-        self.setWindowTitle("ضریب زلزله ویرایش چهارم ۲۸۰۰")
         #guirestore(self, settings)
         #self.updateFileMenu()
-        #QTimer.singleShot(0, self.loadInitialFile)
-
-    #def initialLoad(self):
-        #if  QFile.exists(self.filename):
-            #try:
-                #self.load()
-            #except IOError, err:
-                #QMessageBox.warning(self, "Sections - Error",
-                        #"Failed to load: {0}".format(err))
 
     def create_connections(self):
         self.soilType.currentIndexChanged.connect(self.accept)
@@ -79,9 +56,8 @@ class Cfactor(QMainWindow):
         self.yTAnalaticalSpinBox.valueChanged.connect(self.accept)
         self.infillCheckBox.stateChanged.connect(self.accept)
         self.tAnalaticalGroupBox.clicked.connect(self.accept)
-        self.xSystemBox.currentIndexChanged.connect(self.insert_proper_lateral_resistance_systems_of_current_system_type_to_lateral_box)
-        self.ySystemBox.currentIndexChanged.connect(self.insert_proper_lateral_resistance_systems_of_current_system_type_to_lateral_box)
-        self.directionButtonGroup.buttonClicked.connect(self.setWidgetStack)
+        self.xSystemBox.currentIndexChanged.connect(self.insert_xlaterals)
+        self.ySystemBox.currentIndexChanged.connect(self.insert_ylaterals)
         self.xLateralBox.currentIndexChanged.connect(self.accept)
         self.yLateralBox.currentIndexChanged.connect(self.accept)
         self.storySpinBox.valueChanged.connect(self.accept)
@@ -96,55 +72,7 @@ class Cfactor(QMainWindow):
             self.structure_properties_table.resizeColumnToContents(column)
 
     def create_widgets(self):
-
-        # Label Widgets
-        soil_type_label = QLabel("نوع خاک")
-        height_label = QLabel('ارتفاع')
-        height_label.setAlignment(Qt.AlignRight)
-        story_label = QLabel('تعداد طبقات')
-        story_label.setAlignment(Qt.AlignRight)
-        analatical_period_x_label = QLabel('Tx<sub>an</sub>')
-        analatical_period_y_label = QLabel('Ty<sub>an</sub>')
-        system_label = QLabel('سیستم سازه')
-        lateral_label = QLabel('سیستم مقاوم جانبی')
-        ostan_label = QLabel("استان")
-        shahr_label = QLabel("شهر")
-        shahr_label.setAlignment(Qt.AlignRight)
-        importance_factor_label = QLabel('ضریب اهمیت')
-
-        # ComboBox Widgets
-        self.soilType = QComboBox()
-        self.soilType.addItems(['I', 'II', 'III', 'IV'])
-        self.soilType.setCurrentIndex(2)
-        self.soilType.setMaximumSize(90, 30)
-        self.soilType.setObjectName('SOILTYPE')
-        self.xSystemBox = QComboBox()
-        self.xSystemBox.setFixedWidth(400)
-        #self.xSystemBox.setObjectName('XSYSTEMBOX')
-        self.xLateralBox = QComboBox()
-        self.xLateralBox.setFixedWidth(400)
-        #self.xLateralBox.setObjectName('XLATERALBOX')
-        self.ySystemBox = QComboBox()
-        self.ySystemBox.setFixedWidth(400)
-        #self.ySystemBox.setObjectName('YSYSTEMBOX')
-        self.yLateralBox = QComboBox()
-        self.yLateralBox.setFixedWidth(400)
-        #self.yLateralBox.setObjectName('YLATERALBOX')
-        self.accText = QLineEdit()
-        self.accText.setEnabled(False)
-        #self.accText.setObjectName('ACCBOX')
-        self.accText.setMaximumWidth(90)
-        self.IBox = QComboBox()
-        self.IBox.addItems(['0.8', '1.0', '1.2', '1.4'])
-        self.IBox.setCurrentIndex(1)
-        self.IBox.setMaximumWidth(90)
-        self.IBox.setObjectName('IBOX')
-        self.ostanBox = QComboBox()
-        self.ostanBox.setObjectName('OSTANBOX')
-        self.shahrBox = QComboBox()
-        self.shahrBox.setObjectName('SHAHRBOX')
         ostans = ostanha.ostans.keys()
-        #ostans.sort()
         self.ostanBox.addItems(ostans)
         self.set_shahrs_of_current_ostan()
         self.setA()
@@ -152,238 +80,20 @@ class Cfactor(QMainWindow):
         for noesystem in systemTypes:
             self.xSystemBox.addItem(noesystem)
             self.ySystemBox.addItem(noesystem)
-
-        # SpinBox Widgets
-        self.HSpinBox = QDoubleSpinBox()
-        self.HSpinBox.setMaximumSize(90, 30)
-        self.HSpinBox.setSuffix(' متر')
-        self.HSpinBox.setValue(10.0)
-        self.HSpinBox.setMinimum(1)
-        self.storySpinBox = QSpinBox()
-        self.storySpinBox.setMaximumSize(90, 30)
-        self.storySpinBox.setValue(3)
-        self.storySpinBox.setRange(1, 100)
-        self.xTAnalaticalSpinBox = QDoubleSpinBox()
-        self.xTAnalaticalSpinBox.setDecimals(4)
-        self.xTAnalaticalSpinBox.setMinimum(0.01)
-        self.xTAnalaticalSpinBox.setSingleStep(0.05)
-        self.xTAnalaticalSpinBox.setValue(0.56)
-        self.xTAnalaticalSpinBox.setSuffix(' ثانیه')
-        self.yTAnalaticalSpinBox = QDoubleSpinBox()
-        self.yTAnalaticalSpinBox.setDecimals(4)
-        self.yTAnalaticalSpinBox.setMinimum(0.01)
-        self.yTAnalaticalSpinBox.setSingleStep(0.05)
-        self.yTAnalaticalSpinBox.setValue(0.56)
-        self.yTAnalaticalSpinBox.setSuffix(' ثانیه')
-
-        # CheckBox Widgets
-        self.infillCheckBox = QCheckBox('اثر میانقاب')
-        self.infillCheckBox.setToolTip('فقط برای قابهای خمشی فعال می باشد.')
-
-        # radio button widget
-        directionGroupBox = QGroupBox('راستای نیروی مقاوم جانبی')
-        font = QFont()
-        font.setPointSize(12)
-        directionGroupBox.setFont(font)
-        self.directionButtonGroup = QButtonGroup()
-        xDir = QRadioButton('X')
-        yDir = QRadioButton('Y')
-        xDir.setChecked(True)
-        self.directionButtonGroup.addButton(xDir, 1)
-        self.directionButtonGroup.addButton(yDir, 2)
-        directionLayout = QHBoxLayout()
-        directionLayout.addWidget(xDir)
-        directionLayout.addWidget(yDir)
-        directionWidget = QWidget()
-        directionWidget.setLayout(directionLayout)
-        dirGroupBoxLayout = QVBoxLayout()
-        dirGroupBoxLayout.addWidget(directionWidget)
-        directionGroupBox.setLayout(dirGroupBoxLayout)
-
-        # Group Box Widgets
-        self.tAnalaticalGroupBox = QGroupBox('زمان تناوب تحلیلی')
-        self.tAnalaticalGroupBox.setCheckable(False)
         self.tAnalaticalGroupBox.setChecked(True)
-        tAnalaticalLayout = QGridLayout()
-        tAnalaticalLayout.addWidget(analatical_period_x_label, 0, 1)
-        tAnalaticalLayout.addWidget(self.xTAnalaticalSpinBox, 0, 0)
-        tAnalaticalLayout.addWidget(analatical_period_y_label, 1, 1)
-        tAnalaticalLayout.addWidget(self.yTAnalaticalSpinBox, 1, 0)
-        self.tAnalaticalGroupBox.setLayout(tAnalaticalLayout)
-
-        # TextBrowser Widgets
-        font = QFont()
-        font.setPointSize(20)
-        #align = Qt.Alignment(Qt.AlignCenter | Qt.AlignVCenter)
-        self.browser = QTextEdit()
-        self.browser.setReadOnly(True)
-        self.browser.setFont(font)
-        self.browser.setMinimumWidth(180)
-        #self.browser.setStyleSheet("font: 75 24pt \"B Nazanin\";\n"
-#"alternate-background-color: rgb(255, 0, 255);\n")
-#"background-color: rgb(85, 170, 127);\n")
-        #
-        # view result in text export format
-        self.textExport = QTextEdit()
-        self.textExport.setReadOnly(True)
         #
         # curve widget
         self.curveBWidget = pl()
         self.curveBWidget.setMinimumSize(450, 300)
+        draw_layout = QVBoxLayout()
+        draw_layout.addWidget(self.curveBWidget)
+        self.draw_frame.setLayout(draw_layout)
 
-        self.structure_properties_table = QTableView()
-        self.structure_properties_table.setLayoutDirection(Qt.LeftToRight)
-
-        # soil properties table
-        headers = ['soil', "T0", "Ts", "S", "S0", "B1", "N", "B"]
-        self.soilPropertiesTable = QTableWidget(len(headers), 2)
-        self.soilPropertiesTable.setAlternatingRowColors(True)
-        self.soilPropertiesTable.setHorizontalHeaderLabels(["X", "Y"])
-        self.soilPropertiesTable.setVerticalHeaderLabels(headers)
         for i in range(5):
             self.soilPropertiesTable.setSpan(i, 0, 1, 2)
-        self.soilPropertiesTable.setLayoutDirection(Qt.LeftToRight)
-
-        # LAYOUTS
-        # main layout
-        inputLayout = QGridLayout()
-        inputLayout.addWidget(self.accText, 0, 4)
-        inputLayout.addWidget(soil_type_label, 1, 0)
-        inputLayout.addWidget(self.soilType, 1, 1)
-        inputLayout.addWidget(importance_factor_label, 2, 0)
-        inputLayout.addWidget(self.IBox, 2, 1)
-        inputLayout.addWidget(ostan_label, 0, 0)
-        inputLayout.addWidget(self.ostanBox, 0, 1)
-        inputLayout.addWidget(shahr_label, 0, 2)
-        inputLayout.addWidget(self.shahrBox, 0, 3)
-        inputLayout.addWidget(height_label, 1, 2)
-        inputLayout.addWidget(self.HSpinBox, 1, 3)
-        inputLayout.addWidget(story_label, 2, 2)
-        inputLayout.addWidget(self.storySpinBox, 2, 3)
-        inputLayout.addWidget(self.infillCheckBox, 2, 4)
-        inputLayout.setColumnStretch(2, 2)
-        inputLayout.addWidget(directionGroupBox, 3, 0, 1, 3)
-        inputLayout.addWidget(system_label, 4, 0)
-        inputLayout.addWidget(lateral_label, 5, 0)
-        inputLayout.addWidget(self.tAnalaticalGroupBox, 3, 3, 3, 2)
-
-        # stacked widget
-        self.stackedWidget = QStackedWidget()
-        xDirWidget = QWidget()
-        xDirLayout = QVBoxLayout()
-        xDirLayout.addWidget(self.xSystemBox)
-        xDirLayout.addWidget(self.xLateralBox)
-        xDirWidget.setLayout(xDirLayout)
-        self.stackedWidget.addWidget(xDirWidget)
-
-        yDirWidget = QWidget()
-        yDirLayout = QVBoxLayout()
-        yDirLayout.addWidget(self.ySystemBox)
-        yDirLayout.addWidget(self.yLateralBox)
-        yDirWidget.setLayout(yDirLayout)
-        self.stackedWidget.addWidget(yDirWidget)
-        inputLayout.addWidget(self.stackedWidget, 4, 1, 2, 2)
-
-        inputGroupBox = QGroupBox('ورود داده ها')
-        inputWidget = QWidget()
-        inputWidget.autoFillBackground()
-        inputWidget.setLayout(inputLayout)
-        #inputGroupBox.setLayout(inputLayout)
-        #inputGroupBox.addWidget(inputWidget)
-        groupBoxLayout = QVBoxLayout()
-        groupBoxLayout.addWidget(inputWidget)
-        inputGroupBox.setLayout(groupBoxLayout)
-        fontWidget = QFont()
-        fontWidget.setBold(False)
-        #fontWidget.setPointSize(self.defaultPointsize)
-        #inputWidget.setFont(fontWidget)
-        #
-        # soil properties group box
-        self.soilPropGroupBox = QGroupBox('مشخصات خاک')
-        soilPropLayout = QVBoxLayout()
-        soilPropLayout.addWidget(self.soilPropertiesTable)
-        self.soilPropGroupBox.setLayout(soilPropLayout)
-        #
-        # structure properties group box
-        self.structurePropGroupBox = QGroupBox('مشخصات سازه')
-        structurePropLayout = QVBoxLayout()
-        structurePropLayout.addWidget(self.structure_properties_table)
-        self.structurePropGroupBox.setLayout(structurePropLayout)
-        #
-        # soil and structure properties splitter
-        soilStrucPropertiesWidget = QWidget()
-        soilStrucPropertiesLayout = QVBoxLayout()
-        soilStrucPropertiesLayout.addWidget(self.structurePropGroupBox)
-        soilStrucPropertiesLayout.addWidget(self.soilPropGroupBox)
-        soilStrucPropertiesWidget.setLayout(soilStrucPropertiesLayout)
-
-        #
-        # splittters widget
-        self.inputSplitter = QSplitter(Qt.Vertical)
-        self.inputSplitter.addWidget(inputGroupBox)
-        self.inputSplitter.addWidget(self.curveBWidget)
-        self.mainSplitter = QSplitter(Qt.Horizontal)
-        self.mainSplitter.addWidget(self.inputSplitter)
-        self.mainSplitter.addWidget(soilStrucPropertiesWidget)
-        self.inputSplitter.setObjectName("InputSplitter2")
-        self.mainSplitter.setObjectName("MainSplitter2")
-
-        self.insert_proper_lateral_resistance_systems_of_current_system_type_to_lateral_box(self.xSystemBox, self.xLateralBox)
-        self.insert_proper_lateral_resistance_systems_of_current_system_type_to_lateral_box(self.ySystemBox, self.yLateralBox)
-
-        # TAB WIDGET
-        self.tabWidget = QTabWidget()
-        self.tabWidget.insertTab(0, self.mainSplitter, 'مشخصات ساختمان')
-        #self.tabWidget.insertTab(2, self.rTableWidget, 'جدول ضریب رفتار')
-        self.tabWidget.insertTab(1, self.textExport, 'word خروجی')
-
-        #
-        # central widget
-        self.setCentralWidget(self.tabWidget)
-        #
-        # status bar
-        self.statusbar = self.statusBar()
-
-    def create_actions(self):
-        # File Actions
-        exportToPdfText = 'Pdf خروجی به'
-        exportToWordText = 'Word خروجی به'
-        exportToHtmlText = 'Html خروجی به'
-        exportBCurveToImage = 'خروجی به تصویر'
-        exportBCurveToCsv = 'خروجی به اکسل'
-
-        filePdfAction = self.create_action(exportToPdfText, self.exportToPdf,
-                QKeySequence.Print, "file_extension_pdf", exportToPdfText)
-        fileOfficeAction = self.create_action(exportToWordText,
-        self.exportToOffice, "Ctrl+W", "file_extension_doc", exportToWordText)
-        fileHtmlAction = self.create_action(exportToHtmlText, self.exportToHtml,
-                "Ctrl+H", "file_extension_html", exportToHtmlText)
-        BCurveImageAction = self.create_action(exportBCurveToImage,
-            self.exportBCurveToImage, "Ctrl+I", "file_extension_jpg")
-        BCurveCsvAction = self.create_action(exportBCurveToCsv,
-            self.exportBCurveToCsv, "Ctrl+X", "file_extension_xls")
-        # Help Actions
-        helpAboutAction = self.create_action("درباره نرم افزار",
-                self.helpAbout, Qt.Key_F1)
-
-        self.fileMenu = self.menuBar().addMenu('فایل')
-        self.fileMenuActions = (filePdfAction, fileOfficeAction, fileHtmlAction)
-        self.add_actions(self.fileMenu, self.fileMenuActions)
-        fileToolbar = self.addToolBar("File")
-        fileToolbar.setIconSize(QSize(32, 32))
-        fileToolbar.setObjectName("FileToolBar")
-        self.add_actions(fileToolbar, self.fileMenuActions)
-
-        self.BCurveMenu = self.menuBar().addMenu("ضریب بازتاب")
-        self.BCurveMenuActions = (BCurveImageAction, BCurveCsvAction)
-        self.add_actions(self.BCurveMenu, self.BCurveMenuActions)
-        BCurveToolbar = self.addToolBar("BCurve")
-        BCurveToolbar.setIconSize(QSize(32, 32))
-        BCurveToolbar.setObjectName("BCurveToolBar")
-        self.add_actions(BCurveToolbar, self.BCurveMenuActions)
-
-        helpMenu = self.menuBar().addMenu("راهنما")
-        self.add_actions(helpMenu, (helpAboutAction, ))
+    
+        self.insert_xlaterals()
+        self.insert_ylaterals()
 
     def load_settings(self):
         settings = QSettings()
@@ -392,29 +102,6 @@ class Cfactor(QMainWindow):
         self.restoreState(settings.value("MainWindow/State2").toByteArray())
         self.inputSplitter.restoreState(settings.value("InputSplitter2").toByteArray())
         self.mainSplitter.restoreState(settings.value("MainSplitter2").toByteArray())
-
-    def create_action(self, text, slot=None, shortcut=None, icon=None,
-                     tip=None, checkable=False):
-        action = QAction(text, self)
-        if icon is not None:
-            action.setIcon(QIcon(":/{0}.png".format(icon)))
-        if shortcut is not None:
-            action.setShortcut(shortcut)
-        if tip is not None:
-            action.setToolTip(tip)
-            action.setStatusTip(tip)
-        if slot is not None:
-            action.triggered.connect(slot)
-        if checkable:
-            action.setCheckable(True)
-        return action
-
-    def add_actions(self, target, actions):
-        for action in actions:
-            if action is None:
-                target.addSeparator()
-            else:
-                target.addAction(action)
 
     #def closeEvent(self, event):
         #settings = QSettings()
@@ -433,10 +120,6 @@ class Cfactor(QMainWindow):
         #settings.setValue("InputSplitter2", QVariant(self.inputSplitter.saveState()))
         #settings.setValue("MainSplitter2", QVariant(self.mainSplitter.saveState()))
 
-    def setWidgetStack(self):
-        index = self.directionButtonGroup.checkedId() - 1
-        self.stackedWidget.setCurrentIndex(index)
-
     def helpAbout(self):
         QMessageBox.about(self, "درباره نرم افزار محاسبه ضریب زلزله",
                 """<b>C Factor</b> v {0}   ۱۳۹۶/۰۱/۰۳
@@ -449,28 +132,22 @@ class Cfactor(QMainWindow):
                 به وبلاگ زیر مراجعه نمایید:
                     <p> {1}""".format(__version__, link_ebrahim))
 
-    def getDirectionProp(self):
-        index = self.directionButtonGroup.checkedId() - 1
-        if index == 0:
-            systemBox = self.xSystemBox
-            lateralBox = self.xLateralBox
-        elif index == 1:
-            systemBox = self.ySystemBox
-            lateralBox = self.yLateralBox
-
-        return systemBox, lateralBox
-
-    def insert_proper_lateral_resistance_systems_of_current_system_type_to_lateral_box(
-        self, systemBox=None, lateralBox=None):
-        if (systemBox and lateralBox) is None:
-            systemBox, lateralBox = self.getDirectionProp()
-        systemType = systemBox.currentText()
+    def insert_xlaterals(self):
+        systemType = self.xSystemBox.currentText()
         lateralTypes = rTable.getLateralTypes(systemType)
-        #for i in lateralTypes:
-        old_state = bool(lateralBox.blockSignals(True))
-        lateralBox.clear()
-        lateralBox.addItems(lateralTypes)
-        lateralBox.blockSignals(old_state)
+        old_state = bool(self.xLateralBox.blockSignals(True))
+        print(old_state)
+        self.xLateralBox.clear()
+        self.xLateralBox.addItems(lateralTypes)
+        self.xLateralBox.blockSignals(old_state)
+
+    def insert_ylaterals(self):
+        systemType = self.ySystemBox.currentText()
+        lateralTypes = rTable.getLateralTypes(systemType)
+        old_state = bool(self.yLateralBox.blockSignals(True))
+        self.yLateralBox.clear()
+        self.yLateralBox.addItems(lateralTypes)
+        self.yLateralBox.blockSignals(old_state)
 
     def get_current_system_type(self, systemBox):
         return systemBox.currentText()
@@ -505,35 +182,8 @@ class Cfactor(QMainWindow):
         except KeyError:
             pass
 
-    def getA(self):
-        return self.accText.text()
-
     def get_current_soil_type(self):
         return str(self.soilType.currentText())
-
-    def set_default_values_of_analytical_period(self, build=None):
-        if not build:
-            build = self.current_building()
-        exp_period_x = build.exp_period_x
-        exp_period_y = build.exp_period_y
-        #xTan = exp_period_x * 1.25
-        #yTan = exp_period_y * 1.25
-        self.xTAnalaticalSpinBox.setMinimum(exp_period_x)
-        self.yTAnalaticalSpinBox.setMinimum(exp_period_y)
-        #self.xTAnalaticalSpinBox.setValue(xTan)
-        #self.yTAnalaticalSpinBox.setValue(yTan)
-
-    def getH(self):
-        return self.HSpinBox.value()
-
-    def getStory(self):
-        return self.storySpinBox.value()
-
-    def getI(self):
-        return float(self.IBox.currentText())
-
-    def isInfill(self):
-        return self.infillCheckBox.isChecked()
 
     #def setDEngheta(self):
         #dEngheta = self.getDEngheta()
@@ -632,12 +282,12 @@ class Cfactor(QMainWindow):
         self.p.setYRange(0, B.max() + 1, padding=0)
 
     def current_building(self):
-        risk_level = self.getA()
+        risk_level = self.accText.text()
         city = self.get_current_shahr()
-        height = self.getH()
-        importance_factor = self.getI()
+        height = self.HSpinBox.value()
+        importance_factor = float(self.IBox.currentText())
         soil = self.get_current_soil_type()
-        noStory = self.getStory()
+        noStory = self.storySpinBox.value()
         xSystemType = self.get_current_system_type(self.xSystemBox)
         xLateralType = self.get_lateral_system_type(self.xLateralBox)
         ySystemType = self.get_current_system_type(self.ySystemBox)
@@ -653,7 +303,7 @@ class Cfactor(QMainWindow):
         useTan = Tan[0]
         xTan = Tan[1]
         yTan = Tan[2]
-        is_infill = self.isInfill()
+        is_infill = self.infillCheckBox.isChecked()
         build = Building(risk_level, importance_factor, soil, noStory, height, is_infill,
                               xSystem, ySystem, city, xTan, yTan, useTan)
         return build
@@ -667,8 +317,8 @@ class Cfactor(QMainWindow):
         self.structure_model.build = self.final_building
         self.structure_model.endResetModel()
         # self.resizeColumns()
-        self.set_default_values_of_analytical_period(self.final_building)
         results = self.final_building.results
+        print(results)
         if results[0] is True:
             Cx, Cy = results[1], results[2]
             resultStrx = '<font size=6 color=blue>C<sub>x</sub> = %.4f , K<sub>x</sub> = %.2f</font>' % (Cx, self.final_building.kx)
@@ -687,7 +337,6 @@ class Cfactor(QMainWindow):
             return
 
     def showResult(self):
-        #if self.tabWidget.currentIndex == 2:
         self.textExport.setHtml(self.html)
 
     def exportToPdf(self):
@@ -713,24 +362,6 @@ class Cfactor(QMainWindow):
 if __name__ == "__main__":
 
     app = QApplication(sys.argv)
-    global defaultPointsize
-    font = QFont()
-    font.setFamily("Tahoma")
-    if sys.platform.startswith('linux'):
-        defaultPointsize = 10
-        font.setPointSize(defaultPointsize)
-    else:
-        defaultPointsize = 9
-        font.setPointSize(defaultPointsize)
-    app.setFont(font)
-    app.setWindowIcon(QIcon(":/icon.png"))
-    window = Cfactor()
-    p = window.palette()
-    color = QColor()
-    color.setRgb(255, 255, 170)
-    p.setColor(window.backgroundRole(), color)
-    window.setPalette(p)
-    window.setLayoutDirection(Qt.RightToLeft)
-    #window.setMaximumWidth(1000)
+    window = Ui()
     window.show()
     app.exec_()
