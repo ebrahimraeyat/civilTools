@@ -99,7 +99,7 @@
             <number>50</number>
            </property>
            <property name="value">
-            <number>300</number>
+            <number>400</number>
            </property>
           </widget>
          </item>
@@ -131,7 +131,7 @@
             <number>50</number>
            </property>
            <property name="value">
-            <number>700</number>
+            <number>400</number>
            </property>
           </widget>
          </item>
@@ -229,7 +229,7 @@
             <number>50</number>
            </property>
            <property name="value">
-            <number>400</number>
+            <number>700</number>
            </property>
           </widget>
          </item>
@@ -249,7 +249,7 @@
             <string>  mm</string>
            </property>
            <property name="minimum">
-            <number>20</number>
+            <number>10</number>
            </property>
            <property name="maximum">
             <number>100</number>
@@ -258,7 +258,7 @@
             <number>10</number>
            </property>
            <property name="value">
-            <number>20</number>
+            <number>50</number>
            </property>
           </widget>
          </item>
@@ -287,7 +287,7 @@
             <number>5</number>
            </property>
            <property name="value">
-            <number>30</number>
+            <number>25</number>
            </property>
           </widget>
          </item>
@@ -310,10 +310,10 @@
             <string>foundation  main rebars diameter</string>
            </property>
            <property name="currentText">
-            <string>10</string>
+            <string>16</string>
            </property>
            <property name="currentIndex">
-            <number>0</number>
+            <number>3</number>
            </property>
            <item>
             <property name="text">
@@ -465,11 +465,21 @@
          <height>200</height>
         </size>
        </property>
+       <property name="toolTip">
+        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Noto Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p dir='rtl' style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;با فعال کردن این گزینه شما میتوانید با توجه به برش حداکثر موجود در مقطع پانچ (Vu)  و تعیین قطر و مقاومت خاموتهای سنجاقی، فاصله لازم بین خاموتهای سنجاقی را برای افزایش ظرفیت برش پانچ مقطع بدست آورید.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
        <property name="title">
         <string>shear reinforcement</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
        </property>
        <widget class="QWidget" name="layoutWidget">
         <property name="geometry">

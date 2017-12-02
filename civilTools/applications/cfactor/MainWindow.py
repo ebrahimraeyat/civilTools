@@ -316,9 +316,7 @@ class Ui(QMainWindow):
         self.structure_model.beginResetModel()
         self.structure_model.build = self.final_building
         self.structure_model.endResetModel()
-        # self.resizeColumns()
         results = self.final_building.results
-        print(results)
         if results[0] is True:
             Cx, Cy = results[1], results[2]
             resultStrx = '<font size=6 color=blue>C<sub>x</sub> = %.4f , K<sub>x</sub> = %.2f</font>' % (Cx, self.final_building.kx)

@@ -192,11 +192,11 @@ class Ui(QMainWindow):
             if index == 2:
                 self.doubleBox.setCurrentIndex(index - 1)
             self.addWebPLGroupBox.setChecked(False)
-            self.addWebPLGroupBox.setCheckable(False)
+            self.addWebPLGroupBox.setEnabled(False)
 
         elif sectionType == 'IPE':
             self.doubleBox.addItem(self.doubleList1[-1])
-            self.addWebPLGroupBox.setCheckable(True)
+            self.addWebPLGroupBox.setEnabled(True)
 
     def getSectionLabels(self, sectionType='IPE'):
         if sectionType == 'IPE':

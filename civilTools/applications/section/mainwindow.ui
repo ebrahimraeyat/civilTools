@@ -167,7 +167,7 @@
              <string notr="true">font: italic 10pt &quot;Noto Sans&quot;;</string>
             </property>
             <property name="text">
-             <string>بارگذاری</string>
+             <string>بارگذاری مقاطع</string>
             </property>
             <property name="icon">
              <iconset>
@@ -217,7 +217,7 @@
              <string notr="true">font: italic 10pt &quot;Noto Sans&quot;;</string>
             </property>
             <property name="text">
-             <string>حذف</string>
+             <string>حذف مقطع</string>
             </property>
             <property name="icon">
              <iconset>
@@ -280,7 +280,7 @@
              <string notr="true">font: italic 10pt &quot;Noto Sans&quot;;</string>
             </property>
             <property name="text">
-             <string>A&amp;tocad</string>
+             <string>خروجی به اتوکد</string>
             </property>
             <property name="icon">
              <iconset>
@@ -326,11 +326,18 @@
               <bold>false</bold>
              </font>
             </property>
+            <property name="toolTip">
+             <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Noto Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;justify&quot; dir='rtl' style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;با زدن این دکمه شما میتوانید مشخصات یک مقطع دلخواه و ابعاد آن را وارد کنید تا نرم افزار آن را در فرمت xml بنویسد.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
             <property name="styleSheet">
              <string notr="true">font: italic 10pt &quot;Noto Sans&quot;;</string>
             </property>
             <property name="text">
-             <string>اضافه</string>
+             <string>افزودن مقطع</string>
             </property>
             <property name="icon">
              <iconset>
@@ -383,7 +390,7 @@
              <string notr="true">font: italic 10pt &quot;Noto Sans&quot;;</string>
             </property>
             <property name="text">
-             <string>ذخیره</string>
+             <string> ذخیره مقاطع</string>
             </property>
             <property name="icon">
              <iconset>
@@ -433,7 +440,7 @@
              <string notr="true">font: italic 10pt &quot;Noto Sans&quot;;</string>
             </property>
             <property name="text">
-             <string>&amp;xml</string>
+             <string> xml خروجی به</string>
             </property>
             <property name="icon">
              <iconset>
@@ -483,7 +490,9 @@
              <string notr="true">font: 75 italic 10pt &quot;Noto Sans&quot;;</string>
             </property>
             <property name="text">
-             <string>محاسبه</string>
+             <string>محاسبه
+
+(Ctrl+F5)</string>
             </property>
             <property name="icon">
              <iconset>
@@ -494,6 +503,9 @@
               <width>90</width>
               <height>90</height>
              </size>
+            </property>
+            <property name="shortcut">
+             <string>Ctrl+F5</string>
             </property>
             <property name="flat">
              <bool>false</bool>
@@ -580,6 +592,9 @@
                  <property name="checkable">
                   <bool>true</bool>
                  </property>
+                 <property name="checked">
+                  <bool>false</bool>
+                 </property>
                  <widget class="QWidget" name="layoutWidget_3">
                   <property name="geometry">
                    <rect>
@@ -625,11 +640,17 @@
                </item>
                <item>
                 <widget class="QGroupBox" name="addWebPLGroupBox">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
                  <property name="title">
                   <string>ورق جان</string>
                  </property>
                  <property name="checkable">
                   <bool>true</bool>
+                 </property>
+                 <property name="checked">
+                  <bool>false</bool>
                  </property>
                  <widget class="QWidget" name="layoutWidget_5">
                   <property name="geometry">

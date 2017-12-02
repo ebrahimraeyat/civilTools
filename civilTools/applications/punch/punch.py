@@ -30,6 +30,9 @@ class Punch:
 		s += 'Vc2 = {:0.0f}\t KN\n'.format(self.__Vc2 / 1000)
 		s += 'Vc3 = {:0.0f}\t KN\n'.format(self.__Vc3 / 1000)
 		s += 'Vc = min(Vc1, Vc2, Vc3) = {:0.0f}\t KN\n'.format(self.__Vc / 1000)
+		# punch stress
+		s += _title("SHEAR STRESS CAPACITY")
+		s += 'vc = {:0.2f}\t N / mm2 = {:0.2f}\t Kgf / cm2\n'.format(self.__vc, self.__vc * 100 / 9.81)
 		return s
 
 	def calculate_b0(self):
@@ -65,6 +68,9 @@ class Punch:
 		self.__Vc3 = one_way_shear_capacity * (2 + alpha_s * d / self.b0) / 2
 		self.__Vc = min(self.__Vc1, self.__Vc2, self.__Vc3)
 		return self.__Vc
+
+	def calculate_vc(self):
+		self.__vc = self.__Vc / (self.b0 * self.foundation.d)
 
 
 class ShearSteel(Punch):

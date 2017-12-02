@@ -160,31 +160,32 @@ class Building(object):
         return [True]
 
     def calculateC(self, Bx, By):
-        check_inputs = self.checkInputs()
-        if check_inputs[0] is True:
-            A = self.acc
-            I = self.importance_factor
-            Rux = self.x_system.Ru
-            Ruy = self.y_system.Ru
-            CxNotApproved = A * Bx * I / Rux
-            CyNotApproved = A * By * I / Ruy
-            if CxNotApproved < self.CMin:
-                Cx = self.CMin
-                self.cxStr = (u"{0:.4f} &#60 C<sub>min</sub> &#8658 Cx = {1}</p>"
-                                ).format(CxNotApproved, self.CMin)
-            else:
-                Cx = CxNotApproved
-                self.cxStr = (u"{0:.4f} &#62 C<sub>min</sub>  O.K</p>").format(CxNotApproved)
-            if CyNotApproved < self.CMin:
-                Cy = self.CMin
-                self.cyStr = (u" {0:.4f} &#60 C<sub>min</sub> &#8658 Cy = {1}</p>"
-                                ).format(CyNotApproved, self.CMin)
-            else:
-                Cy = CyNotApproved
-                self.cyStr = (u"{0:.4f} &#62 C<sub>min</sub>  O.K</p>").format(CyNotApproved)
-            return True, Cx, Cy
+        # check_inputs = self.checkInputs()
+        # TODO
+        # if check_inputs[0] is True:
+        A = self.acc
+        I = self.importance_factor
+        Rux = self.x_system.Ru
+        Ruy = self.y_system.Ru
+        CxNotApproved = A * Bx * I / Rux
+        CyNotApproved = A * By * I / Ruy
+        if CxNotApproved < self.CMin:
+            Cx = self.CMin
+            self.cxStr = (u"{0:.4f} &#60 C<sub>min</sub> &#8658 Cx = {1}</p>"
+                            ).format(CxNotApproved, self.CMin)
         else:
-            return check_inputs
+            Cx = CxNotApproved
+            self.cxStr = (u"{0:.4f} &#62 C<sub>min</sub>  O.K</p>").format(CxNotApproved)
+        if CyNotApproved < self.CMin:
+            Cy = self.CMin
+            self.cyStr = (u" {0:.4f} &#60 C<sub>min</sub> &#8658 Cy = {1}</p>"
+                            ).format(CyNotApproved, self.CMin)
+        else:
+            Cy = CyNotApproved
+            self.cyStr = (u"{0:.4f} &#62 C<sub>min</sub>  O.K</p>").format(CyNotApproved)
+        return True, Cx, Cy
+        # else:
+        #     return check_inputs
 
     def __str__(self):
         html = ''

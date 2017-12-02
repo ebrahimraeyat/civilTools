@@ -36,6 +36,7 @@ class Ui(QtWidgets.QMainWindow):
     def calculate_punch(self):
         punch = self.get_punch()
         punch.calculate_Vc()
+        punch.calculate_vc()
         return punch
 
     def get_shear_steel(self):
