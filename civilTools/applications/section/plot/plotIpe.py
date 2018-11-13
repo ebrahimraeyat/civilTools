@@ -15,7 +15,7 @@ class PlotSectionAndEqSection(object):
         self.row = row
         self.autocadScrText = 'textsize{0}20{0}'.format(os.linesep)
         self.section = section
-        self.drawBaseSection = {'IPE': self.drawIpe, 'UNP': self.drawUnp}
+        self.drawBaseSection = {'IPE': self.drawIpe, 'UNP': self.drawUnp, 'CPE': self.drawIpe}
 
     def plot(self):
 

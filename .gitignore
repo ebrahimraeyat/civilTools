@@ -48,6 +48,9 @@ Thumbs.db
 *.bak
 desktop.ini
 inno/
+*.p
+*.iss
+*.ipynb
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -64,6 +67,8 @@ build/
 develop-eggs/
 dist/
 downloads/
+Output/
+docs/
 eggs/
 .eggs/
 lib/
@@ -80,6 +85,7 @@ var/
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.
 *.manifest
 *.spec
+MANIFES*
 
 # Installer logs
 pip-log.txt

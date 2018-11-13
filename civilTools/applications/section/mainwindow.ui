@@ -81,109 +81,6 @@
           <property name="sizeConstraint">
            <enum>QLayout::SetDefaultConstraint</enum>
           </property>
-          <item row="7" column="0">
-           <widget class="QPushButton" name="clear_all_Button">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>194</width>
-              <height>130</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>135</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="font">
-             <font>
-              <family>Noto Sans</family>
-              <pointsize>10</pointsize>
-              <weight>50</weight>
-              <italic>true</italic>
-              <bold>false</bold>
-             </font>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">font: italic 10pt &quot;Noto Sans&quot;;</string>
-            </property>
-            <property name="text">
-             <string>حدف همه</string>
-            </property>
-            <property name="icon">
-             <iconset>
-              <normaloff>images/clear.png</normaloff>images/clear.png</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>90</width>
-              <height>90</height>
-             </size>
-            </property>
-            <property name="flat">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QPushButton" name="load_from_dat_button">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>194</width>
-              <height>130</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>135</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="font">
-             <font>
-              <family>Noto Sans</family>
-              <pointsize>10</pointsize>
-              <weight>50</weight>
-              <italic>true</italic>
-              <bold>false</bold>
-             </font>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">font: italic 10pt &quot;Noto Sans&quot;;</string>
-            </property>
-            <property name="text">
-             <string>بارگذاری مقاطع</string>
-            </property>
-            <property name="icon">
-             <iconset>
-              <normaloff>images/load.png</normaloff>images/load.png</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>90</width>
-              <height>90</height>
-             </size>
-            </property>
-            <property name="flat">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="0">
            <widget class="QPushButton" name="deleteSectionButton">
             <property name="sizePolicy">
@@ -220,8 +117,8 @@
              <string>حذف مقطع</string>
             </property>
             <property name="icon">
-             <iconset>
-              <normaloff>images/remove.png</normaloff>images/remove.png</iconset>
+             <iconset resource="../../images/resource.qrc">
+              <normaloff>:/general/remove.png</normaloff>:/general/remove.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -276,15 +173,18 @@
               <bold>false</bold>
              </font>
             </property>
+            <property name="toolTip">
+             <string>خروجی به اتوکد</string>
+            </property>
             <property name="styleSheet">
              <string notr="true">font: italic 10pt &quot;Noto Sans&quot;;</string>
             </property>
             <property name="text">
-             <string>خروجی به اتوکد</string>
+             <string>Autocad</string>
             </property>
             <property name="icon">
-             <iconset>
-              <normaloff>images/autocad.png</normaloff>images/autocad.png</iconset>
+             <iconset resource="../../images/resource.qrc">
+              <normaloff>:/sections/autocad.png</normaloff>:/sections/autocad.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -340,8 +240,8 @@ p, li { white-space: pre-wrap; }
              <string>افزودن مقطع</string>
             </property>
             <property name="icon">
-             <iconset>
-              <normaloff>images/add.png</normaloff>images/add.png</iconset>
+             <iconset resource="../../images/resource.qrc">
+              <normaloff>:/general/add.png</normaloff>:/general/add.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -357,7 +257,7 @@ p, li { white-space: pre-wrap; }
           <item row="3" column="1">
            <widget class="QPushButton" name="saveToFileButton">
             <property name="enabled">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -393,58 +293,8 @@ p, li { white-space: pre-wrap; }
              <string> ذخیره مقاطع</string>
             </property>
             <property name="icon">
-             <iconset>
-              <normaloff>images/save.png</normaloff>images/save.png</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>90</width>
-              <height>90</height>
-             </size>
-            </property>
-            <property name="flat">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="1">
-           <widget class="QPushButton" name="saveToXml1Button">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>194</width>
-              <height>130</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>135</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="font">
-             <font>
-              <family>Noto Sans</family>
-              <pointsize>10</pointsize>
-              <weight>50</weight>
-              <italic>true</italic>
-              <bold>false</bold>
-             </font>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">font: italic 10pt &quot;Noto Sans&quot;;</string>
-            </property>
-            <property name="text">
-             <string> xml خروجی به</string>
-            </property>
-            <property name="icon">
-             <iconset>
-              <normaloff>images/xml.png</normaloff>images/xml.png</iconset>
+             <iconset resource="../../images/resource.qrc">
+              <normaloff>:/general/save.png</normaloff>:/general/save.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -495,8 +345,8 @@ p, li { white-space: pre-wrap; }
 (Ctrl+F5)</string>
             </property>
             <property name="icon">
-             <iconset>
-              <normaloff>images/run.png</normaloff>images/run.png</iconset>
+             <iconset resource="../../images/resource.qrc">
+              <normaloff>:/general/run.png</normaloff>:/general/run.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -506,6 +356,162 @@ p, li { white-space: pre-wrap; }
             </property>
             <property name="shortcut">
              <string>Ctrl+F5</string>
+            </property>
+            <property name="flat">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="0">
+           <widget class="QPushButton" name="saveToXml1Button">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>194</width>
+              <height>130</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>135</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <family>Noto Sans</family>
+              <pointsize>10</pointsize>
+              <weight>50</weight>
+              <italic>true</italic>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;خروجی به XML&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">font: italic 10pt &quot;Noto Sans&quot;;</string>
+            </property>
+            <property name="text">
+             <string>Xml</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../../images/resource.qrc">
+              <normaloff>:/sections/xml.png</normaloff>:/sections/xml.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>90</width>
+              <height>90</height>
+             </size>
+            </property>
+            <property name="flat">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QPushButton" name="load_from_dat_button">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>194</width>
+              <height>130</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>135</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <family>Noto Sans</family>
+              <pointsize>10</pointsize>
+              <weight>50</weight>
+              <italic>true</italic>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">font: italic 10pt &quot;Noto Sans&quot;;</string>
+            </property>
+            <property name="text">
+             <string>بارگذاری مقاطع</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../../images/resource.qrc">
+              <normaloff>:/general/load.png</normaloff>:/general/load.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>90</width>
+              <height>90</height>
+             </size>
+            </property>
+            <property name="flat">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QPushButton" name="clear_all_Button">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>194</width>
+              <height>130</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>135</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <family>Noto Sans</family>
+              <pointsize>10</pointsize>
+              <weight>50</weight>
+              <italic>true</italic>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">font: italic 10pt &quot;Noto Sans&quot;;</string>
+            </property>
+            <property name="text">
+             <string>حدف همه</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../../images/resource.qrc">
+              <normaloff>:/general/clear.png</normaloff>:/general/clear.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>90</width>
+              <height>90</height>
+             </size>
             </property>
             <property name="flat">
              <bool>false</bool>
@@ -560,7 +566,7 @@ p, li { white-space: pre-wrap; }
                       <string/>
                      </property>
                      <property name="minimum">
-                      <number>2</number>
+                      <number>1</number>
                      </property>
                      <property name="value">
                       <number>25</number>
@@ -573,7 +579,7 @@ p, li { white-space: pre-wrap; }
                       <string>      mm</string>
                      </property>
                      <property name="minimum">
-                      <number>2</number>
+                      <number>1</number>
                      </property>
                      <property name="value">
                       <number>12</number>
@@ -908,7 +914,8 @@ p, li { white-space: pre-wrap; }
   <action name="action_xml">
    <property name="icon">
     <iconset>
-     <normaloff>images/xml.png</normaloff>images/xml.png</iconset>
+     <normaloff>images/xml.png</normaloff>
+     <normalon>images/xml.png</normalon>images/xml.png</iconset>
    </property>
    <property name="text">
     <string>&amp;xml</string>
@@ -944,6 +951,8 @@ p, li { white-space: pre-wrap; }
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../images/resource.qrc"/>
+ </resources>
  <connections/>
 </ui>

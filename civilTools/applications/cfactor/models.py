@@ -3,7 +3,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 
 X, Y = range(2)
-CFACTOR, K, CDRIFT, KDRIFT, TAN, TEXP125, TEXP, HMAX, SYSTEM, LATERAL, RU, OMEGA0, CD = range(13)
+CFACTOR, K, TAN, CDRIFT, KDRIFT, TEXP125, TEXP, SYSTEM, LATERAL, RU, HMAX, OMEGA0, CD = range(13)
 MAGIC_NUMBER = 0x570C4
 FILE_VERSION = 1
 
@@ -87,14 +87,11 @@ class StructureModel(QAbstractTableModel):
             # if row == HMAX:
             #     return QVariant(QColor(255, 140, 140))
             if row in (K, CFACTOR):
-                return QVariant(QColor(140, 255, 140))
+                return QVariant(QColor(100, 255, 100))
             if row in (KDRIFT, CDRIFT):
-                return QVariant(QColor(140, 140, 255))
-            # if row == TAN:
-            #     if Tan <= 1.25 * Texp:
-            #         return QVariant(QColor(200, 200, 250))
-            #     else:
-            #         return QVariant(QColor(Qt.yellow))
+                return QVariant(QColor(100, 100, 255))
+            if row == TAN:
+                return QVariant(QColor(255, 255, 20))
             else:
                 return QVariant(QColor(230, 230, 250))
         if role == Qt.FontRole:
@@ -105,21 +102,23 @@ class StructureModel(QAbstractTableModel):
                 font.setPointSize(12)
                 return font
         if role == Qt.TextAlignmentRole:
-            return QVariant(int(Qt.AlignLeft | Qt.AlignVCenter))
+            return QVariant(int(Qt.AlignCenter | Qt.AlignVCenter))
 
     def headerData(self, section, orientation, role=Qt.DisplayRole):
         if role == Qt.TextAlignmentRole:
             if orientation == Qt.Horizontal:
                 return QVariant(int(Qt.AlignCenter | Qt.AlignVCenter))
-            return QVariant(int(Qt.AlignCenter | Qt.AlignVCenter))
+            return QVariant(int(Qt.AlignLeft | Qt.AlignVCenter))
         if role == Qt.BackgroundColorRole:
             if orientation == Qt.Vertical:
                 # if section == HMAX:
                 #     return QVariant(QColor(255, 80, 80))
                 if section in (K, CFACTOR):
-                    return QVariant(QColor(80, 255, 80))
+                    return QVariant(QColor(120, 255, 120))
                 if section in (KDRIFT, CDRIFT):
-                    return QVariant(QColor(80, 80, 255))
+                    return QVariant(QColor(120, 120, 255))
+                if section == TAN:
+                    return QVariant(QColor(250, 250, 100))
                 else:
                     return QVariant(QColor(230, 230, 250))
         if role == Qt.ToolTipRole:
@@ -178,79 +177,4 @@ class StructureModel(QAbstractTableModel):
     def columnCount(self, index=QModelIndex()):
         return 2
 
-    #def load(self):
-        #exception = None
-        #fh = None
-        #try:
-            ##if self.filename.isEmpty():
-                ##raise IOError, "no filename specified for loading"
-            ##fh = QFile(self.filename)
-            ##if not fh.open(QIODevice.ReadOnly):
-                ##raise IOError, unicode(fh.errorString())
-            ##stream = QDataStream(fh)
-            ##magic = stream.readInt32()
-            ##if magic != MAGIC_NUMBER:
-                ##raise IOError, "unrecognized file type"
-            ##fileVersion = stream.readInt16()
-            ##if fileVersion != FILE_VERSION:
-                ##raise IOError, "unrecognized file type version"
-
-            #stream.writeInt16(build.number_of_story)
-            #stream.writeFloat(build.height)
-            #stream.writeFloat(build.x_period_an)
-            #stream.writeFloat(build.y_period_an)
-            ##risk_level = QString()
-            ##soilType = QString()
-            ##is_infill = QString()
-            ##x_system = QString()
-            ##y_system = QString()
-            ##city = QString()
-            ##useTan = QString()
-            #stream >> risk_level >> soilType >> is_infill
-            #stream >> x_system >> y_system >> city >> useTan
-            #importance_factor = stream.readFloat()
-            #number_of_story = stream.readInt16()
-            #height = stream.readFloat()
-            #x_period_an = stream.readFloat()
-            #y_period_an = stream.readFloat()
-            #self.build = Building(risk_level, importance_factor, soilType, number_of_story, height,
-                 #is_infill, x_system, y_system, city, x_period_an, y_period_an, useTan)
-            #self.systems.append(x_system)
-            #self.systems.append(y_system)
-            #self.dirty = False
-        #except IOError, err:
-            #exception = err
-        #finally:
-            #if fh is not None:
-                #fh.close()
-            #if exception is not None:
-                #raise exception
-
-    #def save(self):
-        #exception = None
-        #fh = None
-        #try:
-            ##if self.filename.isEmpty():
-                ##raise IOError, "no filename specified for saving"
-            ##fh = QFile(self.filename)
-            ##if not fh.open(QIODevice.WriteOnly):
-                ##raise IOError, unicode(fh.errorString())
-            #stream = QDataStream(fh)
-            #stream.writeInt32(MAGIC_NUMBER)
-            #stream.writeInt16(FILE_VERSION)
-            #stream.setVersion(QDataStream.Qt_4_7)
-            #stream << build.risk_level << build.soilType << build.is_infill
-            #stream << build.x_system << build.y_system << build.city << build.useTan
-            #stream.writeFloat(build.importance_factor)
-            #stream.writeInt16(build.number_of_story)
-            #stream.writeFloat(build.height)
-            #stream.writeFloat(build.x_period_an)
-            #stream.writeFloat(build.y_period_an)
-            #self.dirty = False
-        #except IOError, err:
-            #exception = err
-        #finally:
-            #if fh is not None:
-                #fh.close()
-            #if exception is not None:
-                #raise exception
+    

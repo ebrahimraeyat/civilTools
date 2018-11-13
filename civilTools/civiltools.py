@@ -1,60 +1,52 @@
 import sys
+import os
 import subprocess
 from PyQt5 import uic, QtWidgets, QtCore
-import checkupdate
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QSplashScreen
+# import checkupdate
 
 _appname = 'civiltools'
-_version = '1.3'
+_version = '1.4'
 _civiltools_mainpackages = ['civiltools']
-_about = '''
--------------Licence-------------
-civiltools is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
-            
-civiltools is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-            
-You should have received a copy of the GNU General Public License along with Foobar; if not, write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
-            
-Copyright (C) 2015-2017 Roknabadi Ebrahim (e-mail : ebe79442114@gmail.com)
+# ABS_PATH = os.path.abspath(os.path.dirname(__file__))
+# sys.path.append(os.path.join(ABS_PATH, 'applications', 'cfactor'))
+main_window = uic.loadUiType('main_form.ui')[0]
+about_window, about_base = uic.loadUiType('about.ui')
 
--------------Project info-------------
-http://ebrahimraeyat.blog.ir/
-https://pypi.python.org/pypi/civiltools
 
--------------Contact-------------
-ebe79442114@gmail.com
-@roknabadi
-'''
-
-class FormWidget(QtWidgets.QWidget):
+class FormWidget(QtWidgets.QWidget, main_window):
 
     def __init__(self):
         super(FormWidget, self).__init__()
-        uic.loadUi('main_form.ui', self)
-        #---Button clicked events
+        self.setupUi(self)
+        self.about_Button.clicked.connect(self.about)
         self.section_Button.clicked.connect(self.run_section)
         self.cfactor_Button.clicked.connect(self.run_cfactor)
         self.punch_Button.clicked.connect(self.run_punch)
         self.record_Button.clicked.connect(self.run_record)
+        self.dynamic_button.clicked.connect(self.run_dynamic)
         self.about_Button.clicked.connect(self.about)
-        self.update_Button.clicked.connect(self.check_for_updates)
-        # self.exit_Button.clicked.connect(self.exit)
+        # self.update_Button.clicked.connect(self.check_for_updates)
     #----
     def run_section(self):
         subprocess.Popen(['python', '-m', 'applications.section.MainWindow'])
         
-    def run_cfactor(self): 
-        subprocess.Popen(['python', '-m', 'applications.cfactor.MainWindow'])   
+    def run_cfactor(self):
+        subprocess.Popen(['python', '-m', 'applications.cfactor.MainWindow'])  
            
     def run_punch(self):
         subprocess.Popen(['python', '-m', 'applications.punch.mainwindow']) 
         
     def run_record(self):
-        subprocess.Popen(['python', '-m', 'applications.records.records.MainWindow']) 
+        subprocess.Popen(['python', '-m', 'applications.records.MainWindow'])
+
+    def run_dynamic(self):
+        subprocess.Popen(['python', '-m', 'applications.dynamic.sdof.freevibrationwin']) 
 
     def about(self):
-        QtWidgets.QMessageBox.information(None, 'Info', _about)
-        # w = uic.loadUi('about.ui', self)
-        # w.show()
+        self.child_win = AboutForm(self)
+        self.child_win.show()
 
     def check_for_updates(self):
         try:
@@ -69,9 +61,18 @@ class FormWidget(QtWidgets.QWidget):
         except:
             QtWidgets.QMessageBox.information(None, 'Check for packages update', 'Checking failed !! ')
 
-    
+
+class AboutForm(about_base, about_window):
+    def __init__(self, parent=None):
+        super(AboutForm, self).__init__() 
+        self.setupUi(self) 
+
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
+    # pixmap = QPixmap("./images/civil-engineering.png")
+    # splash = QSplashScreen(pixmap)
+    # splash.show()
+    # app.processEvents()
     # translator = QtCore.QTranslator()
     # translator.load("main_form.qm")
     # app.installTranslator(translator)

@@ -19,11 +19,14 @@ link_ebrahim = ('Website: <a href="%s"><span style=" '
 
 ipesProp = sec.Ipe.createStandardIpes()
 unpsProp = sec.Unp.createStandardUnps()
+cpesProp = sec.Cpe.createStandardCpes()
+
+main_window = uic.loadUiType('applications/section/mainwindow.ui')[0]
 
 
-class Ui(QMainWindow):
+class Ui(QMainWindow, main_window):
 
-    sectionProp = {'IPE': ipesProp, 'UNP': unpsProp}
+    sectionProp = {'IPE': ipesProp, 'UNP': unpsProp, 'CPE': cpesProp}
     useAsDict = {'تیر': 'B', 'ستون': 'C'}
     ductilityDict = {'متوسط': 'M', 'زیاد': 'H'}
     doubleList1 = ['تک', 'دوبل', 'سوبل']
@@ -32,18 +35,23 @@ class Ui(QMainWindow):
 
     def __init__(self):
         super(Ui, self).__init__()
-        uic.loadUi('applications/section/mainwindow.ui', self)
+        self.setupUi(self)
         self.dirty = False
         self.lastDirectory = ''
-        self.last_sectionBox_index = {'IPE': 4, 'UNP': 4}
+        self.last_sectionBox_index = {'IPE': 4, 'UNP': 4, 'CPE':4}
         self.currentSectionProp = None
         #self.filename = None
         self.printer = None
         self.createWidgetsOne()
         self.updateSectionShape()
         self.create_connections()
+        
+        
         #self.accept()
-        #self.load_settings()
+        try:
+            self.load_settings()
+        except:
+            pass
         #QTimer.singleShot(0, self.initialLoad)
 
     #def initialLoad(self):
@@ -55,6 +63,15 @@ class Ui(QMainWindow):
             #except IOError, err:
                 #QMessageBox.warning(self, "Sections - Error",
                         #"Failed to load: {0}".format(err))
+
+    def closeEvent(self, event):
+        settings = QSettings()
+        settings.setValue("MainWindow/Geometry",
+                          QVariant(self.saveGeometry()))
+        settings.setValue("MainWindow/State",
+                          QVariant(self.saveState()))
+        settings.setValue("MainSplitter",
+                QVariant(self.mainSplitter.saveState()))
 
     def resizeColumns(self, tableView=None):
         for column in (sec.NAME, sec.AREA,
@@ -142,37 +159,17 @@ class Ui(QMainWindow):
         self.doubleBox.addItems(self.doubleList1)
         self.doubleBox.setCurrentIndex(1)
         self.sectionTypeBox.addItems(sorted(self.sectionProp.keys()))
-        self.sectionsBox.addItems(self.getSectionLabels())
+        sectionType = self.currentSectionType()
+        self.sectionsBox.addItems(self.getSectionLabels(sectionType))
         self.sectionsBox.setCurrentIndex(4)
-
-    @staticmethod
-    def creatList(listItems):
-        _list = QListWidget()
-        _list.addItems(listItems)
-        _list.setSelectionMode(QAbstractItemView.ExtendedSelection)
-        return _list
+        self.mainSplitter.setStretchFactor(0, 1)
+        self.mainSplitter.setStretchFactor(1, 3)
 
     def load_settings(self):
         settings = QSettings()
-        self.restoreGeometry(
-                settings.value("MainWindow" + os.sep + "Geometry1").toByteArray())
-        self.restoreState(settings.value("MainWindow" + os.sep + "State1").toByteArray())
-        #self.inputSplitter.restoreState(settings.value("InputSplitter").toByteArray())
-        self.mainSplitter.restoreState(settings.value("MainSplitter1").toByteArray())
-
-    def closeEvent(self, event):
-        #if self.okToContinue():
-        settings = QSettings()
-        #filename = (QVariant(QString(self.filename))
-                    #if self.filename is not None else QVariant())
-        #settings.setValue("LastFile", filename)
-        #recentFiles = (QVariant(self.recentFiles)
-                       #if self.recentFiles else QVariant())
-        #settings.setValue("RecentFiles", recentFiles)
-        settings.setValue("MainWindow" + os.sep + "Geometry1", QVariant(self.saveGeometry()))
-        settings.setValue("MainWindow" + os.sep + "State1", QVariant(self.saveState()))
-        #settings.setValue("InputSplitter", QVariant(self.inputSplitter.saveState()))
-        settings.setValue("MainSplitter1", QVariant(self.mainSplitter.saveState()))
+        self.restoreGeometry(settings.value("MainWindow/Geometry"))
+        self.restoreState(settings.value("MainWindow/State"))
+        self.mainSplitter.restoreState(settings.value("MainSplitter"))
 
     def setSectionLabels(self):
         sectionType = self.currentSectionType()
@@ -194,8 +191,9 @@ class Ui(QMainWindow):
             self.addWebPLGroupBox.setChecked(False)
             self.addWebPLGroupBox.setEnabled(False)
 
-        elif sectionType == 'IPE':
-            self.doubleBox.addItem(self.doubleList1[-1])
+        elif sectionType == 'IPE' or 'CPE':
+            if self.doubleBox.count() < 3:
+                self.doubleBox.addItem(self.doubleList1[-1])
             self.addWebPLGroupBox.setEnabled(True)
 
     def getSectionLabels(self, sectionType='IPE'):
@@ -203,6 +201,8 @@ class Ui(QMainWindow):
             sections = ipesProp.values()
         elif sectionType == 'UNP':
             sections = unpsProp.values()
+        elif sectionType == 'CPE':
+            sections = cpesProp.values()
 
         sectionNames = [section.name for section in sections]
         return sorted(sectionNames)

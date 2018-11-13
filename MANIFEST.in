@@ -2,9 +2,11 @@ include civilTools/RSN139_TABAS_DAY-L1.AT2
 
 recursive-exclude tests *
 recursive-include civilTools/applications *
+recursive-exclude civilTools/applications/converter *
+recursive-exclude civilTools/applications/cfactor/filehandling *
 recursive-exclude * __pycache__
-recursive-exclude * *.py[co] *.xlsx
+recursive-exclude * *.py[co] *.xlsx *.sqlite *.qm
 recursive-exclude * test_*.py
-recursive-include * *.ui *.qm *.png
+recursive-include * *.ui  *.png
 recursive-exclude docs *
 recursive-exclude dist *

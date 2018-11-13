@@ -7,6 +7,9 @@ from PyQt5.QtWebEngineWidgets import QWebEnginePage
 import os
 import pyqtgraph as pg
 
+def getLastSaveDirectory(f):
+    f = str(f)
+    return os.sep.join(f.split(os.sep)[:-1])
 
 class Export:
 
@@ -27,7 +30,7 @@ class Export:
 
         if filename == '':
             return
-        self.lastDirectory = self.getLastSaveDirectory(filename)
+        self.lastDirectory = getLastSaveDirectory(filename)
         printer = QPrinter()
         printer.setPageSize(QPrinter.A4)
         printer.setResolution(300)
@@ -49,7 +52,7 @@ class Export:
                                                self.lastDirectory, filters)
         if filename == '':
             return
-        self.lastDirectory = self.getLastSaveDirectory(filename)
+        self.lastDirectory = getLastSaveDirectory(filename)
         fileSave = QFile(filename)
         fileSave.open(QIODevice.WriteOnly)
         fileSave.writeData(html)
@@ -68,17 +71,13 @@ class Export:
 
         if filename == '':
             return
-        self.lastDirectory = self.getLastSaveDirectory(filename)
+        self.lastDirectory = getLastSaveDirectory(filename)
         fileSave = QFile(filename)
         fileSave.open(QIODevice.WriteOnly)
         fileSave.writeData(html)
-        fileSave.close()
+        fileSave.close()  
 
-    def getLastSaveDirectory(self, f):
-        f = str(f)
-        return os.sep.join(f.split(os.sep)[:-1])
-
-
+    
 class ExportGraph:
     def __init__(self, widget, lastDirectory, p):
         self.widget = widget
@@ -91,7 +90,7 @@ class ExportGraph:
                                                self.lastDirectory, filters)
         if filename == '':
             return
-        self.lastDirectory = self.getLastSaveDirectory(filename)
+        self.lastDirectory = getLastSaveDirectory(filename)
         exporter = pg.exporters.ImageExporter(self.p)
         exporter.parameters()['width'] = 1920   # (note this also affects height parameter)
         #exporter.parameters()['height'] = 600
@@ -105,13 +104,8 @@ class ExportGraph:
 
         if filename == '':
             return
-        self.lastDirectory = self.getLastSaveDirectory(filename)
+        self.lastDirectory = getLastSaveDirectory(filename)
         exporter = pg.exporters.CSVExporter(self.p)
         # save to file
         exporter.export(filename)
-
-    def getLastSaveDirectory(self, f):
-        f = str(f)
-        return os.sep.join(f.split(os.sep)[:-1])
-
-
+    

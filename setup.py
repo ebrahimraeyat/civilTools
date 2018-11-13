@@ -19,8 +19,8 @@ requirements = [
 'numpy>=1.12.1',
 'pandas>=0.19.2',
 'PyQt5>=5.8.1',
-'pyqtgraph>=0.10.0',
-'xlrd>=1.1.0'
+'pyqtgraph>=0.10.0'
+# 'xlrd>=1.1.0'
 ]
 
 test_requirements = [
@@ -29,7 +29,7 @@ test_requirements = [
 
 setup(
     name='civiltools',
-    version='1.40.0.dev1',
+    version='1.42.0.dev2',
     description="A series of tools for civil engineers.",
     long_description=readme + '\n\n' + history,
     author="Raeyat Ebrahim",

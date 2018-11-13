@@ -23,7 +23,8 @@ FILE_VERSION = 1
 
 class Section(object):
     sectionType = {'IPE': 'STEEL_I_SECTION',
-                   'UNP': 'STEEL_I_SECTION'}
+                   'UNP': 'STEEL_I_SECTION',
+                   'CPE': 'STEEL_I_SECTION'}
 
     def __init__(self, cc=0, composite=None, useAs='B', ductility='M',
                 TBPlate=None, LRPlate=None, webPlate=None, slender=None, isDouble=False,
@@ -167,13 +168,46 @@ class Section(object):
         if self.isSouble:
             return 3 * self.bf, 3 * self.tf, self.d, self.tw
 
-        slenderParameters = {'notPlate': {'B': {'M': {'BF': '2*bf', 'tfCriteria': 'True', 'TF': ('2*tf', ''), 'D': 'd',
+        # slenderParameters = {'notPlate': {'B': {'M': {'BF': '2*bf', 'tfCriteria': 'True', 'TF': ('2*tf', ''), 'D': 'd',
+        #                 'twCriteria': 'True', 'TW': ('(D-2*TF)/(d-2*(tf+r))*tw', '')},
+        #                 'H': {'BF': '2*bf', 'tfCriteria': 'True', 'TF': ('2*0.55*tf/.6', ''), 'D': 'd',
+        #                 'twCriteria': 'True', 'TW': ('(D-2*TF)/(d-2*(tf+r))*tw', '')}},
+        #                             'C': {'M': {'BF': '2*bf', 'tfCriteria': 'True', 'TF': ('2*tf', ''), 'D': 'd',
+        #                             'twCriteria': 'True', 'TW': ('(D-2*TF)/(d-2*(tf+r))*tw', '')},
+        #                             'H': {'BF': '2*bf', 'tfCriteria': 'True', 'TF': ('2*tf', ''), 'D': 'd',
+        #                             'twCriteria': 'True', 'TW': ('(D-2*TF)/(d-2*(tf+r))*tw', '')}}},
+        #                 'TBPlate': {'B': {'M': {'BF': 'c+2*xm', 'tfCriteria': 't1<(.76*B1*tf)/(1.12*bf)',
+        #                 'TF': ('(1.12*BF*t1)/(.76*B1)', '(BF*tf)/bf'), 'D': 'd+2*t1',
+        #                 'twCriteria': 'True', 'TW': ('(D-2*TF)/(d-2*(tf+r))*tw', '')},
+        #                 'H': {'BF': 'c+2*xm', 'tfCriteria': 't1<(.6*B1*tf)/(0.55*bf)',
+        #                     'TF': ('(0.55*BF*t1)/(.60*B1)', '(BF*tf)/bf'), 'D': 'd+2*t1',
+        #                     'twCriteria': 'True', 'TW': ('(D-2*TF)/(d-2*(tf+r))*tw', '')}},
+        #                 'C': {'M': {'BF': 'c+2*xm', 'tfCriteria': 't1<(.76*B1*tf)/(1.12*bf)',
+        #                 'TF': ('(1.12*BF*t1)/(.76*B1)', '(BF*tf)/bf'), 'D': 'd+2*t1',
+        #                 'twCriteria': 'True', 'TW': ('(D-2*TF)/(d-2*(tf+r))*tw', '')},
+        #                     'H': {'BF': 'c+2*xm', 'tfCriteria': 't1<(B1*tf)/(bf)',
+        #                         'TF': ('(BF*t1)/(B1)', '(BF*tf)/bf'), 'D': 'd+2*t1',
+        #                         'twCriteria': 'True', 'TW': ('(D-2*TF)/(d-2*(tf+r))*tw', '')}}},
+        #                 'LRPlate': {'B': {'M': {'BF': 'c+2*xm+2*t2', 'tfCriteria': 't1<(.76*B1*tf)/(1.12*bf)',
+        #                 'TF': ('(1.12*BF*t1)/(.76*B1)', '(BF*tf)/bf'), 'D': 'd+2*t1',
+        #                 'twCriteria': 't2<(d*tw)/(d-2*(tf+r))', 'TW': ('t2*(D-2*TF)/d', 'tw*(D-2*TF)/(d-2*(tf+r))')},
+        #                 'H': {'BF': 'c+2*xm+2*t2', 'tfCriteria': 't1<(.6*B1*tf)/(0.55*bf)',
+        #                 'TF': ('(0.55*BF*t1)/(.60*B1)', '(BF*tf)/bf'), 'D': 'd+2*t1',
+        #                 'twCriteria': 't2<(d*tw)/(d-2*(tf+r))', 'TW': ('t2*(D-2*TF)/d', 'tw*(D-2*TF)/(d-2*(tf+r))')}},
+        #                 'C': {'M': {'BF': 'c+2*xm+2*t2', 'tfCriteria': 't1<(.76*B1*tf)/(1.12*bf)',
+        #                 'TF': ('(1.12*BF*t1)/(.76*B1)', '(BF*tf)/bf'), 'D': 'd+2*t1',
+        #                 'twCriteria': 't2<(d*tw)/(d-2*(tf+r))', 'TW': ('t2*(D-2*TF)/d', 'tw*(D-2*TF)/(d-2*(tf+r))')},
+        #                 'H': {'BF': 'c+2*xm+2*t2', 'tfCriteria': 't1<(B1*tf)/(bf)',
+        #                 'TF': ('(BF*t1)/(B1)', '(BF*tf)/bf'), 'D': 'd+2*t1',
+        #                 'twCriteria': 't2<(d*tw)/(d-2*(tf+r))', 'TW': ('t2*(D-2*TF)/d', 'tw*(D-2*TF)/(d-2*(tf+r))')}}}}
+
+        slenderParameters = {'notPlate': {'B': {'M': {'BF': '2*bf', 'tfCriteria': 'True', 'TF': ('BF*tf/bf', ''), 'D': 'd',
                         'twCriteria': 'True', 'TW': ('(D-2*TF)/(d-2*(tf+r))*tw', '')},
                         'H': {'BF': '2*bf', 'tfCriteria': 'True', 'TF': ('2*0.55*tf/.6', ''), 'D': 'd',
                         'twCriteria': 'True', 'TW': ('(D-2*TF)/(d-2*(tf+r))*tw', '')}},
-                                    'C': {'M': {'BF': '2*bf', 'tfCriteria': 'True', 'TF': ('2*tf', ''), 'D': 'd',
+                                    'C': {'M': {'BF': '2*bf', 'tfCriteria': 'True', 'TF': ('BF*tf/bf', ''), 'D': 'd',
                                     'twCriteria': 'True', 'TW': ('(D-2*TF)/(d-2*(tf+r))*tw', '')},
-                                    'H': {'BF': '2*bf', 'tfCriteria': 'True', 'TF': ('2*tf', ''), 'D': 'd',
+                                    'H': {'BF': '2*bf', 'tfCriteria': 'True', 'TF': ('BF*tf/bf', ''), 'D': 'd',
                                     'twCriteria': 'True', 'TW': ('(D-2*TF)/(d-2*(tf+r))*tw', '')}}},
                         'TBPlate': {'B': {'M': {'BF': 'c+2*xm', 'tfCriteria': 't1<(.76*B1*tf)/(1.12*bf)',
                         'TF': ('(1.12*BF*t1)/(.76*B1)', '(BF*tf)/bf'), 'D': 'd+2*t1',
@@ -608,6 +642,32 @@ class Unp(Section):
                 20: UNP20, 22: UNP22, 24: UNP24, 26: UNP26, 28: UNP28, 30: UNP30}
         return UNP
 
+class Cpe(Section):
+
+    def __init__(self, name, area, bf, d, Ix, Iy, Zx, Zy, tf, tw, r1):
+        xm = bf / 2
+        ym = d / 2
+        xmax = bf
+        ymax = d
+        ASy = (d / 1.5 - tf) * tw
+        ASx = 5 / 3 * bf * tf
+        super(Cpe, self).__init__(_type='CPE', name=name, area=area, xm=xm, ym=ym,
+                                  xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy,
+                                  Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=d, tw=tw, r1=r1)
+
+    @staticmethod
+    def createStandardCpes():
+        CPE14 = Cpe("CPE14", 1640, 73, 210, 12700000, 449000, 121000, 19200, 6.9, 4.7, 7)
+        CPE16 = Cpe("CPE16", 2010, 82, 240, 20300000, 683000, 169000, 26100, 7.4, 5.0, 9)
+        CPE18 = Cpe("CPE18", 2390, 91, 270, 30700000, 1010000, 228000, 34600, 8.0, 5.3, 9)
+        CPE20 = Cpe("CPE20", 2850, 100, 300, 45400000, 1420000, 302000, 44600, 8.5, 5.6, 12)
+        CPE22 = Cpe("CPE22", 3340, 110, 330, 64600000, 2050000, 392000, 58100, 9.2, 5.9, 12)
+        CPE24 = Cpe("CPE24", 3910, 120, 360, 90700000, 2840000, 504000, 73900, 9.8, 6.2, 15)
+        CPE27 = Cpe("CPE27", 4590, 135, 405, 134700000, 4200000, 665000, 96900, 10.2, 6.6, 15)
+        CPE30 = Cpe("CPE30", 5380, 150, 450, 194100000, 6040000, 863000, 125000, 10.7, 7.1, 15)
+        CPE = {14: CPE14, 16: CPE16, 18: CPE18, 20: CPE20, 22: CPE22, 24: CPE24, 27: CPE27, 30: CPE30}
+        return CPE
+
     #def double(self, dist=0):
         #return DoubleSection(self, dist)
 
@@ -639,7 +699,8 @@ class Plate(Section):
 def createSection(sectionProp):
     ipesProp = Ipe.createStandardIpes()
     unpsProp = Unp.createStandardUnps()
-    sectionProperties = {'IPE': ipesProp, 'UNP': unpsProp}
+    cpesProp = Cpe.createStandardCpes()
+    sectionProperties = {'IPE': ipesProp, 'UNP': unpsProp, 'CPE': cpesProp}
     sectionType = sectionProp[SECTIONTYPE]
     sectionSize = sectionProp[SECTIONSIZE]
     section = sectionProperties[sectionType][sectionSize]

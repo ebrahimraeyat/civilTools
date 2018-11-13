@@ -22,10 +22,8 @@ class PlotB(QWidget):
     def createAxis(self, window):
         p = window.addPlot()
         p.setLabel('bottom', text='T', units='Sec')
-        p.setLabel('left', text="N  B1 B")
+        p.setLabel('left', text="N,  B1, B")
         p.showGrid(x=True, y=True)
-        p.addLegend()
-        p.legend.anchor((-9, 0), (0, 0))
         p.setXRange(0, 4.5, padding=0)
         p.setYRange(0, 4, padding=0)
         return p

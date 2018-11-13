@@ -4,7 +4,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
-from . import qrc_resources
+# from . import qrc_resources
 from .db import ostanha
 from .building.build import *
 from .models import *
@@ -12,7 +12,7 @@ import pyqtgraph as pg
 from .plots.plotB import PlotB as pl
 #from guiSaveRestore import *
 from . import export
-
+from .exporter import exporttoetabsdlg1 as etabs
 
 rTable = RFactorTable()
 systemTypes = rTable.getSystemTypes()
@@ -23,12 +23,14 @@ link_ebrahim = ('Website: <a href="%s"><span style=" '
     'text-decoration: underline; color:#0000ff;">'
     '%s</span></a>') % (__url__, __url__)
 
+main_window = uic.loadUiType('applications/cfactor/widgets/mainwindow.ui')[0]
 
-class Ui(QMainWindow):
+
+class Ui(QMainWindow, main_window):
 
     def __init__(self):
         super(Ui, self).__init__()
-        uic.loadUi('applications/cfactor/mainwindow.ui', self)
+        self.setupUi(self)
         self.dirty = False
         self.lastDirectory = ''
         self.html = ''
@@ -37,35 +39,29 @@ class Ui(QMainWindow):
         self.final_building = self.current_building()
         self.structure_model = StructureModel(self.final_building)
         self.structure_properties_table.setModel(self.structure_model)
+        self.resizeColumns()
         #self.__userH = 200
         #self.setMaxAllowedHeight()
         self.create_connections()
-        self.accept()
+        self.calculate()
         # self.create_actions()
-        # settings = QSettings()
-        #self.load_settings()
+        try:
+            self.load_settings()
+        except:
+            pass
         #guirestore(self, settings)
         #self.updateFileMenu()
 
     def create_connections(self):
-        self.soilType.currentIndexChanged.connect(self.accept)
-        self.HSpinBox.valueChanged.connect(self.accept)
+        self.calculate_button.clicked.connect(self.calculate)
+        self.x_treeWidget.itemActivated.connect(self.xactivate)
+        # self.y_treeWidget.itemActivated.connect(self.yactivate)
         ##self.connect(self.HSpinBox, SIGNAL(
                     ##"editingFinished()"), self.userInputHeight)
-        self.xTAnalaticalSpinBox.valueChanged.connect(self.accept)
-        self.yTAnalaticalSpinBox.valueChanged.connect(self.accept)
-        self.infillCheckBox.stateChanged.connect(self.accept)
-        self.tAnalaticalGroupBox.clicked.connect(self.accept)
-        self.xSystemBox.currentIndexChanged.connect(self.insert_xlaterals)
-        self.ySystemBox.currentIndexChanged.connect(self.insert_ylaterals)
-        self.xLateralBox.currentIndexChanged.connect(self.accept)
-        self.yLateralBox.currentIndexChanged.connect(self.accept)
-        self.storySpinBox.valueChanged.connect(self.accept)
-        self.IBox.currentIndexChanged.connect(self.accept)
         self.tabWidget.currentChanged.connect(self.showResult)
         self.ostanBox.currentIndexChanged.connect(self.set_shahrs_of_current_ostan)
         self.shahrBox.currentIndexChanged.connect(self.setA)
-        self.shahrBox.currentIndexChanged.connect(self.accept)
+        self.pushButton_etabs.clicked.connect(self.export_to_etabs)
 
     def resizeColumns(self):
         for column in (X, Y):
@@ -76,14 +72,11 @@ class Ui(QMainWindow):
         self.ostanBox.addItems(ostans)
         self.set_shahrs_of_current_ostan()
         self.setA()
-
-        for noesystem in systemTypes:
-            self.xSystemBox.addItem(noesystem)
-            self.ySystemBox.addItem(noesystem)
-        self.tAnalaticalGroupBox.setChecked(True)
+        # self.tAnalaticalGroupBox.setChecked(True)
         #
         # curve widget
         self.curveBWidget = pl()
+        self.p = self.curveBWidget.p
         self.curveBWidget.setMinimumSize(450, 300)
         draw_layout = QVBoxLayout()
         draw_layout.addWidget(self.curveBWidget)
@@ -91,18 +84,43 @@ class Ui(QMainWindow):
 
         for i in range(5):
             self.soilPropertiesTable.setSpan(i, 0, 1, 2)
+        # self.x_treeWidget.setCurrentItem(0,0)
+        iterator = QTreeWidgetItemIterator(self.x_treeWidget)
+        i = 0
+        while iterator.value():
+            item = iterator.value()
+            iterator += 1
+            if i == 2:
+                self.x_treeWidget.setCurrentItem(item, 0)
+                break
+            i +=1
+        iterator = QTreeWidgetItemIterator(self.y_treeWidget)
+        i = 0
+        while iterator.value():
+            item = iterator.value()
+            iterator += 1
+            if i == 2:
+                self.y_treeWidget.setCurrentItem(item, 0)
+                break
+            i +=1
     
-        self.insert_xlaterals()
-        self.insert_ylaterals()
-
     def load_settings(self):
         settings = QSettings()
-        self.restoreGeometry(
-                settings.value("MainWindow/Geometry2").toByteArray())
-        self.restoreState(settings.value("MainWindow/State2").toByteArray())
-        self.inputSplitter.restoreState(settings.value("InputSplitter2").toByteArray())
-        self.mainSplitter.restoreState(settings.value("MainSplitter2").toByteArray())
+        self.restoreGeometry(settings.value("CfactorMainWindow\Geometry"))
+        self.restoreState(settings.value("CfactorMainWindow\State"))
+        self.splitter.restoreState(settings.value("CfactorMainWindow\Splitter"))
+        self.splitter_2.restoreState(settings.value("CfactorMainWindow\Splitter2"))
 
+    def closeEvent(self, event):
+        settings = QSettings()
+        settings.setValue("CfactorMainWindow\Geometry",
+                          QVariant(self.saveGeometry()))
+        settings.setValue("CfactorMainWindow\State",
+                          QVariant(self.saveState()))
+        settings.setValue("CfactorMainWindow\Splitter",
+                QVariant(self.splitter.saveState()))
+        settings.setValue("CfactorMainWindow\Splitter2",
+                QVariant(self.splitter_2.saveState()))
     #def closeEvent(self, event):
         #settings = QSettings()
         #guisave(self, settings)
@@ -132,28 +150,23 @@ class Ui(QMainWindow):
                 به وبلاگ زیر مراجعه نمایید:
                     <p> {1}""".format(__version__, link_ebrahim))
 
-    def insert_xlaterals(self):
-        systemType = self.xSystemBox.currentText()
-        lateralTypes = rTable.getLateralTypes(systemType)
-        old_state = bool(self.xLateralBox.blockSignals(True))
-        print(old_state)
-        self.xLateralBox.clear()
-        self.xLateralBox.addItems(lateralTypes)
-        self.xLateralBox.blockSignals(old_state)
 
-    def insert_ylaterals(self):
-        systemType = self.ySystemBox.currentText()
-        lateralTypes = rTable.getLateralTypes(systemType)
-        old_state = bool(self.yLateralBox.blockSignals(True))
-        self.yLateralBox.clear()
-        self.yLateralBox.addItems(lateralTypes)
-        self.yLateralBox.blockSignals(old_state)
+    def xactivate(self):
+        if self.x_treeWidget.currentItem().parent():
+            system = self.x_treeWidget.currentItem().parent().text(0)
+            lateral = self.x_treeWidget.currentItem().text(0)
+            # self.y_treeWidget.setCurrentItem(self.y_treeWidget.topLevelItem(0), 0)
+            self.y_treeWidget.scrollToItem(self.x_treeWidget.currentItem())
+            # print(self.y_treeWidget.indexFromItem(self.x_treeWidget.currentItem()))
+            return (system, lateral)
+        return None
 
-    def get_current_system_type(self, systemBox):
-        return systemBox.currentText()
-
-    def get_lateral_system_type(self, lateralBox):
-        return lateralBox.currentText()
+    def yactivate(self):
+        if self.y_treeWidget.currentItem().parent():
+            system = self.y_treeWidget.currentItem().parent().text(0)
+            lateral = self.y_treeWidget.currentItem().text(0)
+            return (system, lateral)
+        return None   
 
     def get_current_ostan(self):
         return self.ostanBox.currentText()
@@ -194,7 +207,8 @@ class Ui(QMainWindow):
 
     def setInfillCheckBoxStatus(self, xSystem, ySystem):
         infill = xSystem.is_infill and ySystem.is_infill
-        if self.tAnalaticalGroupBox.isChecked() or infill is None:
+        # if self.tAnalaticalGroupBox.isChecked() or infill is None:
+        if infill is None:
             self.infillCheckBox.setEnabled(False)
             self.infillCheckBox.setCheckState(False)
         else:
@@ -217,7 +231,8 @@ class Ui(QMainWindow):
         self.HSpinBox.setMaximum(maxAllowedHeight)
 
     def getTAnalatical(self):
-        useTan = self.tAnalaticalGroupBox.isChecked()
+        useTan = True
+        # useTan = self.tAnalaticalGroupBox.isChecked()
         xTan = self.xTAnalaticalSpinBox.value()
         yTan = self.yTAnalaticalSpinBox.value()
         return useTan, xTan, yTan
@@ -249,7 +264,9 @@ class Ui(QMainWindow):
             self.soilPropertiesTable.setItem(row + len(soilProp), 1, item)
 
     def updateBCurve(self, build):
-        self.p = self.curveBWidget.p
+        self.p.clear()
+        self.p.addLegend()
+        self.p.legend.anchor((-9, 0), (0, 0))
         self.p.setTitle('منحنی ضریب بازتاب، خاک نوع {0}، پهنه با خطر نسبی {1}'.format(
                             build.soilType, build.risk_level))
         penB1 = pg.mkPen('r', width=2, style=Qt.DashLine)
@@ -262,7 +279,6 @@ class Ui(QMainWindow):
         N = build.soil_reflection_prop_x.nCurve
         B = build.soil_reflection_prop_x.bCurve
         x = np.arange(0, 4.5, dt)
-        self.p.legend.items = []
         self.p.plot(x, B1, pen=penB1, name="B1", clear=True)
         self.p.plot(x, N, pen=penN, name="N")
         self.p.plot(x, B, pen=penB, name="B")
@@ -280,7 +296,7 @@ class Ui(QMainWindow):
         self.p.addItem(text)
         text.setPos(Ty, B.max())
         self.p.setYRange(0, B.max() + 1, padding=0)
-
+        
     def current_building(self):
         risk_level = self.accText.text()
         city = self.get_current_shahr()
@@ -288,10 +304,12 @@ class Ui(QMainWindow):
         importance_factor = float(self.IBox.currentText())
         soil = self.get_current_soil_type()
         noStory = self.storySpinBox.value()
-        xSystemType = self.get_current_system_type(self.xSystemBox)
-        xLateralType = self.get_lateral_system_type(self.xLateralBox)
-        ySystemType = self.get_current_system_type(self.ySystemBox)
-        yLateralType = self.get_lateral_system_type(self.yLateralBox)
+        x_system = self.xactivate()
+        y_system = self.yactivate()
+        if not x_system and y_system:
+            return None
+        xSystemType, xLateralType = x_system[0], x_system[1]
+        ySystemType, yLateralType = y_system[0], y_system[1]
         xSystem = StructureSystem(xSystemType, xLateralType, "X")
         ySystem = StructureSystem(ySystemType, yLateralType, "Y")
         self.setInfillCheckBoxStatus(xSystem, ySystem)
@@ -308,14 +326,17 @@ class Ui(QMainWindow):
                               xSystem, ySystem, city, xTan, yTan, useTan)
         return build
 
-    def accept(self):
+    def calculate(self):
         self.dirty = False
         self.html = ''
         self.final_building = self.current_building()
+        if not self.final_building:
+            return
         self.setSoilProperties(self.final_building)
         self.structure_model.beginResetModel()
         self.structure_model.build = self.final_building
         self.structure_model.endResetModel()
+        self.resizeColumns()
         results = self.final_building.results
         if results[0] is True:
             Cx, Cy = results[1], results[2]
@@ -357,8 +378,21 @@ class Ui(QMainWindow):
         export_graph = export.ExportGraph(self, self.lastDirectory, self.p)
         export_graph.to_csv()
 
-if __name__ == "__main__":
+    def export_to_etabs(self):
+        # TODO 
+        # results = self.final_building.results
+        # if results[0] is True:
+        self.child_export_etabs_win = etabs.ExportToEtabs(self.final_building, self)
+        self.child_export_etabs_win.number_of_story_spinox.setValue(self.storySpinBox.value())
+        if self.child_export_etabs_win.exec_():
+            title = 'Seccess'
+            text = 'Export File to {}'.format(self.child_export_etabs_win.output_path_line.text())
+            QMessageBox.information(self, title, text)
+        else:
+            return
 
+
+if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = Ui()
     window.show()
