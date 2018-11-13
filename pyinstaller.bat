@@ -1,1 +1,0 @@
-C:\python36\Scripts\pyinstaller.exe  civiltools.spec
