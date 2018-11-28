@@ -62,6 +62,7 @@ class Ui(QMainWindow, main_window):
         self.ostanBox.currentIndexChanged.connect(self.set_shahrs_of_current_ostan)
         self.shahrBox.currentIndexChanged.connect(self.setA)
         self.pushButton_etabs.clicked.connect(self.export_to_etabs)
+        self.pushButton_word.clicked.connect(self.export_to_word)
 
     def resizeColumns(self):
         for column in (X, Y):
@@ -358,17 +359,9 @@ class Ui(QMainWindow, main_window):
     def showResult(self):
         self.textExport.setHtml(self.html)
 
-    def exportToPdf(self):
-        export_result = export.Export(self, self.dirty, self.lastDirectory, self.html)
-        export_result.to_pdf()
-
-    def exportToOffice(self):
-        export_result = export.Export(self, self.dirty, self.lastDirectory, self.html)
+    def export_to_word(self):
+        export_result = export.Export(self, self.dirty, self.lastDirectory, self.final_building)
         export_result.to_word()
-
-    def exportToHtml(self):
-        export_result = export.Export(self, self.dirty, self.lastDirectory, self.html)
-        export_result.to_html()
 
     def exportBCurveToImage(self):
         export_graph = export.ExportGraph(self, self.lastDirectory, self.p)

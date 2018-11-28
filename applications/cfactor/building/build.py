@@ -318,8 +318,14 @@ class StructureSystem(object):
         structure += u'\u2126<sub>0</sub>={4}; C<sub>d</sub>={5}</p>'
         structure = structure.format(self.systemType, self.lateralType,
                                      self.Ru, self.maxHeight, self.phi0, self.cd)
-        #structure = structure.encode('utf-8')
+        
         return structure
+
+    def __eq__(self, another):
+        if self.systemType == another.systemType and \
+        self.lateralType == another.lateralType:
+            return True
+        return False
 
 
 class RFactorTable(object):
