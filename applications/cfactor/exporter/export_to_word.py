@@ -12,6 +12,7 @@ def export(building=None, filename=None):
 	prop = {'': '',
 			'محل اجرای پروژه': building.city,
 			'کاربری ساختمان': 'مسکونی',
+			'ضریب اهمیت': building.importance_factor,
 			'تعداد طبقات': building.number_of_story,
 			'ارتفاع ساختمان  )متر(': building.height,
 			'سطح خطر نسبی': building.risk_level,

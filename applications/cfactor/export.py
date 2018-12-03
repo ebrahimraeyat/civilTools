@@ -29,8 +29,8 @@ class Export:
         filters = "docx(*.docx)"
         filename, _ = QFileDialog.getSaveFileName(self.widget, 'Word خروجی به',
                                                self.lastDirectory, filters)
-        if filename == '':
-            return
+        if filename == '': return
+        if not filename.endswith(".docx"): filename += ".docx"
         self.lastDirectory = getLastSaveDirectory(filename)
         word.export(self.building, filename)
 
