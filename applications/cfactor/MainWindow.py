@@ -13,6 +13,7 @@ from .plots.plotB import PlotB as pl
 #from guiSaveRestore import *
 from . import export
 from .exporter import exporttoetabsdlg1 as etabs
+from .exporter import config
 
 rTable = RFactorTable()
 systemTypes = rTable.getSystemTypes()
@@ -33,7 +34,6 @@ class Ui(QMainWindow, main_window):
         self.setupUi(self)
         self.dirty = False
         self.lastDirectory = ''
-        self.html = ''
         self.printer = None
         self.create_widgets()
         self.final_building = self.current_building()
@@ -43,14 +43,17 @@ class Ui(QMainWindow, main_window):
         #self.__userH = 200
         #self.setMaxAllowedHeight()
         self.create_connections()
-        self.calculate()
         # self.create_actions()
         try:
             self.load_settings()
         except:
             pass
-        #guirestore(self, settings)
-        #self.updateFileMenu()
+
+        self.load_config()
+        self.calculate()
+
+    def load_config(self, json_file='applications/cfactor/exporter/config.json'):
+        config.load(self, json_file)
 
     def create_connections(self):
         self.calculate_button.clicked.connect(self.calculate)
@@ -58,11 +61,12 @@ class Ui(QMainWindow, main_window):
         # self.y_treeWidget.itemActivated.connect(self.yactivate)
         ##self.connect(self.HSpinBox, SIGNAL(
                     ##"editingFinished()"), self.userInputHeight)
-        self.tabWidget.currentChanged.connect(self.showResult)
         self.ostanBox.currentIndexChanged.connect(self.set_shahrs_of_current_ostan)
         self.shahrBox.currentIndexChanged.connect(self.setA)
         self.pushButton_etabs.clicked.connect(self.export_to_etabs)
         self.pushButton_word.clicked.connect(self.export_to_word)
+        self.save_button.clicked.connect(self.save)
+        self.load_button.clicked.connect(self.load)
 
     def resizeColumns(self):
         for column in (X, Y):
@@ -122,22 +126,16 @@ class Ui(QMainWindow, main_window):
                 QVariant(self.splitter.saveState()))
         settings.setValue("CfactorMainWindow\Splitter2",
                 QVariant(self.splitter_2.saveState()))
-    #def closeEvent(self, event):
-        #settings = QSettings()
-        #guisave(self, settings)
-        ##self.deleteLater()
-        ##if self.okToContinue():
-        ##settings = QSettings()
-        ##filename = (QVariant(QString(self.filename))
-                    ##if self.filename is not None else QVariant())
-        ##settings.setValue("LastFile", filename)
-        ##recentFiles = (QVariant(self.recentFiles)
-                       ##if self.recentFiles else QVariant())
-        ##settings.setValue("RecentFiles", Files)
-        #settings.setValue("MainWindow/Geometry2", QVariant(self.saveGeometry()))
-        #settings.setValue("MainWindow/State2", QVariant(self.saveState()))
-        #settings.setValue("InputSplitter2", QVariant(self.inputSplitter.saveState()))
-        #settings.setValue("MainSplitter2", QVariant(self.mainSplitter.saveState()))
+        if self.ok_to_continue():
+            self.save_config()
+
+    def save_config(self, json_file='applications/cfactor/exporter/config.json'):
+        config.save(self, json_file)
+
+    def ok_to_continue(self):
+        return bool(QMessageBox.question(self, 'save config?', 'save configuration file?', 
+            QMessageBox.Yes | QMessageBox.No) == QMessageBox.Yes)
+
 
     def helpAbout(self):
         QMessageBox.about(self, "درباره نرم افزار محاسبه ضریب زلزله",
@@ -329,7 +327,6 @@ class Ui(QMainWindow, main_window):
 
     def calculate(self):
         self.dirty = False
-        self.html = ''
         self.final_building = self.current_building()
         if not self.final_building:
             return
@@ -348,7 +345,6 @@ class Ui(QMainWindow, main_window):
             resultStry_drift = '<font size=6 color=blue>C<sub>ydrift</sub> = %.4f , K<sub>ydrift</sub> = %.2f</font>' % (
                 self.final_building.results_drift[2], self.final_building.ky_drift)
             self.updateBCurve(self.final_building)
-            self.html = self.final_building.__str__()
             self.dirty = True
 
         else:
@@ -356,12 +352,21 @@ class Ui(QMainWindow, main_window):
             QMessageBox.critical(self, title % direction, err)
             return
 
-    def showResult(self):
-        self.textExport.setHtml(self.html)
-
     def export_to_word(self):
         export_result = export.Export(self, self.dirty, self.lastDirectory, self.final_building)
         export_result.to_word()
+
+    def save(self):
+        export_result = export.Export(self, self.dirty, self.lastDirectory, None)
+        export_result.to_json()
+
+    def load(self):
+        filename, _ = QFileDialog.getOpenFileName(self, 'load project',
+                                               self.lastDirectory, "json(*.json)")
+        if filename == '':
+            return
+        config.load(self, filename)
+
 
     def exportBCurveToImage(self):
         export_graph = export.ExportGraph(self, self.lastDirectory, self.p)
