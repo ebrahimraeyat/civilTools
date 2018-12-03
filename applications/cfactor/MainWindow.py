@@ -113,8 +113,8 @@ class Ui(QMainWindow, main_window):
         settings = QSettings()
         self.restoreGeometry(settings.value("CfactorMainWindow\Geometry"))
         self.restoreState(settings.value("CfactorMainWindow\State"))
-        self.splitter.restoreState(settings.value("CfactorMainWindow\Splitter"))
-        self.splitter_2.restoreState(settings.value("CfactorMainWindow\Splitter2"))
+        # self.splitter.restoreState(settings.value("CfactorMainWindow\Splitter"))
+        # self.splitter_2.restoreState(settings.value("CfactorMainWindow\Splitter2"))
 
     def closeEvent(self, event):
         settings = QSettings()
@@ -122,10 +122,10 @@ class Ui(QMainWindow, main_window):
                           QVariant(self.saveGeometry()))
         settings.setValue("CfactorMainWindow\State",
                           QVariant(self.saveState()))
-        settings.setValue("CfactorMainWindow\Splitter",
-                QVariant(self.splitter.saveState()))
-        settings.setValue("CfactorMainWindow\Splitter2",
-                QVariant(self.splitter_2.saveState()))
+        # settings.setValue("CfactorMainWindow\Splitter",
+        #         QVariant(self.splitter.saveState()))
+        # settings.setValue("CfactorMainWindow\Splitter2",
+        #         QVariant(self.splitter_2.saveState()))
         if self.ok_to_continue():
             self.save_config()
 
