@@ -54,6 +54,7 @@ class Ui(QMainWindow, main_window):
 
     def load_config(self, json_file='applications/cfactor/exporter/config.json'):
         config.load(self, json_file)
+        self.calculate()
 
     def create_connections(self):
         self.calculate_button.clicked.connect(self.calculate)
