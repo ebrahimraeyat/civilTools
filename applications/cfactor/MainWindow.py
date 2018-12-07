@@ -383,7 +383,7 @@ class Ui(QMainWindow, main_window):
         # results = self.final_building.results
         # if results[0] is True:
         self.child_export_etabs_win = etabs.ExportToEtabs(self.final_building, self)
-        self.child_export_etabs_win.number_of_story_spinox.setValue(self.storySpinBox.value())
+        # self.child_export_etabs_win.number_of_story_spinox.setValue(self.storySpinBox.value())
         if self.child_export_etabs_win.exec_():
             title = 'Seccess'
             text = 'Export File to {}'.format(self.child_export_etabs_win.output_path_line.text())
