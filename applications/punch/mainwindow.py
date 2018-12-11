@@ -1,13 +1,13 @@
 from PyQt5 import uic, QtWidgets, QtCore
 import sys
-from .punch import Column, Foundation, Punch, ShearSteel
+from punch import Column, Foundation, Punch, ShearSteel
 
  
 class Ui(QtWidgets.QMainWindow):
 
     def __init__(self):
         super(Ui, self).__init__()
-        uic.loadUi('applications/punch/mainwindow.ui', self)
+        uic.loadUi('mainwindow.ui', self)
         self.run_Button.clicked.connect(self.update_result)
 
     def get_column(self):

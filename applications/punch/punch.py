@@ -1,5 +1,5 @@
 import math
-from .rebar import Rebar
+from rebar import Rebar
 
 pi = math.pi
 

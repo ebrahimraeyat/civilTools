@@ -2,7 +2,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5 import uic, QtWidgets
 
-export_etabs_window, etabs_base = uic.loadUiType('applications/cfactor/widgets/export_etabs.ui')
+export_etabs_window, etabs_base = uic.loadUiType('widgets/export_etabs.ui')
 
 class ExportToEtabs(etabs_base, export_etabs_window):
     def __init__(self, building=None, parent=None):

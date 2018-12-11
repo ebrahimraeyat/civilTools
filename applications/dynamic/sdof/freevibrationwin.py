@@ -2,13 +2,13 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
-from .freevibration import Vibration as fv
+from freevibration import Vibration as fv
 import pyqtgraph as pg
 import numpy as np
 
 pg.setConfigOption('background', 'w')
 pg.setConfigOption('foreground', 'k')
-free_vib_win, base_win = uic.loadUiType('applications/dynamic/widgets/sdof_free_vibration.ui')
+free_vib_win, base_win = uic.loadUiType('widgets/sdof_free_vibration.ui')
 
 
 class FreeVibrationWin(base_win, free_vib_win):

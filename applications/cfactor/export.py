@@ -6,8 +6,8 @@ from PyQt5.QtPrintSupport import QPrinter
 from PyQt5.QtWebEngineWidgets import QWebEnginePage
 import os
 import pyqtgraph as pg
-from .exporter import export_to_word as word
-from .exporter import config
+from exporter import export_to_word as word
+from exporter import config
 
 def getLastSaveDirectory(f):
     f = str(f)

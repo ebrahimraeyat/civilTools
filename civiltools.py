@@ -9,10 +9,12 @@ from PyQt5.QtWidgets import QSplashScreen
 _appname = 'civiltools'
 _version = '1.4'
 _civiltools_mainpackages = ['civiltools']
+civiltools_path = os.path.dirname(os.path.abspath(__file__))
 # ABS_PATH = os.path.abspath(os.path.dirname(__file__))
 # sys.path.append(os.path.join(ABS_PATH, 'applications', 'cfactor'))
-main_window = uic.loadUiType('main_form.ui')[0]
-about_window, about_base = uic.loadUiType('about.ui')
+main_window = uic.loadUiType(civiltools_path + '/main_form.ui')[0]
+about_window, about_base = uic.loadUiType(civiltools_path + '/about.ui')
+import os
 
 
 class FormWidget(QtWidgets.QWidget, main_window):
@@ -30,19 +32,23 @@ class FormWidget(QtWidgets.QWidget, main_window):
         # self.update_Button.clicked.connect(self.check_for_updates)
     #----
     def run_section(self):
-        subprocess.Popen(['python', '-m', 'applications.section.MainWindow'])
+        os.chdir(civiltools_path + "/applications/section")
+        subprocess.Popen(['python', 'MainWindow.py'])
         
     def run_cfactor(self):
-        subprocess.Popen(['python', '-m', 'applications.cfactor.MainWindow'])  
+        os.chdir(civiltools_path + "/applications/cfactor")
+        subprocess.Popen(['python', 'MainWindow.py'])  
            
     def run_punch(self):
-        subprocess.Popen(['python', '-m', 'applications.punch.mainwindow']) 
+        os.chdir(civiltools_path + "/applications/punch")
+        subprocess.Popen(['python', 'mainwindow.py']) 
         
     def run_record(self):
         subprocess.Popen(['python', '-m', 'applications.records.MainWindow'])
 
     def run_dynamic(self):
-        subprocess.Popen(['python', '-m', 'applications.dynamic.sdof.freevibrationwin']) 
+        os.chdir(civiltools_path + "/applications/dynamic")
+        subprocess.Popen(['python', 'sdof/freevibrationwin.py']) 
 
     def about(self):
         self.child_win = AboutForm(self)

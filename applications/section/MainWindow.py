@@ -7,8 +7,8 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5 import uic, QtCore
-from . import sec
-from .plot.plotIpe import PlotSectionAndEqSection
+import sec
+from plot.plotIpe import PlotSectionAndEqSection
 
 
 __url__ = "http://ebrahimraeyat.blog.ir"
@@ -21,7 +21,7 @@ ipesProp = sec.Ipe.createStandardIpes()
 unpsProp = sec.Unp.createStandardUnps()
 cpesProp = sec.Cpe.createStandardCpes()
 
-main_window = uic.loadUiType('applications/section/mainwindow.ui')[0]
+main_window = uic.loadUiType('mainwindow.ui')[0]
 
 
 class Ui(QMainWindow, main_window):

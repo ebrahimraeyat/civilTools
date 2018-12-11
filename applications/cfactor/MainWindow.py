@@ -5,15 +5,15 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 # from . import qrc_resources
-from .db import ostanha
-from .building.build import *
-from .models import *
+from db import ostanha
+from building.build import *
+from models import *
 import pyqtgraph as pg
-from .plots.plotB import PlotB as pl
+from plots.plotB import PlotB as pl
 #from guiSaveRestore import *
-from . import export
-from .exporter import exporttoetabsdlg1 as etabs
-from .exporter import config
+import export
+from exporter import exporttoetabsdlg1 as etabs
+from exporter import config
 
 rTable = RFactorTable()
 systemTypes = rTable.getSystemTypes()
@@ -24,7 +24,7 @@ link_ebrahim = ('Website: <a href="%s"><span style=" '
     'text-decoration: underline; color:#0000ff;">'
     '%s</span></a>') % (__url__, __url__)
 
-main_window = uic.loadUiType('applications/cfactor/widgets/mainwindow.ui')[0]
+main_window = uic.loadUiType('widgets/mainwindow.ui')[0]
 
 
 class Ui(QMainWindow, main_window):
@@ -52,7 +52,7 @@ class Ui(QMainWindow, main_window):
         self.load_config()
         self.calculate()
 
-    def load_config(self, json_file='applications/cfactor/exporter/config.json'):
+    def load_config(self, json_file='exporter/config.json'):
         config.load(self, json_file)
 
 
@@ -130,7 +130,7 @@ class Ui(QMainWindow, main_window):
         if self.ok_to_continue():
             self.save_config()
 
-    def save_config(self, json_file='applications/cfactor/exporter/config.json'):
+    def save_config(self, json_file='exporter/config.json'):
         config.save(self, json_file)
 
     def ok_to_continue(self):
