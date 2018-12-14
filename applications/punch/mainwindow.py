@@ -1,13 +1,15 @@
 from PyQt5 import uic, QtWidgets, QtCore
-import sys
+import sys, os
+abs_path = os.path.dirname(__file__)
+sys.path.insert(0, abs_path)
 from punch import Column, Foundation, Punch, ShearSteel
-
+ui_file = os.path.join(abs_path, 'mainwindow.ui')
  
 class Ui(QtWidgets.QMainWindow):
 
     def __init__(self):
         super(Ui, self).__init__()
-        uic.loadUi('mainwindow.ui', self)
+        uic.loadUi(ui_file, self)
         self.run_Button.clicked.connect(self.update_result)
 
     def get_column(self):
@@ -62,8 +64,7 @@ class Ui(QtWidgets.QMainWindow):
             result = self.calculate_punch()
         self.plainTextEdit.setPlainText(result.__str__())
 
-
-if __name__ == '__main__':
+def main():
     app = QtWidgets.QApplication(sys.argv)
     translator = QtCore.QTranslator()
     translator.load("applications/punch/mainwindow.qm")
@@ -71,3 +72,6 @@ if __name__ == '__main__':
     window = Ui()
     window.show()
     sys.exit(app.exec_())
+
+if __name__ == '__main__':
+    main()

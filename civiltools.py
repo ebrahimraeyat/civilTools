@@ -7,14 +7,12 @@ from PyQt5.QtWidgets import QSplashScreen
 # import checkupdate
 
 _appname = 'civiltools'
-_version = '1.4'
+_version = '1.5'
 _civiltools_mainpackages = ['civiltools']
 civiltools_path = os.path.dirname(os.path.abspath(__file__))
-# ABS_PATH = os.path.abspath(os.path.dirname(__file__))
-# sys.path.append(os.path.join(ABS_PATH, 'applications', 'cfactor'))
+sys.path.insert(0, civiltools_path)
 main_window = uic.loadUiType(civiltools_path + '/main_form.ui')[0]
 about_window, about_base = uic.loadUiType(civiltools_path + '/about.ui')
-import os
 
 
 class FormWidget(QtWidgets.QWidget, main_window):
@@ -73,7 +71,8 @@ class AboutForm(about_base, about_window):
         super(AboutForm, self).__init__() 
         self.setupUi(self) 
 
-if __name__ == '__main__':
+def main():
+    os.chdir(civiltools_path)
     app = QtWidgets.QApplication(sys.argv)
     # pixmap = QPixmap("./images/civil-engineering.png")
     # splash = QSplashScreen(pixmap)
@@ -86,3 +85,6 @@ if __name__ == '__main__':
     window.setWindowTitle(_appname + ' ' + _version)
     window.show()
     sys.exit(app.exec_())
+
+if __name__ == '__main__':
+    main()

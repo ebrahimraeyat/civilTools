@@ -3,6 +3,8 @@
 import re
 import sys
 import os
+abs_path = os.path.dirname(__file__)
+sys.path.insert(0, abs_path)
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -21,7 +23,7 @@ ipesProp = sec.Ipe.createStandardIpes()
 unpsProp = sec.Unp.createStandardUnps()
 cpesProp = sec.Cpe.createStandardCpes()
 
-main_window = uic.loadUiType('mainwindow.ui')[0]
+main_window = uic.loadUiType(os.path.join(abs_path, 'mainwindow.ui'))[0]
 
 
 class Ui(QMainWindow, main_window):
@@ -402,8 +404,7 @@ class Ui(QMainWindow, main_window):
                     <p> {1}""".format(__version__, link_ebrahim))
 
 
-if __name__ == "__main__":
-
+def main():
     app = QApplication(sys.argv)
     # translator = QtCore.QTranslator()
     # translator.load("applications/section/mainwindow.qm")
@@ -411,3 +412,6 @@ if __name__ == "__main__":
     window = Ui()
     window.show()
     app.exec_()
+
+if __name__ == "__main__":
+    main()

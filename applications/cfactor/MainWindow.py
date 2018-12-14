@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
-import sys
+import sys, os
+abs_path = os.path.dirname(__file__)
+sys.path.insert(0, abs_path)
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
-# from . import qrc_resources
 from db import ostanha
 from building.build import *
 from models import *
 import pyqtgraph as pg
 from plots.plotB import PlotB as pl
-#from guiSaveRestore import *
 import export
 from exporter import exporttoetabsdlg1 as etabs
 from exporter import config
@@ -24,7 +24,7 @@ link_ebrahim = ('Website: <a href="%s"><span style=" '
     'text-decoration: underline; color:#0000ff;">'
     '%s</span></a>') % (__url__, __url__)
 
-main_window = uic.loadUiType('widgets/mainwindow.ui')[0]
+main_window = uic.loadUiType(os.path.join(abs_path, 'widgets', 'mainwindow.ui'))[0]
 
 
 class Ui(QMainWindow, main_window):
@@ -52,7 +52,7 @@ class Ui(QMainWindow, main_window):
         self.load_config()
         self.calculate()
 
-    def load_config(self, json_file='exporter/config.json'):
+    def load_config(self, json_file=os.path.join(abs_path, 'exporter', 'config.json')):
         config.load(self, json_file)
 
 
@@ -130,7 +130,7 @@ class Ui(QMainWindow, main_window):
         if self.ok_to_continue():
             self.save_config()
 
-    def save_config(self, json_file='exporter/config.json'):
+    def save_config(self, json_file=os.path.join(abs_path, 'exporter', 'config.json')):
         config.save(self, json_file)
 
     def ok_to_continue(self):
@@ -383,7 +383,6 @@ class Ui(QMainWindow, main_window):
         # results = self.final_building.results
         # if results[0] is True:
         self.child_export_etabs_win = etabs.ExportToEtabs(self.final_building, self)
-        # self.child_export_etabs_win.number_of_story_spinox.setValue(self.storySpinBox.value())
         if self.child_export_etabs_win.exec_():
             title = 'Seccess'
             text = 'Export File to {}'.format(self.child_export_etabs_win.output_path_line.text())
@@ -392,8 +391,12 @@ class Ui(QMainWindow, main_window):
             return
 
 
-if __name__ == "__main__":
+def main():
     app = QApplication(sys.argv)
     window = Ui()
     window.show()
     app.exec_()
+    pg.exit()
+
+if __name__ == '__main__':
+	main()

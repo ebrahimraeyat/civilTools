@@ -1,6 +1,8 @@
 from docx import Document
 from docx.enum.table import WD_TABLE_DIRECTION
-import sys
+import sys, os
+
+cfactor_path = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
 
 def export(building=None, filename=None):
 	if not building :
@@ -40,7 +42,7 @@ def export(building=None, filename=None):
 			  'C': (building.results[1], building.results[2])}
 
 
-	doc = Document('exporter/template.docx')
+	doc = Document(os.path.join(cfactor_path, 'exporter', 'template.docx'))
 	doc.add_heading('محاسبه ضریب زلزله', level=0)
 	doc.add_heading('مشخصات پروژه', level=1)
 	table_prop = doc.add_table(rows=0, cols=2, style=doc.styles['List Table 4 Accent 5'])

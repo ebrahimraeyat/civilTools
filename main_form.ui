@@ -178,6 +178,9 @@ p, li { white-space: pre-wrap; }
         </layout>
        </widget>
        <widget class="QWidget" name="tab_2">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <attribute name="title">
          <string>دانشجویی</string>
         </attribute>
@@ -185,7 +188,7 @@ p, li { white-space: pre-wrap; }
          <item>
           <widget class="QPushButton" name="record_Button">
            <property name="enabled">
-            <bool>true</bool>
+            <bool>false</bool>
            </property>
            <property name="text">
             <string>    رکورد زلزله</string>
