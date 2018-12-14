@@ -2,7 +2,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5 import uic, QtWidgets
 
-import os
+import sys, os
 
 cfactor_path = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
 export_etabs_window, etabs_base = uic.loadUiType(os.path.join(cfactor_path, 'widgets', 'export_etabs.ui'))
@@ -19,7 +19,10 @@ class ExportToEtabs(etabs_base, export_etabs_window):
     def accept(self):
         input_e2k = self.input_path_line.text()
         output_e2k = self.output_path_line.text()
-        with open(input_e2k, encoding="ISO-8859-1") as f:
+        encoding = None
+        if sys.platform.startswith('linux'):
+        	encoding = "ISO-8859-1"
+        with open(input_e2k, encoding=encoding) as f:
             input_str = f.read()
         apply_earthquake_file = self._earthquake_e2k_text(input_str)
         with open(output_e2k, 'w') as output_file:
