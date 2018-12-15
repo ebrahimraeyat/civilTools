@@ -9,7 +9,7 @@ Tests for `civiltools` module.
 """
 #import sys
 import unittest
-from .sec import *
+from sec import *
 
 
 class TestIpeSoubleSections(unittest.TestCase):

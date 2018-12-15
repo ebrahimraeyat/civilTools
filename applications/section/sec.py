@@ -4,11 +4,13 @@ from __future__ import division
 from math import sqrt
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-from PyQt5.QtXml import *
+# from PyQt5.QtXml import *
 import re
+import pandas as pd
 
+column_count = 23
 NAME, AREA, ASX, ASY, IX, IY, ZX, ZY, \
-Sx, Sy, RX, RY, BF, TF, D, TW, XM, YM, V2, V3, SLENDER = range(21)
+Sx, Sy, RX, RY, CW, J, BF, TF, D, TW, XM, YM, V2, V3, SLENDER = range(column_count)
 
 LH, TH, LV, TV, LW, _TW, DIST, ISTBPLATE, ISLRPLATE, ISWEBPLATE, USEAS, DUCTILITY, ISDOUBLE, \
 ISSOUBLE, SECTIONSIZE, SECTIONTYPE, CONVERT_TYPE = range(17)
@@ -47,6 +49,8 @@ class Section(object):
         self.d = kwargs['d']
         self.tw = kwargs['tw']
         self.r1 = kwargs['r1']
+        self.cw = kwargs['cw']
+        self.J = kwargs['J']
         self.cc = cc
         self.composite = composite
         self.useAs = useAs
@@ -113,12 +117,13 @@ class Section(object):
                '\t<R22>{:.1f}</R22>\n'
                '\t<Z33>{:.0f}</Z33>\n'
                '\t<Z22>{:.0f}</Z22>\n'
-               '\t<J>0</J>\n'
+               '\t<J>{:.0f}</J>\n'
+               '\t<CW>{:.0f}</CW>\n'
                '  </{}>'
               ).format(secType, self.name, self.name, self.d_equivalentI, self.bf_equivalentI, self.tf_equivalentI,
                                        self.tw_equivalentI, self.area, self.ASy, self.ASx, self.Ix, self.Iy,
                                        self.Sx, self.Sx, self.Sy, self.Sy, self.Rx,
-                                       self.Ry, self.Zx, self.Zy, secType)
+                                       self.Ry, self.Zx, self.Zy, self.J, self.cw, secType)
         return s
 
     @staticmethod
@@ -160,6 +165,36 @@ class Section(object):
                 pass
         return True, "Exported section properties to %s" % (QFileInfo(fname).fileName())
 
+    @staticmethod
+    def export_to_excel(fname, sections):
+        IPES = pd.DataFrame(columns=['TYPE', 'EDI_LABEL', 'LABEL', 'T_F', 'A', 'D', 'BF',  'TW', 
+                    'TF', 'KDES', 'KDET', 'IX', 'ZX', 'SX', 'RX', 'ASX', 'IY', 'ZY', 'SY',
+                    'RY', 'ASY', 'J', 'CW'], index=range(len(sections)))
+        IPES['TYPE'][:] = 'W'
+        for row, section in enumerate(sections):
+            IPES['EDI_LABEL'][row] = IPES['LABEL'][row] = section.name
+            IPES['T_F'][row] = ''
+            IPES['A'][row] = section.area
+            IPES['D'][row] = section.d_equivalentI
+            IPES['BF'][row] = section.bf_equivalentI
+            IPES['TW'][row] = section.tw_equivalentI
+            IPES['TF'][row] = section.tf_equivalentI
+            IPES['KDES'][row] = ''
+            IPES['KDET'][row] = ''
+            IPES['IX'][row] = section.Ix
+            IPES['ZX'][row] = section.Zx
+            IPES['SX'][row] = section.Sx
+            IPES['RX'][row] = section.Rx
+            IPES['ASX'][row] = section.ASx
+            IPES['IY'][row] = section.Iy
+            IPES['ZY'][row] = section.Zy
+            IPES['SY'][row] = section.Sy
+            IPES['RY'][row] = section.Ry
+            IPES['ASY'][row] = section.ASy
+            IPES['J'][row] = section.J
+            IPES['CW'][row] = section.cw
+        IPES.to_excel(fname, index=False)
+
     def equivalentSectionI(self):
 
         if not self.composite:
@@ -167,39 +202,6 @@ class Section(object):
 
         if self.isSouble:
             return 3 * self.bf, 3 * self.tf, self.d, self.tw
-
-        # slenderParameters = {'notPlate': {'B': {'M': {'BF': '2*bf', 'tfCriteria': 'True', 'TF': ('2*tf', ''), 'D': 'd',
-        #                 'twCriteria': 'True', 'TW': ('(D-2*TF)/(d-2*(tf+r))*tw', '')},
-        #                 'H': {'BF': '2*bf', 'tfCriteria': 'True', 'TF': ('2*0.55*tf/.6', ''), 'D': 'd',
-        #                 'twCriteria': 'True', 'TW': ('(D-2*TF)/(d-2*(tf+r))*tw', '')}},
-        #                             'C': {'M': {'BF': '2*bf', 'tfCriteria': 'True', 'TF': ('2*tf', ''), 'D': 'd',
-        #                             'twCriteria': 'True', 'TW': ('(D-2*TF)/(d-2*(tf+r))*tw', '')},
-        #                             'H': {'BF': '2*bf', 'tfCriteria': 'True', 'TF': ('2*tf', ''), 'D': 'd',
-        #                             'twCriteria': 'True', 'TW': ('(D-2*TF)/(d-2*(tf+r))*tw', '')}}},
-        #                 'TBPlate': {'B': {'M': {'BF': 'c+2*xm', 'tfCriteria': 't1<(.76*B1*tf)/(1.12*bf)',
-        #                 'TF': ('(1.12*BF*t1)/(.76*B1)', '(BF*tf)/bf'), 'D': 'd+2*t1',
-        #                 'twCriteria': 'True', 'TW': ('(D-2*TF)/(d-2*(tf+r))*tw', '')},
-        #                 'H': {'BF': 'c+2*xm', 'tfCriteria': 't1<(.6*B1*tf)/(0.55*bf)',
-        #                     'TF': ('(0.55*BF*t1)/(.60*B1)', '(BF*tf)/bf'), 'D': 'd+2*t1',
-        #                     'twCriteria': 'True', 'TW': ('(D-2*TF)/(d-2*(tf+r))*tw', '')}},
-        #                 'C': {'M': {'BF': 'c+2*xm', 'tfCriteria': 't1<(.76*B1*tf)/(1.12*bf)',
-        #                 'TF': ('(1.12*BF*t1)/(.76*B1)', '(BF*tf)/bf'), 'D': 'd+2*t1',
-        #                 'twCriteria': 'True', 'TW': ('(D-2*TF)/(d-2*(tf+r))*tw', '')},
-        #                     'H': {'BF': 'c+2*xm', 'tfCriteria': 't1<(B1*tf)/(bf)',
-        #                         'TF': ('(BF*t1)/(B1)', '(BF*tf)/bf'), 'D': 'd+2*t1',
-        #                         'twCriteria': 'True', 'TW': ('(D-2*TF)/(d-2*(tf+r))*tw', '')}}},
-        #                 'LRPlate': {'B': {'M': {'BF': 'c+2*xm+2*t2', 'tfCriteria': 't1<(.76*B1*tf)/(1.12*bf)',
-        #                 'TF': ('(1.12*BF*t1)/(.76*B1)', '(BF*tf)/bf'), 'D': 'd+2*t1',
-        #                 'twCriteria': 't2<(d*tw)/(d-2*(tf+r))', 'TW': ('t2*(D-2*TF)/d', 'tw*(D-2*TF)/(d-2*(tf+r))')},
-        #                 'H': {'BF': 'c+2*xm+2*t2', 'tfCriteria': 't1<(.6*B1*tf)/(0.55*bf)',
-        #                 'TF': ('(0.55*BF*t1)/(.60*B1)', '(BF*tf)/bf'), 'D': 'd+2*t1',
-        #                 'twCriteria': 't2<(d*tw)/(d-2*(tf+r))', 'TW': ('t2*(D-2*TF)/d', 'tw*(D-2*TF)/(d-2*(tf+r))')}},
-        #                 'C': {'M': {'BF': 'c+2*xm+2*t2', 'tfCriteria': 't1<(.76*B1*tf)/(1.12*bf)',
-        #                 'TF': ('(1.12*BF*t1)/(.76*B1)', '(BF*tf)/bf'), 'D': 'd+2*t1',
-        #                 'twCriteria': 't2<(d*tw)/(d-2*(tf+r))', 'TW': ('t2*(D-2*TF)/d', 'tw*(D-2*TF)/(d-2*(tf+r))')},
-        #                 'H': {'BF': 'c+2*xm+2*t2', 'tfCriteria': 't1<(B1*tf)/(bf)',
-        #                 'TF': ('(BF*t1)/(B1)', '(BF*tf)/bf'), 'D': 'd+2*t1',
-        #                 'twCriteria': 't2<(d*tw)/(d-2*(tf+r))', 'TW': ('t2*(D-2*TF)/d', 'tw*(D-2*TF)/(d-2*(tf+r))')}}}}
 
         slenderParameters = {'notPlate': {'B': {'M': {'BF': '2*bf', 'tfCriteria': 'True', 'TF': ('BF*tf/bf', ''), 'D': 'd',
                         'twCriteria': 'True', 'TW': ('(D-2*TF)/(d-2*(tf+r))*tw', '')},
@@ -396,13 +398,21 @@ def DoubleSection(section, dist=0):
     ductility = baseSection.ductility
     convert_type = section.convert_type
     cc = dist + 2 * (baseSection.bf - baseSection.xm)
+    dw = cc
+    hw = d - 2 * tf
+    if _type == 'UNP':
+        dw = dist + 2 * bf - tw
+    cw = 2 * baseSection.cw + (tw * hw ** 3 / 12) * dw ** 2 / 2
+    J = 0
+    if dist > 0:
+        J = 2 * baseSection.J
     if dist == 0:
         name = '2' + section.name
     else:
         name = '2' + section.name + 'c{:.0f}'.format(cc / 10)
     return Section(_type=_type, name=name, area=area, xm=xm, ym=ym,
                          xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy,
-                         Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=d, tw=tw, r1=r1, isDouble=True, cc=cc,
+                         Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=d, tw=tw, r1=r1, cw=cw, J=J, isDouble=True, cc=cc,
                          useAs=useAs, ductility=ductility, baseSection=baseSection,
                          composite='notPlate', convert_type=convert_type)
 
@@ -440,14 +450,14 @@ def SoubleSection(section, dist=0):
         name = '3' + section.name + 'c{:.0f}'.format(cc / 10)
     return Section(_type=_type, name=name, area=area, xm=xm, ym=ym,
                          xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy,
-                         Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=d, tw=tw, r1=r1, isDouble=False, isSouble=True, cc=cc,
+                         Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=d, tw=tw, r1=r1, cw=0, J=0, isDouble=False, isSouble=True, cc=cc,
                          useAs=useAs, ductility=ductility, baseSection=baseSection,
                          composite='notPlate', convert_type=convert_type)
 
 def AddPlateTB(section, plate):
-    '''add plate to Top and Botton of section, center of palate in x direction
+    '''add plate to Top and Bottom of section, center of palate in x direction
        is equal to center of section.
-       bf times to 2 beacuse section equal to I_STEEL_SECTION and b/t in I
+       bf times to 2 because section equal to I_STEEL_SECTION and b/t in I
        section equal to bf/(2*tf)'''
 
     _type = section.type
@@ -476,9 +486,11 @@ def AddPlateTB(section, plate):
     ductility = baseSection.ductility
     convert_type = section.convert_type
     cc = section.cc
+    dp = d + plate.ymax
+    cw = section.cw + plate.Iy * (dp ** 2 / 2)
     return Section(_type=_type, name=name, area=area, xm=xm, ym=ym,
         xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy, Zx=Zx, Zy=Zy, bf=bf, tf=tf,
-        d=d, tw=tw, r1=r1, isDouble=isDouble, isSouble=isSouble, baseSection=baseSection, cc=cc,
+        d=d, tw=tw, r1=r1, cw=cw, J=0, isDouble=isDouble, isSouble=isSouble, baseSection=baseSection, cc=cc,
         useAs=useAs, TBPlate=plate, ductility=ductility, composite='TBPlate', convert_type=convert_type)
 
 
@@ -510,9 +522,11 @@ def AddPlateLR(section, plate):
     ductility = baseSection.ductility
     convert_type = section.convert_type
     cc = section.cc
+    dp = section.xmax + plate.xmax
+    cw = section.cw + plate.Ix * (dp ** 2 / 2)
     return Section(_type=_type, name=name, area=area, xm=xm, ym=ym,
         xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy, Zx=Zx, Zy=Zy, bf=bf, tf=tf,
-        d=d, tw=tw, r1=r1, isDouble=isDouble, isSouble=isSouble, baseSection=baseSection, cc=cc,
+        d=d, tw=tw, r1=r1, cw=cw, J=0, isDouble=isDouble, isSouble=isSouble, baseSection=baseSection, cc=cc,
         useAs=useAs, TBPlate=TBPlate, LRPlate=plate,
         ductility=ductility, composite='LRPlate', convert_type=convert_type)
 
@@ -546,9 +560,11 @@ def AddPlateWeb(section, plate):
     ductility = baseSection.ductility
     convert_type = section.convert_type
     cc = section.cc
+    dp = section.cc + section.tw + plate.xmax
+    cw = section.cw + plate.Ix * (dp ** 2 / 2)
     return Section(_type=_type, name=name, area=area, xm=xm, ym=ym,
         xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy, Zx=Zx, Zy=Zy, bf=bf, tf=tf,
-        d=d, tw=tw, r1=r1, isDouble=isDouble, isSouble=isSouble, baseSection=baseSection, cc=cc,
+        d=d, tw=tw, r1=r1, cw=cw, J=0, isDouble=isDouble, isSouble=isSouble, baseSection=baseSection, cc=cc,
         useAs=useAs, TBPlate=TBPlate, LRPlate=LRPlate, webPlate=plate,
         ductility=ductility, composite='LRPlate', convert_type=convert_type)
 
@@ -569,10 +585,12 @@ class Ipe(Section):
         ymax = d
         ASy = (d - tf) * tw
         ASx = 5 / 3 * bf * tf
+        df = d - tf
+        cw = (tf * bf ** 3 / 12) * (df ** 2 / 2)
+        J = (2 * bf * tf ** 3 + (d - 2 * tf) * tw ** 3) / 3
         super(Ipe, self).__init__(_type='IPE', name=name, area=area, xm=xm, ym=ym,
                                   xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy,
-                                  Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=d, tw=tw, r1=r1)
-
+                                  Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=d, tw=tw, r1=r1, cw=cw, J=J)
     @staticmethod
     def createStandardIpes():
         IPE14 = Ipe("IPE14", 1640, 73, 140, 5410000, 449000, 88300, 19200, 6.9, 4.7, 7)
@@ -586,11 +604,6 @@ class Ipe(Section):
         IPE = {14: IPE14, 16: IPE16, 18: IPE18, 20: IPE20, 22: IPE22, 24: IPE24, 27: IPE27, 30: IPE30}
         return IPE
 
-    #def double(self, dist=0):
-        ##return DoubleSection(self, dist)
-
-    #def addPlateTB(self, plate):
-        #return AddPlateTB(self, plate)
 
 class PG(Section):
 
@@ -605,7 +618,7 @@ class PG(Section):
 
         super(PG, self).__init__(_type='IPE', name=name, area=pg.area, xm=pg.xm, ym=pg.ym,
                                   xmax=pg.xmax, ymax=pg.ymax, ASy=ASy, ASx=ASx, Ix=pg.Ix, Iy=pg.Iy,
-                                  Zx=pg.Zx, Zy=pg.Zy, bf=bf, tf=tf, d=d, tw=tw, r1=0)
+                                  Zx=pg.Zx, Zy=pg.Zy, bf=bf, tf=tf, d=d, tw=tw, r1=0, cw=0, J=0)
 
 
 
@@ -618,10 +631,12 @@ class Unp(Section):
         ymax = d
         ASy = (d - tf) * tw
         ASx = 5 / 3 * bf * tf
-
+        df = d - tf
+        cw = (tf * bf ** 3 / 12) * (df ** 2 / 2)
+        J = (2 * bf * tf ** 3 + (d - 2 * tf) * tw ** 3) / 3
         super(Unp, self).__init__(_type='UNP', name=name, area=area, xm=xm, ym=ym,
                                   xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy,
-                                  Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=d, tw=tw, r1=r1)
+                                  Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=d, tw=tw, r1=r1, cw=cw, J=J)
 
     @staticmethod
     def createStandardUnps():
@@ -651,9 +666,11 @@ class Cpe(Section):
         ymax = d
         ASy = (d / 1.5 - tf) * tw
         ASx = 5 / 3 * bf * tf
+        df = d - tf
+        cw = (tf * bf ** 3 / 12) * (df ** 2 / 2)
         super(Cpe, self).__init__(_type='CPE', name=name, area=area, xm=xm, ym=ym,
                                   xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy,
-                                  Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=d, tw=tw, r1=r1)
+                                  Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=d, tw=tw, r1=r1, cw=cw, J=0)
 
     @staticmethod
     def createStandardCpes():
@@ -693,7 +710,7 @@ class Plate(Section):
         self.cc = 0
         super(Plate, self).__init__(_type='PLATE', name=name, area=area, xm=xm, ym=ym,
             xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy,
-            Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=0, tw=0, r1=0)
+            Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=0, tw=0, r1=0, cw=0, J=0)
 
 
 def createSection(sectionProp):
@@ -768,144 +785,152 @@ class SectionTableModel(QAbstractTableModel):
     def data(self, index, role=Qt.DisplayRole):
         if (not index.isValid() or
             not (0 <= index.row() < len(self.sections))):
-            return QVariant()
+            return
         section = self.sections[index.row()]
         baseSection = section.baseSection
         column = index.column()
         if role == Qt.DisplayRole:
             if column == NAME:
-                return QVariant(section.name)
+                return section.name
             elif column == AREA:
-                return QVariant('{0:.1f}'.format(section.area / 100.))
+                return '{0:.1f}'.format(section.area / 100.)
             elif column == ASY:
-                return QVariant('{0:.1f}'.format(section.ASy / 100.))
+                return '{0:.1f}'.format(section.ASy / 100.)
             elif column == ASX:
-                return QVariant('{0:.1f}'.format(section.ASx / 100.))
+                return '{0:.1f}'.format(section.ASx / 100.)
             elif column == IX:
-                return QVariant('{0:.1f}'.format(section.Ix / 10000.))
+                return '{0:.1f}'.format(section.Ix / 10000.)
             elif column == IY:
-                return QVariant('{0:.1f}'.format(section.Iy / 10000.))
+                return '{0:.1f}'.format(section.Iy / 10000.)
             elif column == ZX:
-                return QVariant('{0:.1f}'.format(section.Zx / 1000.))
+                return '{0:.1f}'.format(section.Zx / 1000.)
             elif column == ZY:
-                return QVariant('{0:.1f}'.format(section.Zy / 1000.))
+                return '{0:.1f}'.format(section.Zy / 1000.)
             elif column == BF:
-                return QVariant('{0:.1f}'.format(section.bf_equivalentI / 10.))
+                return '{0:.1f}'.format(section.bf_equivalentI / 10.)
             elif column == TF:
-                return QVariant('{0:.1f}'.format(section.tf_equivalentI / 10.))
+                return '{0:.1f}'.format(section.tf_equivalentI / 10.)
             elif column == D:
-                return QVariant('{0:.1f}'.format(section.d_equivalentI / 10.))
+                return '{0:.1f}'.format(section.d_equivalentI / 10.)
             elif column == TW:
-                return QVariant('{0:.1f}'.format(section.tw_equivalentI / 10.))
+                return '{0:.1f}'.format(section.tw_equivalentI / 10.)
             elif column == Sx:
-                return QVariant('{0:.1f}'.format(section.Sx / 1000.))
+                return '{0:.1f}'.format(section.Sx / 1000.)
             elif column == Sy:
-                return QVariant('{0:.1f}'.format(section.Sy / 1000.))
+                return '{0:.1f}'.format(section.Sy / 1000.)
             elif column == RX:
-                return QVariant('{0:.1f}'.format(section.Rx / 10.))
+                return '{0:.1f}'.format(section.Rx / 10.)
             elif column == RY:
-                return QVariant('{0:.1f}'.format(section.Ry / 10.))
+                return '{0:.1f}'.format(section.Ry / 10.)
+            elif column == CW:
+                return '{0:.0f}'.format(section.cw / 1e6)
+            elif column == J:
+                return '{0:.0f}'.format(section.J)
             #elif column == SLENDER:
-                #return QVariant('{0:.1f}'.format(section.slender))
+                #return '{0:.1f}'.format(section.slender))
             elif column == V2:
-                return QVariant('{0:.1f}'.format(section.V2))
+                return '{0:.1f}'.format(section.V2)
             elif column == V3:
-                return QVariant('{0:.1f}'.format(section.V3))
+                return '{0:.1f}'.format(section.V3)
             elif column == XM:
-                return QVariant('{0:.1f}'.format(section.xm / 10.))
+                return '{0:.1f}'.format(section.xm / 10.)
             elif column == YM:
-                return QVariant('{0:.1f}'.format(section.ym / 10.))
+                return '{0:.1f}'.format(section.ym / 10.)
 
         elif role == Qt.TextAlignmentRole:
-            return QVariant(int(Qt.AlignCenter | Qt.AlignVCenter))
+            return int(Qt.AlignCenter | Qt.AlignVCenter)
         elif role == Qt.BackgroundColorRole:
             if column == SLENDER:
                 if section.slender == u'لاغر':
-                    return QVariant(QColor(250, 40, 0))
+                    return QColor(250, 40, 0)
                 else:
-                    return QVariant(QColor(100, 250, 0))
+                    return QColor(100, 250, 0)
             elif '14' in baseSection.name:
-                return QVariant(QColor(150, 200, 150))
+                return QColor(150, 200, 150)
             elif '16' in baseSection.name:
-                return QVariant(QColor(150, 200, 250))
+                return QColor(150, 200, 250)
             elif '18' in baseSection.name:
-                return QVariant(QColor(250, 200, 250))
+                return QColor(250, 200, 250)
             elif '20' in baseSection.name:
-                return QVariant(QColor(250, 250, 130))
+                return QColor(250, 250, 130)
             elif '22' in baseSection.name:
-                return QVariant(QColor(10, 250, 250))
+                return QColor(10, 250, 250)
             elif '24' in baseSection.name:
-                return QVariant(QColor(210, 230, 230))
+                return QColor(210, 230, 230)
             elif '27' in baseSection.name:
-                return QVariant(QColor(110, 230, 230))
+                return QColor(110, 230, 230)
             elif '30' in baseSection.name:
-                return QVariant(QColor(210, 130, 230))
+                return QColor(210, 130, 230)
             else:
-                return QVariant(QColor(150, 150, 250))
+                return QColor(150, 150, 250)
         #elif role == Qt.TextColorRole:
             #if column == SLENDER:
-                #return QVariant(Qt.red)
+                #return Qt.red)
 
-        return QVariant()
+        return
 
     def headerData(self, section, orientation, role=Qt.DisplayRole):
         if role == Qt.TextAlignmentRole:
             if orientation == Qt.Horizontal:
-                return QVariant(int(Qt.AlignLeft | Qt.AlignVCenter))
-            return QVariant(int(Qt.AlignRight | Qt.AlignVCenter))
+                return int(Qt.AlignLeft | Qt.AlignVCenter)
+            return int(Qt.AlignRight | Qt.AlignVCenter)
         if role != Qt.DisplayRole:
-            return QVariant()
+            return
         if orientation == Qt.Horizontal:
             if section == NAME:
-                return QVariant("Name")
+                return "Name"
             elif section == AREA:
-                return QVariant("A (cm2)")
+                return "A (cm2)"
             elif section == ASY:
-                return QVariant("ASy (cm2)")
+                return "ASy (cm2)"
             elif section == ASX:
-                return QVariant("ASx (cm2)")
+                return "ASx (cm2)"
             elif section == IX:
-                return QVariant("Ix (cm4)")
+                return "Ix (cm4)"
             elif section == IY:
-                return QVariant("Iy (cm4)")
+                return "Iy (cm4)"
             elif section == ZX:
-                return QVariant("Zx (cm3)")
+                return "Zx (cm3)"
             elif section == ZY:
-                return QVariant("Zy (cm3)")
+                return "Zy (cm3)"
             elif section == BF:
-                return QVariant("bf (cm)")
+                return "bf (cm)"
             elif section == TF:
-                return QVariant("tf (cm)")
+                return "tf (cm)"
             elif section == D:
-                return QVariant("d (cm)")
+                return "d (cm)"
             elif section == TW:
-                return QVariant("tw (cm)")
+                return "tw (cm)"
             elif section == Sx:
-                return QVariant("Sx (cm3)")
+                return "Sx (cm3)"
             elif section == Sy:
-                return QVariant("Sy (cm3)")
+                return "Sy (cm3)"
             elif section == RX:
-                return QVariant("rx (cm)")
+                return "rx (cm)"
             elif section == RY:
-                return QVariant("ry (cm)")
+                return "ry (cm)"
+            elif section == CW:
+                return "cw (cm6)"
+            elif section == J:
+                return "J (mm4)"
             elif section == SLENDER:
-                return QVariant("Slender")
+                return "Slender"
             elif section == V2:
-                return QVariant("V2 coef.")
+                return "V2 coef."
             elif section == V3:
-                return QVariant("V3 coef.")
+                return "V3 coef."
             elif section == XM:
-                return QVariant("xm (cm)")
+                return "xm (cm)"
             elif section == YM:
-                return QVariant("ym (cm)")
+                return "ym (cm)"
 
-        return QVariant(int(section + 1))
+        return int(section + 1)
 
     def rowCount(self, index=QModelIndex()):
         return len(self.sections)
 
     def columnCount(self, index=QModelIndex()):
-        return 21
+        return column_count
 
     def setData(self, index, value, role=Qt.EditRole):
         if index.isValid() and 0 <= index.row() < len(self.sections):
@@ -938,6 +963,10 @@ class SectionTableModel(QAbstractTableModel):
                         section.d_equivalentI = value
                     elif column == TW:
                         section.tw_equivalentI = value
+                    elif column == CW:
+                        section.cw = value
+                    elif column == J:
+                        section.J = value
                     elif column == XM:
                         section.xm = value
                     elif column == YM:
@@ -1086,3 +1115,6 @@ class SectionTableModel(QAbstractTableModel):
                 fh.close()
             if exception is not None:
                 raise exception
+
+if __name__ == '__main__':
+    model = SectionTableModel()

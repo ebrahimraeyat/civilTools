@@ -48,14 +48,14 @@
           <cursorShape>PointingHandCursor</cursorShape>
          </property>
          <property name="toolTip">
-          <string>ساخت فایل ایتبز</string>
+          <string>اعمال ضریب زلزله در فایل ایتبز</string>
          </property>
          <property name="text">
-          <string>Etabs</string>
+          <string/>
          </property>
          <property name="icon">
-          <iconset>
-           <normaloff>:/cfactor/etabs2016.jpg</normaloff>:/cfactor/etabs2016.jpg</iconset>
+          <iconset resource="../../../images/resource.qrc">
+           <normaloff>:/All/etabs.jpg</normaloff>:/All/etabs.jpg</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -82,17 +82,20 @@
          <property name="cursor">
           <cursorShape>PointingHandCursor</cursorShape>
          </property>
+         <property name="toolTip">
+          <string>خروجی به word</string>
+         </property>
          <property name="text">
-          <string>Word</string>
+          <string/>
          </property>
          <property name="icon">
-          <iconset>
-           <normaloff>:/cfactor/report_word.png</normaloff>:/cfactor/report_word.png</iconset>
+          <iconset resource="../../../images/resource.qrc">
+           <normaloff>:/All/word.png</normaloff>:/All/word.png</iconset>
          </property>
          <property name="iconSize">
           <size>
-           <width>30</width>
-           <height>30</height>
+           <width>50</width>
+           <height>50</height>
           </size>
          </property>
         </widget>
@@ -111,17 +114,20 @@
          <property name="cursor">
           <cursorShape>PointingHandCursor</cursorShape>
          </property>
+         <property name="toolTip">
+          <string>ذخیره ضریب بازتاب</string>
+         </property>
          <property name="text">
-          <string>Image</string>
+          <string/>
          </property>
          <property name="icon">
-          <iconset>
-           <normaloff>:/cfactor/file_extension_png.png</normaloff>:/cfactor/file_extension_png.png</iconset>
+          <iconset resource="../../../images/resource.qrc">
+           <normaloff>:/All/file_extension_png.png</normaloff>:/All/file_extension_png.png</iconset>
          </property>
          <property name="iconSize">
           <size>
-           <width>30</width>
-           <height>30</height>
+           <width>50</width>
+           <height>50</height>
           </size>
          </property>
         </widget>
@@ -140,17 +146,20 @@
          <property name="cursor">
           <cursorShape>PointingHandCursor</cursorShape>
          </property>
+         <property name="toolTip">
+          <string>ذخیره اعداد طیف</string>
+         </property>
          <property name="text">
-          <string>Excel</string>
+          <string/>
          </property>
          <property name="icon">
-          <iconset>
-           <normaloff>:/cfactor/excel_exports.png</normaloff>:/cfactor/excel_exports.png</iconset>
+          <iconset resource="../../../images/resource.qrc">
+           <normaloff>:/All/xlsx.png</normaloff>:/All/xlsx.png</iconset>
          </property>
          <property name="iconSize">
           <size>
-           <width>30</width>
-           <height>30</height>
+           <width>50</width>
+           <height>50</height>
           </size>
          </property>
         </widget>
@@ -169,17 +178,20 @@
          <property name="cursor">
           <cursorShape>PointingHandCursor</cursorShape>
          </property>
+         <property name="toolTip">
+          <string>بارگذاری پروژه</string>
+         </property>
          <property name="text">
-          <string>Load</string>
+          <string/>
          </property>
          <property name="icon">
-          <iconset>
-           <normaloff>:/cfactor/excel_exports.png</normaloff>:/cfactor/excel_exports.png</iconset>
+          <iconset resource="../../../images/resource.qrc">
+           <normaloff>:/All/load.png</normaloff>:/All/load.png</iconset>
          </property>
          <property name="iconSize">
           <size>
-           <width>30</width>
-           <height>30</height>
+           <width>50</width>
+           <height>50</height>
           </size>
          </property>
         </widget>
@@ -198,17 +210,20 @@
          <property name="cursor">
           <cursorShape>PointingHandCursor</cursorShape>
          </property>
+         <property name="toolTip">
+          <string>ذخیره پروژه</string>
+         </property>
          <property name="text">
-          <string>Save</string>
+          <string/>
          </property>
          <property name="icon">
-          <iconset>
-           <normaloff>:/cfactor/excel_exports.png</normaloff>:/cfactor/excel_exports.png</iconset>
+          <iconset resource="../../../images/resource.qrc">
+           <normaloff>:/All/save.png</normaloff>:/All/save.png</iconset>
          </property>
          <property name="iconSize">
           <size>
-           <width>30</width>
-           <height>30</height>
+           <width>50</width>
+           <height>50</height>
           </size>
          </property>
         </widget>
@@ -236,23 +251,21 @@
          <property name="cursor">
           <cursorShape>PointingHandCursor</cursorShape>
          </property>
+         <property name="toolTip">
+          <string>اجرا</string>
+         </property>
          <property name="layoutDirection">
           <enum>Qt::RightToLeft</enum>
          </property>
          <property name="autoFillBackground">
           <bool>false</bool>
          </property>
-         <property name="styleSheet">
-          <string notr="true">background-color: rgb(85, 255, 127);
-</string>
-         </property>
          <property name="text">
-          <string>محاسبه
-(F5) </string>
+          <string/>
          </property>
          <property name="icon">
-          <iconset>
-           <normaloff>../../../images/run.svg</normaloff>../../../images/run.svg</iconset>
+          <iconset resource="../../../images/resource.qrc">
+           <normaloff>:/All/run.svg</normaloff>:/All/run.svg</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -758,7 +771,7 @@ p, li { white-space: pre-wrap; }
             </font>
            </property>
            <property name="textAlignment">
-            <set>AlignCenter</set>
+            <set>AlignHCenter|AlignVCenter|AlignCenter</set>
            </property>
           </column>
           <item>
@@ -1005,7 +1018,7 @@ p, li { white-space: pre-wrap; }
             </font>
            </property>
            <property name="textAlignment">
-            <set>AlignCenter</set>
+            <set>AlignHCenter|AlignVCenter|AlignCenter</set>
            </property>
           </column>
           <item>
@@ -1255,12 +1268,14 @@ p, li { white-space: pre-wrap; }
      <x>0</x>
      <y>0</y>
      <width>1518</width>
-     <height>30</height>
+     <height>24</height>
     </rect>
    </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../../images/resource.qrc"/>
+ </resources>
  <connections/>
 </ui>

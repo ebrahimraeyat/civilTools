@@ -9,7 +9,7 @@ Tests for `civiltools` module.
 """
 #import sys
 import unittest
-from .sec import *
+from sec import *
 
 
 class TestIpeSections(unittest.TestCase):
@@ -167,7 +167,7 @@ class TestIpeSections(unittest.TestCase):
 
     def test_IPE22_tf_equivalent(self):
         self.assertAlmostEqual(self.IPE22.tf_equivalentI, 9.2, places=1)
-        self.assertAlmostEqual(self.IPE22_double.tf_equivalentI, 18.4, places=1)
+        self.assertAlmostEqual(self.IPE22_double.tf_equivalentI, 25.09, places=1)
         self.assertAlmostEqual(self.IPE22_double_TBPlate.tf_equivalentI, 21.2211, places=1)
         self.assertAlmostEqual(self.IPE22_double_4sidePlate.tf_equivalentI, 22.9187, places=1)
 
@@ -179,9 +179,16 @@ class TestIpeSections(unittest.TestCase):
 
     def test_IPE22_tw_equivalent(self):
         self.assertAlmostEqual(self.IPE22.tw_equivalentI, 5.9, places=1)
-        self.assertAlmostEqual(self.IPE22_double.tw_equivalentI, 6.08604, places=1)
+        self.assertAlmostEqual(self.IPE22_double.tw_equivalentI, 5.6414, places=1)
         self.assertAlmostEqual(self.IPE22_double_TBPlate.tw_equivalentI, 6.6959, places=1)
         self.assertAlmostEqual(self.IPE22_double_4sidePlate.tw_equivalentI, 6.5831, places=1)
+
+    def test_IPE22_cw(self):
+        self.assertAlmostEqual(self.IPE22.cw, 22672314338.666, places=1)
+        self.assertAlmostEqual(self.IPE22_double.cw, 118058883054.29332, places=1)
+        self.assertAlmostEqual(self.IPE22_double_TBPlate.cw, 538558883054.293, places=1)
+        self.assertAlmostEqual(self.IPE22_double_4sidePlate.cw, 1299058883054.293, places=1)
+        self.assertAlmostEqual(self.IPE22_double_TBPlate_webPlate.cw, 598176584616.7933, places=1)
 
     #def test_equivalent_IPE22_V2(self):
         #self.assertEqual(self.IPE22.V2, 1)

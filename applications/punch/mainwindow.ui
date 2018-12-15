@@ -309,7 +309,7 @@
            <property name="toolTip">
             <string>foundation  main rebars diameter</string>
            </property>
-           <property name="currentText">
+           <property name="currentText" stdset="0">
             <string>16</string>
            </property>
            <property name="currentIndex">
@@ -538,7 +538,7 @@ p, li { white-space: pre-wrap; }
            <property name="toolTip">
             <string>foundation  main rebars diameter</string>
            </property>
-           <property name="currentText">
+           <property name="currentText" stdset="0">
             <string>340</string>
            </property>
            <property name="currentIndex">
@@ -735,12 +735,9 @@ p, li { white-space: pre-wrap; }
          <strikeout>false</strikeout>
         </font>
        </property>
-       <property name="text">
-        <string>&amp;Run</string>
-       </property>
        <property name="icon">
-        <iconset>
-         <normaloff>images/run.png</normaloff>images/run.png</iconset>
+        <iconset resource="../../images/resource.qrc">
+         <normaloff>:/All/run.svg</normaloff>:/All/run.svg</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -759,7 +756,7 @@ p, li { white-space: pre-wrap; }
      <x>0</x>
      <y>0</y>
      <width>880</width>
-     <height>30</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -864,6 +861,8 @@ p, li { white-space: pre-wrap; }
   <tabstop>b0_spinBox</tabstop>
   <tabstop>run_Button</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="../../images/resource.qrc"/>
+ </resources>
  <connections/>
 </ui>

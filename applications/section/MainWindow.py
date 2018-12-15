@@ -153,10 +153,10 @@ class Ui(QMainWindow, main_window):
         self.clear_all_Button.clicked.connect(self.clearSectionOne)
         self.deleteSectionButton.clicked.connect(self.removeSection)
         self.saveToXml1Button.clicked.connect(self.saveToXml1)
+        self.excel_button.clicked.connect(self.save_to_excel)
         self.save_to_autocad_Button.clicked.connect(self.save_to_autocad_script_format)
         self.saveToFileButton.clicked.connect(self.export_to_dat)
         self.load_from_dat_button.clicked.connect(self.load_from_dat)
-        self.addSectionButton.clicked.connect(self.addSection)
         self.calculate_Button.clicked.connect(self.acceptOne)
         self.doubleBox.addItems(self.doubleList1)
         self.doubleBox.setCurrentIndex(1)
@@ -345,6 +345,14 @@ class Ui(QMainWindow, main_window):
         if not filename.endswith('xml'):
             filename += '.xml'
         sec.Section.exportXml(filename , self.model1.sections)
+
+    def save_to_excel(self):
+        filename = self.getFilename(['xlsx'])
+        if not filename:
+            return
+        if not filename.endswith('xlsx'):
+            filename += '.xlsx'
+        sec.Section.export_to_excel(filename , self.model1.sections)
 
     def save_to_autocad_script_format(self):
         filename = self.getFilename(['scr'])
