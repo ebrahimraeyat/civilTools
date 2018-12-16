@@ -13,6 +13,9 @@ civiltools_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, civiltools_path)
 main_window = uic.loadUiType(civiltools_path + '/main_form.ui')[0]
 about_window, about_base = uic.loadUiType(civiltools_path + '/about.ui')
+python_exe = 'pythonw'
+if sys.platform.startswith('linux'):
+    python_exe = 'python'
 
 
 class FormWidget(QtWidgets.QWidget, main_window):
@@ -31,22 +34,22 @@ class FormWidget(QtWidgets.QWidget, main_window):
     #----
     def run_section(self):
         os.chdir(civiltools_path + "/applications/section")
-        subprocess.Popen(['python', 'MainWindow.py'])
+        subprocess.Popen([python_exe, 'MainWindow.py'])
         
     def run_cfactor(self):
         os.chdir(civiltools_path + "/applications/cfactor")
-        subprocess.Popen(['python', 'MainWindow.py'])  
+        subprocess.Popen([python_exe, 'MainWindow.py'])  
            
     def run_punch(self):
         os.chdir(civiltools_path + "/applications/punch")
-        subprocess.Popen(['python', 'mainwindow.py']) 
+        subprocess.Popen([python_exe, 'mainwindow.py']) 
         
     def run_record(self):
-        subprocess.Popen(['python', '-m', 'applications.records.MainWindow'])
+        subprocess.Popen([python_exe, '-m', 'applications.records.MainWindow'])
 
     def run_dynamic(self):
         os.chdir(civiltools_path + "/applications/dynamic")
-        subprocess.Popen(['python', 'sdof/freevibrationwin.py']) 
+        subprocess.Popen([python_exe, 'sdof/freevibrationwin.py']) 
 
     def about(self):
         self.child_win = AboutForm(self)

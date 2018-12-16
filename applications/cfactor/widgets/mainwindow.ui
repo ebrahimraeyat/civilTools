@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>Cfactor-2800 v4</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../../../images/resource.qrc">
+    <normaloff>:/All/cfactor.png</normaloff>:/All/cfactor.png</iconset>
+  </property>
   <property name="layoutDirection">
    <enum>Qt::RightToLeft</enum>
   </property>
@@ -103,7 +107,7 @@
        <item>
         <widget class="QPushButton" name="pushButton_4">
          <property name="enabled">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
          <property name="minimumSize">
           <size>
@@ -135,7 +139,7 @@
        <item>
         <widget class="QPushButton" name="pushButton_6">
          <property name="enabled">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
          <property name="minimumSize">
           <size>

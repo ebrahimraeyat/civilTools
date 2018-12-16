@@ -22,6 +22,10 @@
   <property name="windowTitle">
    <string>مقطع معادل</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../../images/resource.qrc">
+    <normaloff>:/All/2IPEPL.png</normaloff>:/All/2IPEPL.png</iconset>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <property name="sizePolicy">
     <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
