@@ -1278,6 +1278,29 @@ p, li { white-space: pre-wrap; }
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <tabstops>
+  <tabstop>ostanBox</tabstop>
+  <tabstop>shahrBox</tabstop>
+  <tabstop>soilType</tabstop>
+  <tabstop>IBox</tabstop>
+  <tabstop>HSpinBox</tabstop>
+  <tabstop>storySpinBox</tabstop>
+  <tabstop>xTAnalaticalSpinBox</tabstop>
+  <tabstop>yTAnalaticalSpinBox</tabstop>
+  <tabstop>infillCheckBox</tabstop>
+  <tabstop>calculate_button</tabstop>
+  <tabstop>pushButton_etabs</tabstop>
+  <tabstop>pushButton_word</tabstop>
+  <tabstop>pushButton_4</tabstop>
+  <tabstop>pushButton_6</tabstop>
+  <tabstop>load_button</tabstop>
+  <tabstop>save_button</tabstop>
+  <tabstop>soilPropertiesTable</tabstop>
+  <tabstop>x_treeWidget</tabstop>
+  <tabstop>structure_properties_table</tabstop>
+  <tabstop>accText</tabstop>
+  <tabstop>y_treeWidget</tabstop>
+ </tabstops>
  <resources>
   <include location="../../../images/resource.qrc"/>
  </resources>
