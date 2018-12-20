@@ -68,6 +68,7 @@ class ExportToEtabs(etabs_base, export_etabs_window):
 
     def selectFile(self):
         self.input_path_line.setText(QFileDialog.getOpenFileName(filter="e2k(*.e2k)")[0])
+        self.output_path_line.setText(self.input_path_line.text())
 
     def saveFile(self):
         output_e2k = QFileDialog.getSaveFileName(filter="e2k(*.e2k)")[0]
