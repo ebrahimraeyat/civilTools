@@ -167,7 +167,7 @@ class Section(object):
 
     @staticmethod
     def export_to_excel(fname, sections):
-        IPES = pd.DataFrame(columns=['TYPE', 'EDI_LABEL', 'LABEL', 'T_F', 'A', 'D', 'BF',  'TW', 
+        IPES = pd.DataFrame(columns=['TYPE', 'EDI_LABEL', 'LABEL', 'T_F', 'A', 'D', 'BF',  'TW',
                     'TF', 'KDES', 'KDET', 'IX', 'ZX', 'SX', 'RX', 'ASX', 'IY', 'ZY', 'SY',
                     'RY', 'ASY', 'J', 'CW'], index=range(len(sections)))
         IPES['TYPE'][:] = 'W'
@@ -223,7 +223,7 @@ class Section(object):
                             'H': {'BF': 'c+2*xm', 'tfCriteria': 't1<(B1*tf)/(bf)',
                                 'TF': ('(BF*t1)/(B1)', '(BF*tf)/bf'), 'D': 'd+2*t1',
                                 'twCriteria': 'True', 'TW': ('(D-2*TF)/(d-2*(tf+r))*tw', '')}}},
-                        'LRPlate': {'B': {'M': {'BF': 'c+2*xm+2*t2', 'tfCriteria': 't1<(.76*B1*tf)/(1.12*bf)',
+                        'TBLRPLATR': {'B': {'M': {'BF': 'c+2*xm+2*t2', 'tfCriteria': 't1<(.76*B1*tf)/(1.12*bf)',
                         'TF': ('(1.12*BF*t1)/(.76*B1)', '(BF*tf)/bf'), 'D': 'd+2*t1',
                         'twCriteria': 't2<(d*tw)/(d-2*(tf+r))', 'TW': ('t2*(D-2*TF)/d', 'tw*(D-2*TF)/(d-2*(tf+r))')},
                         'H': {'BF': 'c+2*xm+2*t2', 'tfCriteria': 't1<(.6*B1*tf)/(0.55*bf)',
@@ -234,6 +234,13 @@ class Section(object):
                         'twCriteria': 't2<(d*tw)/(d-2*(tf+r))', 'TW': ('t2*(D-2*TF)/d', 'tw*(D-2*TF)/(d-2*(tf+r))')},
                         'H': {'BF': 'c+2*xm+2*t2', 'tfCriteria': 't1<(B1*tf)/(bf)',
                         'TF': ('(BF*t1)/(B1)', '(BF*tf)/bf'), 'D': 'd+2*t1',
+                        'twCriteria': 't2<(d*tw)/(d-2*(tf+r))', 'TW': ('t2*(D-2*TF)/d', 'tw*(D-2*TF)/(d-2*(tf+r))')}}},
+                        'LRPLATE': {'B': {'M': {'BF': 'c+2*xm+2*t2',
+                        'tfCriteria': 'True', 'TF': ('BF*tf/bf', ''), 'D': 'd', 'twCriteria': 't2<(d*tw)/(d-2*(tf+r))', 'TW': ('t2*(D-2*TF)/d', 'tw*(D-2*TF)/(d-2*(tf+r))')},'H': {'BF': 'c+2*xm+2*t2', 'tfCriteria': 'True', 'TF': ('2*0.55*tf/.6', ''), 'D': 'd',
+                        'twCriteria': 't2<(d*tw)/(d-2*(tf+r))', 'TW': ('t2*(D-2*TF)/d', 'tw*(D-2*TF)/(d-2*(tf+r))')}},
+                        'C': {'M': {'BF': 'c+2*xm+2*t2', 'tfCriteria': 'True', 'TF': ('BF*tf/bf', ''), 'D': 'd',
+                        'twCriteria': 't2<(d*tw)/(d-2*(tf+r))', 'TW': ('t2*(D-2*TF)/d', 'tw*(D-2*TF)/(d-2*(tf+r))')},
+                        'H': {'BF': 'c+2*xm+2*t2', 'tfCriteria': 'True', 'TF': ('BF*tf/bf', ''), 'D': 'd',
                         'twCriteria': 't2<(d*tw)/(d-2*(tf+r))', 'TW': ('t2*(D-2*TF)/d', 'tw*(D-2*TF)/(d-2*(tf+r))')}}}}
 
         composite = str(self.composite)
@@ -258,12 +265,18 @@ class Section(object):
         try:
             B2 = self.LRPlate.tf
             t2 = self.LRPlate.bf
+            lr_plate_ratio = B2/ t2
         except:
             pass
 
         try:
-            B2 = self.webPlate.tf
-            t2 = self.webPlate.bf
+            if lr_plate_ratio:
+                if self.webPlate.tf / self.webPlate.bf > lr_plate_ratio:
+                    B2 = self.webPlate.tf
+                    t2 = self.webPlate.bf
+            else:
+                B2 = self.webPlate.tf
+                t2 = self.webPlate.bf
         except:
             pass
 
@@ -524,11 +537,14 @@ def AddPlateLR(section, plate):
     cc = section.cc
     dp = section.xmax + plate.xmax
     cw = section.cw + plate.Ix * (dp ** 2 / 2)
+    composite='TBLRPLATR'
+    if not TBPlate:
+        composite = 'LRPLATE'
     return Section(_type=_type, name=name, area=area, xm=xm, ym=ym,
         xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy, Zx=Zx, Zy=Zy, bf=bf, tf=tf,
         d=d, tw=tw, r1=r1, cw=cw, J=0, isDouble=isDouble, isSouble=isSouble, baseSection=baseSection, cc=cc,
         useAs=useAs, TBPlate=TBPlate, LRPlate=plate,
-        ductility=ductility, composite='LRPlate', convert_type=convert_type)
+        ductility=ductility, composite=composite, convert_type=convert_type)
 
 
 def AddPlateWeb(section, plate):
@@ -562,11 +578,14 @@ def AddPlateWeb(section, plate):
     cc = section.cc
     dp = section.cc + section.tw + plate.xmax
     cw = section.cw + plate.Ix * (dp ** 2 / 2)
+    composite='TBLRPLATR'
+    if not TBPlate:
+        composite = 'LRPLATE'
     return Section(_type=_type, name=name, area=area, xm=xm, ym=ym,
         xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy, Zx=Zx, Zy=Zy, bf=bf, tf=tf,
         d=d, tw=tw, r1=r1, cw=cw, J=0, isDouble=isDouble, isSouble=isSouble, baseSection=baseSection, cc=cc,
         useAs=useAs, TBPlate=TBPlate, LRPlate=LRPlate, webPlate=plate,
-        ductility=ductility, composite='LRPlate', convert_type=convert_type)
+        ductility=ductility, composite=composite, convert_type=convert_type)
 
 #class AddPlateTBThick(AddPlateTB):
 
