@@ -52,7 +52,7 @@ class TestUnpSections(unittest.TestCase):
         self.assertFalse(self.UNP22.composite)
         self.assertEqual(self.UNP22_double.composite, 'notPlate')
         self.assertEqual(self.UNP22_double_TBPlate.composite, 'TBPlate')
-        self.assertEqual(self.UNP22_double_4sidePlate.composite, 'LRPlate')
+        self.assertEqual(self.UNP22_double_4sidePlate.composite, 'TBLRPLATE')
 
     def test_UNP22_baseSection(self):
         self.assertEqual(self.UNP22.baseSection, self.UNP22)

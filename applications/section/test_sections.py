@@ -58,8 +58,8 @@ class TestIpeSections(unittest.TestCase):
         self.assertFalse(self.IPE22.composite)
         self.assertEqual(self.IPE22_double.composite, 'notPlate')
         self.assertEqual(self.IPE22_double_TBPlate.composite, 'TBPlate')
-        self.assertEqual(self.IPE22_double_4sidePlate.composite, 'LRPlate')
-        self.assertEqual(self.IPE22_double_TBPlate_webPlate.composite, 'LRPlate')
+        self.assertEqual(self.IPE22_double_4sidePlate.composite, 'TBLRPLATE')
+        self.assertEqual(self.IPE22_double_TBPlate_webPlate.composite, 'TBLRPLATE')
 
     def test_IPE22_baseSection(self):
         self.assertEqual(self.IPE22.baseSection, self.IPE22)

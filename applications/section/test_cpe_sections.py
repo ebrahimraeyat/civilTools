@@ -52,7 +52,7 @@ class TestCpeSections(unittest.TestCase):
         self.assertFalse(self.CPE22.composite)
         self.assertEqual(self.CPE22_double.composite, 'notPlate')
         self.assertEqual(self.CPE22_double_TBPlate.composite, 'TBPlate')
-        self.assertEqual(self.CPE22_double_4sidePlate.composite, 'LRPlate')
+        self.assertEqual(self.CPE22_double_4sidePlate.composite, 'TBLRPLATE')
 
     def test_CPE22_baseSection(self):
         self.assertEqual(self.CPE22.baseSection, self.CPE22)
