@@ -269,7 +269,7 @@ p, li { white-space: pre-wrap; }
      <item>
       <widget class="QPushButton" name="update_Button">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="text">
         <string>    آپدیت</string>

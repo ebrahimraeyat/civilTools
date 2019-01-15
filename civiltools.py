@@ -3,8 +3,7 @@ import os
 import subprocess
 from PyQt5 import uic, QtWidgets, QtCore
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QSplashScreen
-# import checkupdate
+from PyQt5.QtWidgets import QSplashScreen, QMessageBox
 
 _appname = 'civiltools'
 _version = '1.5'
@@ -30,49 +29,46 @@ class FormWidget(QtWidgets.QWidget, main_window):
         self.record_Button.clicked.connect(self.run_record)
         self.dynamic_button.clicked.connect(self.run_dynamic)
         self.about_Button.clicked.connect(self.about)
-        # self.update_Button.clicked.connect(self.check_for_updates)
+        self.update_Button.clicked.connect(self.git_updates)
     #----
     def run_section(self):
         os.chdir(civiltools_path + "/applications/section")
         subprocess.Popen([python_exe, 'MainWindow.py'])
-        
+
     def run_cfactor(self):
         os.chdir(civiltools_path + "/applications/cfactor")
-        subprocess.Popen([python_exe, 'MainWindow.py'])  
-           
+        subprocess.Popen([python_exe, 'MainWindow.py'])
+
     def run_punch(self):
         os.chdir(civiltools_path + "/applications/punch")
-        subprocess.Popen([python_exe, 'mainwindow.py']) 
-        
+        subprocess.Popen([python_exe, 'mainwindow.py'])
+
     def run_record(self):
         subprocess.Popen([python_exe, '-m', 'applications.records.MainWindow'])
 
     def run_dynamic(self):
         os.chdir(civiltools_path + "/applications/dynamic")
-        subprocess.Popen([python_exe, 'sdof/freevibrationwin.py']) 
+        subprocess.Popen([python_exe, 'sdof/freevibrationwin.py'])
 
     def about(self):
         self.child_win = AboutForm(self)
         self.child_win.show()
 
-    def check_for_updates(self):
-        try:
-            status = checkupdate.check_few(_civiltools_mainpackages)
-            if status[0]:
-                msg_info = 'Check for packages update - OK'
-                msg_text = status[1]
-            else:
-                msg_info = 'Check for packages update - !!! out to date !!!'
-                msg_text = status[1]
-            QtWidgets.QMessageBox.information(None, msg_info, status[1])
-        except:
-            QtWidgets.QMessageBox.information(None, 'Check for packages update', 'Checking failed !! ')
+    def git_updates(self):
+        if (QMessageBox.question(self, "update", ("update to latest version?!"),
+                QMessageBox.Yes|QMessageBox.No) == QMessageBox.No):
+            return
+        import git
+        import shutil
+        shutil.rmtree(civiltools_path)
+        git.Git(civiltools_path + '/..').clone("https://github.com/ebrahimraeyat/civilTools.git")
+        QtWidgets.QMessageBox.information(None, 'update', 'update done successfully')
 
 
 class AboutForm(about_base, about_window):
     def __init__(self, parent=None):
-        super(AboutForm, self).__init__() 
-        self.setupUi(self) 
+        super(AboutForm, self).__init__()
+        self.setupUi(self)
 
 def main():
     os.chdir(civiltools_path)
