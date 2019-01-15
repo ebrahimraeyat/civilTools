@@ -6,7 +6,7 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QSplashScreen, QMessageBox
 
 _appname = 'civiltools'
-_version = '1.5'
+_version = '1.6'
 _civiltools_mainpackages = ['civiltools']
 civiltools_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, civiltools_path)
@@ -60,10 +60,33 @@ class FormWidget(QtWidgets.QWidget, main_window):
             return
         import git
         import shutil
-        shutil.rmtree(civiltools_path)
-        git.Git(civiltools_path + '/..').clone("https://github.com/ebrahimraeyat/civilTools.git")
+        os.chdir(civiltools_path + '/..')
+        shutil.rmtree(civiltools_path, onerror=onerror)
+        git.Git('.').clone("https://github.com/ebrahimraeyat/civilTools.git")
+        # os.chdir(civiltools_path + '/..')
+        # pip_install = f'pip install --upgrade  --install-option="--prefix={civiltools_path}/.." git+https://github.com/ebrahimraeyat/civilTools.git'
+        # subprocess.Popen([python_exe, '-m', pip_install])
         QtWidgets.QMessageBox.information(None, 'update', 'update done successfully')
 
+
+def onerror(func, path, exc_info):
+    """
+    Error handler for ``shutil.rmtree``.
+
+    If the error is due to an access error (read only file)
+    it attempts to add write permission and then retries.
+
+    If the error is for another reason it re-raises the error.
+
+    Usage : ``shutil.rmtree(path, onerror=onerror)``
+    """
+    import stat
+    if not os.access(path, os.W_OK):
+        # Is the error an access error ?
+        os.chmod(path, stat.S_IWUSR)
+        func(path)
+    else:
+        raise
 
 class AboutForm(about_base, about_window):
     def __init__(self, parent=None):
