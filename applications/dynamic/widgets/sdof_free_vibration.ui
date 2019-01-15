@@ -192,6 +192,9 @@
               <property name="text">
                <string>draw push</string>
               </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
              </widget>
             </item>
             <item>
@@ -345,7 +348,7 @@
         </widget>
         <widget class="QWidget" name="tab_3">
          <attribute name="title">
-          <string>Page</string>
+          <string>constant</string>
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>

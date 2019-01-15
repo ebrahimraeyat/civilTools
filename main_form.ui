@@ -179,23 +179,23 @@ p, li { white-space: pre-wrap; }
        </widget>
        <widget class="QWidget" name="tab_2">
         <property name="enabled">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <attribute name="title">
          <string>دانشجویی</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_3">
          <item>
-          <widget class="QPushButton" name="record_Button">
+          <widget class="QPushButton" name="dynamic_button">
            <property name="enabled">
-            <bool>false</bool>
+            <bool>true</bool>
            </property>
            <property name="text">
-            <string>    رکورد زلزله</string>
+            <string>دینامیک سازه</string>
            </property>
            <property name="icon">
             <iconset>
-             <normaloff>applications/records/images/Earthquake.png</normaloff>applications/records/images/Earthquake.png</iconset>
+             <normaloff>../../../Downloads/dynamic.gif</normaloff>../../../Downloads/dynamic.gif</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -209,13 +209,16 @@ p, li { white-space: pre-wrap; }
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="dynamic_button">
+          <widget class="QPushButton" name="record_Button">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="text">
-            <string>دینامیک سازه</string>
+            <string>    رکورد زلزله</string>
            </property>
            <property name="icon">
             <iconset>
-             <normaloff>applications/section/images/2IPEPL.png</normaloff>applications/section/images/2IPEPL.png</iconset>
+             <normaloff>applications/records/images/Earthquake.png</normaloff>applications/records/images/Earthquake.png</iconset>
            </property>
            <property name="iconSize">
             <size>
