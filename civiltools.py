@@ -60,36 +60,50 @@ class FormWidget(QtWidgets.QWidget, main_window):
             return
         import git
         g = git.cmd.Git(civiltools_path)
-        msg = g.pull()
-        # import shutil
-        # os.chdir(civiltools_path + '/..')
-        # shutil.rmtree(civiltools_path, onerror=onerror)
-        # git.Git('.').clone("https://github.com/ebrahimraeyat/civilTools.git")
+        msg = ''
+        try:
+            msg = g.pull()
+        except:
+            import shutil
+            pkgs_dir = os.path.abspath(os.path.join(civiltools_path, os.path.pardir))
+            temp_dir = os.path.join(pkgs_dir, 'temp')
+            os.mkdir(temp_dir)
+            os.chdir(temp_dir)
+            git.Git('.').clone("https://github.com/ebrahimraeyat/civilTools.git")
+            shutil.rmtree(civiltools_path, onerror=onerror)
+            src_folder = os.path.join(temp_dir, 'civilTools')
+            shutil.copytree(src_folder, civiltools_path)
+            shutil.rmtree(temp_dir, onerror=onerror)
+            msg = 'update done successfully'
+
         # os.chdir(civiltools_path + '/..')
         # pip_install = f'pip install --upgrade  --install-option="--prefix={civiltools_path}/.." git+https://github.com/ebrahimraeyat/civilTools.git'
         # subprocess.Popen([python_exe, '-m', pip_install])
+        finally:
+            msg = 'error occured during update\nplease contact with @roknabadi'
+        # msg += '\n please restart the programm.'
         QtWidgets.QMessageBox.information(None, 'update', msg)
 
 
-# def onerror(func, path, exc_info):
-#     """
-#     Error handler for ``shutil.rmtree``.
+def onerror(func, path, exc_info):
+    """
+    Error handler for ``shutil.rmtree``.
 
-#     If the error is due to an access error (read only file)
-#     it attempts to add write permission and then retries.
+    If the error is due to an access error (read only file)
+    it attempts to add write permission and then retries.
 
-#     If the error is for another reason it re-raises the error.
+    If the error is for another reason it re-raises the error.
 
-#     Usage : ``shutil.rmtree(path, onerror=onerror)``
-#     """
-#     import stat
-#     if not os.access(path, os.W_OK):
-#         # Is the error an access error ?
-#         os.chmod(path, stat.S_IWUSR)
-#         func(path)
-#     else:
-#         print('another error')
-#         raise
+    Usage : ``shutil.rmtree(path, onerror=onerror)``
+    """
+    import stat
+    if not os.access(path, os.W_OK):
+        # Is the error an access error ?
+        os.chmod(path, stat.S_IWUSR)
+        func(path)
+    else:
+        print('another error')
+        raise
 
 class AboutForm(about_base, about_window):
     def __init__(self, parent=None):
