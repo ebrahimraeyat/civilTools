@@ -14,7 +14,7 @@
    <string>ابزارهای مهندسین عمران</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="images/resource.qrc">
+   <iconset>
     <normaloff>:/All/civil_engineering.ico</normaloff>:/All/civil_engineering.ico</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -194,8 +194,8 @@ p, li { white-space: pre-wrap; }
             <string>دینامیک سازه</string>
            </property>
            <property name="icon">
-            <iconset>
-             <normaloff>../../../Downloads/dynamic.gif</normaloff>../../../Downloads/dynamic.gif</iconset>
+            <iconset resource="images/resource.qrc">
+             <normaloff>:/All/dynamic.png</normaloff>:/All/dynamic.png</iconset>
            </property>
            <property name="iconSize">
             <size>

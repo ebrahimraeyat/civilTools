@@ -1,7 +1,6 @@
 <RCC>
   <qresource prefix="All">
     <file>run.svg</file>
-    <file>civil_engineering.ico</file>
     <file>civil-engineering.png</file>
     <file>clear.png</file>
     <file>save.png</file>
@@ -17,13 +16,10 @@
     <file>about.png</file>
     <file>add.png</file>
     <file>quit.png</file>
-    <file>quit.svg</file>
     <file>remove.svg</file>
-    <file>resource_rc.py</file>
-    <file>resource.qrc</file>
-    <file>run.png</file>
     <file>etabs.jpg</file>
     <file>file_extension_png.png</file>
     <file>load.png</file>
+    <file>dynamic.png</file>
   </qresource>
 </RCC>

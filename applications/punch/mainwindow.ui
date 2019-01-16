@@ -39,7 +39,7 @@
      <rect>
       <x>10</x>
       <y>20</y>
-      <width>181</width>
+      <width>190</width>
       <height>791</height>
      </rect>
     </property>
@@ -199,7 +199,7 @@
          <rect>
           <x>16</x>
           <y>30</y>
-          <width>147</width>
+          <width>152</width>
           <height>186</height>
          </rect>
         </property>
@@ -309,7 +309,7 @@
            <property name="toolTip">
             <string>foundation  main rebars diameter</string>
            </property>
-           <property name="currentText" stdset="0">
+           <property name="currentText">
             <string>16</string>
            </property>
            <property name="currentIndex">
@@ -486,7 +486,7 @@ p, li { white-space: pre-wrap; }
          <rect>
           <x>20</x>
           <y>40</y>
-          <width>147</width>
+          <width>155</width>
           <height>134</height>
          </rect>
         </property>
@@ -538,7 +538,7 @@ p, li { white-space: pre-wrap; }
            <property name="toolTip">
             <string>foundation  main rebars diameter</string>
            </property>
-           <property name="currentText" stdset="0">
+           <property name="currentText">
             <string>340</string>
            </property>
            <property name="currentIndex">
@@ -756,7 +756,7 @@ p, li { white-space: pre-wrap; }
      <x>0</x>
      <y>0</y>
      <width>880</width>
-     <height>24</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
