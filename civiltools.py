@@ -73,14 +73,16 @@ class FormWidget(QtWidgets.QWidget, main_window):
             shutil.rmtree(civiltools_path, onerror=onerror)
             src_folder = os.path.join(temp_dir, 'civilTools')
             shutil.copytree(src_folder, civiltools_path)
+            os.chdir(civiltools_path)
             shutil.rmtree(temp_dir, onerror=onerror)
             msg = 'update done successfully'
 
         # os.chdir(civiltools_path + '/..')
         # pip_install = f'pip install --upgrade  --install-option="--prefix={civiltools_path}/.." git+https://github.com/ebrahimraeyat/civilTools.git'
         # subprocess.Popen([python_exe, '-m', pip_install])
-        finally:
-            msg = 'error occured during update\nplease contact with @roknabadi'
+        else:
+            if not msg:
+                msg = 'error occured during update\nplease contact with @roknabadi'
         # msg += '\n please restart the programm.'
         QtWidgets.QMessageBox.information(None, 'update', msg)
 
