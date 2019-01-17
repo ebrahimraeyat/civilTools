@@ -4,8 +4,7 @@ import subprocess
 from PyQt5 import uic, QtWidgets, QtCore
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QSplashScreen, QMessageBox, QProgressBar
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
+from PyQt5.QtCore import Qt
 
 _appname = 'civiltools'
 _version = '1.6'
@@ -49,8 +48,10 @@ class FormWidget(QtWidgets.QWidget, main_window):
         subprocess.Popen([python_exe, '-m', 'applications.records.MainWindow'])
 
     def run_dynamic(self):
-        os.chdir(civiltools_path + "/applications/dynamic")
-        subprocess.Popen([python_exe, 'sdof/freevibrationwin.py'])
+        directory = os.path.join(civiltools_path, 'applications', 'dynamic')
+        os.chdir(directory)
+        dynamic = 'sdof' + os.sep + 'freevibrationwin.py'
+        subprocess.Popen([python_exe, dynamic])
 
     def about(self):
         self.child_win = AboutForm(self)
@@ -60,12 +61,16 @@ class FormWidget(QtWidgets.QWidget, main_window):
         if (QMessageBox.question(self, "update", ("update to latest version?!"),
                 QMessageBox.Yes|QMessageBox.No) == QMessageBox.No):
             return
+        if not internet():
+            msg = "You are not connected to the Internet, please check your internet connection."
+            QtWidgets.QMessageBox.warning(None, 'update', str(msg))
+            return
+
         import git
         g = git.cmd.Git(civiltools_path)
         msg = ''
         try:
             msg = g.pull()
-            print(msg)
         except:
             import shutil
             pkgs_dir = os.path.abspath(os.path.join(civiltools_path, os.path.pardir))
@@ -110,6 +115,16 @@ def onerror(func, path, exc_info):
         print('another error')
         raise
 
+def internet(host="8.8.8.8", port=53, timeout=3):
+    import socket
+    try:
+        socket.setdefaulttimeout(timeout)
+        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
+        return True
+    except Exception as ex:
+#         print(ex.message)
+        return False
+
 class AboutForm(about_base, about_window):
     def __init__(self, parent=None):
         super(AboutForm, self).__init__()
@@ -126,12 +141,10 @@ def main():
     # adding progress bar
     progressBar = QProgressBar(splash)
     progressBar.setMaximum(10)
-    progressBar.setGeometry(0, splash_pix.height() - 50, splash_pix.width(), 20)
-
-    # splash.setMask(splash_pix.mask())
+    progressBar.setGeometry(50, splash_pix.height() - 30, splash_pix.width() - 100, 15)
 
     splash.show()
-    splash.showMessage("<h4><font color='green'>loading civiltools ... </font></h4>", Qt.AlignTop | Qt.AlignCenter, Qt.black)
+    splash.showMessage("<h2><font color='brown'>civiltools by Ebrahim Raeyat Roknabadi </font></h2>", Qt.AlignTop | Qt.AlignCenter, Qt.black)
 
     for i in range(1, 11):
         progressBar.setValue(i)
