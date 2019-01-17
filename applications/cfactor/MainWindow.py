@@ -44,11 +44,7 @@ class Ui(QMainWindow, main_window):
         #self.setMaxAllowedHeight()
         self.create_connections()
         # self.create_actions()
-        try:
-            self.load_settings()
-        except:
-            pass
-
+        self.load_settings()
         self.load_config()
         self.calculate()
 
@@ -109,32 +105,39 @@ class Ui(QMainWindow, main_window):
                 self.y_treeWidget.setCurrentItem(item, 0)
                 break
             i +=1
-    
-    def load_settings(self):
-        settings = QSettings()
-        self.restoreGeometry(settings.value("CfactorMainWindow\Geometry"))
-        self.restoreState(settings.value("CfactorMainWindow\State"))
-        # self.splitter.restoreState(settings.value("CfactorMainWindow\Splitter"))
-        # self.splitter_2.restoreState(settings.value("CfactorMainWindow\Splitter2"))
 
     def closeEvent(self, event):
-        settings = QSettings()
-        settings.setValue("CfactorMainWindow\Geometry",
-                          QVariant(self.saveGeometry()))
-        settings.setValue("CfactorMainWindow\State",
-                          QVariant(self.saveState()))
+        qsettings = QSettings("civiltools", "cfactor")
+        qsettings.setValue( "geometry", self.saveGeometry() )
+        qsettings.setValue( "saveState", self.saveState() )
+        qsettings.setValue( "maximized", self.isMaximized() )
+        # qsettings.setValue( "MainSplitter", self.mainSplitter.saveState())
+        # if not self.isMaximized() == True :
+        qsettings.setValue( "pos", self.pos() )
+        qsettings.setValue( "size", self.size() )
         # settings.setValue("CfactorMainWindow\Splitter",
         #         QVariant(self.splitter.saveState()))
         # settings.setValue("CfactorMainWindow\Splitter2",
         #         QVariant(self.splitter_2.saveState()))
         if self.ok_to_continue():
             self.save_config()
+        event.accept()
+
+    def load_settings(self):
+        qsettings = QSettings("civiltools", "cfactor")
+        self.restoreGeometry(qsettings.value( "geometry", self.saveGeometry()))
+        self.restoreState(qsettings.value( "saveState", self.saveState()))
+        self.move(qsettings.value( "pos", self.pos()))
+        self.resize(qsettings.value( "size", self.size()))
+        # self.mainSplitter.restoreState(qsettings.value("MainSplitter", self.mainSplitter.saveState()))
+        # self.splitter.restoreState(settings.value("CfactorMainWindow\Splitter"))
+        # self.splitter_2.restoreState(settings.value("CfactorMainWindow\Splitter2"))
 
     def save_config(self, json_file=os.path.join(abs_path, 'exporter', 'config.json')):
         config.save(self, json_file)
 
     def ok_to_continue(self):
-        return bool(QMessageBox.question(self, 'save config?', 'save configuration file?', 
+        return bool(QMessageBox.question(self, 'save config?', 'save configuration file?',
             QMessageBox.Yes | QMessageBox.No) == QMessageBox.Yes)
 
 
@@ -166,7 +169,7 @@ class Ui(QMainWindow, main_window):
             system = self.y_treeWidget.currentItem().parent().text(0)
             lateral = self.y_treeWidget.currentItem().text(0)
             return (system, lateral)
-        return None   
+        return None
 
     def get_current_ostan(self):
         return self.ostanBox.currentText()
@@ -296,7 +299,7 @@ class Ui(QMainWindow, main_window):
         self.p.addItem(text)
         text.setPos(Ty, B.max())
         self.p.setYRange(0, B.max() + 1, padding=0)
-        
+
     def current_building(self):
         risk_level = self.accText.text()
         city = self.get_current_shahr()
@@ -379,7 +382,7 @@ class Ui(QMainWindow, main_window):
         export_graph.to_csv()
 
     def export_to_etabs(self):
-        # TODO 
+        # TODO
         # results = self.final_building.results
         # if results[0] is True:
         self.child_export_etabs_win = etabs.ExportToEtabs(self.final_building, self)

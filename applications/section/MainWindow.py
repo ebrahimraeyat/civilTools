@@ -47,13 +47,7 @@ class Ui(QMainWindow, main_window):
         self.createWidgetsOne()
         self.updateSectionShape()
         self.create_connections()
-        
-        
-        #self.accept()
-        try:
-            self.load_settings()
-        except:
-            pass
+        self.load_settings()
         #QTimer.singleShot(0, self.initialLoad)
 
     #def initialLoad(self):
@@ -67,13 +61,23 @@ class Ui(QMainWindow, main_window):
                         #"Failed to load: {0}".format(err))
 
     def closeEvent(self, event):
-        settings = QSettings()
-        settings.setValue("MainWindow/Geometry",
-                          QVariant(self.saveGeometry()))
-        settings.setValue("MainWindow/State",
-                          QVariant(self.saveState()))
-        settings.setValue("MainSplitter",
-                QVariant(self.mainSplitter.saveState()))
+        qsettings = QSettings("civiltools", "section")
+        qsettings.setValue( "geometry", self.saveGeometry() )
+        qsettings.setValue( "saveState", self.saveState() )
+        qsettings.setValue( "maximized", self.isMaximized() )
+        qsettings.setValue( "MainSplitter", self.mainSplitter.saveState())
+        # if not self.isMaximized() == True :
+        qsettings.setValue( "pos", self.pos() )
+        qsettings.setValue( "size", self.size() )
+        event.accept()
+
+    def load_settings(self):
+        qsettings = QSettings("civiltools", "section")
+        self.restoreGeometry(qsettings.value( "geometry", self.saveGeometry()))
+        self.restoreState(qsettings.value( "saveState", self.saveState()))
+        self.move(qsettings.value( "pos", self.pos()))
+        self.resize(qsettings.value( "size", self.size()))
+        self.mainSplitter.restoreState(qsettings.value("MainSplitter", self.mainSplitter.saveState()))
 
     def resizeColumns(self, tableView=None):
         for column in (sec.NAME, sec.AREA,
@@ -166,12 +170,6 @@ class Ui(QMainWindow, main_window):
         self.sectionsBox.setCurrentIndex(4)
         self.mainSplitter.setStretchFactor(0, 1)
         self.mainSplitter.setStretchFactor(1, 3)
-
-    def load_settings(self):
-        settings = QSettings()
-        self.restoreGeometry(settings.value("MainWindow/Geometry"))
-        self.restoreState(settings.value("MainWindow/State"))
-        self.mainSplitter.restoreState(settings.value("MainSplitter"))
 
     def setSectionLabels(self):
         sectionType = self.currentSectionType()
