@@ -63,6 +63,7 @@ class FormWidget(QtWidgets.QWidget, main_window):
         msg = ''
         try:
             msg = g.pull()
+            print(msg)
         except:
             import shutil
             pkgs_dir = os.path.abspath(os.path.join(civiltools_path, os.path.pardir))
