@@ -3,7 +3,9 @@ import os
 import subprocess
 from PyQt5 import uic, QtWidgets, QtCore
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QSplashScreen, QMessageBox
+from PyQt5.QtWidgets import QSplashScreen, QMessageBox, QProgressBar
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 
 _appname = 'civiltools'
 _version = '1.6'
@@ -114,18 +116,38 @@ class AboutForm(about_base, about_window):
         self.setupUi(self)
 
 def main():
+    import time
     os.chdir(civiltools_path)
     app = QtWidgets.QApplication(sys.argv)
-    # pixmap = QPixmap("./images/civil-engineering.png")
-    # splash = QSplashScreen(pixmap)
-    # splash.show()
-    # app.processEvents()
+    splash_pix = QPixmap("./images/civil-engineering.png")
+    splash = QSplashScreen(splash_pix, Qt.WindowStaysOnTopHint)
+    splash.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint)
+    splash.setEnabled(False)
+    # adding progress bar
+    progressBar = QProgressBar(splash)
+    progressBar.setMaximum(10)
+    progressBar.setGeometry(0, splash_pix.height() - 50, splash_pix.width(), 20)
+
+    # splash.setMask(splash_pix.mask())
+
+    splash.show()
+    splash.showMessage("<h4><font color='green'>loading civiltools ... </font></h4>", Qt.AlignTop | Qt.AlignCenter, Qt.black)
+
+    for i in range(1, 11):
+        progressBar.setValue(i)
+        t = time.time()
+        while time.time() < t + 0.1:
+           app.processEvents()
+
+    # Simulate something that takes time
+    time.sleep(1)
     # translator = QtCore.QTranslator()
     # translator.load("main_form.qm")
     # app.installTranslator(translator)
     window = FormWidget()
     window.setWindowTitle(_appname + ' ' + _version)
     window.show()
+    splash.finish(window)
     sys.exit(app.exec_())
 
 if __name__ == '__main__':
