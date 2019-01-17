@@ -1,0 +1,11 @@
+<RCC>
+  <qresource prefix="cfactor">
+    <file>../../images/etabs.jpg</file>
+    <file>../../images/file_extension_png.png</file>
+    <file>../../images/load.png</file>
+    <file>../../images/run.svg</file>
+    <file>../../images/save.png</file>
+    <file>../../images/word.png</file>
+    <file>../../images/xlsx.png</file>
+  </qresource>
+</RCC>

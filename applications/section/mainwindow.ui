@@ -23,7 +23,7 @@
    <string>مقطع معادل</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../../images/resource.qrc">
+   <iconset>
     <normaloff>:/All/2IPEPL.png</normaloff>:/All/2IPEPL.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -493,8 +493,8 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../../images/resource.qrc">
-          <normaloff>:/All/clear.png</normaloff>:/All/clear.png</iconset>
+         <iconset resource="resource.qrc">
+          <normaloff>:/section/images/clear.png</normaloff>:/section/images/clear.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -543,8 +543,8 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../../images/resource.qrc">
-          <normaloff>:/All/remove.svg</normaloff>:/All/remove.svg</iconset>
+         <iconset resource="resource.qrc">
+          <normaloff>:/section/images/remove.svg</normaloff>:/section/images/remove.svg</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -593,8 +593,8 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../../images/resource.qrc">
-          <normaloff>:/All/xlsx.png</normaloff>:/All/xlsx.png</iconset>
+         <iconset resource="resource.qrc">
+          <normaloff>:/section/images/xlsx.png</normaloff>:/section/images/xlsx.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -646,8 +646,8 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../../images/resource.qrc">
-          <normaloff>:/All/save.png</normaloff>:/All/save.png</iconset>
+         <iconset resource="resource.qrc">
+          <normaloff>:/section/images/save.png</normaloff>:/section/images/save.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -699,8 +699,8 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../../images/resource.qrc">
-          <normaloff>:/All/load.png</normaloff>:/All/load.png</iconset>
+         <iconset resource="resource.qrc">
+          <normaloff>:/section/images/load.png</normaloff>:/section/images/load.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -752,8 +752,8 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../../images/resource.qrc">
-          <normaloff>:/All/autocad.png</normaloff>:/All/autocad.png</iconset>
+         <iconset resource="resource.qrc">
+          <normaloff>:/section/images/autocad.png</normaloff>:/section/images/autocad.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -802,8 +802,8 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../../images/resource.qrc">
-          <normaloff>:/All/xml.png</normaloff>:/All/xml.png</iconset>
+         <iconset resource="resource.qrc">
+          <normaloff>:/section/images/xml.png</normaloff>:/section/images/xml.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -852,8 +852,8 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../../images/resource.qrc">
-          <normaloff>:/All/run.svg</normaloff>:/All/run.svg</iconset>
+         <iconset resource="resource.qrc">
+          <normaloff>:/section/images/run.svg</normaloff>:/section/images/run.svg</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -960,7 +960,7 @@
   </action>
  </widget>
  <resources>
-  <include location="../../images/resource.qrc"/>
+  <include location="resource.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -106,8 +106,8 @@ p, li { white-space: pre-wrap; }
               <string>    مقاطع معادل</string>
              </property>
              <property name="icon">
-              <iconset>
-               <normaloff>applications/section/images/2IPEPL.png</normaloff>applications/section/images/2IPEPL.png</iconset>
+              <iconset resource="resource.qrc">
+               <normaloff>:/civiltools/images/2IPEPL.png</normaloff>:/civiltools/images/2IPEPL.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -126,8 +126,8 @@ p, li { white-space: pre-wrap; }
               <string>    ضریب زلزله</string>
              </property>
              <property name="icon">
-              <iconset>
-               <normaloff>applications/cfactor/images/cfactor.png</normaloff>applications/cfactor/images/cfactor.png</iconset>
+              <iconset resource="resource.qrc">
+               <normaloff>:/civiltools/images/Earthquake.png</normaloff>:/civiltools/images/Earthquake.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -146,8 +146,8 @@ p, li { white-space: pre-wrap; }
               <string>    برش پانچ</string>
              </property>
              <property name="icon">
-              <iconset>
-               <normaloff>applications/punch/images/main2.png</normaloff>applications/punch/images/main2.png</iconset>
+              <iconset resource="resource.qrc">
+               <normaloff>:/civiltools/images/punch.svg</normaloff>:/civiltools/images/punch.svg</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -194,8 +194,8 @@ p, li { white-space: pre-wrap; }
             <string>دینامیک سازه</string>
            </property>
            <property name="icon">
-            <iconset resource="images/resource.qrc">
-             <normaloff>:/All/dynamic.png</normaloff>:/All/dynamic.png</iconset>
+            <iconset resource="resource.qrc">
+             <normaloff>:/civiltools/images/dynamic.png</normaloff>:/civiltools/images/dynamic.png</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -217,8 +217,8 @@ p, li { white-space: pre-wrap; }
             <string>    رکورد زلزله</string>
            </property>
            <property name="icon">
-            <iconset>
-             <normaloff>applications/records/images/Earthquake.png</normaloff>applications/records/images/Earthquake.png</iconset>
+            <iconset resource="resource.qrc">
+             <normaloff>:/civiltools/images/cfactor.png</normaloff>:/civiltools/images/cfactor.png</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -311,7 +311,7 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <resources>
-  <include location="images/resource.qrc"/>
+  <include location="resource.qrc"/>
  </resources>
  <connections>
   <connection>

@@ -14,7 +14,7 @@
    <string>Cfactor-2800 v4</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../../../images/resource.qrc">
+   <iconset>
     <normaloff>:/All/cfactor.png</normaloff>:/All/cfactor.png</iconset>
   </property>
   <property name="layoutDirection">
@@ -58,13 +58,13 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset resource="../../../images/resource.qrc">
-           <normaloff>:/All/etabs.jpg</normaloff>:/All/etabs.jpg</iconset>
+          <iconset resource="../resource.qrc">
+           <normaloff>:/cfactor/images/etabs.jpg</normaloff>:/cfactor/images/etabs.jpg</iconset>
          </property>
          <property name="iconSize">
           <size>
-           <width>50</width>
-           <height>50</height>
+           <width>40</width>
+           <height>40</height>
           </size>
          </property>
          <property name="shortcut">
@@ -93,13 +93,13 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset resource="../../../images/resource.qrc">
-           <normaloff>:/All/word.png</normaloff>:/All/word.png</iconset>
+          <iconset resource="../resource.qrc">
+           <normaloff>:/cfactor/images/word.png</normaloff>:/cfactor/images/word.png</iconset>
          </property>
          <property name="iconSize">
           <size>
-           <width>50</width>
-           <height>50</height>
+           <width>40</width>
+           <height>40</height>
           </size>
          </property>
         </widget>
@@ -125,13 +125,13 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset resource="../../../images/resource.qrc">
-           <normaloff>:/All/file_extension_png.png</normaloff>:/All/file_extension_png.png</iconset>
+          <iconset resource="../resource.qrc">
+           <normaloff>:/cfactor/images/file_extension_png.png</normaloff>:/cfactor/images/file_extension_png.png</iconset>
          </property>
          <property name="iconSize">
           <size>
-           <width>50</width>
-           <height>50</height>
+           <width>40</width>
+           <height>40</height>
           </size>
          </property>
         </widget>
@@ -157,13 +157,13 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset resource="../../../images/resource.qrc">
-           <normaloff>:/All/xlsx.png</normaloff>:/All/xlsx.png</iconset>
+          <iconset resource="../resource.qrc">
+           <normaloff>:/cfactor/images/xlsx.png</normaloff>:/cfactor/images/xlsx.png</iconset>
          </property>
          <property name="iconSize">
           <size>
-           <width>50</width>
-           <height>50</height>
+           <width>40</width>
+           <height>40</height>
           </size>
          </property>
         </widget>
@@ -189,13 +189,13 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset resource="../../../images/resource.qrc">
-           <normaloff>:/All/load.png</normaloff>:/All/load.png</iconset>
+          <iconset resource="../resource.qrc">
+           <normaloff>:/cfactor/images/load.png</normaloff>:/cfactor/images/load.png</iconset>
          </property>
          <property name="iconSize">
           <size>
-           <width>50</width>
-           <height>50</height>
+           <width>40</width>
+           <height>40</height>
           </size>
          </property>
         </widget>
@@ -221,13 +221,13 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset resource="../../../images/resource.qrc">
-           <normaloff>:/All/save.png</normaloff>:/All/save.png</iconset>
+          <iconset resource="../resource.qrc">
+           <normaloff>:/cfactor/images/save.png</normaloff>:/cfactor/images/save.png</iconset>
          </property>
          <property name="iconSize">
           <size>
-           <width>50</width>
-           <height>50</height>
+           <width>40</width>
+           <height>40</height>
           </size>
          </property>
         </widget>
@@ -268,13 +268,13 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset resource="../../../images/resource.qrc">
-           <normaloff>:/All/run.svg</normaloff>:/All/run.svg</iconset>
+          <iconset resource="../resource.qrc">
+           <normaloff>:/cfactor/images/run.svg</normaloff>:/cfactor/images/run.svg</iconset>
          </property>
          <property name="iconSize">
           <size>
-           <width>60</width>
-           <height>60</height>
+           <width>40</width>
+           <height>40</height>
           </size>
          </property>
          <property name="shortcut">
@@ -775,7 +775,7 @@ p, li { white-space: pre-wrap; }
             </font>
            </property>
            <property name="textAlignment">
-            <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+            <set>AlignCenter</set>
            </property>
           </column>
           <item>
@@ -1022,7 +1022,7 @@ p, li { white-space: pre-wrap; }
             </font>
            </property>
            <property name="textAlignment">
-            <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+            <set>AlignCenter</set>
            </property>
           </column>
           <item>
@@ -1272,7 +1272,7 @@ p, li { white-space: pre-wrap; }
      <x>0</x>
      <y>0</y>
      <width>1518</width>
-     <height>24</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
@@ -1302,7 +1302,7 @@ p, li { white-space: pre-wrap; }
   <tabstop>y_treeWidget</tabstop>
  </tabstops>
  <resources>
-  <include location="../../../images/resource.qrc"/>
+  <include location="../resource.qrc"/>
  </resources>
  <connections/>
 </ui>

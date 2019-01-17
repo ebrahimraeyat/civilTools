@@ -1,0 +1,13 @@
+<RCC>
+  <qresource prefix="civiltools">
+    <file>images/2IPEPL.png</file>
+    <file>images/about.png</file>
+    <file>images/cfactor.png</file>
+    <file>images/civil-engineering.png</file>
+    <file>images/dynamic.png</file>
+    <file>images/quit.png</file>
+    <file>images/software-update.png</file>
+    <file>images/Earthquake.png</file>
+    <file>images/punch.svg</file>
+  </qresource>
+</RCC>

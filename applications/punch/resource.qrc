@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="punch">
+    <file>../../images/run.svg</file>
+  </qresource>
+</RCC>

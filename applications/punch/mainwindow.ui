@@ -735,14 +735,17 @@ p, li { white-space: pre-wrap; }
          <strikeout>false</strikeout>
         </font>
        </property>
+       <property name="text">
+        <string/>
+       </property>
        <property name="icon">
-        <iconset resource="../../images/resource.qrc">
-         <normaloff>:/All/run.svg</normaloff>:/All/run.svg</iconset>
+        <iconset resource="resource.qrc">
+         <normaloff>:/punch/images/run.svg</normaloff>:/punch/images/run.svg</iconset>
        </property>
        <property name="iconSize">
         <size>
-         <width>64</width>
-         <height>64</height>
+         <width>50</width>
+         <height>50</height>
         </size>
        </property>
       </widget>
@@ -862,7 +865,7 @@ p, li { white-space: pre-wrap; }
   <tabstop>run_Button</tabstop>
  </tabstops>
  <resources>
-  <include location="../../images/resource.qrc"/>
+  <include location="resource.qrc"/>
  </resources>
  <connections/>
 </ui>
