@@ -110,15 +110,13 @@ class Ui(QMainWindow, main_window):
         qsettings = QSettings("civiltools", "cfactor")
         qsettings.setValue( "geometry", self.saveGeometry() )
         qsettings.setValue( "saveState", self.saveState() )
-        qsettings.setValue( "maximized", self.isMaximized() )
-        # qsettings.setValue( "MainSplitter", self.mainSplitter.saveState())
+        # qsettings.setValue( "maximized", self.isMaximized() )
         # if not self.isMaximized() == True :
         qsettings.setValue( "pos", self.pos() )
         qsettings.setValue( "size", self.size() )
-        # settings.setValue("CfactorMainWindow\Splitter",
-        #         QVariant(self.splitter.saveState()))
-        # settings.setValue("CfactorMainWindow\Splitter2",
-        #         QVariant(self.splitter_2.saveState()))
+        qsettings.setValue("hsplitter", self.hsplitter.saveState())
+        qsettings.setValue("v1splitter", self.v1splitter.saveState())
+        qsettings.setValue("v2splitter", self.v2splitter.saveState())
         if self.ok_to_continue():
             self.save_config()
         event.accept()
@@ -129,9 +127,9 @@ class Ui(QMainWindow, main_window):
         self.restoreState(qsettings.value( "saveState", self.saveState()))
         self.move(qsettings.value( "pos", self.pos()))
         self.resize(qsettings.value( "size", self.size()))
-        # self.mainSplitter.restoreState(qsettings.value("MainSplitter", self.mainSplitter.saveState()))
-        # self.splitter.restoreState(settings.value("CfactorMainWindow\Splitter"))
-        # self.splitter_2.restoreState(settings.value("CfactorMainWindow\Splitter2"))
+        self.hsplitter.restoreState(qsettings.value("hsplitter", self.hsplitter.saveState()))
+        self.v1splitter.restoreState(qsettings.value("v1splitter", self.v1splitter.saveState()))
+        self.v2splitter.restoreState(qsettings.value("v2splitter", self.v2splitter.saveState()))
 
     def save_config(self, json_file=os.path.join(abs_path, 'exporter', 'config.json')):
         config.save(self, json_file)

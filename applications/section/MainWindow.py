@@ -64,7 +64,7 @@ class Ui(QMainWindow, main_window):
         qsettings = QSettings("civiltools", "section")
         qsettings.setValue( "geometry", self.saveGeometry() )
         qsettings.setValue( "saveState", self.saveState() )
-        qsettings.setValue( "maximized", self.isMaximized() )
+        # qsettings.setValue( "maximized", self.isMaximized() )
         qsettings.setValue( "MainSplitter", self.mainSplitter.saveState())
         # if not self.isMaximized() == True :
         qsettings.setValue( "pos", self.pos() )
@@ -164,7 +164,7 @@ class Ui(QMainWindow, main_window):
         self.calculate_Button.clicked.connect(self.acceptOne)
         self.doubleBox.addItems(self.doubleList1)
         self.doubleBox.setCurrentIndex(1)
-        self.sectionTypeBox.addItems(sorted(self.sectionProp.keys()))
+        self.sectionTypeBox.addItems(self.sectionProp.keys())
         sectionType = self.currentSectionType()
         self.sectionsBox.addItems(self.getSectionLabels(sectionType))
         self.sectionsBox.setCurrentIndex(4)
