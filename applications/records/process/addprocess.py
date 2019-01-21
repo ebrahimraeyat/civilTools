@@ -2,9 +2,11 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
-from .process import Process as process
+from process.process import Process as process
+import os
+records_path = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
 
-process_win, base_win = uic.loadUiType('applications/records/widgets/process.ui')
+process_win, base_win = uic.loadUiType(os.path.join(records_path, 'widgets', 'process.ui'))
 
 
 class ProcessWin(base_win, process_win):
@@ -40,7 +42,7 @@ class ProcessWin(base_win, process_win):
             for direction in self.process.keys():
                 self.process[direction][key] = value.accelerations[direction.lower()]
         QDialog.accept(self)
-        
+
     def creat_connections(self):
     	self.add_process_button.clicked.connect(self.add_process)
     	self.remove_process_button.clicked.connect(self.remove_process)

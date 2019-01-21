@@ -1,5 +1,7 @@
 import sys
 import os
+abs_path = os.path.dirname(__file__)
+sys.path.insert(0, abs_path)
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
@@ -11,13 +13,13 @@ import numpy as np
 ##matplotlib.use("Agg")
 # from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 # import matplotlib.pyplot as plt
-from .earthquake import addearthquake, earthquake
-from .process import addprocess, process
+from earthquake import addearthquake, earthquake
+from process import addprocess, process
 import pyqtgraph as pg
 ## Switch to using white background and black foreground
 pg.setConfigOption('background', 'w')
 pg.setConfigOption('foreground', 'k')
-main_window = uic.loadUiType('applications/records/widgets/mainwindow.ui')[0]
+main_window = uic.loadUiType(os.path.join(abs_path, 'widgets', 'mainwindow.ui'))[0]
 
 
 class Record(QMainWindow, main_window):
@@ -29,10 +31,7 @@ class Record(QMainWindow, main_window):
         self.lastDirectory = ''
         self.filename = None
         self.create_connections()
-        try:
-            self.load_settings()
-        except:
-            pass
+        self.load_settings()
         self.earthquakes = {}
         self.min_earthquakes_dt = 1.0
         self.max_eff_duration = 1.0
@@ -65,11 +64,13 @@ class Record(QMainWindow, main_window):
         self.xi0_process_SpinBox.valueChanged.connect(self.draw_process_canai_tajimi)
 
     def load_settings(self):
-        settings = QSettings()
-        self.restoreGeometry(settings.value("Record\Geometry"))
-        self.restoreState(settings.value("Record\State"))
-        self.splitter.restoreState(settings.value("Record\Splitter"))
-        self.splitter_2.restoreState(settings.value("Record\Splitter2"))
+        qsettings = QSettings("civiltools", "records")
+        self.restoreGeometry(qsettings.value( "geometry", self.saveGeometry()))
+        self.restoreState(qsettings.value( "saveState", self.saveState()))
+        self.move(qsettings.value( "pos", self.pos()))
+        self.resize(qsettings.value( "size", self.size()))
+        self.splitter.restoreState(qsettings.value("splitter", self.splitter.saveState()))
+        self.splitter1.restoreState(qsettings.value("splitter1", self.splitter1.saveState()))
 
     def closeEvent(self, event):
         if  (self.dirty and
@@ -78,16 +79,15 @@ class Record(QMainWindow, main_window):
                     QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel) ==
                     QMessageBox.Yes):
             self.save_earthquakes()
-        settings = QSettings()
-        settings.setValue("Record\Geometry",
-                          QVariant(self.saveGeometry()))
-        settings.setValue("Record\State",
-                          QVariant(self.saveState()))
-        settings.setValue("Record\Splitter",
-                QVariant(self.splitter.saveState()))
-        settings.setValue("Record\Splitter2",
-                QVariant(self.splitter_2.saveState()))
+        qsettings = QSettings("civiltools", "records")
+        qsettings.setValue( "geometry", self.saveGeometry() )
+        qsettings.setValue( "saveState", self.saveState() )
+        qsettings.setValue( "pos", self.pos() )
+        qsettings.setValue( "size", self.size() )
+        qsettings.setValue("splitter", self.splitter.saveState())
+        qsettings.setValue("splitter1", self.splitter1.saveState())
         event.accept()
+
     def save_earthquakes(self):
         filename, _ = QFileDialog.getSaveFileName(self, 'save earthquakes',
                                                self.lastDirectory)
@@ -115,7 +115,7 @@ class Record(QMainWindow, main_window):
         #         acc.reset_prop()
         if self.earthquake_list.count() > 0:
             self.earthquake_list.setCurrentRow(0)
-                
+
         self.min_dt_label.setText(f"min = {self.min_earthquakes_dt}")
 
     def add_earthquake(self):
@@ -202,7 +202,7 @@ class Record(QMainWindow, main_window):
                 self.update_progressBar(i)
             self.__plot_accelerated()
             self.dt_SpinBox.setValue(dt)
-            QMessageBox.information(self, "Successful !", 
+            QMessageBox.information(self, "Successful !",
                 f"All earthquakes Interpolated to dt = {dt}")
             self.update_progressBar(-1)
         self.min_dt_label.setText(f"min = {self.min_earthquakes_dt}")
@@ -213,15 +213,15 @@ class Record(QMainWindow, main_window):
         if sf == 0:
             sf = 1
         if (self.earthquake_list.count() and
-            QMessageBox.question(self, "scale - earthquakes?", 
+            QMessageBox.question(self, "scale - earthquakes?",
                 f"scale all earthquakes to {sf} g?",
                 QMessageBox.Yes | QMessageBox.No) ==
                 QMessageBox.Yes):
             for i, earthquake in enumerate(self.earthquakes.values()):
                 earthquake.scale(sf)
-                self.update_progressBar(i)   
+                self.update_progressBar(i)
             self.__plot_accelerated()
-            QMessageBox.information(self, "Successful !", 
+            QMessageBox.information(self, "Successful !",
                 f"All earthquakes Scaled to Acceleration = {sf} g")
             self.update_progressBar(-1)
         self.dirty = True
@@ -231,7 +231,7 @@ class Record(QMainWindow, main_window):
         if duration == 0:
             duration = self.max_eff_duration
         if (self.earthquake_list.count() and
-            QMessageBox.question(self, "unify duration - earthquakes?", 
+            QMessageBox.question(self, "unify duration - earthquakes?",
                 f"unify duration of all earthquakes to {duration} sec?",
                 QMessageBox.Yes | QMessageBox.No) ==
                 QMessageBox.Yes):
@@ -240,7 +240,7 @@ class Record(QMainWindow, main_window):
                 print(earthquake.name, earthquake.number_of_points)
                 self.update_progressBar(i)
             self.__plot_accelerated()
-            QMessageBox.information(self, "Successful !", 
+            QMessageBox.information(self, "Successful !",
                 f"All earthquakes unified to duration = {duration} Sec")
             self.update_progressBar(-1)
         self.dirty = True
@@ -302,7 +302,7 @@ class Record(QMainWindow, main_window):
         # exporter = pg.exporters.ImageExporter(self.accelerated_time_history.plotItem)
         # # save to file
         # exporter.export('fileName.png')
-        
+
     def __direction(self):
         '''
         return direction that selected in earthquake direction groupbox
@@ -381,11 +381,11 @@ class Record(QMainWindow, main_window):
             pass
         self.canai_process_item = pg.PlotDataItem(ws_canai, s_w_canai, connect="finite", pen=pen)
         self.process_s_w.addItem(self.canai_process_item)
-                
 
-        
+
+
             # for e in selected_earthquakes:
-            #     x_process = 
+            #     x_process =
             # new_earthquake = earthquake.Earthquake(win.accelerated['x'], win.accelerated['y'], win.accelerated['z'])
             # if new_earthquake.dt < self.min_earthquakes_dt:
             #     self.min_earthquakes_dt = new_earthquake.dt

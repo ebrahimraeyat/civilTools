@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from .readaccelerated import read_record
+from accelerated.readaccelerated import read_record
 from scipy import interpolate, integrate
 import scipy
 
@@ -106,7 +106,7 @@ class Accelerated(object):
         return ws, s_w
 
     def effective_duration_index(self):
-        # ''' 
+        # '''
         # calculate effective duration of acceleration with
         # trifunac algorithm. is based on the mean-square integral
         # of amplitude which is related to the seismic energy content
@@ -120,7 +120,7 @@ class Accelerated(object):
         eff_du = round((index_95 - index_5) * self.dt, 1)
         return eff_du, index_5, index_95
 
-    def cut(self, end, start=None): 
+    def cut(self, end, start=None):
         if end > self.n:
             extra_zeros = pd.Series(np.zeros(end - self.n), index = np.arange(self.n, end) * self.dt)
             self.time_history.append(extra_zeros)
@@ -132,7 +132,7 @@ class Accelerated(object):
         self.acc = time_history.values
         duration = self.n * self.dt
         self.time = np.linspace(0, duration, self.n)
-        print(f"acc={len(self.acc)}, time={len(self.time)}, dt={self.dt}, n={self.n}")    
+        print(f"acc={len(self.acc)}, time={len(self.time)}, dt={self.dt}, n={self.n}")
         self.accelerated_info['number_of_points'] = self.n
         self.reset_prop()
 

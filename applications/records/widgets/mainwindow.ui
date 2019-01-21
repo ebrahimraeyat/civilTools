@@ -35,7 +35,7 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_7">
         <item>
-         <widget class="QSplitter" name="splitter_2">
+         <widget class="QSplitter" name="splitter1">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -171,8 +171,8 @@
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset resource="../../../images/resource.qrc">
-                  <normaloff>:/general/add.png</normaloff>:/general/add.png</iconset>
+                 <iconset resource="../resource.qrc">
+                  <normaloff>:/records/images/add.png</normaloff>:/records/images/add.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -191,8 +191,8 @@
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset resource="../../../images/resource.qrc">
-                  <normaloff>:/general/remove.png</normaloff>:/general/remove.png</iconset>
+                 <iconset resource="../resource.qrc">
+                  <normaloff>:/records/images/remove.svg</normaloff>:/records/images/remove.svg</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -208,8 +208,8 @@
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset resource="../../../images/resource.qrc">
-                  <normaloff>:/general/clear.png</normaloff>:/general/clear.png</iconset>
+                 <iconset resource="../resource.qrc">
+                  <normaloff>:/records/images/clear.png</normaloff>:/records/images/clear.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -228,8 +228,8 @@
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset resource="../../../images/resource.qrc">
-                  <normaloff>:/general/select.png</normaloff>:/general/select.png</iconset>
+                 <iconset resource="../resource.qrc">
+                  <normaloff>:/records/images/check.png</normaloff>:/records/images/check.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -248,8 +248,8 @@
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset resource="../../../images/resource.qrc">
-                  <normaloff>:/general/about.png</normaloff>:/general/about.png</iconset>
+                 <iconset resource="../resource.qrc">
+                  <normaloff>:/records/images/select.png</normaloff>:/records/images/select.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -265,8 +265,8 @@
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset resource="../../../images/resource.qrc">
-                  <normaloff>:/general/save.png</normaloff>:/general/save.png</iconset>
+                 <iconset resource="../resource.qrc">
+                  <normaloff>:/records/images/save.png</normaloff>:/records/images/save.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -282,8 +282,8 @@
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset resource="../../../images/resource.qrc">
-                  <normaloff>:/general/load.png</normaloff>:/general/load.png</iconset>
+                 <iconset resource="../resource.qrc">
+                  <normaloff>:/records/images/load.png</normaloff>:/records/images/load.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -333,8 +333,8 @@
                  <string>interpolate</string>
                 </property>
                 <property name="icon">
-                 <iconset>
-                  <normaloff>../../../images/select.png</normaloff>../../../images/select.png</iconset>
+                 <iconset resource="../resource.qrc">
+                  <normaloff>:/records/images/select.png</normaloff>:/records/images/select.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -385,8 +385,8 @@
                  <string>scale</string>
                 </property>
                 <property name="icon">
-                 <iconset>
-                  <normaloff>../../../images/select.png</normaloff>../../../images/select.png</iconset>
+                 <iconset resource="../resource.qrc">
+                  <normaloff>:/records/images/select.png</normaloff>:/records/images/select.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -523,7 +523,7 @@
                <string>Start Process</string>
               </property>
               <property name="icon">
-               <iconset resource="../../../images/resource.qrc">
+               <iconset>
                 <normaloff>:/general/run.png</normaloff>:/general/run.png</iconset>
               </property>
               <property name="iconSize">
@@ -739,8 +739,8 @@
              <string>Apply</string>
             </property>
             <property name="icon">
-             <iconset>
-              <normaloff>../../../images/check.png</normaloff>../../../images/check.png</iconset>
+             <iconset resource="../resource.qrc">
+              <normaloff>:/records/images/check.png</normaloff>:/records/images/check.png</iconset>
             </property>
            </widget>
           </item>
@@ -767,7 +767,7 @@
      <x>0</x>
      <y>0</y>
      <width>1220</width>
-     <height>30</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -802,7 +802,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../../images/resource.qrc"/>
+  <include location="../resource.qrc"/>
  </resources>
  <connections/>
 </ui>

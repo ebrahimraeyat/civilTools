@@ -31,7 +31,7 @@ class FormWidget(QtWidgets.QWidget, main_window):
         self.dynamic_button.clicked.connect(self.run_dynamic)
         self.about_Button.clicked.connect(self.about)
         self.update_Button.clicked.connect(self.git_updates)
-    #----
+
     def run_section(self):
         os.chdir(civiltools_path + "/applications/section")
         subprocess.Popen([python_exe, 'MainWindow.py'])
@@ -45,13 +45,13 @@ class FormWidget(QtWidgets.QWidget, main_window):
         subprocess.Popen([python_exe, 'mainwindow.py'])
 
     def run_record(self):
-        subprocess.Popen([python_exe, '-m', 'applications.records.MainWindow'])
+        os.chdir(civiltools_path + "/applications/records")
+        subprocess.Popen([python_exe, 'MainWindow.py'])
 
     def run_dynamic(self):
         directory = os.path.join(civiltools_path, 'applications', 'dynamic')
         os.chdir(directory)
-        dynamic = 'sdof' + os.sep + 'freevibrationwin.py'
-        subprocess.Popen([python_exe, dynamic])
+        subprocess.Popen([python_exe, 'freevibrationwin.py'])
 
     def about(self):
         self.child_win = AboutForm(self)
@@ -72,18 +72,21 @@ class FormWidget(QtWidgets.QWidget, main_window):
         try:
             msg = g.pull()
         except:
+            QMessageBox.information(self, "update", "update takes some minutes, please be patient.")
             import shutil
+            import tempfile
             pkgs_dir = os.path.abspath(os.path.join(civiltools_path, os.path.pardir))
-            temp_dir = os.path.join(pkgs_dir, 'temp')
-            os.mkdir(temp_dir)
-            os.chdir(temp_dir)
+            default_tmp_dir = tempfile._get_default_tempdir()
+            name = next(tempfile._get_candidate_names())
+            civiltools_temp_dir = os.path.join(default_tmp_dir, 'civiltools' + name)
+            os.mkdir(civiltools_temp_dir)
+            os.chdir(civiltools_temp_dir)
             git.Git('.').clone("https://github.com/ebrahimraeyat/civilTools.git")
             shutil.rmtree(civiltools_path, onerror=onerror)
-            src_folder = os.path.join(temp_dir, 'civilTools')
+            src_folder = os.path.join(civiltools_temp_dir, 'civilTools')
             shutil.copytree(src_folder, civiltools_path)
             os.chdir(civiltools_path)
-            shutil.rmtree(temp_dir, onerror=onerror)
-            msg = 'update done successfully'
+            msg = 'update done successfully.'
 
         # os.chdir(civiltools_path + '/..')
         # pip_install = f'pip install --upgrade  --install-option="--prefix={civiltools_path}/.." git+https://github.com/ebrahimraeyat/civilTools.git'

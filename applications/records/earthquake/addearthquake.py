@@ -2,9 +2,11 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
-from ..accelerated import processaccelerated as accel
+from accelerated import processaccelerated as accel
+import os
+records_path = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
 
-add_earthquake_win, base_win = uic.loadUiType('applications/records/widgets/earthquake.ui')
+add_earthquake_win, base_win = uic.loadUiType(os.path.join(records_path, 'widgets', 'earthquake.ui'))
 
 
 class AddEarthquakeWin(base_win, add_earthquake_win):
@@ -19,17 +21,16 @@ class AddEarthquakeWin(base_win, add_earthquake_win):
         self.accelerated = {}
 
     def load_settings(self):
-        settings = QSettings()
-        self.restoreGeometry(settings.value("AddEarthquake\Geometry"))
-        self.splitter.restoreState(settings.value("AddEarthquake\Splitter"))
+        qsettings = QSettings("civiltools", "addearthquake")
+        self.restoreGeometry(qsettings.value( "geometry", self.saveGeometry()))
+        self.splitter.restoreState(qsettings.value("splitter", self.splitter.saveState()))
 
     def closeEvent(self, event):
-        settings = QSettings()
-        settings.setValue("AddEarthquake\Geometry",
-                          QVariant(self.saveGeometry()))
-        settings.setValue("AddEarthquake\Splitter",
-                QVariant(self.splitter.saveState()))
-        
+        qsettings = QSettings("civiltools", "addearthquake")
+        qsettings.setValue( "geometry", self.saveGeometry() )
+        qsettings.setValue("splitter", self.splitter.saveState())
+        QDialog.accept(self)
+
     def creat_connections(self):
     	self.x_push_button.clicked.connect(self.set_lineedit_text)
     	self.y_push_button.clicked.connect(self.set_lineedit_text)

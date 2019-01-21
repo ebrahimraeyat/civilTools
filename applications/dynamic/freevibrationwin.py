@@ -1,3 +1,4 @@
+import sys, os
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -8,7 +9,11 @@ import numpy as np
 
 pg.setConfigOption('background', 'w')
 pg.setConfigOption('foreground', 'k')
-free_vib_win, base_win = uic.loadUiType('widgets/sdof_free_vibration.ui')
+
+dynamic_path = os.path.dirname(__file__)
+sys.path.insert(0, dynamic_path)
+
+free_vib_win, base_win = uic.loadUiType(os.path.abspath(os.path.join(dynamic_path, 'widgets', 'sdof_free_vibration.ui')))
 
 
 class FreeVibrationWin(base_win, free_vib_win):
@@ -34,7 +39,7 @@ class FreeVibrationWin(base_win, free_vib_win):
         settings = QSettings()
         settings.setValue("FreeVibration\Geometry",
                           QVariant(self.saveGeometry()))
-        
+
     def creat_connections(self):
         self.draw_free_button.clicked.connect(self.plot_free)
         self.clear_free_button.clicked.connect(self.clear_free)

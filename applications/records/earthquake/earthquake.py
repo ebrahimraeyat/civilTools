@@ -1,7 +1,7 @@
 
 
 
-class Earthquake(object): 
+class Earthquake(object):
 
 	def __init__(self, x_accelerated=None, y_accelerated=None, z_accelerated=None):
 		self.accelerations = {'x': x_accelerated,
@@ -17,7 +17,7 @@ class Earthquake(object):
 		s += f"duration:\t{self.duration}\n"
 		s += f"dt:\t{self.dt}\n"
 		s += f"NPT:\t{self.number_of_points}\n"
-		return s	
+		return s
 
 	def _set_properties(self):
 		self.info = self.accelerations['x'].accelerated_info
@@ -42,7 +42,7 @@ class Earthquake(object):
 
 
 	def effective_duration_index(self):
-    # ''' calculate effective duration of acceleration with 
+    # ''' calculate effective duration of acceleration with
     # trifunac algorithm. is based on the mean-square integral
     # of amplitude which is related to the seismic energy content
     # of the ground motion ( Trifunac and Brady, 1975)'''
@@ -59,7 +59,7 @@ class Earthquake(object):
 
 
 if __name__ == '__main__':
-	from ..accelerated.processaccelerated import Accelerated as acc
+	from accelerated.processaccelerated import Accelerated as acc
 	z_filename = '/home/ebi/olomTahghighat/4/random/PEERNGARecords_Unscaled(1)/RSN88_SFERN_FSD-UP.AT2'
 	x_filename = '/home/ebi/olomTahghighat/4/random/PEERNGARecords_Unscaled(1)/RSN88_SFERN_FSD172.AT2'
 	y_filename = '/home/ebi/olomTahghighat/4/random/PEERNGARecords_Unscaled(1)/RSN88_SFERN_FSD262.AT2'
@@ -69,7 +69,7 @@ if __name__ == '__main__':
 	sfern = Earthquake(x_accelerated, y_accelerated, z_accelerated)
 	print(sfern)
 
-    
+
 
 
 
