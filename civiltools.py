@@ -13,6 +13,7 @@ civiltools_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, civiltools_path)
 main_window = uic.loadUiType(civiltools_path + '/main_form.ui')[0]
 about_window, about_base = uic.loadUiType(civiltools_path + '/about.ui')
+update_window, update_base = uic.loadUiType(civiltools_path + '/update.ui')
 python_exe = 'pythonw'
 if sys.platform.startswith('linux'):
     python_exe = 'python'
@@ -58,6 +59,23 @@ class FormWidget(QtWidgets.QWidget, main_window):
         self.child_win.show()
 
     def git_updates(self):
+        update_win = UpdateForm(self)
+        from git import Repo, Git
+        repo = Repo(civiltools_path)
+        tags = repo.git.tag(l=True).split('\n')
+        update_win.tag_list.addItems(tags)
+        if update_win.exec_():
+            tag = update_win.tag_list.currentItem().text()
+        else:
+            return
+        if tag != 'Latest':
+            g = Git(civiltools_path)
+            g.checkout(tag)
+            msg = f'You have successfully move to {tag}'
+            QtWidgets.QMessageBox.information(None, 'update', str(msg))
+            return
+
+
         if (QMessageBox.question(self, "update", ("update to latest version?!"),
                 QMessageBox.Yes|QMessageBox.No) == QMessageBox.No):
             return
@@ -131,6 +149,11 @@ def internet(host="8.8.8.8", port=53, timeout=3):
 class AboutForm(about_base, about_window):
     def __init__(self, parent=None):
         super(AboutForm, self).__init__()
+        self.setupUi(self)
+
+class UpdateForm(update_base, update_window):
+    def __init__(self, parent=None):
+        super(UpdateForm, self).__init__()
         self.setupUi(self)
 
 def main():
