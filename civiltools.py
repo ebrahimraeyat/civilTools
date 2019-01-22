@@ -70,7 +70,7 @@ class FormWidget(QtWidgets.QWidget, main_window):
             return
         if tag != 'Latest':
             g = Git(civiltools_path)
-            g.checkout(tag)
+            result = g.execute(['git', 'checkout', '-f', tag])
             msg = f'You have successfully move to {tag}'
             QtWidgets.QMessageBox.information(None, 'update', str(msg))
             return
