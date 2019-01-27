@@ -88,7 +88,7 @@ class FormWidget(QtWidgets.QWidget, main_window):
         g = git.cmd.Git(civiltools_path)
         msg = ''
         try:
-            msg = g.pull()
+            msg = g.pull(env={'GIT_SSL_NO_VERIFY': '1'})
         except:
             QMessageBox.information(self, "update", "update takes some minutes, please be patient.")
             import shutil
@@ -99,7 +99,7 @@ class FormWidget(QtWidgets.QWidget, main_window):
             civiltools_temp_dir = os.path.join(default_tmp_dir, 'civiltools' + name)
             os.mkdir(civiltools_temp_dir)
             os.chdir(civiltools_temp_dir)
-            git.Git('.').clone("https://github.com/ebrahimraeyat/civilTools.git")
+            git.Git('.').clone("https://github.com/ebrahimraeyat/civilTools.git", env={'GIT_SSL_NO_VERIFY': '1'})
             shutil.rmtree(civiltools_path, onerror=onerror)
             src_folder = os.path.join(civiltools_temp_dir, 'civilTools')
             shutil.copytree(src_folder, civiltools_path)

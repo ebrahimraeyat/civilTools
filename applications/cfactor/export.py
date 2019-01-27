@@ -2,8 +2,6 @@
 
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-from PyQt5.QtPrintSupport import QPrinter
-from PyQt5.QtWebEngineWidgets import QWebEnginePage
 import os
 import pyqtgraph as pg
 from exporter import export_to_word as word
@@ -79,4 +77,4 @@ class ExportGraph:
         exporter = pg.exporters.CSVExporter(self.p)
         # save to file
         exporter.export(filename)
-    
+
