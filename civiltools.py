@@ -16,7 +16,7 @@ about_window, about_base = uic.loadUiType(civiltools_path + '/about.ui')
 update_window, update_base = uic.loadUiType(civiltools_path + '/update.ui')
 python_exe = 'pythonw'
 if sys.platform.startswith('linux'):
-    python_exe = 'python'
+    python_exe = 'python3'
 
 
 class FormWidget(QtWidgets.QWidget, main_window):
