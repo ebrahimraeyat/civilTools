@@ -3,13 +3,13 @@ import sys, os
 abs_path = os.path.dirname(__file__)
 sys.path.insert(0, abs_path)
 from punch import Column, Foundation, Punch, ShearSteel
-ui_file = os.path.join(abs_path, 'mainwindow.ui')
- 
-class Ui(QtWidgets.QMainWindow):
+main_window = uic.loadUiType(os.path.join(abs_path, 'mainwindow.ui'))[0]
+
+class Ui(QtWidgets.QMainWindow, main_window):
 
     def __init__(self):
         super(Ui, self).__init__()
-        uic.loadUi(ui_file, self)
+        self.setupUi(self)
         self.run_Button.clicked.connect(self.update_result)
 
     def get_column(self):
@@ -17,7 +17,7 @@ class Ui(QtWidgets.QMainWindow):
         c2 = self.c2_spinBox.value()
         pos = self.pos_comboBox.currentText()
         return Column(shap='rec', pos=pos, c1=c1, c2=c2)
-        
+
 
     def get_foundation(self):
         fc = self.fc_spinBox.value()
@@ -34,7 +34,7 @@ class Ui(QtWidgets.QMainWindow):
             b0 = self.b0_spinBox.value()
             return Punch(curr_foundation, curr_column, b0=b0)
         return Punch(curr_foundation, curr_column)
-        
+
     def calculate_punch(self):
         punch = self.get_punch()
         punch.calculate_Vc()
@@ -66,9 +66,9 @@ class Ui(QtWidgets.QMainWindow):
 
 def main():
     app = QtWidgets.QApplication(sys.argv)
-    translator = QtCore.QTranslator()
-    translator.load("applications/punch/mainwindow.qm")
-    app.installTranslator(translator)
+    # translator = QtCore.QTranslator()
+    # translator.load("applications/punch/mainwindow.qm")
+    # app.installTranslator(translator)
     window = Ui()
     window.show()
     sys.exit(app.exec_())
