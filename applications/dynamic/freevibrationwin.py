@@ -1,4 +1,6 @@
 import sys, os
+abs_path = os.path.dirname(__file__)
+sys.path.insert(0, abs_path)
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *

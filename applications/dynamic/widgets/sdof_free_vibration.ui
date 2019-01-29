@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1163</width>
-    <height>879</height>
+    <width>967</width>
+    <height>530</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -215,6 +215,10 @@
               <property name="text">
                <string>&amp;Draw</string>
               </property>
+              <property name="icon">
+               <iconset resource="../resource.qrc">
+                <normaloff>:/dynamic/images/select.png</normaloff>:/dynamic/images/select.png</iconset>
+              </property>
              </widget>
             </item>
             <item>
@@ -222,12 +226,20 @@
               <property name="text">
                <string>Undo</string>
               </property>
+              <property name="icon">
+               <iconset resource="../resource.qrc">
+                <normaloff>:/dynamic/images/undo.png</normaloff>:/dynamic/images/undo.png</iconset>
+              </property>
              </widget>
             </item>
             <item>
              <widget class="QPushButton" name="clear_free_button">
               <property name="text">
                <string>&amp;Clear</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../resource.qrc">
+                <normaloff>:/dynamic/images/clear.svg</normaloff>:/dynamic/images/clear.svg</iconset>
               </property>
              </widget>
             </item>
@@ -318,7 +330,11 @@
             <item>
              <widget class="QPushButton" name="draw_sin_button">
               <property name="text">
-               <string>draw</string>
+               <string>&amp;Draw</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../resource.qrc">
+                <normaloff>:/dynamic/images/select.png</normaloff>:/dynamic/images/select.png</iconset>
               </property>
              </widget>
             </item>
@@ -327,12 +343,20 @@
               <property name="text">
                <string>Undo</string>
               </property>
+              <property name="icon">
+               <iconset resource="../resource.qrc">
+                <normaloff>:/dynamic/images/undo.png</normaloff>:/dynamic/images/undo.png</iconset>
+              </property>
              </widget>
             </item>
             <item>
              <widget class="QPushButton" name="clear_sin_button">
               <property name="text">
                <string>clear</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../resource.qrc">
+                <normaloff>:/dynamic/images/clear.svg</normaloff>:/dynamic/images/clear.svg</iconset>
               </property>
              </widget>
             </item>
@@ -389,7 +413,11 @@
             <item>
              <widget class="QPushButton" name="draw_constant_button">
               <property name="text">
-               <string>draw</string>
+               <string>&amp;Draw</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../resource.qrc">
+                <normaloff>:/dynamic/images/select.png</normaloff>:/dynamic/images/select.png</iconset>
               </property>
              </widget>
             </item>
@@ -398,12 +426,20 @@
               <property name="text">
                <string>Undo</string>
               </property>
+              <property name="icon">
+               <iconset resource="../resource.qrc">
+                <normaloff>:/dynamic/images/undo.png</normaloff>:/dynamic/images/undo.png</iconset>
+              </property>
              </widget>
             </item>
             <item>
              <widget class="QPushButton" name="clear_constant_button">
               <property name="text">
                <string>clear</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../resource.qrc">
+                <normaloff>:/dynamic/images/clear.svg</normaloff>:/dynamic/images/clear.svg</iconset>
               </property>
              </widget>
             </item>
@@ -428,6 +464,8 @@
    <header>pyqtgraph</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../resource.qrc"/>
+ </resources>
  <connections/>
 </ui>
