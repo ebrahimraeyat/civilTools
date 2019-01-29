@@ -144,3 +144,6 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# Dolphin file manager
+.directory
