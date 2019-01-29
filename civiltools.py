@@ -14,9 +14,23 @@ sys.path.insert(0, civiltools_path)
 main_window = uic.loadUiType(civiltools_path + '/main_form.ui')[0]
 about_window, about_base = uic.loadUiType(civiltools_path + '/about.ui')
 update_window, update_base = uic.loadUiType(civiltools_path + '/update.ui')
-python_exe = 'pythonw'
-if sys.platform.startswith('linux'):
-    python_exe = 'python'
+
+# using the correct python interpreter
+# TODO: darwin platform
+if sys.platform == 'win32':
+    python_exe = 'pythonw'
+elif sys.platform == 'linux':
+    # local or global address. e.g.: 'python3', 'python',
+    #                                '/usr/local/Python-3.7.2/python', etc.  
+    python_interpreter = 'python3'
+    python_ver_cmd = [python_interpreter, '-c',
+                      'import platform; print(platform.python_version())']
+    python_ver = subprocess.check_output(python_ver_cmd).decode("utf-8")
+    python_ver = str(python_ver)
+    if python_ver >= '3.6':
+        python_exe = python_interpreter
+    elif python_ver < '3.6':
+        raise ValueError('python version must be >= 3.6 but yours is {}'.format(python_ver))
 
 
 class FormWidget(QtWidgets.QWidget, main_window):
