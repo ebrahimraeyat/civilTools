@@ -1,6 +1,6 @@
 import unittest
 import pandas as pd
-from ..readrecord import ReadRecord
+from ..accelerated.readaccelerated import read_record
 from ..processrecord import ProcessRecord, EnsembleRecord
 
 

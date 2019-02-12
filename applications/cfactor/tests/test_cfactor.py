@@ -19,35 +19,35 @@ class Test1(unittest.TestCase):
         self.myBuilding = Building(u'خیلی زیاد', 1.4, 'I', 3, 12, None, self.x, self.x, u'کرج', 0.6, 0.6, True)
 
     def test_Cx(self):
-        self.assertAlmostEqual(self.myBuilding.results_drift[1], 0.113, places=3)
+        self.assertAlmostEqual(self.myBuilding.results_drift[1], 0.1622, places=3)
 
     def test_Kx(self):
-        self.assertAlmostEqual(self.myBuilding.kx_drift, 1.05, places=2)
+        self.assertAlmostEqual(self.myBuilding.kx_drift, 1.00, places=2)
 
     def test_Texp(self):
-        self.assertAlmostEqual(self.myBuilding.exp_period_x, 0.5157, places=2)
+        self.assertAlmostEqual(self.myBuilding.exp_period_x, .3223, places=2)
 
     def test_T(self):
-        self.assertEqual(self.myBuilding.x_period_an, 0.6)
+        self.assertAlmostEqual(self.myBuilding.x_period_an, .40296, places=4)
 
     def test_B(self):
-        self.assertAlmostEqual(self.myBuilding.Bx_drift, 1.73, places=2)
+        self.assertAlmostEqual(self.myBuilding.Bx_drift, 2.483, places=2)
 
     def test_R(self):
         self.assertEqual(self.myBuilding.x_system.Ru, 7.5)
 
     def test_B1(self):
-        self.assertAlmostEqual(self.myBuilding.soil_reflection_drift_prop_x.B1, 1.6666, places=2)
+        self.assertAlmostEqual(self.myBuilding.soil_reflection_drift_prop_x.B1, 2.481, places=2)
 
     def test_N(self):
-        self.assertAlmostEqual(self.myBuilding.soil_reflection_drift_prop_x.N, 1.038888, places=3)
+        self.assertAlmostEqual(self.myBuilding.soil_reflection_drift_prop_x.N, 1.0005, places=3)
 
     def test_c_factor_drift(self):
-        self.assertAlmostEqual(self.myBuilding.results_drift[1], .113, places=3)
-        self.assertAlmostEqual(self.myBuilding.results_drift[2], .113, places=3)
+        self.assertAlmostEqual(self.myBuilding.results_drift[1], .1622, places=3)
+        self.assertAlmostEqual(self.myBuilding.results_drift[2], .1622, places=3)
 
     def test_k_x_for_drift(self):
-        self.assertAlmostEqual(self.myBuilding.kx_drift, 1.05, places=2)
+        self.assertAlmostEqual(self.myBuilding.kx_drift, 1.00, places=2)
 
 
 class Test2(unittest.TestCase):

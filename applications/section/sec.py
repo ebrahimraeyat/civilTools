@@ -26,7 +26,9 @@ FILE_VERSION = 1
 class Section(object):
     sectionType = {'IPE': 'STEEL_I_SECTION',
                    'UNP': 'STEEL_I_SECTION',
-                   'CPE': 'STEEL_I_SECTION'}
+                   'CPE': 'STEEL_I_SECTION',
+                   'BOX': 'STEEL_I_SECTION',
+                   }
 
     def __init__(self, cc=0, composite=None, useAs='B', ductility='M',
                 TBPlate=None, LRPlate=None, webPlate=None, slender=None, isDouble=False,
@@ -202,6 +204,12 @@ class Section(object):
 
         if self.isSouble:
             return 3 * self.bf, 3 * self.tf, self.d, self.tw
+
+        if self.type == 'BOX':
+            if not (bool(self.TBPlate) and bool(self.LRPlate)):
+                raise AttributeError('You must have for side plate!')
+            return self.TBPlate.bf, self.TBPlate.tf, \
+                (self.LRPlate.tf + 2 * self.TBPlate.tf), 2 * self.LRPlate.bf
 
         slenderParameters = {'notPlate': {'B': {'M': {'BF': '2*bf', 'tfCriteria': 'True', 'TF': ('BF*tf/bf', ''), 'D': 'd',
                         'twCriteria': 'True', 'TW': ('(D-2*TF)/(d-2*(tf+r))*tw', '')},
@@ -726,15 +734,43 @@ class Plate(Section):
             xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy,
             Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=0, tw=0, r1=0, cw=0, J=0)
 
+class Box(Section):
+
+    def __init__(self, xmax, ymax):
+        name = 'Box1'
+        xm = xmax / 2
+        ym = ymax / 2
+        super(Box, self).__init__(_type='BOX', name=name, area=1, xm=xm, ym=ym,
+                                      xmax=xmax, ymax=ymax, ASy=0, ASx=0, Ix=0, Iy=0,
+            Zx=0, Zy=0, bf=xmax, tf=1, d=ymax, tw=1, r1=0, cw=0, J=0)
+
+    @staticmethod
+    def createStandardBox():
+        BOX1 = Box(400, 400)
+        BOX = {1: BOX1}
+        return BOX
 
 def createSection(sectionProp):
     ipesProp = Ipe.createStandardIpes()
     unpsProp = Unp.createStandardUnps()
     cpesProp = Cpe.createStandardCpes()
-    sectionProperties = {'IPE': ipesProp, 'UNP': unpsProp, 'CPE': cpesProp}
+    boxProp = Box.createStandardBox()
+    sectionProperties = {
+                        'IPE': ipesProp,
+                        'UNP': unpsProp,
+                        'CPE': cpesProp,
+                        'BOX': boxProp,
+                        }
     sectionType = sectionProp[SECTIONTYPE]
     sectionSize = sectionProp[SECTIONSIZE]
     section = sectionProperties[sectionType][sectionSize]
+    isTBPlate = sectionProp[ISTBPLATE]
+    isLRPlate = sectionProp[ISLRPLATE]
+    isWebPlate = sectionProp[ISWEBPLATE]
+    if sectionType == 'BOX':
+        if (isTBPlate and isLRPlate):
+            section = Box(sectionProp[LH], sectionProp[LV])
+
     #convert_type = sectionProp[CONVERT_TYPE]
     section.convert_type = sectionProp[CONVERT_TYPE]
     useAs = sectionProp[USEAS]
@@ -744,9 +780,6 @@ def createSection(sectionProp):
     dist = sectionProp[DIST]
     isDouble = sectionProp[ISDOUBLE]
     isSouble = sectionProp[ISSOUBLE]
-    isTBPlate = sectionProp[ISTBPLATE]
-    isLRPlate = sectionProp[ISLRPLATE]
-    isWebPlate = sectionProp[ISWEBPLATE]
     if isDouble:
         section = DoubleSection(section, dist)
     if isSouble:

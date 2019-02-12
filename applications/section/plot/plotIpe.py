@@ -29,14 +29,18 @@ class PlotSectionAndEqSection(object):
         win = pg.PlotWidget()
         win.setXRange(-0.2 * self.section.xmax, 2.4 * self.section.xmax)
         win.setYRange(-0.3 * self.section.ymax, 1.1 * self.section.ymax)
-        win.showGrid(x=True, y=True)
+        win.showGrid(x=False, y=False)
         p1 = Point(0, 0)
         #pl1 = pg.PolyLineROI([[0,0], [10,10], [10,30], [30,10]], closed=True)
         #win.addItem(pl1)
-        win.addItem(self.drawBaseSection[baseSectionType](baseSection, p1))
-        ipeText = pg.TextItem(html=baseSection.name, anchor=(-0.3, 0), border='k', fill=(0, 0, 255, 100))
+        ipeText = pg.TextItem(html=baseSection.name)
+        if not baseSectionType == 'BOX':
+            win.addItem(self.drawBaseSection[baseSectionType](baseSection, p1))
+            ipeText = pg.TextItem(html=baseSection.name, anchor=(-0.3, 0), border='k', fill=(0, 0, 255, 100))
 
         if self.section.isSouble:
+            if baseSectionType == 'BOX':
+                return
             p2 = Point(p1.x + 2 * baseSection.xm + self.section.cc, p1.y)
             win.addItem(self.drawBaseSection[baseSectionType](baseSection, p2, True))
             html = 'cc={}\tcm'.format(int(self.section.cc / 10))
@@ -47,6 +51,8 @@ class PlotSectionAndEqSection(object):
             xm = xmax / 2
 
         if self.section.isDouble:
+            if baseSectionType == 'BOX':
+                return
             p2 = Point(p1.x + 2 * baseSection.xm + self.section.cc, p1.y)
             win.addItem(self.drawBaseSection[baseSectionType](baseSection, p2, True))
             xmax = 2 * baseSection.xm + self.section.cc
@@ -75,6 +81,8 @@ class PlotSectionAndEqSection(object):
                                              ' mm', pos=Point(xmax, ym), anchor=(.5, 2), isRotate=True)
 
         if self.section.webPlate:
+            if baseSectionType == 'BOX':
+                return
             p8 = Point((self.section.bf - self.section.tw - self.section.webPlate.bf) / 2, ym)
             multiplier = 0
             if self.section.isDouble:

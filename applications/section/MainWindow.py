@@ -22,13 +22,25 @@ link_ebrahim = ('Website: <a href="%s"><span style=" '
 ipesProp = sec.Ipe.createStandardIpes()
 unpsProp = sec.Unp.createStandardUnps()
 cpesProp = sec.Cpe.createStandardCpes()
+boxProp = sec.Box.createStandardBox()
 
 main_window = uic.loadUiType(os.path.join(abs_path, 'mainwindow.ui'))[0]
 
 
 class Ui(QMainWindow, main_window):
 
-    sectionProp = {'IPE': ipesProp, 'UNP': unpsProp, 'CPE': cpesProp}
+    sectionProp = {
+                    'IPE': ipesProp,
+                    'UNP': unpsProp,
+                    'CPE': cpesProp,
+                    'BOX': boxProp,
+                    }
+    double_box = {
+                    'IPE': ['تک', 'دوبل', 'سوبل'],
+                    'CPE': ['تک', 'دوبل', 'سوبل'],
+                    'UNP': ['تک', 'دوبل'],
+                    'BOX': ['تک'],
+                    }
     useAsDict = {'تیر': 'B', 'ستون': 'C'}
     ductilityDict = {'متوسط': 'M', 'زیاد': 'H'}
     doubleList1 = ['تک', 'دوبل', 'سوبل']
@@ -40,7 +52,11 @@ class Ui(QMainWindow, main_window):
         self.setupUi(self)
         self.dirty = False
         self.lastDirectory = ''
-        self.last_sectionBox_index = {'IPE': 4, 'UNP': 4, 'CPE':4}
+        self.last_sectionBox_index = {
+            'IPE': 4,
+            'UNP': 4,
+            'CPE':4,
+            'BOX':0 }
         self.currentSectionProp = None
         #self.filename = None
         self.printer = None
@@ -184,16 +200,20 @@ class Ui(QMainWindow, main_window):
     def updateGui(self):
         index = self.doubleBox.currentIndex()
         sectionType = self.currentSectionType()
-        if sectionType == 'UNP':
-            self.doubleBox.removeItem(2)
-            if index == 2:
-                self.doubleBox.setCurrentIndex(index - 1)
+        index = self.doubleBox.currentIndex()
+        self.doubleBox.blockSignals(True)
+        self.doubleBox.clear()
+        self.doubleBox.addItems(self.double_box[sectionType])
+        self.doubleBox.blockSignals(False)
+        if self.doubleBox.count() >= index + 1:
+            self.doubleBox.setCurrentIndex(index)
+        if sectionType == 'UNP' or 'BOX':
             self.addWebPLGroupBox.setChecked(False)
             self.addWebPLGroupBox.setEnabled(False)
+            if sectionType == 'BOX':
+                self.updateSectionShape()
 
         elif sectionType == 'IPE' or 'CPE':
-            if self.doubleBox.count() < 3:
-                self.doubleBox.addItem(self.doubleList1[-1])
             self.addWebPLGroupBox.setEnabled(True)
 
     def getSectionLabels(self, sectionType='IPE'):
@@ -203,6 +223,8 @@ class Ui(QMainWindow, main_window):
             sections = unpsProp.values()
         elif sectionType == 'CPE':
             sections = cpesProp.values()
+        elif sectionType == 'BOX':
+            sections = boxProp.values()
 
         sectionNames = [section.name for section in sections]
         return sorted(sectionNames)
