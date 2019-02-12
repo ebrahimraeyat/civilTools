@@ -61,10 +61,10 @@ class TestCpeSections(unittest.TestCase):
         self.assertEqual(self.CPE22_double_4sidePlate.baseSection, self.CPE22)
 
     def test_CPE22_area(self):
-        self.assertAlmostEqual(self.CPE22.area, 3340, places=1)
-        self.assertAlmostEqual(self.CPE22_double.area, 6680, places=1)
-        self.assertAlmostEqual(self.CPE22_double_TBPlate.area, 12680, places=1)
-        self.assertAlmostEqual(self.CPE22_double_4sidePlate.area, 17480, places=1)
+        self.assertAlmostEqual(self.CPE22.area, 2690, places=1)
+        self.assertAlmostEqual(self.CPE22_double.area, 5380, places=1)
+        self.assertAlmostEqual(self.CPE22_double_TBPlate.area, 11380, places=1)
+        self.assertAlmostEqual(self.CPE22_double_4sidePlate.area, 16180, places=1)
 
     def test_CPE22_ASx(self):
         self.assertAlmostEqual(self.CPE22.ASx, 1686.67, places=1)
@@ -87,8 +87,8 @@ class TestCpeSections(unittest.TestCase):
 
     def test_CPE22_Iy(self):
         self.assertEqual(self.CPE22.Iy, 2050000)
-        self.assertEqual(self.CPE22_double.Iy, 24307000)
-        self.assertEqual(self.CPE22_double_TBPlate.Iy, 55557000)
+        self.assertEqual(self.CPE22_double.Iy, 20374500)
+        self.assertEqual(self.CPE22_double_TBPlate.Iy, 51624500)
         # self.assertEqual(self.CPE22_double_4sidePlate.Iy, 2.41725e8)
         # self.assertAlmostEqual(self.CPE22_double_TBPlate_webPlate.Iy, 127458107.5, places=1)
 
@@ -105,8 +105,8 @@ class TestCpeSections(unittest.TestCase):
     #     self.assertAlmostEqual(self.CPE22_double_4sidePlate.Sy, 1492129.629, places=1)
 
     def test_CPE22_Rx(self):
-        self.assertAlmostEqual(self.CPE22.Rx, 139.0730, places=3)
-        self.assertAlmostEqual(self.CPE22_double.Rx, 139.0730, places=3)
+        self.assertAlmostEqual(self.CPE22.Rx, 154.9673, places=3)
+        self.assertAlmostEqual(self.CPE22_double.Rx, 154.9673, places=3)
         # self.assertAlmostEqual(self.CPE22_double_TBPlate.Rx, 103.697, places=3)
         # self.assertAlmostEqual(self.CPE22_double_4sidePlate.Rx, 94.7209, places=3)
 
