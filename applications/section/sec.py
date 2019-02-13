@@ -736,18 +736,19 @@ class Plate(Section):
 
 class Box(Section):
 
-    def __init__(self, xmax, ymax):
-        name = 'Box1'
+    def __init__(self, xmax, ymax, mode=1):
+        name = f'Box{mode}'
         xm = xmax / 2
         ym = ymax / 2
-        super(Box, self).__init__(_type='BOX', name=name, area=1, xm=xm, ym=ym,
+        super(Box, self).__init__(_type='BOX', name=name, area=0.0001, xm=xm, ym=ym,
                                       xmax=xmax, ymax=ymax, ASy=0, ASx=0, Ix=0, Iy=0,
             Zx=0, Zy=0, bf=xmax, tf=1, d=ymax, tw=1, r1=0, cw=0, J=0)
 
     @staticmethod
     def createStandardBox():
-        BOX1 = Box(400, 400)
-        BOX = {1: BOX1}
+        BOX1 = Box(400, 400, mode=1)
+        BOX2 = Box(300, 300, mode=2)
+        BOX = {1: BOX1, 2: BOX2}
         return BOX
 
 def createSection(sectionProp):
@@ -769,7 +770,10 @@ def createSection(sectionProp):
     isWebPlate = sectionProp[ISWEBPLATE]
     if sectionType == 'BOX':
         if (isTBPlate and isLRPlate):
-            section = Box(sectionProp[LH], sectionProp[LV])
+            xmax, ymax = sectionProp[LH], sectionProp[LV]
+            if sectionSize == 2:
+                xmax = sectionProp[LH] - 2 * sectionProp[TV]
+            section = Box(xmax, ymax, mode=sectionSize)
 
     #convert_type = sectionProp[CONVERT_TYPE]
     section.convert_type = sectionProp[CONVERT_TYPE]
