@@ -74,5 +74,12 @@ class TestBox(unittest.TestCase):
         self.assertEqual(self.box1.tw_equivalentI, 40)
         self.assertEqual(self.box2.tw_equivalentI, 40)
 
+    def test_cw(self):
+        self.assertEqual(self.box1.cw, 0)
+        self.assertEqual(self.box2.cw, 0)
+
+    def test_j(self):
+        pass
+
 
 

@@ -504,6 +504,8 @@ def AddPlateTB(section, plate):
     cc = section.cc
     dp = d + plate.ymax
     cw = section.cw + plate.Iy * (dp ** 2 / 2)
+    if _type == 'BOX':
+        cw = 0
     return Section(_type=_type, name=name, area=area, xm=xm, ym=ym,
         xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy, Zx=Zx, Zy=Zy, bf=bf, tf=tf,
         d=d, tw=tw, r1=r1, cw=cw, J=0, isDouble=isDouble, isSouble=isSouble, baseSection=baseSection, cc=cc,
@@ -540,6 +542,8 @@ def AddPlateLR(section, plate):
     cc = section.cc
     dp = section.xmax + plate.xmax
     cw = section.cw + plate.Ix * (dp ** 2 / 2)
+    if _type == 'BOX':
+        cw = 0
     composite='TBLRPLATE'
     if not TBPlate:
         composite = 'LRPLATE'
@@ -800,6 +804,8 @@ def createSection(sectionProp):
     if isSouble or isDouble or isTBPlate or isLRPlate or isWebPlate:
         #section.equivalentSectionI()
         section.name = '{}{}{}'.format(section.name, useAs, ductility)
+
+
 
     return section
 
