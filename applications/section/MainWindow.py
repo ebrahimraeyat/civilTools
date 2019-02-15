@@ -3,6 +3,7 @@
 import re
 import sys
 import os
+import pickle
 abs_path = os.path.dirname(__file__)
 sys.path.insert(0, abs_path)
 from PyQt5.QtCore import *
@@ -85,6 +86,7 @@ class Ui(QMainWindow, main_window):
         # if not self.isMaximized() == True :
         qsettings.setValue( "pos", self.pos() )
         qsettings.setValue( "size", self.size() )
+        self.accept()
         event.accept()
 
     def load_settings(self):
@@ -104,18 +106,17 @@ class Ui(QMainWindow, main_window):
     def reject(self):
         self.accept()
 
-    #def accept(self):
-        #if (self.model.dirty and
-            #QMessageBox.question(self, "sections - Save?",
-                    #"Save unsaved changes?",
-                    #QMessageBox.Yes | QMessageBox.No) ==
-                    #QMessageBox.Yes):
-            #try:
-                #self.model.save()
-            #except IOError, err:
-                #QMessageBox.warning(self, "sections - Error",
-                        #"Failed to save: {0}".format(err))
-        #QDialog.accept(self)
+    def accept(self):
+        if (self.model1.dirty and
+            QMessageBox.question(self, "sections - Save?",
+                    "Save unsaved changes?",
+                    QMessageBox.Yes | QMessageBox.No) ==
+                    QMessageBox.Yes):
+            try:
+                self.export_to_dat()
+            except(IOError, err):
+                QMessageBox.warning(self, "sections - Error",
+                        f"Failed to save: {err}")
 
     def sortTable(self, section):
         if section == sec.AREA:
@@ -287,48 +288,7 @@ class Ui(QMainWindow, main_window):
         self.model1.sections = []
         self.model1.endResetModel()
         self.model1.names = set()
-
         self.model1.dirty = False
-
-    def multiAccept(self):
-        self.model.sections = []
-        sections = self.sectionsList.selectedItems()
-        dists = self.distsList.selectedItems()
-        platesWidth = self.plateWidthList.selectedItems()
-        platesThick = self.plateThickList.selectedItems()
-        sectionsName = re.sub("[^A-Z]", "", str(sections[0].text()))
-        for sectionName in sections:
-            sectionSize = int(re.sub("[^0-9]", "", str(sectionName.text())))
-            section = self.sectionProp[sectionsName][sectionSize]
-
-            for dist in dists:
-                dist = int(dist.text())
-                section2 = sec.DoubleSection(section, dist)
-
-                if len(platesWidth) == 0:
-                    for plateThick in platesThick:
-                        plateThick = int(plateThick.text())
-                        if plateThick == 0:
-                            self.model.sections.append(section2)
-                        else:
-                            sectionPL = sec.AddPlateTBThick(section2, plateThick)
-                            self.model.sections.append(sectionPL)
-                else:
-                    for plateThick in platesThick:
-                        plateThick = int(plateThick.text())
-                        if plateThick == 0:
-                            self.model.sections.append(section2)
-                        else:
-                            for plateWidth in platesWidth:
-                                plateWidth = int(plateWidth.text()) * 10
-                                plate = sec.Plate(plateWidth, plateThick)
-                                sectionPL = sec.AddPlateTB(section2, plate)
-                                self.model.sections.append(sectionPL)
-        for i, section in enumerate(self.model.sections):
-            self.model.sections[i] = sec.equivalentSectionI(section)
-        self.model.reset()
-        self.resizeColumns(self.tableView)
-        self.model.dirty = True
 
     def updateSectionShape(self):
         self.currentSection = sec.createSection(self.currentSectionOne())
@@ -336,29 +296,7 @@ class Ui(QMainWindow, main_window):
         self.drawLayout.addWidget(plotWidget.plot(), 0, 0)
         self.currentSection.autocadScrText = plotWidget.autocadScrText
 
-    #def acceptSave(self):
-        ##if (self.model.dirty and
-        #if QMessageBox.question(self, "sections - Save?",
-                    #"Save unsaved changes?",
-                    #QMessageBox.Yes | QMessageBox.No) == QMessageBox.Yes:
-            #try:
-                #sec.Sections.save(self.sectionsResults)
-            #except IOError, err:
-                #QMessageBox.warning(self, "sections - Error",
-                        #"Failed to save: {0}".format(err))
-        #QDialog.accept(self)
-
-    #def load(self):
-        #try:
-            #self.model1.load()
-        #except IOError, err:
-            #QMessageBox.warning(self, "Sections - Error",
-                    #"Failed to load: {0}".format(err))
-
     def saveToXml1(self):
-        #if not self.model1.dirty:
-            #QMessageBox.warning(self, 'خروجی', 'نتیجه ای جهت ارسال وجود ندارد')
-            #return
         filename = self.getFilename(['xml'])
         if not filename:
             return
@@ -398,27 +336,27 @@ class Ui(QMainWindow, main_window):
         return filename
 
     def export_to_dat(self):
-
         filename = self.getFilename(['dat'])
         if not filename:
             return
         if not filename.endswith('dat'):
             filename += '.dat'
-
-        self.model1.filename = filename
-        self.model1.save()
+        sections = {
+                    'sections':self.model1.sections,
+                    }
+        pickle.dump(sections, open(filename, "wb"))
+        self.model1.dirty = False
 
     def load_from_dat(self):
-        filename, _ = QFileDialog.getOpenFileName(self, 'بازکردن فایل مقاطع',
+        filename, _ = QFileDialog.getOpenFileName(self, "select section's filename",
                                                self.lastDirectory, "dat (*.dat)")
-
         if not filename:
             return
-        else:
-            self.model1.filename = filename
-            self.model1.load()
-            self.model1.sortByName()
-            self.resizeColumns(self.tableView1)
+        sections = pickle.load(open(filename, "rb"))
+        self.model1.beginResetModel()
+        self.model1.sections = sections['sections']
+        self.model1.endResetModel()
+        self.resizeColumns(self.tableView1)
 
     def helpAbout(self):
         QMessageBox.about(self, u"درباره نرم افزار محاسبه مشخصات مقاطع",
