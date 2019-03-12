@@ -22,6 +22,7 @@ link_ebrahim = ('Website: <a href="%s"><span style=" '
 
 ipesProp = sec.Ipe.createStandardIpes()
 unpsProp = sec.Unp.createStandardUnps()
+upasProp = sec.Upa.createStandardUpas()
 cpesProp = sec.Cpe.createStandardCpes()
 boxProp = sec.Box.createStandardBox()
 
@@ -35,11 +36,13 @@ class Ui(QMainWindow, main_window):
                     'UNP': unpsProp,
                     'CPE': cpesProp,
                     'BOX': boxProp,
+                    'UPA': upasProp,
                     }
     double_box = {
                     'IPE': ['تک', 'دوبل', 'سوبل'],
                     'CPE': ['تک', 'دوبل', 'سوبل'],
                     'UNP': ['تک', 'دوبل'],
+                    'UPA': ['تک', 'دوبل'],
                     'BOX': ['تک'],
                     }
     useAsDict = {'تیر': 'B', 'ستون': 'C'}
@@ -56,8 +59,10 @@ class Ui(QMainWindow, main_window):
         self.last_sectionBox_index = {
             'IPE': 4,
             'UNP': 4,
-            'CPE':4,
-            'BOX':0 }
+            'CPE': 4,
+            'BOX': 0,
+            'UPA': 4,
+            }
         self.currentSectionProp = None
         #self.filename = None
         self.printer = None
@@ -208,7 +213,7 @@ class Ui(QMainWindow, main_window):
         self.doubleBox.blockSignals(False)
         if self.doubleBox.count() >= index + 1:
             self.doubleBox.setCurrentIndex(index)
-        if sectionType == 'UNP' or 'BOX':
+        if sectionType == 'UNP' or 'BOX' or 'UPA':
             self.addWebPLGroupBox.setChecked(False)
             self.addWebPLGroupBox.setEnabled(False)
             if sectionType == 'BOX':
@@ -222,6 +227,8 @@ class Ui(QMainWindow, main_window):
             sections = ipesProp.values()
         elif sectionType == 'UNP':
             sections = unpsProp.values()
+        elif sectionType == 'UPA':
+            sections = upasProp.values()
         elif sectionType == 'CPE':
             sections = cpesProp.values()
         elif sectionType == 'BOX':
@@ -237,13 +244,6 @@ class Ui(QMainWindow, main_window):
         sectionIndex = self.sectionsBox.currentIndex()
         sectionType = self.currentSectionType()
         return self.sectionProp[sectionType].values()[sectionIndex]
-
-    def ipesProp(self):
-        return sec.Ipe.createStandardIpes()
-
-    def unpsProp(self):
-        return sec.Unp.createStandardUnps()
-
     def currentSectionOne(self):
         lh = self.lhSpinBox.value() * 10
         th = self.thSpinBox.value()

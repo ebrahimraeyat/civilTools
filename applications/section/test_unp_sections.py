@@ -109,18 +109,18 @@ class TestUnpSections(unittest.TestCase):
         self.assertAlmostEqual(self.UNP22_double_4sidePlate.Sx, 1234655.7377, places=1)
 
     def test_UNP22_Sy(self):
-        #self.assertAlmostEqual(self.UNP22.Sy, 37272.7, places=1)
+        # self.assertAlmostEqual(self.UNP22.Sy, 37272.7, places=1)
         self.assertAlmostEqual(self.UNP22_double.Sy, 639909.2817, places=1)
         self.assertAlmostEqual(self.UNP22_double_TBPlate.Sy, 900325.9483, places=1)
         self.assertAlmostEqual(self.UNP22_double_4sidePlate.Sy, 1396223.5894, places=1)
 
-    #def test_UNP22_Rx(self):
+    # def test_UNP22_Rx(self):
         #self.assertAlmostEqual(self.UNP22.Rx, 91.1832, places=3)
         #self.assertAlmostEqual(self.UNP22_double.Rx, 91.1832, places=3)
         #self.assertAlmostEqual(self.UNP22_double_TBPlate.Rx, 103.697, places=3)
         #self.assertAlmostEqual(self.UNP22_double_4sidePlate.Rx, 94.7209, places=3)
 
-    #def test_UNP22_Ry(self):
+    # def test_UNP22_Ry(self):
         #self.assertAlmostEqual(self.UNP22.Ry, 24.7744, places=3)
         #self.assertAlmostEqual(self.UNP22_double.Ry, 98.1773, places=3)
         #self.assertAlmostEqual(self.UNP22_double_TBPlate.Ry, 86.8467, places=3)
@@ -150,45 +150,43 @@ class TestUnpSections(unittest.TestCase):
         self.assertAlmostEqual(self.UNP22_double_TBPlate.bf_equivalentI, 240, places=1)
         self.assertAlmostEqual(self.UNP22_double_4sidePlate.bf_equivalentI, 264, places=1)
 
-    #def test_UNP22_tf_equivalent(self):
+    # def test_UNP22_tf_equivalent(self):
         #self.assertAlmostEqual(self.UNP22.tf_equivalentI, 9.2, places=1)
         #self.assertAlmostEqual(self.UNP22_double.tf_equivalentI, 18.4, places=1)
         #self.assertAlmostEqual(self.UNP22_double_TBPlate.tf_equivalentI, 21.2211, places=1)
         #self.assertAlmostEqual(self.UNP22_double_4sidePlate.tf_equivalentI, 22.9187, places=1)
 
-    #def test_UNP22_d_equivalent(self):
+    # def test_UNP22_d_equivalent(self):
         #self.assertAlmostEqual(self.UNP22.d_equivalentI, 220, places=1)
         #self.assertAlmostEqual(self.UNP22_double.d_equivalentI, 220, places=1)
         #self.assertAlmostEqual(self.UNP22_double_TBPlate.d_equivalentI, 244, places=1)
         #self.assertAlmostEqual(self.UNP22_double_4sidePlate.d_equivalentI, 244, places=1)
 
-    #def test_UNP22_tw_equivalent(self):
+    # def test_UNP22_tw_equivalent(self):
         #self.assertAlmostEqual(self.UNP22.tw_equivalentI, 5.9, places=1)
         #self.assertAlmostEqual(self.UNP22_double.tw_equivalentI, 6.08604, places=1)
         #self.assertAlmostEqual(self.UNP22_double_TBPlate.tw_equivalentI, 6.6959, places=1)
         #self.assertAlmostEqual(self.UNP22_double_4sidePlate.tw_equivalentI, 6.5831, places=1)
 
-    #def test_equivalent_UNP22_V2(self):
+    # def test_equivalent_UNP22_V2(self):
         #self.assertEqual(self.UNP22.V2, 1)
         #self.assertAlmostEqual(self.UNP22_double.V2, 1.85778, places=4)
         #self.assertAlmostEqual(self.UNP22_double_TBPlate.V2, 1.52249, places=4)
         #self.assertAlmostEqual(self.UNP22_double_4sidePlate.V2, 5.28392, places=4)
 
-    #def test_equivalent_UNP22_V3(self):
+    # def test_equivalent_UNP22_V3(self):
         #self.assertEqual(self.UNP22.V3, 1)
         #self.assertAlmostEqual(self.UNP22_double.V3, 0.416667, places=4)
         #self.assertAlmostEqual(self.UNP22_double_TBPlate.V3, 0.736166, places=4)
         #self.assertAlmostEqual(self.UNP22_double_4sidePlate.V3, 0.63114, places=4)
 
+    # UNP22.equivalentSectionI()
 
+    # def tearDown(self):
+        # pass
 
-    #UNP22.equivalentSectionI()
-
-    #def tearDown(self):
-        #pass
-
-    #def test_000_something(self):
-        #pass
+    # def test_000_something(self):
+        # pass
 
 
 if __name__ == '__main__':

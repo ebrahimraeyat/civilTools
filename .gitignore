@@ -147,3 +147,6 @@ ENV/
 
 # Dolphin file manager
 .directory
+
+# dotvscode
+.vscode

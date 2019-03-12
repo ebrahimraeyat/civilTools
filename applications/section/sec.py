@@ -1,23 +1,22 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import division
+import os
+import sys
 from math import sqrt
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-# from PyQt5.QtXml import *
-import re
+abs_path = os.path.dirname(__file__)
+sys.path.insert(0, abs_path)
 import pandas as pd
+from slender_params import slenderParameters
 
 column_count = 23
 NAME, AREA, ASX, ASY, IX, IY, ZX, ZY, \
-Sx, Sy, RX, RY, CW, J, BF, TF, D, TW, XM, YM, V2, V3, SLENDER = range(column_count)
+    Sx, Sy, RX, RY, CW, J, BF, TF, D, TW, XM, YM, V2, V3, SLENDER = range(column_count)
 
 LH, TH, LV, TV, LW, _TW, DIST, ISTBPLATE, ISLRPLATE, ISWEBPLATE, USEAS, DUCTILITY, ISDOUBLE, \
-ISSOUBLE, SECTIONSIZE, SECTIONTYPE, CONVERT_TYPE = range(17)
-
-#ipesProp = Ipe.createStandardIpes()
-#unpsProp = Unp.createStandardUnps()
-#sectionProperties = {'IPE': ipesProp, 'UNP': unpsProp}
+    ISSOUBLE, SECTIONSIZE, SECTIONTYPE, CONVERT_TYPE = range(17)
 
 MAGIC_NUMBER = 0x570C4
 FILE_VERSION = 1
@@ -28,11 +27,12 @@ class Section(object):
                    'UNP': 'STEEL_I_SECTION',
                    'CPE': 'STEEL_I_SECTION',
                    'BOX': 'STEEL_I_SECTION',
+                   'UPA': 'STEEL_I_SECTION',
                    }
 
     def __init__(self, cc=0, composite=None, useAs='B', ductility='M',
-                TBPlate=None, LRPlate=None, webPlate=None, slender=None, isDouble=False,
-                isSouble=False, convert_type='slender', **kwargs):
+                 TBPlate=None, LRPlate=None, webPlate=None, slender=None, isDouble=False,
+                 isSouble=False, convert_type='slender', **kwargs):
         self.type = kwargs['_type']
         self.name = kwargs['name']
         self.area = kwargs['area']
@@ -80,7 +80,7 @@ class Section(object):
 
         if convert_type == 'shear':
             self.bf_equivalentI, self.tf_equivalentI, self.d_equivalentI, self.tw_equivalentI = \
-            self.equivalent_section_to_I_with_shear_correction()
+                self.equivalent_section_to_I_with_shear_correction()
 
     def equivalent_section_to_I_with_shear_correction(self):
         BF = self.xmax
@@ -98,68 +98,58 @@ class Section(object):
     def __str__(self):
         secType = self.sectionType[str(self.type)]
         s = ('\n\n  <{}>\n'
-               '\t<LABEL>{}</LABEL>\n'
-               '\t<EDI_STD>{}</EDI_STD>\n'
-               '\t<DESIGNATION>G</DESIGNATION>\n'
-               '\t<D>{}</D>\n'
-               '\t<BF>{}</BF>\n'
-               '\t<TF>{}</TF>\n'
-               '\t<TW>{}</TW>\n'
-               '\t<FRAD>0</FRAD>\n'
-               '\t<A>{:.0f}</A>\n'
-               '\t<AS2>{:.0f}</AS2>\n'
-               '\t<AS3>{:.0f}</AS3>\n'
-               '\t<I33>{:.0f}</I33>\n'
-               '\t<I22>{:.0f}</I22>\n'
-               '\t<S33POS>{:.0f}</S33POS>\n'
-               '\t<S33NEG>{:.0f}</S33NEG>\n'
-               '\t<S22POS>{:.0f}</S22POS>\n'
-               '\t<S22NEG>{:.0f}</S22NEG>\n'
-               '\t<R33>{:.1f}</R33>\n'
-               '\t<R22>{:.1f}</R22>\n'
-               '\t<Z33>{:.0f}</Z33>\n'
-               '\t<Z22>{:.0f}</Z22>\n'
-               '\t<J>{:.0f}</J>\n'
-               '\t<CW>{:.0f}</CW>\n'
-               '  </{}>'
-              ).format(secType, self.name, self.name, self.d_equivalentI, self.bf_equivalentI, self.tf_equivalentI,
-                                       self.tw_equivalentI, self.area, self.ASy, self.ASx, self.Ix, self.Iy,
-                                       self.Sx, self.Sx, self.Sy, self.Sy, self.Rx,
-                                       self.Ry, self.Zx, self.Zy, self.J, self.cw, secType)
+             '\t<LABEL>{}</LABEL>\n'
+             '\t<EDI_STD>{}</EDI_STD>\n'
+             '\t<DESIGNATION>G</DESIGNATION>\n'
+             '\t<D>{}</D>\n'
+             '\t<BF>{}</BF>\n'
+             '\t<TF>{}</TF>\n'
+             '\t<TW>{}</TW>\n'
+             '\t<FRAD>0</FRAD>\n'
+             '\t<A>{:.0f}</A>\n'
+             '\t<AS2>{:.0f}</AS2>\n'
+             '\t<AS3>{:.0f}</AS3>\n'
+             '\t<I33>{:.0f}</I33>\n'
+             '\t<I22>{:.0f}</I22>\n'
+             '\t<S33POS>{:.0f}</S33POS>\n'
+             '\t<S33NEG>{:.0f}</S33NEG>\n'
+             '\t<S22POS>{:.0f}</S22POS>\n'
+             '\t<S22NEG>{:.0f}</S22NEG>\n'
+             '\t<R33>{:.1f}</R33>\n'
+             '\t<R22>{:.1f}</R22>\n'
+             '\t<Z33>{:.0f}</Z33>\n'
+             '\t<Z22>{:.0f}</Z22>\n'
+             '\t<J>{:.0f}</J>\n'
+             '\t<CW>{:.0f}</CW>\n'
+             '  </{}>'
+             ).format(secType, self.name, self.name, self.d_equivalentI, self.bf_equivalentI, self.tf_equivalentI,
+                      self.tw_equivalentI, self.area, self.ASy, self.ASx, self.Ix, self.Iy,
+                      self.Sx, self.Sx, self.Sy, self.Sy, self.Rx,
+                      self.Ry, self.Zx, self.Zy, self.J, self.cw, secType)
         return s
 
     @staticmethod
     def exportXml(fname, sections):
-        #error = None
-        #fh = None
-        #try:
         fh = open(fname, 'w')
-        #if not fh.open(QIODevice.WriteOnly):
-            #raise IOError, unicode(fh.errorString())
-        #stream.setCodec(CODEC)
         fh.write('<?xml version="1.0" encoding="utf-8"?>\n'
-        '<PROPERTY_FILE xmlns="http://www.csiberkeley.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.csiberkeley.com CSIExtendedSectionPropertyFile.xsd">\n'
-        '   <EbrahimRaeyat_Presents>\n'
-        '      <Comment_on_CopyRight> This database is provided by: EbrahimRaeyat, (2017); http://www.ebrahimraeyat.blog.ir </Comment_on_CopyRight>\n'
-        '   </EbrahimRaeyat_Presents>\n'
-        '  <CONTROL>\n'
-        '      <FILE_ID>CSI Frame Properties</FILE_ID>\n'
-        '      <VERSION>1</VERSION>\n'
-        '      <LENGTH_UNITS>mm</LENGTH_UNITS>\n'
-        '      <FORCE_UNITS>kgf</FORCE_UNITS>\n'
-        '  </CONTROL>\n\n')
+                 '<PROPERTY_FILE xmlns="http://www.csiberkeley.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.csiberkeley.com CSIExtendedSectionPropertyFile.xsd">\n'
+                 '   <EbrahimRaeyat_Presents>\n'
+                 '      <Comment_on_CopyRight> This database is provided by: EbrahimRaeyat, (2017); http://www.ebrahimraeyat.blog.ir </Comment_on_CopyRight>\n'
+                 '   </EbrahimRaeyat_Presents>\n'
+                 '  <CONTROL>\n'
+                 '      <FILE_ID>CSI Frame Properties</FILE_ID>\n'
+                 '      <VERSION>1</VERSION>\n'
+                 '      <LENGTH_UNITS>mm</LENGTH_UNITS>\n'
+                 '      <FORCE_UNITS>kgf</FORCE_UNITS>\n'
+                 '  </CONTROL>\n\n')
         for section in sections:
             fh.write(section.__str__())
         fh.write('\n</PROPERTY_FILE>')
         return True, "Exported section properties to "    # "%s" % (QFileInfo(fname).fileName())
 
-
     @staticmethod
     def export_to_autocad(fname, sections):
         fh = open(fname, 'w')
-        #if not fh.open(QIODevice.WriteOnly):
-            #raise IOError, unicode(fh.errorString())
-        #stream = QTextStream(fh)
         for section in sections:
             try:
                 fh.write(section.autocadScrText)
@@ -169,9 +159,9 @@ class Section(object):
 
     @staticmethod
     def export_to_excel(fname, sections):
-        IPES = pd.DataFrame(columns=['TYPE', 'EDI_LABEL', 'LABEL', 'T_F', 'A', 'D', 'BF',  'TW',
-                    'TF', 'KDES', 'KDET', 'IX', 'ZX', 'SX', 'RX', 'ASX', 'IY', 'ZY', 'SY',
-                    'RY', 'ASY', 'J', 'CW'], index=range(len(sections)))
+        IPES = pd.DataFrame(columns=['TYPE', 'EDI_LABEL', 'LABEL', 'T_F', 'A', 'D', 'BF', 'TW',
+                                     'TF', 'KDES', 'KDET', 'IX', 'ZX', 'SX', 'RX', 'ASX', 'IY', 'ZY', 'SY',
+                                     'RY', 'ASY', 'J', 'CW'], index=range(len(sections)))
         IPES['TYPE'][:] = 'W'
         for row, section in enumerate(sections):
             IPES['EDI_LABEL'][row] = IPES['LABEL'][row] = section.name
@@ -211,46 +201,6 @@ class Section(object):
             return self.TBPlate.bf, self.TBPlate.tf, \
                 (self.LRPlate.tf + 2 * self.TBPlate.tf), 2 * self.LRPlate.bf
 
-        slenderParameters = {'notPlate': {'B': {'M': {'BF': '2*bf', 'tfCriteria': 'True', 'TF': ('BF*tf/bf', ''), 'D': 'd',
-                        'twCriteria': 'True', 'TW': ('(D-2*TF)/(d-2*(tf+r))*tw', '')},
-                        'H': {'BF': '2*bf', 'tfCriteria': 'True', 'TF': ('2*0.55*tf/.6', ''), 'D': 'd',
-                        'twCriteria': 'True', 'TW': ('(D-2*TF)/(d-2*(tf+r))*tw', '')}},
-                                    'C': {'M': {'BF': '2*bf', 'tfCriteria': 'True', 'TF': ('BF*tf/bf', ''), 'D': 'd',
-                                    'twCriteria': 'True', 'TW': ('(D-2*TF)/(d-2*(tf+r))*tw', '')},
-                                    'H': {'BF': '2*bf', 'tfCriteria': 'True', 'TF': ('BF*tf/bf', ''), 'D': 'd',
-                                    'twCriteria': 'True', 'TW': ('(D-2*TF)/(d-2*(tf+r))*tw', '')}}},
-                        'TBPlate': {'B': {'M': {'BF': 'c+2*xm', 'tfCriteria': 't1<(.76*B1*tf)/(1.12*bf)',
-                        'TF': ('(1.12*BF*t1)/(.76*B1)', '(BF*tf)/bf'), 'D': 'd+2*t1',
-                        'twCriteria': 'True', 'TW': ('(D-2*TF)/(d-2*(tf+r))*tw', '')},
-                        'H': {'BF': 'c+2*xm', 'tfCriteria': 't1<(.6*B1*tf)/(0.55*bf)',
-                            'TF': ('(0.55*BF*t1)/(.60*B1)', '(BF*tf)/bf'), 'D': 'd+2*t1',
-                            'twCriteria': 'True', 'TW': ('(D-2*TF)/(d-2*(tf+r))*tw', '')}},
-                        'C': {'M': {'BF': 'c+2*xm', 'tfCriteria': 't1<(.76*B1*tf)/(1.12*bf)',
-                        'TF': ('(1.12*BF*t1)/(.76*B1)', '(BF*tf)/bf'), 'D': 'd+2*t1',
-                        'twCriteria': 'True', 'TW': ('(D-2*TF)/(d-2*(tf+r))*tw', '')},
-                            'H': {'BF': 'c+2*xm', 'tfCriteria': 't1<(B1*tf)/(bf)',
-                                'TF': ('(BF*t1)/(B1)', '(BF*tf)/bf'), 'D': 'd+2*t1',
-                                'twCriteria': 'True', 'TW': ('(D-2*TF)/(d-2*(tf+r))*tw', '')}}},
-                        'TBLRPLATE': {'B': {'M': {'BF': 'c+2*xm+2*t2', 'tfCriteria': 't1<(.76*B1*tf)/(1.12*bf)',
-                        'TF': ('(1.12*BF*t1)/(.76*B1)', '(BF*tf)/bf'), 'D': 'd+2*t1',
-                        'twCriteria': 't2<(d*tw)/(d-2*(tf+r))', 'TW': ('t2*(D-2*TF)/d', 'tw*(D-2*TF)/(d-2*(tf+r))')},
-                        'H': {'BF': 'c+2*xm+2*t2', 'tfCriteria': 't1<(.6*B1*tf)/(0.55*bf)',
-                        'TF': ('(0.55*BF*t1)/(.60*B1)', '(BF*tf)/bf'), 'D': 'd+2*t1',
-                        'twCriteria': 't2<(d*tw)/(d-2*(tf+r))', 'TW': ('t2*(D-2*TF)/d', 'tw*(D-2*TF)/(d-2*(tf+r))')}},
-                        'C': {'M': {'BF': 'c+2*xm+2*t2', 'tfCriteria': 't1<(.76*B1*tf)/(1.12*bf)',
-                        'TF': ('(1.12*BF*t1)/(.76*B1)', '(BF*tf)/bf'), 'D': 'd+2*t1',
-                        'twCriteria': 't2<(d*tw)/(d-2*(tf+r))', 'TW': ('t2*(D-2*TF)/d', 'tw*(D-2*TF)/(d-2*(tf+r))')},
-                        'H': {'BF': 'c+2*xm+2*t2', 'tfCriteria': 't1<(B1*tf)/(bf)',
-                        'TF': ('(BF*t1)/(B1)', '(BF*tf)/bf'), 'D': 'd+2*t1',
-                        'twCriteria': 't2<(d*tw)/(d-2*(tf+r))', 'TW': ('t2*(D-2*TF)/d', 'tw*(D-2*TF)/(d-2*(tf+r))')}}},
-                        'LRPLATE': {'B': {'M': {'BF': 'c+2*xm+2*t2',
-                        'tfCriteria': 'True', 'TF': ('BF*tf/bf', ''), 'D': 'd', 'twCriteria': 't2<(d*tw)/(d-2*(tf+r))', 'TW': ('t2*(D-2*TF)/d', 'tw*(D-2*TF)/(d-2*(tf+r))')},'H': {'BF': 'c+2*xm+2*t2', 'tfCriteria': 'True', 'TF': ('2*0.55*tf/.6', ''), 'D': 'd',
-                        'twCriteria': 't2<(d*tw)/(d-2*(tf+r))', 'TW': ('t2*(D-2*TF)/d', 'tw*(D-2*TF)/(d-2*(tf+r))')}},
-                        'C': {'M': {'BF': 'c+2*xm+2*t2', 'tfCriteria': 'True', 'TF': ('BF*tf/bf', ''), 'D': 'd',
-                        'twCriteria': 't2<(d*tw)/(d-2*(tf+r))', 'TW': ('t2*(D-2*TF)/d', 'tw*(D-2*TF)/(d-2*(tf+r))')},
-                        'H': {'BF': 'c+2*xm+2*t2', 'tfCriteria': 'True', 'TF': ('BF*tf/bf', ''), 'D': 'd',
-                        'twCriteria': 't2<(d*tw)/(d-2*(tf+r))', 'TW': ('t2*(D-2*TF)/d', 'tw*(D-2*TF)/(d-2*(tf+r))')}}}}
-
         composite = str(self.composite)
         useAs = str(self.useAs)
         ductility = str(self.ductility)
@@ -272,7 +222,7 @@ class Section(object):
         if bool(self.LRPlate):
             B2 = self.LRPlate.tf
             t2 = self.LRPlate.bf
-            lr_plate_ratio = B2/ t2
+            lr_plate_ratio = B2 / t2
 
         if bool(self.webPlate):
             if lr_plate_ratio:
@@ -298,7 +248,7 @@ class Section(object):
         else:
             TW = eval(parameters['TW'][1])
 
-        #if self.baseSection.type == 'UNP':
+        # if self.baseSection.type == 'UNP':
             #TF = .5 * TF
 
         return BF, TF, D, TW
@@ -313,10 +263,9 @@ class Section(object):
             V2 = 1
             V3 = 1
 
-        #self.equalSlendersParamsEtabs()
+        # self.equalSlendersParamsEtabs()
 
         return V2, V3
-
 
         if self.isEquivalenIpeSlender():
             self.slender = u'لاغر'
@@ -324,11 +273,10 @@ class Section(object):
             self.slender = u'غیرلاغر'
 
 
-
-#def equalSlendersParams(BF, TF, D, TW):
+# def equalSlendersParams(BF, TF, D, TW):
     #'''Return BF, TF, D, TW for equivalent I section to
-    #correct calculation of AS2 and AS3 that etabs calculate
-    #automatically and change user input for this parameters.'''
+    # correct calculation of AS2 and AS3 that etabs calculate
+    # automatically and change user input for this parameters.'''
     #ASx = self.ASx
     #ASy = self.ASy
 
@@ -340,14 +288,14 @@ class Section(object):
     #D = (3 * TF + sqrt(delta)) / 2
     #TW = (D - 2 * TF) / WS
 
-    #return BF, TF, D, TW
+    # return BF, TF, D, TW
 
-    #def equalSlendersParamsEtabs(self):
+    # def equalSlendersParamsEtabs(self):
         #'''Return BF, TF, D, TW for equivalent I section to
-        #correct calculation of AS2 and AS3 that etabs calculate
-        #automatically and change user input for this parameters.
-        #FS = flange slender
-        #WS = web slender'''
+        # correct calculation of AS2 and AS3 that etabs calculate
+        # automatically and change user input for this parameters.
+        # FS = flange slender
+        # WS = web slender'''
 
         #FS = self.bf / (2 * self.tf)
         #WS = (self.d - 2 * self.tf) / self.tw
@@ -365,8 +313,8 @@ class Section(object):
         '''This function gives a equivalent ipe section and
             check it's slender'''
 
-        slenderParameters = {'flang':{'B': {'O': 0.76, 'M': 0.76, 'H': 0.60}, 'C': {'O': 1.28, 'M': 0.76, 'H': 0.60}},
-                             'web': {'B': {'O':3.76, 'M': 3.76, 'H': 2.45}, 'C': {'O': 1.49, 'M': 1.12, 'H': 0.77}}}
+        slenderParameters = {'flang': {'B': {'O': 0.76, 'M': 0.76, 'H': 0.60}, 'C': {'O': 1.28, 'M': 0.76, 'H': 0.60}},
+                             'web': {'B': {'O': 3.76, 'M': 3.76, 'H': 2.45}, 'C': {'O': 1.49, 'M': 1.12, 'H': 0.77}}}
 
         E = 2e6
         Fy = 2400
@@ -379,16 +327,15 @@ class Section(object):
         fs = self.bf_equivalentI / self.tf_equivalentI
         ws = (self.d_equivalentI - 2 * self.tf_equivalentI) / self.tw_equivalentI
 
-        #print 'FS = {}, WS = {}\nfs = {}, ws = {}'.format(FS, WS, fs, ws)
+        # print 'FS = {}, WS = {}\nfs = {}, ws = {}'.format(FS, WS, fs, ws)
 
         if fs > FS or ws > WS:
-            return  True
+            return True
         else:
             return False
 
 
 def DoubleSection(section, dist=0):
-
     '''dist = distance between two sections, 0 mean that there is no
     distance between sections'''
     _type = section.type
@@ -416,7 +363,7 @@ def DoubleSection(section, dist=0):
     cc = dist + 2 * (baseSection.bf - baseSection.xm)
     dw = cc
     hw = d - 2 * tf
-    if _type == 'UNP':
+    if _type in ('UNP', 'UPA'):
         dw = dist + 2 * bf - tw
     cw = 2 * baseSection.cw + (tw * hw ** 3 / 12) * dw ** 2 / 2
     J = 0
@@ -427,14 +374,13 @@ def DoubleSection(section, dist=0):
     else:
         name = '2' + section.name + 'c{:.0f}'.format(cc / 10)
     return Section(_type=_type, name=name, area=area, xm=xm, ym=ym,
-                         xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy,
-                         Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=d, tw=tw, r1=r1, cw=cw, J=J, isDouble=True, cc=cc,
-                         useAs=useAs, ductility=ductility, baseSection=baseSection,
-                         composite='notPlate', convert_type=convert_type)
+                   xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy,
+                   Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=d, tw=tw, r1=r1, cw=cw, J=J, isDouble=True, cc=cc,
+                   useAs=useAs, ductility=ductility, baseSection=baseSection,
+                   composite='notPlate', convert_type=convert_type)
 
 
 def SoubleSection(section, dist=0):
-
     '''dist = distance between two sections, 0 mean that there is no
     distance between sections'''
     _type = section.type
@@ -465,10 +411,11 @@ def SoubleSection(section, dist=0):
     else:
         name = '3' + section.name + 'c{:.0f}'.format(cc / 10)
     return Section(_type=_type, name=name, area=area, xm=xm, ym=ym,
-                         xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy,
-                         Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=d, tw=tw, r1=r1, cw=0, J=0, isDouble=False, isSouble=True, cc=cc,
-                         useAs=useAs, ductility=ductility, baseSection=baseSection,
-                         composite='notPlate', convert_type=convert_type)
+                   xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy,
+                   Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=d, tw=tw, r1=r1, cw=0, J=0, isDouble=False, isSouble=True, cc=cc,
+                   useAs=useAs, ductility=ductility, baseSection=baseSection,
+                   composite='notPlate', convert_type=convert_type)
+
 
 def AddPlateTB(section, plate):
     '''add plate to Top and Bottom of section, center of palate in x direction
@@ -507,9 +454,9 @@ def AddPlateTB(section, plate):
     if _type == 'BOX':
         cw = 0
     return Section(_type=_type, name=name, area=area, xm=xm, ym=ym,
-        xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy, Zx=Zx, Zy=Zy, bf=bf, tf=tf,
-        d=d, tw=tw, r1=r1, cw=cw, J=0, isDouble=isDouble, isSouble=isSouble, baseSection=baseSection, cc=cc,
-        useAs=useAs, TBPlate=plate, ductility=ductility, composite='TBPlate', convert_type=convert_type)
+                   xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy, Zx=Zx, Zy=Zy, bf=bf, tf=tf,
+                   d=d, tw=tw, r1=r1, cw=cw, J=0, isDouble=isDouble, isSouble=isSouble, baseSection=baseSection, cc=cc,
+                   useAs=useAs, TBPlate=plate, ductility=ductility, composite='TBPlate', convert_type=convert_type)
 
 
 def AddPlateLR(section, plate):
@@ -544,14 +491,14 @@ def AddPlateLR(section, plate):
     cw = section.cw + plate.Ix * (dp ** 2 / 2)
     if _type == 'BOX':
         cw = 0
-    composite='TBLRPLATE'
+    composite = 'TBLRPLATE'
     if not TBPlate:
         composite = 'LRPLATE'
     return Section(_type=_type, name=name, area=area, xm=xm, ym=ym,
-        xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy, Zx=Zx, Zy=Zy, bf=bf, tf=tf,
-        d=d, tw=tw, r1=r1, cw=cw, J=0, isDouble=isDouble, isSouble=isSouble, baseSection=baseSection, cc=cc,
-        useAs=useAs, TBPlate=TBPlate, LRPlate=plate,
-        ductility=ductility, composite=composite, convert_type=convert_type)
+                   xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy, Zx=Zx, Zy=Zy, bf=bf, tf=tf,
+                   d=d, tw=tw, r1=r1, cw=cw, J=0, isDouble=isDouble, isSouble=isSouble, baseSection=baseSection, cc=cc,
+                   useAs=useAs, TBPlate=TBPlate, LRPlate=plate,
+                   ductility=ductility, composite=composite, convert_type=convert_type)
 
 
 def AddPlateWeb(section, plate):
@@ -585,21 +532,14 @@ def AddPlateWeb(section, plate):
     cc = section.cc
     dp = section.cc + section.tw + plate.xmax
     cw = section.cw + plate.Ix * (dp ** 2 / 2)
-    composite='TBLRPLATE'
+    composite = 'TBLRPLATE'
     if not TBPlate:
         composite = 'LRPLATE'
     return Section(_type=_type, name=name, area=area, xm=xm, ym=ym,
-        xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy, Zx=Zx, Zy=Zy, bf=bf, tf=tf,
-        d=d, tw=tw, r1=r1, cw=cw, J=0, isDouble=isDouble, isSouble=isSouble, baseSection=baseSection, cc=cc,
-        useAs=useAs, TBPlate=TBPlate, LRPlate=LRPlate, webPlate=plate,
-        ductility=ductility, composite=composite, convert_type=convert_type)
-
-#class AddPlateTBThick(AddPlateTB):
-
-    #def __init__(self, section, thick):
-        #plateWidth = section.xmax - 40
-        #plate = Plate(plateWidth, thick)
-        #super(AddPlateTBThick, self).__init__(section, plate)
+                   xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy, Zx=Zx, Zy=Zy, bf=bf, tf=tf,
+                   d=d, tw=tw, r1=r1, cw=cw, J=0, isDouble=isDouble, isSouble=isSouble, baseSection=baseSection, cc=cc,
+                   useAs=useAs, TBPlate=TBPlate, LRPlate=LRPlate, webPlate=plate,
+                   ductility=ductility, composite=composite, convert_type=convert_type)
 
 
 class Ipe(Section):
@@ -617,6 +557,7 @@ class Ipe(Section):
         super(Ipe, self).__init__(_type='IPE', name=name, area=area, xm=xm, ym=ym,
                                   xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy,
                                   Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=d, tw=tw, r1=r1, cw=cw, J=J)
+
     @staticmethod
     def createStandardIpes():
         IPE14 = Ipe("IPE14", 1640, 73, 140, 5410000, 449000, 88300, 19200, 6.9, 4.7, 7)
@@ -643,9 +584,8 @@ class PG(Section):
         ASx = 5 / 3 * (bf * tf)
 
         super(PG, self).__init__(_type='IPE', name=name, area=pg.area, xm=pg.xm, ym=pg.ym,
-                                  xmax=pg.xmax, ymax=pg.ymax, ASy=ASy, ASx=ASx, Ix=pg.Ix, Iy=pg.Iy,
-                                  Zx=pg.Zx, Zy=pg.Zy, bf=bf, tf=tf, d=d, tw=tw, r1=0, cw=0, J=0)
-
+                                 xmax=pg.xmax, ymax=pg.ymax, ASy=ASy, ASx=ASx, Ix=pg.Ix, Iy=pg.Iy,
+                                 Zx=pg.Zx, Zy=pg.Zy, bf=bf, tf=tf, d=d, tw=tw, r1=0, cw=0, J=0)
 
 
 class Unp(Section):
@@ -680,8 +620,57 @@ class Unp(Section):
         UNP28 = Unp("UNP28", 5340, 95, 280, 25.2, 6.272e7, 3989000, 544500, 122300, 15, 10)
         UNP30 = Unp("UNP30", 5874, 100, 300, 26.87, 8.022e7, 4940000, 646900, 144600, 16, 10)
         UNP = {8: UNP8, 10: UNP10, 12: UNP12, 14: UNP14, 16: UNP16, 18: UNP18,
-                20: UNP20, 22: UNP22, 24: UNP24, 26: UNP26, 28: UNP28, 30: UNP30}
+               20: UNP20, 22: UNP22, 24: UNP24, 26: UNP26, 28: UNP28, 30: UNP30}
         return UNP
+
+
+class Upa(Section):
+
+    def __init__(self, name, area, bf, d, xm, Ix, Iy, Zx, Zy, tf, tw):
+        r1 = tf
+        ym = d / 2
+        xmax = bf
+        ymax = d
+        ASy = (d - tf) * tw
+        ASx = 5 / 3 * bf * tf
+        df = d - tf
+        cw = (tf * bf ** 3 / 12) * (df ** 2 / 2)
+        J = (2 * bf * tf ** 3 + (d - 2 * tf) * tw ** 3) / 3
+        super(Upa, self).__init__(_type='UPA', name=name, area=area, xm=xm, ym=ym,
+                                  xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy,
+                                  Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=d, tw=tw, r1=r1, cw=cw, J=J)
+
+    @staticmethod
+    def createStandardUpas():
+                    # name, area, bf, d,  xm,     Ix,    Iy,    Zx,   Zy,  tf, tw
+
+        UPA8 = Upa("UPA08", 898.0, 40.0, 80.0, 1.68421052631579, 894000.0, 128000.0, 22400.0, 4750.0, 7.4, 4.5)
+        UPA10 = Upa("UPA10", 1090.0, 46.0, 100.0, 1.54798761609907, 1740000.0, 204000.0, 34800.0, 6460.0, 7.6, 4.5)
+        UPA12 = Upa("UPA12", 1330.0, 52.0, 120.0, 1.40845070422535, 3040000.0, 312000.0, 50600.0, 8520.0, 7.8, 4.8)
+        UPA14 = Upa("UPA14", 1560.0, 58.0, 140.0, 1.27272727272727, 4910000.0, 454000.0, 70200.0, 11000.0, 8.1, 4.9)
+        UPA16 = Upa("UPA16", 1810.0000000000002, 64.0, 160.0, 11.6666666666667, 7470000.0, 633000.0, 93400.0, 13800.0, 8.4, 5.0)
+        UPA18 = Upa("UPA18", 2070.0, 70.0, 180.0, 1.05882352941176, 10900000.0, 860000.0, 121000.0, 17000.0, 8.7, 5.1)
+        UPA20 = Upa("UPA20", 2340.0, 76.0, 200.0, 0.975609756097561, 15200000.0, 1130000.0, 152000.0, 20500.0, 9.0, 5.2)
+        UPA22 = Upa("UPA22", 2670.0, 82.0, 220.0, 0.876494023904382, 21100000.0, 1510000.0, 192000.0, 25100.0, 9.5, 5.4)
+        UPA24 = Upa("UPA24", 3060.0, 90.0, 240.0, 0.759493670886076, 29000000.0, 2080000.0, 242000.0, 31600.0, 10.0, 5.6)
+        UPA27 = Upa("UPA27", 3520.0000000000005, 95.0, 270.0, 0.723860589812333, 41600000.0, 2620000.0, 308000.0, 37300.0, 10.5, 6.0)
+        UPA30 = Upa("UPA30", 4050.0, 100.0, 300.0, 0.688073394495413, 58100000.0, 3270000.0, 387000.0, 43600.0, 11.0, 6.5)
+
+        UPA = {
+            8: UPA8,
+            10: UPA10,
+            12: UPA12,
+            14: UPA14,
+            16: UPA16,
+            18: UPA18,
+            20: UPA20,
+            22: UPA22,
+            24: UPA24,
+            27: UPA27,
+            30: UPA30,
+        }
+        return UPA
+
 
 class Cpe(Section):
 
@@ -711,12 +700,6 @@ class Cpe(Section):
         CPE = {14: CPE14, 16: CPE16, 18: CPE18, 20: CPE20, 22: CPE22, 24: CPE24, 27: CPE27, 30: CPE30}
         return CPE
 
-    #def double(self, dist=0):
-        #return DoubleSection(self, dist)
-
-    #def addPlateTB(self, plate):
-        #return AddPlateTB(self, plate)
-
 
 class Plate(Section):
 
@@ -735,8 +718,9 @@ class Plate(Section):
         tf = ymax
         self.cc = 0
         super(Plate, self).__init__(_type='PLATE', name=name, area=area, xm=xm, ym=ym,
-            xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy,
-            Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=0, tw=0, r1=0, cw=0, J=0)
+                                    xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy,
+                                    Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=0, tw=0, r1=0, cw=0, J=0)
+
 
 class Box(Section):
 
@@ -745,8 +729,8 @@ class Box(Section):
         xm = xmax / 2
         ym = ymax / 2
         super(Box, self).__init__(_type='BOX', name=name, area=0.0001, xm=xm, ym=ym,
-                                      xmax=xmax, ymax=ymax, ASy=0, ASx=0, Ix=0, Iy=0,
-            Zx=0, Zy=0, bf=xmax, tf=1, d=ymax, tw=1, r1=0, cw=0, J=0)
+                                  xmax=xmax, ymax=ymax, ASy=0, ASx=0, Ix=0, Iy=0,
+                                  Zx=0, Zy=0, bf=xmax, tf=1, d=ymax, tw=1, r1=0, cw=0, J=0)
 
     @staticmethod
     def createStandardBox():
@@ -755,17 +739,20 @@ class Box(Section):
         BOX = {1: BOX1, 2: BOX2}
         return BOX
 
+
 def createSection(sectionProp):
     ipesProp = Ipe.createStandardIpes()
     unpsProp = Unp.createStandardUnps()
+    upasProp = Upa.createStandardUpas()
     cpesProp = Cpe.createStandardCpes()
     boxProp = Box.createStandardBox()
     sectionProperties = {
-                        'IPE': ipesProp,
-                        'UNP': unpsProp,
-                        'CPE': cpesProp,
-                        'BOX': boxProp,
-                        }
+        'IPE': ipesProp,
+        'UNP': unpsProp,
+        'CPE': cpesProp,
+        'BOX': boxProp,
+        'UPA': upasProp,
+    }
     sectionType = sectionProp[SECTIONTYPE]
     sectionSize = sectionProp[SECTIONSIZE]
     section = sectionProperties[sectionType][sectionSize]
@@ -779,7 +766,6 @@ def createSection(sectionProp):
                 xmax = sectionProp[LH] - 2 * sectionProp[TV]
             section = Box(xmax, ymax, mode=sectionSize)
 
-    #convert_type = sectionProp[CONVERT_TYPE]
     section.convert_type = sectionProp[CONVERT_TYPE]
     useAs = sectionProp[USEAS]
     ductility = sectionProp[DUCTILITY]
@@ -802,10 +788,8 @@ def createSection(sectionProp):
         p3 = Plate(sectionProp[_TW], sectionProp[LW])
         section = AddPlateWeb(section, p3)
     if isSouble or isDouble or isTBPlate or isLRPlate or isWebPlate:
-        #section.equivalentSectionI()
+        # section.equivalentSectionI()
         section.name = '{}{}{}'.format(section.name, useAs, ductility)
-
-
 
     return section
 
@@ -836,12 +820,12 @@ class SectionTableModel(QAbstractTableModel):
         if not index.isValid():
             return Qt.ItemIsEnabled
         return Qt.ItemFlags(
-                QAbstractTableModel.flags(self, index) |
-                Qt.ItemIsEditable)
+            QAbstractTableModel.flags(self, index) |
+            Qt.ItemIsEditable)
 
     def data(self, index, role=Qt.DisplayRole):
         if (not index.isValid() or
-            not (0 <= index.row() < len(self.sections))):
+                not (0 <= index.row() < len(self.sections))):
             return
         section = self.sections[index.row()]
         baseSection = section.baseSection
@@ -883,8 +867,8 @@ class SectionTableModel(QAbstractTableModel):
                 return '{0:.0f}'.format(section.cw / 1e6)
             elif column == J:
                 return '{0:.0f}'.format(section.J)
-            #elif column == SLENDER:
-                #return '{0:.1f}'.format(section.slender))
+            # elif column == SLENDER:
+                # return '{0:.1f}'.format(section.slender))
             elif column == V2:
                 return '{0:.1f}'.format(section.V2)
             elif column == V3:
@@ -920,9 +904,9 @@ class SectionTableModel(QAbstractTableModel):
                 return QColor(210, 130, 230)
             else:
                 return QColor(150, 150, 250)
-        #elif role == Qt.TextColorRole:
-            #if column == SLENDER:
-                #return Qt.red)
+        # elif role == Qt.TextColorRole:
+            # if column == SLENDER:
+                # return Qt.red)
 
         return
 
@@ -997,7 +981,7 @@ class SectionTableModel(QAbstractTableModel):
                 section.name = value
             try:
                 value = float(value)
-                if  value > 0:
+                if value > 0:
                     if column == AREA:
                         section.area = value
                     elif column == ASX:
@@ -1045,7 +1029,7 @@ class SectionTableModel(QAbstractTableModel):
         self.beginInsertRows(QModelIndex(), position, position + rows - 1)
         for row in range(rows):
             self.sections.insert(position + row,
-                              Ipe("IPE18", 2390, 91, 180, 13170000, 1010000, 166000, 34600, 8.0, 5.3, 9))
+                                 Ipe("IPE18", 2390, 91, 180, 13170000, 1010000, 166000, 34600, 8.0, 5.3, 9))
         self.endInsertRows()
         self.dirty = True
         return True
@@ -1053,10 +1037,11 @@ class SectionTableModel(QAbstractTableModel):
     def removeRows(self, position, rows=1, index=QModelIndex()):
         self.beginRemoveRows(QModelIndex(), position, position + rows - 1)
         self.sections = (self.sections[:position] +
-                      self.sections[position + rows:])
+                         self.sections[position + rows:])
         self.endRemoveRows()
         self.dirty = True
         return True
+
 
 if __name__ == '__main__':
     model = SectionTableModel()
