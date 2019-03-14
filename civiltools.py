@@ -75,9 +75,8 @@ class FormWidget(QtWidgets.QWidget, main_window):
             QtWidgets.QMessageBox.information(None, 'update', str(msg))
             return
 
-
         if (QMessageBox.question(self, "update", ("update to latest version?!"),
-                QMessageBox.Yes|QMessageBox.No) == QMessageBox.No):
+                                 QMessageBox.Yes | QMessageBox.No) == QMessageBox.No):
             return
         if not internet():
             msg = "You are not connected to the Internet, please check your internet connection."
@@ -136,6 +135,7 @@ def onerror(func, path, exc_info):
         print('another error')
         raise
 
+
 def internet(host="8.8.8.8", port=53, timeout=3):
     import socket
     try:
@@ -143,18 +143,21 @@ def internet(host="8.8.8.8", port=53, timeout=3):
         socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
         return True
     except Exception as ex:
-#         print(ex.message)
+        #         print(ex.message)
         return False
+
 
 class AboutForm(about_base, about_window):
     def __init__(self, parent=None):
         super(AboutForm, self).__init__()
         self.setupUi(self)
 
+
 class UpdateForm(update_base, update_window):
     def __init__(self, parent=None):
         super(UpdateForm, self).__init__()
         self.setupUi(self)
+
 
 def main():
     import time
@@ -170,13 +173,13 @@ def main():
     progressBar.setGeometry(50, splash_pix.height() - 30, splash_pix.width() - 100, 15)
 
     splash.show()
-    splash.showMessage("<h2><font color='DarkGreen'>civiltools by Ebrahim Raeyat Roknabadi </font></h2>", Qt.AlignTop | Qt.AlignCenter, Qt.black)
+    splash.showMessage("<h1><font color='DarkGreen'>civiltools by Ebrahim Raeyat Roknabadi </font></h1>", Qt.AlignCenter | Qt.AlignCenter, Qt.black)
 
     for i in range(1, 11):
         progressBar.setValue(i)
         t = time.time()
         while time.time() < t + 0.1:
-           app.processEvents()
+            app.processEvents()
 
     # Simulate something that takes time
     time.sleep(1)
@@ -188,6 +191,7 @@ def main():
     window.show()
     splash.finish(window)
     sys.exit(app.exec_())
+
 
 if __name__ == '__main__':
     main()
