@@ -173,7 +173,7 @@ def main():
     progressBar.setGeometry(50, splash_pix.height() - 30, splash_pix.width() - 100, 20)
 
     splash.show()
-    splash.showMessage("<h1><font color='DarkGreen'>civiltools by Ebrahim Raeyat Roknabadi </font></h1>", Qt.AlignCenter | Qt.AlignCenter, Qt.black)
+    splash.showMessage("<h1><font color='DarkRed'>civiltools by Ebrahim Raeyat Roknabadi </font></h1>", Qt.AlignCenter | Qt.AlignCenter, Qt.black)
 
     for i in range(1, 11):
         progressBar.setValue(i)
