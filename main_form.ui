@@ -38,8 +38,8 @@
            <string/>
           </property>
           <property name="icon">
-           <iconset>
-            <normaloff>images/civil-engineering.png</normaloff>images/civil-engineering.png</iconset>
+           <iconset resource="resource.qrc">
+            <normaloff>:/civiltools/images/civil-engineering.jpg</normaloff>:/civiltools/images/civil-engineering.jpg</iconset>
           </property>
           <property name="iconSize">
            <size>
