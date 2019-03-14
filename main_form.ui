@@ -39,7 +39,7 @@
           </property>
           <property name="icon">
            <iconset resource="resource.qrc">
-            <normaloff>:/civiltools/images/civil-engineering.png</normaloff>:/civiltools/images/civil-engineering.png</iconset>
+            <normaloff>:/civiltools/images/civil-engineering.jpg</normaloff>:/civiltools/images/civil-engineering.jpg</iconset>
           </property>
           <property name="iconSize">
            <size>

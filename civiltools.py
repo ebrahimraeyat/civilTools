@@ -163,14 +163,14 @@ def main():
     import time
     os.chdir(civiltools_path)
     app = QtWidgets.QApplication(sys.argv)
-    splash_pix = QPixmap("./images/civil-engineering.png")
+    splash_pix = QPixmap("./images/civil-engineering.jpg")
     splash = QSplashScreen(splash_pix, Qt.WindowStaysOnTopHint)
     splash.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint)
     splash.setEnabled(False)
     # adding progress bar
     progressBar = QProgressBar(splash)
     progressBar.setMaximum(10)
-    progressBar.setGeometry(50, splash_pix.height() - 30, splash_pix.width() - 100, 15)
+    progressBar.setGeometry(50, splash_pix.height() - 30, splash_pix.width() - 100, 20)
 
     splash.show()
     splash.showMessage("<h1><font color='DarkGreen'>civiltools by Ebrahim Raeyat Roknabadi </font></h1>", Qt.AlignCenter | Qt.AlignCenter, Qt.black)
