@@ -30,8 +30,8 @@ class Building(object):
         self.exp_period_x = self.period(x_system)
         self.exp_period_y = self.period(y_system)
         self.useTan = useTan
-        self.Tx = min(x_period_an, 1.25 * self.exp_period_x)
-        self.Ty = min(y_period_an, 1.25 * self.exp_period_y)
+        self.Tx = max(min(x_period_an, 1.25 * self.exp_period_x), self.exp_period_x)
+        self.Ty = max(min(y_period_an, 1.25 * self.exp_period_y), self.exp_period_y)
         self.x_period_an = x_period_an
         self.y_period_an = y_period_an
         if importance_factor == 1.4:
@@ -48,8 +48,8 @@ class Building(object):
         # analytical calculations for drift
         self.soil_reflection_drift_prop_x = ReflectionFactor(soilType, self.acc, self.x_period_an)
         self.soil_reflection_drift_prop_y = ReflectionFactor(soilType, self.acc, self.y_period_an)
-        self.Bx_drift = self.soil_reflection_drift_prop_x.B
-        self.By_drift = self.soil_reflection_drift_prop_y.B
+        self.Bx_drift = min(self.Bx, self.soil_reflection_drift_prop_x.B)
+        self.By_drift = min(self.By, self.soil_reflection_drift_prop_y.B)
         self.kx_drift, self.ky_drift = self.getK(self.x_period_an, self.y_period_an)
         self.results_drift = self.calculateC(self.Bx_drift, self.By_drift)
 
@@ -172,14 +172,14 @@ class Building(object):
         if CxNotApproved < self.CMin:
             Cx = self.CMin
             self.cxStr = (u"{0:.4f} &#60 C<sub>min</sub> &#8658 Cx = {1}</p>"
-                            ).format(CxNotApproved, self.CMin)
+                          ).format(CxNotApproved, self.CMin)
         else:
             Cx = CxNotApproved
             self.cxStr = (u"{0:.4f} &#62 C<sub>min</sub>  O.K</p>").format(CxNotApproved)
         if CyNotApproved < self.CMin:
             Cy = self.CMin
             self.cyStr = (u" {0:.4f} &#60 C<sub>min</sub> &#8658 Cy = {1}</p>"
-                            ).format(CyNotApproved, self.CMin)
+                          ).format(CyNotApproved, self.CMin)
         else:
             Cy = CyNotApproved
             self.cyStr = (u"{0:.4f} &#62 C<sub>min</sub>  O.K</p>").format(CyNotApproved)
@@ -208,7 +208,7 @@ class Building(object):
         html += '}\n'
         html += 'p#pfarsi {font-size:120%;}'
         html += 'p#pmath {text-dir:ltr;text-align:left;font-size:120%;}'
-        #html += 'p#pmath {text-dir:ltr;font-size:120%;}'
+        # html += 'p#pmath {text-dir:ltr;font-size:120%;}'
         html += '</style>\n'
         html += '</head>\n'
 
@@ -219,24 +219,24 @@ class Building(object):
 
         html += u"<h1 align=center> مشخصات پروژه: </h1>\n"
         html += (u"<p id=pfarsi> تعداد طبقات: {0} طبقه</p>"
-                u"<p id=pfarsi> ارتفاع ساختمان: {1} متر</p>"
-                ).format(self.number_of_story,
-                         self.height)
+                 u"<p id=pfarsi> ارتفاع ساختمان: {1} متر</p>"
+                 ).format(self.number_of_story,
+                          self.height)
         html += (u"<p id=pfarsi><b>  مشخصات سازه در راستای X:</b> </p>"
                  u"<p id=pfarsi> {0}</p>"
                  u"<p id=pfarsi><b>  مشخصات سازه در راستای Y:</b> </p>"
                  u"<p id=pfarsi> {1}</p>").format(self.x_system.__str__(),
-                                                 self.y_system.__str__())
+                                                  self.y_system.__str__())
         html += u"<p id=pfarsi><b>مشخصات ساختگاه:</b></p>"
         html += (u"<p id=pfarsi>  محل اجرای پروژه: شهر {0} </p>"
                  u"<p id=pfarsi> خطر نسبی زلزله: {1} </p>"
                  u"<p id=pfarsi> نسبت شتاب مبنای طرح : {2}</p>"
                  u"<p id=pfarsi> نوع خاک : تیپ {3} </p>"
-                ).format(self.city,
-                         self.risk_level,
-                         self.acc,
-                         self.soilType
-                         )
+                 ).format(self.city,
+                          self.risk_level,
+                          self.acc,
+                          self.soilType
+                          )
         html += u"<p id=pfarsi><b> محاسبه زمان تناوب سازه:</b> </p>"
         if self.useTan:
             html += (u"<p id=pfarsi> از زمان تناوب تحلیلی استفاده میگردد: </p>"
@@ -246,21 +246,21 @@ class Building(object):
             if self.is_infill:
                 html += u"<p id=pfarsi>اثر میانقاب در نظر گرفته شده است.</p>"
                 html += ("<p id=pmath> T<sub>x</sub> = 0.8 &#215 {0} &#215 H <sup>{2}</sup>"
-                     " = 0.8 &#215 {0} &#215 ({1}) <sup>{2}</sup> = {3:.2f} Sec</p>").format(
-                         self.x_system.alpha, self.height, self.x_system.pow, self.Tx)
+                         " = 0.8 &#215 {0} &#215 ({1}) <sup>{2}</sup> = {3:.2f} Sec</p>").format(
+                    self.x_system.alpha, self.height, self.x_system.pow, self.Tx)
                 html += ("<p id=pmath> T<sub>y</sub> = 0.8 &#215 {0} &#215 H <sup>{2}</sup>"
-                     " = 0.8 &#215 {0} &#215 ({1}) <sup>{2}</sup> = {3:.2f} Sec</p>").format(
-                         self.y_system.alpha, self.height, self.y_system.pow, self.Ty)
+                         " = 0.8 &#215 {0} &#215 ({1}) <sup>{2}</sup> = {3:.2f} Sec</p>").format(
+                    self.y_system.alpha, self.height, self.y_system.pow, self.Ty)
             else:
                 html += u"<p id=pfarsi>اثر میانقاب در نظر گرفته نشده است.</p>"
                 html += ("<p id=pmath> T<sub>x</sub> = {0} &#215 H <sup>{2}</sup>"
-                     " = {0} &#215 ({1}) <sup>{2}</sup> = {3:.2f} Sec</p>").format(
-                         self.x_system.alpha, self.height, self.x_system.pow, self.Tx)
+                         " = {0} &#215 ({1}) <sup>{2}</sup> = {3:.2f} Sec</p>").format(
+                    self.x_system.alpha, self.height, self.x_system.pow, self.Tx)
                 html += ("<p id=pmath> T<sub>y</sub> = {0} &#215 H <sup>{2}</sup>"
-                     " = {0} &#215 ({1}) <sup>{2}</sup> = {3:.2f} Sec</p>").format(
-                         self.y_system.alpha, self.height, self.y_system.pow, self.Ty)
+                         " = {0} &#215 ({1}) <sup>{2}</sup> = {3:.2f} Sec</p>").format(
+                    self.y_system.alpha, self.height, self.y_system.pow, self.Ty)
         html += (u"<p id=pfarsi><b> مشخصات خاک: </b> </p>"
-                u"<p id=pfarsi> {0}</p>").format(self.soilProperties.__str__())
+                 u"<p id=pfarsi> {0}</p>").format(self.soilProperties.__str__())
         html += (u"<p id=pfarsi><b> محاسبه ضریب بازتاب در راستای x: </b> {0}</p>"
                  u'<p id=pmath> <b>B<sub>x</sub> = {1:.2f}</b></p>'
                  ).format(self.soil_reflection_prop_x.__str__(), self.Bx)
@@ -270,12 +270,12 @@ class Building(object):
         #cx, cy = self.calculateC()
         html += u"<p id=pfarsi><b> محاسبه ضریب K: </b> </p>"
         html += (u"<p id=pmath> K<sub>x</sub>: {0} &#8658 <b>K<sub>x</sub> = {1:.2f}</b></p>"
-                ).format(self._kxStr, self.kx)
+                 ).format(self._kxStr, self.kx)
         html += (u"<p id=pmath> K<sub>y</sub>: {0} &#8658 <b>K<sub>y</sub> = {1:.2f}</b></p>"
-                ).format(self._kyStr, self.ky)
+                 ).format(self._kyStr, self.ky)
         html += u"<p id=pfarsi><b> محاسبه ضریب زلزله: </b> </p>"
         html += (u"<p id=pmath>C<sub>min</sub> = 0.12 &#215 A &#215 I = {0:.4f}</p>"
-                        ).format(self.CMin)
+                 ).format(self.CMin)
         html += (u"<p id=pmath><b>C<sub>x</sub></b> = A &#215 B<sub>x</sub> &#215 I / R<sub>ux</sub>"
                  " = {0} &#215 {1:.2f} &#215 {2} / {3} = " + self.cxStr
                  ).format(self.acc, self.Bx, self.importance_factor, self.x_system.Ru)
@@ -284,8 +284,8 @@ class Building(object):
                  ).format(self.acc, self.By, self.importance_factor, self.y_system.Ru)
         html += '<hr />\n'
         #html += '<b style="font-size: 8pt;">Cfactor Calculator ver. ' + __version__ + '</b>\n'
-        #if ext != 'pdf':
-            #html += u'     <a href="http://ebrahimraeyat.blog.ir"> دانلود آخرین ورژن نرم افزار</a> \n'
+        # if ext != 'pdf':
+        #html += u'     <a href="http://ebrahimraeyat.blog.ir"> دانلود آخرین ورژن نرم افزار</a> \n'
         html += '</body>\n'
         html += '</html>\n'
         #html = html.encode('utf-8')
@@ -318,12 +318,12 @@ class StructureSystem(object):
         structure += u'\u2126<sub>0</sub>={4}; C<sub>d</sub>={5}</p>'
         structure = structure.format(self.systemType, self.lateralType,
                                      self.Ru, self.maxHeight, self.phi0, self.cd)
-        
+
         return structure
 
     def __eq__(self, another):
         if self.systemType == another.systemType and \
-        self.lateralType == another.lateralType:
+                self.lateralType == another.lateralType:
             return True
         return False
 
