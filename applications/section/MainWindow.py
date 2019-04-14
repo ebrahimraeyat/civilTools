@@ -3,6 +3,7 @@
 import re
 import sys
 import os
+import copy
 import pickle
 abs_path = os.path.dirname(__file__)
 sys.path.insert(0, abs_path)
@@ -17,8 +18,8 @@ from plot.plotIpe import PlotSectionAndEqSection
 __url__ = "http://ebrahimraeyat.blog.ir"
 __version__ = "0.8"
 link_ebrahim = ('Website: <a href="%s"><span style=" '
-    'text-decoration: underline; color:#0000ff;">'
-    '%s</span></a>') % (__url__, __url__)
+                'text-decoration: underline; color:#0000ff;">'
+                '%s</span></a>') % (__url__, __url__)
 
 ipesProp = sec.Ipe.createStandardIpes()
 unpsProp = sec.Unp.createStandardUnps()
@@ -32,19 +33,19 @@ main_window = uic.loadUiType(os.path.join(abs_path, 'mainwindow.ui'))[0]
 class Ui(QMainWindow, main_window):
 
     sectionProp = {
-                    'IPE': ipesProp,
-                    'UNP': unpsProp,
-                    'CPE': cpesProp,
-                    'BOX': boxProp,
-                    'UPA': upasProp,
-                    }
+        'IPE': ipesProp,
+        'UNP': unpsProp,
+        'CPE': cpesProp,
+        'BOX': boxProp,
+        'UPA': upasProp,
+    }
     double_box = {
-                    'IPE': ['تک', 'دوبل', 'سوبل'],
-                    'CPE': ['تک', 'دوبل', 'سوبل'],
-                    'UNP': ['تک', 'دوبل'],
-                    'UPA': ['تک', 'دوبل'],
-                    'BOX': ['تک'],
-                    }
+        'IPE': ['تک', 'دوبل', 'سوبل'],
+        'CPE': ['تک', 'دوبل', 'سوبل'],
+        'UNP': ['تک', 'دوبل'],
+        'UPA': ['تک', 'دوبل'],
+        'BOX': ['تک'],
+    }
     useAsDict = {'تیر': 'B', 'ستون': 'C'}
     ductilityDict = {'متوسط': 'M', 'زیاد': 'H'}
     doubleList1 = ['تک', 'دوبل', 'سوبل']
@@ -62,7 +63,7 @@ class Ui(QMainWindow, main_window):
             'CPE': 4,
             'BOX': 0,
             'UPA': 4,
-            }
+        }
         self.currentSectionProp = None
         #self.filename = None
         self.printer = None
@@ -72,40 +73,40 @@ class Ui(QMainWindow, main_window):
         self.load_settings()
         #QTimer.singleShot(0, self.initialLoad)
 
-    #def initialLoad(self):
-        #if  QFile.exists(self.model1.filename):
-            #try:
-                #self.model1.load()
-                #self.model1.sortByName()
-                #self.resizeColumns(self.tableView1)
-            #except IOError, err:
-                #QMessageBox.warning(self, "Sections - Error",
-                        #"Failed to load: {0}".format(err))
+    # def initialLoad(self):
+        # if  QFile.exists(self.model1.filename):
+        # try:
+        # self.model1.load()
+        # self.model1.sortByName()
+        # self.resizeColumns(self.tableView1)
+        # except IOError, err:
+        # QMessageBox.warning(self, "Sections - Error",
+        #"Failed to load: {0}".format(err))
 
     def closeEvent(self, event):
         qsettings = QSettings("civiltools", "section")
-        qsettings.setValue( "geometry", self.saveGeometry() )
-        qsettings.setValue( "saveState", self.saveState() )
+        qsettings.setValue("geometry", self.saveGeometry())
+        qsettings.setValue("saveState", self.saveState())
         # qsettings.setValue( "maximized", self.isMaximized() )
-        qsettings.setValue( "MainSplitter", self.mainSplitter.saveState())
+        qsettings.setValue("MainSplitter", self.mainSplitter.saveState())
         # if not self.isMaximized() == True :
-        qsettings.setValue( "pos", self.pos() )
-        qsettings.setValue( "size", self.size() )
+        qsettings.setValue("pos", self.pos())
+        qsettings.setValue("size", self.size())
         self.accept()
         event.accept()
 
     def load_settings(self):
         qsettings = QSettings("civiltools", "section")
-        self.restoreGeometry(qsettings.value( "geometry", self.saveGeometry()))
-        self.restoreState(qsettings.value( "saveState", self.saveState()))
-        self.move(qsettings.value( "pos", self.pos()))
-        self.resize(qsettings.value( "size", self.size()))
+        self.restoreGeometry(qsettings.value("geometry", self.saveGeometry()))
+        self.restoreState(qsettings.value("saveState", self.saveState()))
+        self.move(qsettings.value("pos", self.pos()))
+        self.resize(qsettings.value("size", self.size()))
         self.mainSplitter.restoreState(qsettings.value("MainSplitter", self.mainSplitter.saveState()))
 
     def resizeColumns(self, tableView=None):
         for column in (sec.NAME, sec.AREA,
                        sec.ASY, sec.ASX, sec.IX, sec.IY, sec.ZX, sec.ZY,
-                         sec.BF, sec.TF, sec.D, sec.TW, sec.Sx, sec.Sy, sec.RX, sec.RY):
+                       sec.BF, sec.TF, sec.D, sec.TW, sec.Sx, sec.Sy, sec.RX, sec.RY):
             tableView.resizeColumnToContents(column)
 
     def reject(self):
@@ -114,19 +115,19 @@ class Ui(QMainWindow, main_window):
     def accept(self):
         if (self.model1.dirty and
             QMessageBox.question(self, "sections - Save?",
-                    "Save unsaved changes?",
-                    QMessageBox.Yes | QMessageBox.No) ==
-                    QMessageBox.Yes):
+                                 "Save unsaved changes?",
+                                 QMessageBox.Yes | QMessageBox.No) ==
+                QMessageBox.Yes):
             try:
                 self.export_to_dat()
             except(IOError, err):
                 QMessageBox.warning(self, "sections - Error",
-                        f"Failed to save: {err}")
+                                    f"Failed to save: {err}")
 
     def sortTable(self, section):
         if section == sec.AREA:
             self.model1.sortByArea()
-        #self.model.sortByName();
+        # self.model.sortByName();
         self.resizeColumns(self.tableView1)
 
     def addSection(self):
@@ -142,10 +143,10 @@ class Ui(QMainWindow, main_window):
             return
         row = index.row()
         name = self.model1.data(
-                        self.model1.index(row, sec.NAME))
+            self.model1.index(row, sec.NAME))
         if (QMessageBox.question(self, "sections - Remove",
-                ("Remove section {}?".format(name)),
-                QMessageBox.Yes|QMessageBox.No) ==
+                                 ("Remove section {}?".format(name)),
+                                 QMessageBox.Yes | QMessageBox.No) ==
                 QMessageBox.No):
             return
 
@@ -170,7 +171,8 @@ class Ui(QMainWindow, main_window):
         self.ductilityBox.currentIndexChanged.connect(self.updateSectionShape)
         self.useAsBox.currentIndexChanged.connect(self.updateSectionShape)
         self.convert_type_radio_button.toggled.connect(self.updateSectionShape)
-        #self.tableView1.horizontalHeader.sectionClicked.connect(self.sortTable)
+        self.shear_button.clicked.connect(self.convert_all_section_to_shear)
+        # self.tableView1.horizontalHeader.sectionClicked.connect(self.sortTable)
 
     def createWidgetsOne(self):
         self.model1 = sec.SectionTableModel("section.dat")
@@ -201,7 +203,7 @@ class Ui(QMainWindow, main_window):
         self.sectionsBox.addItems(self.getSectionLabels(sectionType))
         self.sectionsBox.blockSignals(old_state)
         self.sectionsBox.setCurrentIndex(self.last_sectionBox_index[sectionType])
-        #print self.last_sectionBox_index
+        # print self.last_sectionBox_index
 
     def updateGui(self):
         index = self.doubleBox.currentIndex()
@@ -244,6 +246,7 @@ class Ui(QMainWindow, main_window):
         sectionIndex = self.sectionsBox.currentIndex()
         sectionType = self.currentSectionType()
         return self.sectionProp[sectionType].values()[sectionIndex]
+
     def currentSectionOne(self):
         lh = self.lhSpinBox.value() * 10
         th = self.thSpinBox.value()
@@ -264,12 +267,11 @@ class Ui(QMainWindow, main_window):
         convert_type = 'slender'
         if self.convert_type_radio_button.isChecked():
             convert_type = "shear"
-        return (lh, th, lv, tv, lw, tw, dist, isTBPlate, isLRPlate, isWebPlate, useAs, ductility, isDouble,
-        isSouble, sectionSize, sectionType, convert_type)
+        return [lh, th, lv, tv, lw, tw, dist, isTBPlate, isLRPlate, isWebPlate, useAs, ductility, isDouble, isSouble, sectionSize, sectionType, convert_type]
 
     def acceptOne(self):
         #section = self.currentSectionOne()
-        #if not section.name in self.model1.names:
+        # if not section.name in self.model1.names:
         self.model1.beginResetModel()
         self.model1.sections.append(self.currentSection)
         self.model1.endResetModel()
@@ -282,7 +284,7 @@ class Ui(QMainWindow, main_window):
         if self.model1.sections == []:
             return
         if (QMessageBox.question(self, "sections - Remove", ("همه مقاطع حذف شوند؟"),
-                QMessageBox.Yes|QMessageBox.No) == QMessageBox.No):
+                                 QMessageBox.Yes | QMessageBox.No) == QMessageBox.No):
             return
         self.model1.beginResetModel()
         self.model1.sections = []
@@ -296,13 +298,25 @@ class Ui(QMainWindow, main_window):
         self.drawLayout.addWidget(plotWidget.plot(), 0, 0)
         self.currentSection.autocadScrText = plotWidget.autocadScrText
 
+    def convert_all_section_to_shear(self):
+        self.model1.beginResetModel()
+        sections = copy.deepcopy(self.model1.sections)
+        for section in sections:
+            if not 'shear' in section.name:
+                prop = section.prop
+                prop[-1] = 'shear'
+                shear_section = sec.createSection(prop)
+                shear_section.name += 'shear'
+                self.model1.sections.append(shear_section)
+        self.model1.endResetModel()
+
     def saveToXml1(self):
         filename = self.getFilename(['xml'])
         if not filename:
             return
         if not filename.endswith('xml'):
             filename += '.xml'
-        sec.Section.exportXml(filename , self.model1.sections)
+        sec.Section.exportXml(filename, self.model1.sections)
 
     def save_to_excel(self):
         filename = self.getFilename(['xlsx'])
@@ -310,7 +324,7 @@ class Ui(QMainWindow, main_window):
             return
         if not filename.endswith('xlsx'):
             filename += '.xlsx'
-        sec.Section.export_to_excel(filename , self.model1.sections)
+        sec.Section.export_to_excel(filename, self.model1.sections)
 
     def save_to_autocad_script_format(self):
         filename = self.getFilename(['scr'])
@@ -328,7 +342,7 @@ class Ui(QMainWindow, main_window):
         for prefix in prefixes:
             filters += "{}(*.{})".format(prefix, prefix)
         filename, _ = QFileDialog.getSaveFileName(self, ' خروجی ',
-                                               self.lastDirectory, filters)
+                                                  self.lastDirectory, filters)
 
         if not filename:
             return
@@ -342,14 +356,14 @@ class Ui(QMainWindow, main_window):
         if not filename.endswith('dat'):
             filename += '.dat'
         sections = {
-                    'sections':self.model1.sections,
-                    }
+            'sections': self.model1.sections,
+        }
         pickle.dump(sections, open(filename, "wb"))
         self.model1.dirty = False
 
     def load_from_dat(self):
         filename, _ = QFileDialog.getOpenFileName(self, "select section's filename",
-                                               self.lastDirectory, "dat (*.dat)")
+                                                  self.lastDirectory, "dat (*.dat)")
         if not filename:
             return
         sections = pickle.load(open(filename, "rb"))
@@ -360,7 +374,7 @@ class Ui(QMainWindow, main_window):
 
     def helpAbout(self):
         QMessageBox.about(self, u"درباره نرم افزار محاسبه مشخصات مقاطع",
-                u"""<b>SectionPro</b> v {0}   ۱۳۹۵/۰۵/۱۱
+                          u"""<b>SectionPro</b> v {0}   ۱۳۹۵/۰۵/۱۱
                 <p>توسعه دهنده: ابراهیم رعیت رکن آبادی
                 <p>این نرم افزار برای محاسبه مشخصات مقاطع برای استفاده در ایتبز ۲۰۱۳ و ۲۰۱۵ تهیه شده است.
                 <p>از مهندسین عزیز خواهش میکنم با بررسی این برنامه ضعفها و ایرادات برنامه رو
@@ -378,6 +392,7 @@ def main():
     window = Ui()
     window.show()
     app.exec_()
+
 
 if __name__ == "__main__":
     main()

@@ -791,6 +791,8 @@ def createSection(sectionProp):
         # section.equivalentSectionI()
         section.name = '{}{}{}'.format(section.name, useAs, ductility)
 
+    section.prop = sectionProp
+
     return section
 
 
