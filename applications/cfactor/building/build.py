@@ -122,6 +122,7 @@ class Building(object):
         e3 = u'ارتفاع حداکثر سیستم "%s" برای ساختمانهای "با اهمیت متوسط" در مناطق لرزه خیزی ۳و ۴ به ۱۵ متر محدود میگردد.'
         e4 = u'در مناطق با خطر نسبی خیلی زیاد برای ساختمانهای با "اهمیت خیلی زیاد" فقط باید از سیستم هایی که عنوان "ویژه" دارند، استفاده شود.'
         e5 = u'در ساختمانهای با بیشتر از ۱۵ طبقه و یا بلندتر از ۵۰ متر، استفاده از سیستم قاب خمشی ویژه و یا سیستم دوگانه الزامی است.'
+        e6 = 'حداکثر ارتفاع مجاز سازه %i متر می باشد.'
 
         ID1 = self.ID1
         specialIDs = self.specialIDs
@@ -130,15 +131,20 @@ class Building(object):
         A = self.acc
         H = self.height
         story = self.number_of_story
+        max_height = self.maxAllowedHeight()
 
         for direction in ("X", "Y"):
             if direction == "X":
                 ID = self.x_system.ID
+                systemType = self.x_system.systemType
                 lateralType = self.x_system.lateralType
             else:
                 ID = self.y_system.ID
+                systemType = self.y_system.systemType
                 lateralType = self.y_system.lateralType
             try:
+                if self.height > max_height:
+                    raise StructureSystemError(e6 % max_height)
                 if ID in ID1:
                     if I > 1.1:
                         raise StructureSystemError(e1 % lateralType)
@@ -160,9 +166,10 @@ class Building(object):
         return [True]
 
     def calculateC(self, Bx, By):
-        # check_inputs = self.checkInputs()
+        check_inputs = self.checkInputs()
         # TODO
-        # if check_inputs[0] is True:
+        if check_inputs[0] is False:
+            return check_inputs
         A = self.acc
         I = self.importance_factor
         Rux = self.x_system.Ru

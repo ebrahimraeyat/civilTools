@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-import sys, os
+import sys
+import os
 abs_path = os.path.dirname(__file__)
 sys.path.insert(0, abs_path)
 from PyQt5.QtCore import *
@@ -21,8 +22,8 @@ systemTypes = rTable.getSystemTypes()
 __url__ = "http://ebrahimraeyat.blog.ir"
 __version__ = "4.5"
 link_ebrahim = ('Website: <a href="%s"><span style=" '
-    'text-decoration: underline; color:#0000ff;">'
-    '%s</span></a>') % (__url__, __url__)
+                'text-decoration: underline; color:#0000ff;">'
+                '%s</span></a>') % (__url__, __url__)
 
 main_window = uic.loadUiType(os.path.join(abs_path, 'widgets', 'mainwindow.ui'))[0]
 
@@ -41,7 +42,7 @@ class Ui(QMainWindow, main_window):
         self.structure_properties_table.setModel(self.structure_model)
         self.resizeColumns()
         #self.__userH = 200
-        #self.setMaxAllowedHeight()
+        # self.setMaxAllowedHeight()
         self.create_connections()
         # self.create_actions()
         self.load_settings()
@@ -51,13 +52,12 @@ class Ui(QMainWindow, main_window):
     def load_config(self, json_file=os.path.join(abs_path, 'exporter', 'config.json')):
         config.load(self, json_file)
 
-
     def create_connections(self):
         self.calculate_button.clicked.connect(self.calculate)
         self.x_treeWidget.itemActivated.connect(self.xactivate)
         # self.y_treeWidget.itemActivated.connect(self.yactivate)
-        ##self.connect(self.HSpinBox, SIGNAL(
-                    ##"editingFinished()"), self.userInputHeight)
+        # self.connect(self.HSpinBox, SIGNAL(
+        # "editingFinished()"), self.userInputHeight)
         self.ostanBox.currentIndexChanged.connect(self.set_shahrs_of_current_ostan)
         self.shahrBox.currentIndexChanged.connect(self.setA)
         self.pushButton_etabs.clicked.connect(self.export_to_etabs)
@@ -95,7 +95,7 @@ class Ui(QMainWindow, main_window):
             if i == 2:
                 self.x_treeWidget.setCurrentItem(item, 0)
                 break
-            i +=1
+            i += 1
         iterator = QTreeWidgetItemIterator(self.y_treeWidget)
         i = 0
         while iterator.value():
@@ -104,16 +104,16 @@ class Ui(QMainWindow, main_window):
             if i == 2:
                 self.y_treeWidget.setCurrentItem(item, 0)
                 break
-            i +=1
+            i += 1
 
     def closeEvent(self, event):
         qsettings = QSettings("civiltools", "cfactor")
-        qsettings.setValue( "geometry", self.saveGeometry() )
-        qsettings.setValue( "saveState", self.saveState() )
+        qsettings.setValue("geometry", self.saveGeometry())
+        qsettings.setValue("saveState", self.saveState())
         # qsettings.setValue( "maximized", self.isMaximized() )
         # if not self.isMaximized() == True :
-        qsettings.setValue( "pos", self.pos() )
-        qsettings.setValue( "size", self.size() )
+        qsettings.setValue("pos", self.pos())
+        qsettings.setValue("size", self.size())
         qsettings.setValue("hsplitter", self.hsplitter.saveState())
         qsettings.setValue("v1splitter", self.v1splitter.saveState())
         qsettings.setValue("v2splitter", self.v2splitter.saveState())
@@ -123,10 +123,10 @@ class Ui(QMainWindow, main_window):
 
     def load_settings(self):
         qsettings = QSettings("civiltools", "cfactor")
-        self.restoreGeometry(qsettings.value( "geometry", self.saveGeometry()))
-        self.restoreState(qsettings.value( "saveState", self.saveState()))
-        self.move(qsettings.value( "pos", self.pos()))
-        self.resize(qsettings.value( "size", self.size()))
+        self.restoreGeometry(qsettings.value("geometry", self.saveGeometry()))
+        self.restoreState(qsettings.value("saveState", self.saveState()))
+        self.move(qsettings.value("pos", self.pos()))
+        self.resize(qsettings.value("size", self.size()))
         self.hsplitter.restoreState(qsettings.value("hsplitter", self.hsplitter.saveState()))
         self.v1splitter.restoreState(qsettings.value("v1splitter", self.v1splitter.saveState()))
         self.v2splitter.restoreState(qsettings.value("v2splitter", self.v2splitter.saveState()))
@@ -136,12 +136,11 @@ class Ui(QMainWindow, main_window):
 
     def ok_to_continue(self):
         return bool(QMessageBox.question(self, 'save config?', 'save configuration file?',
-            QMessageBox.Yes | QMessageBox.No) == QMessageBox.Yes)
-
+                                         QMessageBox.Yes | QMessageBox.No) == QMessageBox.Yes)
 
     def helpAbout(self):
         QMessageBox.about(self, "درباره نرم افزار محاسبه ضریب زلزله",
-                """<b>C Factor</b> v {0}   ۱۳۹۶/۰۱/۰۳
+                          """<b>C Factor</b> v {0}   ۱۳۹۶/۰۱/۰۳
                 <p>توسعه دهنده: ابراهیم رعیت رکن آبادی
                 <p>این نرم افزار برای محاسبه ضریب زلزله مطابق ویرایش چهارم
                 آیین نامه ۲۸۰۰ زلزله تهیه شده است.
@@ -150,7 +149,6 @@ class Ui(QMainWindow, main_window):
                 <p>برای دریافت آخرین نسخه نرم افزار و مطالب مفید دیگر
                 به وبلاگ زیر مراجعه نمایید:
                     <p> {1}""".format(__version__, link_ebrahim))
-
 
     def xactivate(self):
         if self.x_treeWidget.currentItem().parent():
@@ -183,7 +181,7 @@ class Ui(QMainWindow, main_window):
         self.shahrBox.clear()
         ostan = self.get_current_ostan()
         shahrs = self.get_shahrs_of_current_ostan(ostan)
-        #shahrs.sort()
+        # shahrs.sort()
         self.shahrBox.addItems(shahrs)
 
     def setA(self):
@@ -199,12 +197,12 @@ class Ui(QMainWindow, main_window):
     def get_current_soil_type(self):
         return str(self.soilType.currentText())
 
-    #def setDEngheta(self):
+    # def setDEngheta(self):
         #dEngheta = self.getDEngheta()
-        #if dEngheta:
-            #self.dEnghetaLineEdit.setText("%.1f Cm" % dEngheta)
-        #else:
-            #self.dEnghetaLineEdit.setText("مراجعه به بند ۳-۵-۶")
+        # if dEngheta:
+        #self.dEnghetaLineEdit.setText("%.1f Cm" % dEngheta)
+        # else:
+        #self.dEnghetaLineEdit.setText("مراجعه به بند ۳-۵-۶")
 
     def setInfillCheckBoxStatus(self, xSystem, ySystem):
         infill = xSystem.is_infill and ySystem.is_infill
@@ -215,21 +213,21 @@ class Ui(QMainWindow, main_window):
         else:
             self.infillCheckBox.setEnabled(True)
 
-    def userInputHeight(self):
-        self.__userH = self.HSpinBox.value()
+    # def userInputHeight(self):
+    #     self.__userH = self.HSpinBox.value()
 
-    def setMaxHeightAllowed(self, xSystem, ySystem):
-        xMaxAllowedHeight = xSystem.maxHeight
-        yMaxAllowedHeight = ySystem.maxHeight
-        if (xMaxAllowedHeight and yMaxAllowedHeight) is None:
-            maxAllowedHeight = 200
-        elif xMaxAllowedHeight is None:
-            maxAllowedHeight = yMaxAllowedHeight
-        elif yMaxAllowedHeight is None:
-            maxAllowedHeight = xMaxAllowedHeight
-        else:
-            maxAllowedHeight = min(xMaxAllowedHeight, yMaxAllowedHeight)
-        self.HSpinBox.setMaximum(maxAllowedHeight)
+    # def setMaxHeightAllowed(self, xSystem, ySystem):
+    #     xMaxAllowedHeight = xSystem.maxHeight
+    #     yMaxAllowedHeight = ySystem.maxHeight
+    #     if (xMaxAllowedHeight and yMaxAllowedHeight) is None:
+    #         maxAllowedHeight = 200
+    #     elif xMaxAllowedHeight is None:
+    #         maxAllowedHeight = yMaxAllowedHeight
+    #     elif yMaxAllowedHeight is None:
+    #         maxAllowedHeight = xMaxAllowedHeight
+    #     else:
+    #         maxAllowedHeight = min(xMaxAllowedHeight, yMaxAllowedHeight)
+    #     self.HSpinBox.setMaximum(maxAllowedHeight)
 
     def getTAnalatical(self):
         useTan = True
@@ -269,7 +267,7 @@ class Ui(QMainWindow, main_window):
         self.p.addLegend()
         self.p.legend.anchor((-9, 0), (0, 0))
         self.p.setTitle('منحنی ضریب بازتاب، خاک نوع {0}، پهنه با خطر نسبی {1}'.format(
-                            build.soilType, build.risk_level))
+            build.soilType, build.risk_level))
         penB1 = pg.mkPen('r', width=2, style=Qt.DashLine)
         penN = pg.mkPen('g', width=2)
         penB = pg.mkPen('b', width=3)
@@ -286,8 +284,8 @@ class Ui(QMainWindow, main_window):
         self.p.addLine(x=build.Tx, pen=penTx)
         self.p.addLine(x=build.Ty, pen=penTy)
         Tx, Ty = build.Tx, build.Ty
-        #THtml = '<div style="text-align: center"><span style="color: #FFF;">T<sub>{0}</sub> = '
-        #THtml += '{1:.2f} </span><br><span style="color: #FF0; font-size: 16pt;"></span></div>'
+        # THtml = '<div style="text-align: center"><span style="color: #FFF;">T<sub>{0}</sub> = '
+        # THtml += '{1:.2f} </span><br><span style="color: #FF0; font-size: 16pt;"></span></div>'
         THtml = 'T<sub>{0}</sub> = {1:.2f}'
         TxHtml, TyHtml = THtml.format('x', Tx), THtml.format('y', Ty)
         text = pg.TextItem(html=TxHtml, anchor=(0, 1.5), border='k', fill=(0, 0, 255, 100))
@@ -314,9 +312,9 @@ class Ui(QMainWindow, main_window):
         xSystem = StructureSystem(xSystemType, xLateralType, "X")
         ySystem = StructureSystem(ySystemType, yLateralType, "Y")
         self.setInfillCheckBoxStatus(xSystem, ySystem)
-        self.setMaxHeightAllowed(xSystem, ySystem)
-        #if self.__userH < self.HSpinBox.maximum() and self.__userH > height:
-            #self.HSpinBox.setValue(self.__userH)
+        # self.setMaxHeightAllowed(xSystem, ySystem)
+        # if self.__userH < self.HSpinBox.maximum() and self.__userH > height:
+        # self.HSpinBox.setValue(self.__userH)
         #height = self.getH()
         Tan = self.getTAnalatical()
         useTan = Tan[0]
@@ -324,7 +322,7 @@ class Ui(QMainWindow, main_window):
         yTan = Tan[2]
         is_infill = self.infillCheckBox.isChecked()
         build = Building(risk_level, importance_factor, soil, noStory, height, is_infill,
-                              xSystem, ySystem, city, xTan, yTan, useTan)
+                         xSystem, ySystem, city, xTan, yTan, useTan)
         return build
 
     def calculate(self):
@@ -348,10 +346,16 @@ class Ui(QMainWindow, main_window):
                 self.final_building.results_drift[2], self.final_building.ky_drift)
             self.updateBCurve(self.final_building)
             self.dirty = True
+            self.pushButton_etabs.setEnabled(True)
+            self.pushButton_word.setEnabled(True)
+            self.save_button.setEnabled(True)
 
         else:
+            self.pushButton_etabs.setEnabled(False)
+            self.pushButton_word.setEnabled(False)
+            self.save_button.setEnabled(False)
             title, err, direction = results[1:]
-            QMessageBox.critical(self, title % direction, err)
+            QMessageBox.critical(self, title % direction, str(err))
             return
 
     def export_to_word(self):
@@ -364,12 +368,11 @@ class Ui(QMainWindow, main_window):
 
     def load(self):
         filename, _ = QFileDialog.getOpenFileName(self, 'load project',
-                                               self.lastDirectory, "json(*.json)")
+                                                  self.lastDirectory, "json(*.json)")
         if filename == '':
             return
         config.load(self, filename)
         self.calculate()
-
 
     def exportBCurveToImage(self):
         export_graph = export.ExportGraph(self, self.lastDirectory, self.p)
@@ -399,5 +402,6 @@ def main():
     app.exec_()
     pg.exit()
 
+
 if __name__ == '__main__':
-	main()
+    main()
