@@ -7,12 +7,17 @@ class TestBox(unittest.TestCase):
     def setUp(self):
         box1_empty = Box(300, 300, mode=1)
         box2_empty = Box(260, 300, mode=2)
+        box3_empty = Box(496, 410)
         TBPlate = Plate(300, 20)
         LRPlate = Plate(20, 300)
+        TBPlate_J = Plate(600, 45)
+        LRPlate_J = Plate(52, 410)
         box1_tb = AddPlateTB(box1_empty, TBPlate)
-        self.box1 = AddPlateLR(box1_tb, LRPlate)
         box2_tb = AddPlateTB(box2_empty, TBPlate)
+        box3_tb = AddPlateTB(box3_empty, TBPlate_J)
+        self.box1 = AddPlateLR(box1_tb, LRPlate)
         self.box2 = AddPlateLR(box2_tb, LRPlate)
+        self.box3 = AddPlateLR(box3_tb, LRPlate_J)
 
     def test_area(self):
         self.assertAlmostEqual(self.box1.area, 24000, places=0)
@@ -79,7 +84,5 @@ class TestBox(unittest.TestCase):
         self.assertEqual(self.box2.cw, 0)
 
     def test_j(self):
-        pass
-
-
-
+        self.assertAlmostEqual(self.box2.J, 535210666.66, places=0)
+        self.assertAlmostEqual(self.box3.J, 5941427347, places=0)

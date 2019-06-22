@@ -489,14 +489,24 @@ def AddPlateLR(section, plate):
     cc = section.cc
     dp = section.xmax + plate.xmax
     cw = section.cw + plate.Ix * (dp ** 2 / 2)
+    J = 0
     if _type == 'BOX':
         cw = 0
+        if bool(TBPlate):
+            a = TBPlate.bf - plate.bf
+            b = plate.tf + TBPlate.tf
+            Am = a * b
+            p = 2 * (a + b)
+            t1 = TBPlate.tf
+            t2 = plate.bf
+            J = 4 * (Am ** 2) / (2 * a / t1 + 2 * b / t2)
+
     composite = 'TBLRPLATE'
     if not TBPlate:
         composite = 'LRPLATE'
     return Section(_type=_type, name=name, area=area, xm=xm, ym=ym,
                    xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy, Zx=Zx, Zy=Zy, bf=bf, tf=tf,
-                   d=d, tw=tw, r1=r1, cw=cw, J=0, isDouble=isDouble, isSouble=isSouble, baseSection=baseSection, cc=cc,
+                   d=d, tw=tw, r1=r1, cw=cw, J=J, isDouble=isDouble, isSouble=isSouble, baseSection=baseSection, cc=cc,
                    useAs=useAs, TBPlate=TBPlate, LRPlate=plate,
                    ductility=ductility, composite=composite, convert_type=convert_type)
 
@@ -725,7 +735,7 @@ class Plate(Section):
 class Box(Section):
 
     def __init__(self, xmax, ymax, mode=1):
-        name = f'Box{mode}'
+        name = "Box{}".format(mode)
         xm = xmax / 2
         ym = ymax / 2
         super(Box, self).__init__(_type='BOX', name=name, area=0.0001, xm=xm, ym=ym,
