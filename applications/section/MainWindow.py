@@ -125,9 +125,10 @@ class Ui(QMainWindow, main_window):
                                     f"Failed to save: {err}")
 
     def sortTable(self, section):
-        if section == sec.AREA:
-            self.model1.sortByArea()
-        # self.model.sortByName();
+        # if section == sec.AREA:
+        #     self.model1.sortByArea()
+        if section == sec.NAME:
+            self.model1.sortByName()
         self.resizeColumns(self.tableView1)
 
     def addSection(self):
@@ -172,7 +173,8 @@ class Ui(QMainWindow, main_window):
         self.useAsBox.currentIndexChanged.connect(self.updateSectionShape)
         self.convert_type_radio_button.toggled.connect(self.updateSectionShape)
         self.shear_button.clicked.connect(self.convert_all_section_to_shear)
-        # self.tableView1.horizontalHeader.sectionClicked.connect(self.sortTable)
+        self.tableView1.horizontalHeader().sectionClicked.connect(self.sortTable)
+        # self.connect(self.tableView1.horizontalHeader(), SIGNAL("sectionClicked(int)"), self.sortTable)
 
     def createWidgetsOne(self):
         self.model1 = sec.SectionTableModel("section.dat")

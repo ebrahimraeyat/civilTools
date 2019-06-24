@@ -128,6 +128,9 @@ class Section(object):
                       self.Ry, self.Zx, self.Zy, self.J, self.cw, secType)
         return s
 
+    def __lt__(self, other):
+        return self.name.lower() < other.name.lower()
+
     @staticmethod
     def exportXml(fname, sections):
         fh = open(fname, 'w')
@@ -462,7 +465,8 @@ def AddPlateTB(section, plate):
 def AddPlateLR(section, plate):
 
     _type = section.type
-    name = section.name + 'LR' + plate.name
+    plate_name = name = 'PL%sX%s' % (plate.ymax, plate.xmax)
+    name = section.name + 'LR' + plate_name
     area = section.area + 2 * plate.area
     ymax = max(section.ymax, plate.ymax)
     xmax = section.xmax + 2 * plate.xmax
@@ -514,7 +518,8 @@ def AddPlateLR(section, plate):
 def AddPlateWeb(section, plate):
 
     _type = section.type
-    name = section.name + 'W' + plate.name
+    plate_name = name = 'PL%sX%s' % (plate.ymax, plate.xmax)
+    name = section.name + 'W' + plate_name
     area = section.area + 2 * plate.area
     ymax = section.ymax
     xmax = section.xmax
@@ -816,8 +821,9 @@ class SectionTableModel(QAbstractTableModel):
         self.names = set()
 
     def sortByName(self):
+        self.beginResetModel()
         self.sections = sorted(self.sections)
-        self.reset()
+        self.endResetModel()
 
     def sortByArea(self):
         def compare(a, b):
@@ -825,7 +831,7 @@ class SectionTableModel(QAbstractTableModel):
                 return 1
             else:
                 return -1
-        self.sections = sorted(self.sections, compare)
+        self.sections = sorted(self.sections, key=compare)
         self.reset()
 
     def flags(self, index):
