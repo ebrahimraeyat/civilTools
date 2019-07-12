@@ -427,7 +427,7 @@ def AddPlateTB(section, plate):
        section equal to bf/(2*tf)'''
 
     _type = section.type
-    name = section.name + 'TB' + plate.name
+    name = section.name + 'F' + plate.name
     area = section.area + 2 * plate.area
     xmax = section.xmax
     #xmax = max(section.xmax, plate.xmax)
@@ -465,8 +465,8 @@ def AddPlateTB(section, plate):
 def AddPlateLR(section, plate):
 
     _type = section.type
-    plate_name = name = 'PL%sX%s' % (plate.ymax, plate.xmax)
-    name = section.name + 'LR' + plate_name
+    # plate_name = name = 'PL%sX%s' % (plate.ymax, plate.xmax)
+    name = section.name + 'LR' + plate.name
     area = section.area + 2 * plate.area
     ymax = max(section.ymax, plate.ymax)
     xmax = section.xmax + 2 * plate.xmax
@@ -518,8 +518,8 @@ def AddPlateLR(section, plate):
 def AddPlateWeb(section, plate):
 
     _type = section.type
-    plate_name = name = 'PL%sX%s' % (plate.ymax, plate.xmax)
-    name = section.name + 'W' + plate_name
+    # plate_name = name = 'PL%sX%s' % (plate.ymax, plate.xmax)
+    name = section.name + 'W' + plate.name
     area = section.area + 2 * plate.area
     ymax = section.ymax
     xmax = section.xmax
@@ -719,7 +719,10 @@ class Cpe(Section):
 class Plate(Section):
 
     def __init__(self, xmax, ymax):
-        name = 'PL%sX%s' % (xmax, ymax)
+        if xmax > ymax:
+            name = f'{xmax/10:.0f}X{ymax}'
+        else:
+            name = f'{ymax/10:.0f}X{xmax}'
         area = xmax * ymax
         xm = xmax / 2
         ym = ymax / 2
@@ -897,6 +900,8 @@ class SectionTableModel(QAbstractTableModel):
                 return '{0:.1f}'.format(section.ym / 10.)
 
         elif role == Qt.TextAlignmentRole:
+            if column == NAME:
+                return int(Qt.AlignLeft | Qt.AlignVCenter)
             return int(Qt.AlignCenter | Qt.AlignVCenter)
         elif role == Qt.BackgroundColorRole:
             if column == SLENDER:

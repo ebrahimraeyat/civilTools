@@ -121,13 +121,12 @@ class Ui(QMainWindow, main_window):
             try:
                 self.export_to_dat()
             except(IOError, err):
-                QMessageBox.warning(self, "sections - Error",
-                                    f"Failed to save: {err}")
+                QMessageBox.warning(self, "sections - Error", f"Failed to save: {err}")
 
     def sortTable(self, section):
-        # if section == sec.AREA:
-        #     self.model1.sortByArea()
-        if section == sec.NAME:
+        if section == sec.AREA:
+            self.model1.sortByArea()
+        elif section == sec.NAME:
             self.model1.sortByName()
         self.resizeColumns(self.tableView1)
 
@@ -308,7 +307,7 @@ class Ui(QMainWindow, main_window):
                 prop = section.prop
                 prop[-1] = 'shear'
                 shear_section = sec.createSection(prop)
-                shear_section.name += 'shear'
+                shear_section.name += 'S'
                 self.model1.sections.append(shear_section)
         self.model1.endResetModel()
 
