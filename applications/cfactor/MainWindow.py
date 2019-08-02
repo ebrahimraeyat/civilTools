@@ -64,6 +64,7 @@ class Ui(QMainWindow, main_window):
         self.pushButton_word.clicked.connect(self.export_to_word)
         self.save_button.clicked.connect(self.save)
         self.load_button.clicked.connect(self.load)
+        self.spectrum_button.clicked.connect(self.exportBCurveToCsv)
 
     def resizeColumns(self):
         for column in (X, Y):

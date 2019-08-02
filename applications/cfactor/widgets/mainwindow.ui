@@ -140,9 +140,9 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_6">
+        <widget class="QPushButton" name="spectrum_button">
          <property name="enabled">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
          <property name="minimumSize">
           <size>
@@ -251,7 +251,7 @@
       </layout>
       <zorder>pushButton_word</zorder>
       <zorder>pushButton_4</zorder>
-      <zorder>pushButton_6</zorder>
+      <zorder>spectrum_button</zorder>
       <zorder>pushButton_etabs</zorder>
       <zorder>verticalSpacer</zorder>
       <zorder>save_button</zorder>
@@ -786,7 +786,7 @@
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
-       <widget class="QWidget" name="">
+       <widget class="QWidget" name="layoutWidget">
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
           <spacer name="horizontalSpacer">
@@ -1287,7 +1287,7 @@ p, li { white-space: pre-wrap; }
   <tabstop>pushButton_etabs</tabstop>
   <tabstop>pushButton_word</tabstop>
   <tabstop>pushButton_4</tabstop>
-  <tabstop>pushButton_6</tabstop>
+  <tabstop>spectrum_button</tabstop>
   <tabstop>load_button</tabstop>
   <tabstop>save_button</tabstop>
   <tabstop>x_treeWidget</tabstop>

@@ -3,13 +3,16 @@
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 import os
+from functools import reduce
 import pyqtgraph as pg
 from exporter import export_to_word as word
 from exporter import config
 
+
 def getLastSaveDirectory(f):
     f = str(f)
     return os.sep.join(f.split(os.sep)[:-1])
+
 
 class Export:
 
@@ -26,9 +29,11 @@ class Export:
 
         filters = "docx(*.docx)"
         filename, _ = QFileDialog.getSaveFileName(self.widget, 'Word خروجی به',
-                                               self.lastDirectory, filters)
-        if filename == '': return
-        if not filename.endswith(".docx"): filename += ".docx"
+                                                  self.lastDirectory, filters)
+        if filename == '':
+            return
+        if not filename.endswith(".docx"):
+            filename += ".docx"
         self.lastDirectory = getLastSaveDirectory(filename)
         word.export(self.building, filename)
 
@@ -39,10 +44,11 @@ class Export:
 
         filters = "json(*.json)"
         filename, _ = QFileDialog.getSaveFileName(self.widget, 'save project',
-                                               self.lastDirectory, filters)
+                                                  self.lastDirectory, filters)
         if filename == '':
             return
-        if not filename.endswith('.json'): filename += '.json'
+        if not filename.endswith('.json'):
+            filename += '.json'
         self.lastDirectory = getLastSaveDirectory(filename)
         config.save(self.widget, filename)
 
@@ -56,7 +62,7 @@ class ExportGraph:
     def to_image(self):
         filters = "png(*.png);;jpg(*.jpg);;bmp(*.bmp);;eps(*.eps);;tif(*.tif);;jpeg(*.jpeg)"
         filename, _ = QFileDialog.getSaveFileName(self.widget, u'خروجی منحنی ضریب بازتاب',
-                                               self.lastDirectory, filters)
+                                                  self.lastDirectory, filters)
         if filename == '':
             return
         self.lastDirectory = getLastSaveDirectory(filename)
@@ -67,14 +73,41 @@ class ExportGraph:
         exporter.export(filename)
 
     def to_csv(self):
-        filters = "csv(*.csv)"
-        filename, _ = QFileDialog.getSaveFileName(self.widget, u'خروجی منحنی ضریب بازتاب',
-                                               self.lastDirectory, filters)
+        filters = "txt(*.txt)"
+        filename, _ = QFileDialog.getSaveFileName(self.widget, u'Export Spectrum',
+                                                  self.lastDirectory, filters)
 
         if filename == '':
             return
         self.lastDirectory = getLastSaveDirectory(filename)
-        exporter = pg.exporters.CSVExporter(self.p)
-        # save to file
-        exporter.export(filename)
+        A = self.widget.final_building.acc
+        I = self.widget.final_building.importance_factor
+        Rux = self.widget.final_building.x_system.Ru
+        Ruy = self.widget.final_building.y_system.Ru
+        data = []
+        for c in self.p.curves:
+            if c.name() == 'B':
+                data.append(c.getData())
 
+        sep = '\t'
+        if Rux == Ruy:
+            Rs = (Rux,)
+            dirs = ('',)
+        else:
+            Rs = (Rux, Ruy)
+            dirs = ('_x', '_y')
+        for R, dir_ in zip(Rs, dirs):
+            fname = f'{filename[:-4]}{dir_}{filename[-4:]}'
+            fd = open(fname, 'w')
+            i = 0
+            numFormat = '%0.10g'
+            numRows = reduce(max, [len(d[0]) for d in data])
+            for i in range(numRows):
+                for d in data:
+                    if i < len(d[0]):
+                        c = A * d[1][i] * I / R
+                        fd.write(numFormat % d[0][i] + sep + numFormat % c)
+                    # else:
+                    #     fd.write(' %s %s' % (sep, sep))
+                fd.write('\n')
+            fd.close()
