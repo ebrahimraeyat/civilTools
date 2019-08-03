@@ -138,19 +138,17 @@ class Ui(QMainWindow, main_window):
         self.tableView1.edit(index)
 
     def removeSection(self):
-        index = self.tableView1.currentIndex()
-        if not index.isValid():
+        indices = self.tableView1.selectionModel().selectedIndexes()
+        if not indices:
             return
-        row = index.row()
-        name = self.model1.data(
-            self.model1.index(row, sec.NAME))
+        first = sorted(indices)[0].row()
+        rows = len(indices)
         if (QMessageBox.question(self, "sections - Remove",
-                                 ("Remove section {}?".format(name)),
+                                 (f"Remove {rows} sections?"),
                                  QMessageBox.Yes | QMessageBox.No) ==
                 QMessageBox.No):
             return
-
-        self.model1.removeRows(row)
+        self.model1.removeRows(first, rows)
         self.resizeColumns(self.tableView1)
 
     def create_connections(self):
@@ -216,13 +214,15 @@ class Ui(QMainWindow, main_window):
         self.doubleBox.blockSignals(False)
         if self.doubleBox.count() >= index + 1:
             self.doubleBox.setCurrentIndex(index)
-        if sectionType == 'UNP' or 'BOX' or 'UPA':
+        if sectionType in ('UNP', 'BOX', 'UPA'):
             self.addWebPLGroupBox.setChecked(False)
             self.addWebPLGroupBox.setEnabled(False)
             if sectionType == 'BOX':
+                self.addLRPLGroupBox.setChecked(True)
+                self.addTBPLGroupBox.setChecked(True)
                 self.updateSectionShape()
 
-        elif sectionType == 'IPE' or 'CPE':
+        elif sectionType in ('IPE', 'CPE'):
             self.addWebPLGroupBox.setEnabled(True)
 
     def getSectionLabels(self, sectionType='IPE'):
