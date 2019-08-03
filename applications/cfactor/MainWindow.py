@@ -382,6 +382,9 @@ class Ui(QMainWindow, main_window):
     def exportBCurveToCsv(self):
         export_graph = export.ExportGraph(self, self.lastDirectory, self.p)
         export_graph.to_csv()
+        # from pyqtgraph.GraphicsScene import exportDialog
+        # exportDialog = exportDialog.ExportDialog(self.p.scene())
+        # exportDialog.show(self.p)
 
     def export_to_etabs(self):
         # TODO

@@ -107,7 +107,5 @@ class ExportGraph:
                     if i < len(d[0]):
                         c = A * d[1][i] * I / R
                         fd.write(numFormat % d[0][i] + sep + numFormat % c)
-                    # else:
-                    #     fd.write(' %s %s' % (sep, sep))
                 fd.write('\n')
             fd.close()
