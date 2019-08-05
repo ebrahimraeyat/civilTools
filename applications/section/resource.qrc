@@ -1,6 +1,8 @@
 <RCC>
   <qresource prefix="section">
     <file>../../images/add.png</file>
+    <file>../../images/down.svg</file>
+    <file>../../images/up.svg</file>
     <file>../../images/autocad.png</file>
     <file>../../images/clear.png</file>
     <file>../../images/load.png</file>

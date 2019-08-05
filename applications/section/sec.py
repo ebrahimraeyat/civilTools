@@ -1065,6 +1065,19 @@ class SectionTableModel(QAbstractTableModel):
         self.dirty = True
         return True
 
+    # def moveRows(self, parent, source_first, source_last, parent2, dest):
+    #     self.beginMoveRows(parent, source_first, source_last, parent2, dest)
+
+    #     sections = self.sections
+    #     if source_first <= dest:
+    #         new_order = sections[:source_first] + sections[source_last + 1:dest + 1] + sections[source_first:source_last + 1] + sections[dest + 1:]
+    #     else:  # TODO what if source_first < dest < source_last
+    #         new_order = sections[:dest] + sections[source_first:source_last + 1] + sections[dest:source_first] + sections[source_last + 1:]
+    #     # self.alignment.set_sequences(new_order, notify=True)
+    #     self.sections = new_order
+    #     print("BEFORE endMoveRows in edit_sequence_list.Model, %s" % self)
+    #     self.endMoveRows()
+
 
 if __name__ == '__main__':
     model = SectionTableModel()

@@ -5,6 +5,7 @@ import sys
 import os
 import copy
 import pickle
+from functools import partial
 abs_path = os.path.dirname(__file__)
 sys.path.insert(0, abs_path)
 from PyQt5.QtCore import *
@@ -51,6 +52,8 @@ class Ui(QMainWindow, main_window):
     doubleList1 = ['تک', 'دوبل', 'سوبل']
     doubleList2 = [[False, False], [True, False], [False, True]]
     doubleDict = dict(zip(doubleList1, doubleList2))
+    DOWN = 1
+    UP = -1
 
     def __init__(self):
         super(Ui, self).__init__()
@@ -65,13 +68,13 @@ class Ui(QMainWindow, main_window):
             'UPA': 4,
         }
         self.currentSectionProp = None
-        #self.filename = None
+        # self.filename = None
         self.printer = None
         self.createWidgetsOne()
         self.updateSectionShape()
         self.create_connections()
         self.load_settings()
-        #QTimer.singleShot(0, self.initialLoad)
+        # QTimer.singleShot(0, self.initialLoad)
 
     # def initialLoad(self):
         # if  QFile.exists(self.model1.filename):
@@ -130,27 +133,6 @@ class Ui(QMainWindow, main_window):
             self.model1.sortByName()
         self.resizeColumns(self.tableView1)
 
-    def addSection(self):
-        row = self.model1.rowCount()
-        self.model1.insertRows(row)
-        index = self.model1.index(row, 1)
-        self.tableView1.setCurrentIndex(index)
-        self.tableView1.edit(index)
-
-    def removeSection(self):
-        indices = self.tableView1.selectionModel().selectedIndexes()
-        if not indices:
-            return
-        first = sorted(indices)[0].row()
-        rows = len(indices)
-        if (QMessageBox.question(self, "sections - Remove",
-                                 (f"Remove {rows} sections?"),
-                                 QMessageBox.Yes | QMessageBox.No) ==
-                QMessageBox.No):
-            return
-        self.model1.removeRows(first, rows)
-        self.resizeColumns(self.tableView1)
-
     def create_connections(self):
         self.sectionTypeBox.currentIndexChanged.connect(self.setSectionLabels)
         self.sectionTypeBox.currentIndexChanged.connect(self.updateGui)
@@ -171,6 +153,8 @@ class Ui(QMainWindow, main_window):
         self.convert_type_radio_button.toggled.connect(self.updateSectionShape)
         self.shear_button.clicked.connect(self.convert_all_section_to_shear)
         self.tableView1.horizontalHeader().sectionClicked.connect(self.sortTable)
+        # self.up_button.clicked.connect(partial(self.move_current_rows, self.UP))
+        # self.down_button.clicked.connect(partial(self.move_current_rows, self.DOWN))
         # self.connect(self.tableView1.horizontalHeader(), SIGNAL("sectionClicked(int)"), self.sortTable)
 
     def createWidgetsOne(self):
@@ -193,10 +177,13 @@ class Ui(QMainWindow, main_window):
         self.sectionsBox.setCurrentIndex(4)
         self.mainSplitter.setStretchFactor(0, 1)
         self.mainSplitter.setStretchFactor(1, 3)
+        self.tableView1.verticalHeader().setSectionsMovable(True)
+        self.tableView1.verticalHeader().setDragEnabled(True)
+        self.tableView1.verticalHeader().setDragDropMode(QAbstractItemView.InternalMove)
 
     def setSectionLabels(self):
         sectionType = self.currentSectionType()
-        #self.last_sectionBox_index[sectionType] = self.sectionsBox.currentIndex()
+        # self.last_sectionBox_index[sectionType] = self.sectionsBox.currentIndex()
         old_state = bool(self.sectionsBox.blockSignals(True))
         self.sectionsBox.clear()
         self.sectionsBox.addItems(self.getSectionLabels(sectionType))
@@ -271,15 +258,41 @@ class Ui(QMainWindow, main_window):
         return [lh, th, lv, tv, lw, tw, dist, isTBPlate, isLRPlate, isWebPlate, useAs, ductility, isDouble, isSouble, sectionSize, sectionType, convert_type]
 
     def acceptOne(self):
-        #section = self.currentSectionOne()
+        # section = self.currentSectionOne()
         # if not section.name in self.model1.names:
         self.model1.beginResetModel()
         self.model1.sections.append(self.currentSection)
         self.model1.endResetModel()
-        #del section
+        # del section
 
         self.resizeColumns(self.tableView1)
         self.model1.dirty = True
+
+    def addSection(self):
+        row = self.model1.rowCount()
+        self.model1.insertRows(row)
+        index = self.model1.index(row, 1)
+        self.tableView1.setCurrentIndex(index)
+        self.tableView1.edit(index)
+
+    def removeSection(self):
+        indices = self.tableView1.selectionModel().selectedIndexes()
+        rows_number = set()
+        for i in indices:
+            rows_number.add(i.row())
+        if not indices:
+            return
+        first = sorted(indices)[0].row()
+        rows = len(rows_number)
+        if (QMessageBox.question(self, "sections - Remove",
+                                 (f"Remove {rows} sections?"),
+                                 QMessageBox.Yes | QMessageBox.No) ==
+                QMessageBox.No):
+            return
+        self.model1.beginResetModel()
+        self.model1.removeRows(first, rows)
+        self.model1.endResetModel()
+        self.resizeColumns(self.tableView1)
 
     def clearSectionOne(self):
         if self.model1.sections == []:
@@ -310,6 +323,35 @@ class Ui(QMainWindow, main_window):
                 shear_section.name += 'S'
                 self.model1.sections.append(shear_section)
         self.model1.endResetModel()
+
+    # def move_current_rows(self, direction=DOWN):
+        # if direction not in (self.DOWN, self.UP):
+        #     return
+
+        # model = self.model1
+        # print(help(model.moveRows))
+        # selModel = self.tableView1.selectionModel()
+        # selected = selModel.selectedRows()
+        # if not selected:
+        #     return
+
+        # items = []
+        # indexes = sorted(selected, key=lambda x: x.row(), reverse=(direction == self.DOWN))
+
+        # for idx in indexes:
+        #     items.append(model.itemFromIndex(idx))
+        #     rowNum = idx.row()
+        #     newRow = rowNum + direction
+        #     if not (0 <= newRow < model.rowCount()):
+        #         continue
+
+        #     rowItems = model.takeRow(rowNum)
+        #     model.insertRow(newRow, rowItems)
+
+        # selModel.clear()
+        # for item in items:
+        #     selModel.select(item.index(), selModel.Select | selModel.Rows)
+        # return
 
     def saveToXml1(self):
         filename = self.getFilename(['xml'])
