@@ -6,8 +6,8 @@
     <file>images/cfactor.png</file>
     <file>images/dynamic.png</file>
     <file>images/quit.png</file>
-    <file>images/software-update.png</file>
     <file>images/Earthquake.png</file>
+    <file>images/update.png</file>
     <file>images/punch.svg</file>
   </qresource>
 </RCC>
