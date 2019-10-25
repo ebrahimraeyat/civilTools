@@ -219,6 +219,8 @@ class Section(object):
             c = 0
         if bool(self.TBPlate):
             B1 = self.TBPlate.bf
+            if B1 > self.xmax:
+                B1 = self.xmax
             t1 = self.TBPlate.tf
 
         lr_plate_ratio = None
