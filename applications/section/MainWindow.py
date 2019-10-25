@@ -192,7 +192,6 @@ class Ui(QMainWindow, main_window):
         # print self.last_sectionBox_index
 
     def updateGui(self):
-        index = self.doubleBox.currentIndex()
         sectionType = self.currentSectionType()
         index = self.doubleBox.currentIndex()
         self.doubleBox.blockSignals(True)

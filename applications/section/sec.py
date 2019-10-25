@@ -81,6 +81,7 @@ class Section(object):
         if convert_type == 'shear':
             self.bf_equivalentI, self.tf_equivalentI, self.d_equivalentI, self.tw_equivalentI = \
                 self.equivalent_section_to_I_with_shear_correction()
+        self.components = []
 
     def equivalent_section_to_I_with_shear_correction(self):
         BF = self.xmax
@@ -94,6 +95,22 @@ class Section(object):
         self.Sy = self.Iy / (self.xmax - self.xm)
         self.Rx = sqrt(self.Ix / self.area)
         self.Ry = sqrt(self.Iy / self.area)
+
+    def j_func():
+        return (self.Ix + self.Iy -
+                omega.dot(k.dot(np.transpose(omega))))
+
+    def solve_warping():
+
+        warping_section = CrossSection(self.geometry, self.mesh,
+                                       self.materials)
+        (k, k_lg, f_torsion) = warping_section.assemble_torsion()
+        if solver_type == 'cgs':
+            omega = solver.solve_cgs(k, f_torsion, k_precond)
+        elif solver_type == 'direct':
+            omega = solver.solve_direct(k, f_torsion)
+
+        return omega
 
     def __str__(self):
         secType = self.sectionType[str(self.type)]
