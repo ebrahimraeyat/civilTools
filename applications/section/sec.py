@@ -225,7 +225,7 @@ class Section(object):
 
         lr_plate_ratio = None
         if bool(self.LRPlate):
-            B2 = self.LRPlate.tf
+            B2 = self.baseSection.d
             t2 = self.LRPlate.bf
             lr_plate_ratio = B2 / t2
 
