@@ -111,7 +111,7 @@ p, li { white-space: pre-wrap; }
              </property>
              <property name="icon">
               <iconset resource="resource.qrc">
-               <normaloff>:/civiltools/images/2IPEPL.png</normaloff>:/civiltools/images/2IPEPL.png</iconset>
+               <normaloff>:/civiltools/images/2IPE.svg</normaloff>:/civiltools/images/2IPE.svg</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -131,7 +131,7 @@ p, li { white-space: pre-wrap; }
              </property>
              <property name="icon">
               <iconset resource="resource.qrc">
-               <normaloff>:/civiltools/images/Earthquake.png</normaloff>:/civiltools/images/Earthquake.png</iconset>
+               <normaloff>:/civiltools/images/cfactor.svg</normaloff>:/civiltools/images/cfactor.svg</iconset>
              </property>
              <property name="iconSize">
               <size>

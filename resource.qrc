@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="civiltools">
+    <file>images/cfactor.svg</file>
+    <file>images/2IPE.svg</file>
     <file>images/2IPEPL.png</file>
     <file>images/about.png</file>
     <file>images/civil-engineering.jpg</file>
