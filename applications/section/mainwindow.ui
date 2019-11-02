@@ -14,13 +14,13 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout_4">
+   <layout class="QVBoxLayout" name="verticalLayout_4">
     <item>
      <widget class="QSplitter" name="mainSplitter">
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
-      <widget class="QWidget" name="layoutWidget">
+      <widget class="QWidget" name="">
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -455,593 +455,600 @@
          </layout>
         </item>
         <item>
-         <layout class="QGridLayout" name="drawLayout"/>
-        </item>
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout_2">
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <widget class="QSplitter" name="splitter">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <widget class="QWidget" name="">
+           <layout class="QGridLayout" name="drawLayout"/>
+          </widget>
+          <widget class="QWidget" name="">
+           <layout class="QVBoxLayout" name="verticalLayout_2">
             <item>
-             <widget class="QGroupBox" name="groupBox_2">
-              <property name="title">
-               <string>Main section</string>
-              </property>
-              <property name="flat">
-               <bool>true</bool>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout">
-               <item>
-                <widget class="QComboBox" name="doubleBox">
-                 <property name="currentIndex">
-                  <number>1</number>
-                 </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_2">
+              <item>
+               <widget class="QGroupBox" name="groupBox_2">
+                <property name="title">
+                 <string>Main section</string>
+                </property>
+                <property name="flat">
+                 <bool>false</bool>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout">
                  <item>
-                  <property name="text">
-                   <string>single</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="resource_1.qrc">
-                    <normaloff>:/section/images/one.svg</normaloff>:/section/images/one.svg</iconset>
-                  </property>
+                  <widget class="QComboBox" name="doubleBox">
+                   <property name="currentIndex">
+                    <number>1</number>
+                   </property>
+                   <item>
+                    <property name="text">
+                     <string>single</string>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="resource_1.qrc">
+                      <normaloff>:/section/images/one.svg</normaloff>:/section/images/one.svg</iconset>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>double</string>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="resource_1.qrc">
+                      <normaloff>:/section/images/two.svg</normaloff>:/section/images/two.svg</iconset>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>souble</string>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="resource_1.qrc">
+                      <normaloff>:/section/images/three.svg</normaloff>:/section/images/three.svg</iconset>
+                    </property>
+                   </item>
+                  </widget>
                  </item>
                  <item>
-                  <property name="text">
-                   <string>double</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="resource_1.qrc">
-                    <normaloff>:/section/images/two.svg</normaloff>:/section/images/two.svg</iconset>
-                  </property>
+                  <widget class="QComboBox" name="sectionTypeBox">
+                   <item>
+                    <property name="text">
+                     <string>IPE</string>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="resource_1.qrc">
+                      <normaloff>:/section/images/IPE.png</normaloff>:/section/images/IPE.png</iconset>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>CPE</string>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="resource_1.qrc">
+                      <normaloff>:/section/images/cpe.png</normaloff>:/section/images/cpe.png</iconset>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>UNP</string>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="resource_1.qrc">
+                      <normaloff>:/section/images/unp.png</normaloff>:/section/images/unp.png</iconset>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>UPA</string>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="resource_1.qrc">
+                      <normaloff>:/section/images/upa.png</normaloff>:/section/images/upa.png</iconset>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>BOX</string>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="resource_1.qrc">
+                      <normaloff>:/section/images/BOX.png</normaloff>:/section/images/BOX.png</iconset>
+                    </property>
+                   </item>
+                  </widget>
                  </item>
                  <item>
-                  <property name="text">
-                   <string>souble</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="resource_1.qrc">
-                    <normaloff>:/section/images/three.svg</normaloff>:/section/images/three.svg</iconset>
-                  </property>
+                  <widget class="QComboBox" name="sectionsBox">
+                   <property name="currentIndex">
+                    <number>-1</number>
+                   </property>
+                  </widget>
                  </item>
-                </widget>
-               </item>
-               <item>
-                <widget class="QComboBox" name="sectionTypeBox">
-                 <item>
-                  <property name="text">
-                   <string>IPE</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="resource_1.qrc">
-                    <normaloff>:/section/images/IPE.png</normaloff>:/section/images/IPE.png</iconset>
-                  </property>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QGroupBox" name="groupBox_3">
+                <property name="title">
+                 <string>Plate dimentions</string>
+                </property>
+                <layout class="QGridLayout" name="gridLayout">
+                 <item row="0" column="0">
+                  <widget class="QFrame" name="frame_tb">
+                   <property name="frameShape">
+                    <enum>QFrame::NoFrame</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_5">
+                    <item>
+                     <widget class="QSpinBox" name="lhSpinBox">
+                      <property name="styleSheet">
+                       <string notr="true"/>
+                      </property>
+                      <property name="suffix">
+                       <string>  cm</string>
+                      </property>
+                      <property name="prefix">
+                       <string/>
+                      </property>
+                      <property name="minimum">
+                       <number>5</number>
+                      </property>
+                      <property name="value">
+                       <number>25</number>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QSpinBox" name="thSpinBox">
+                      <property name="styleSheet">
+                       <string notr="true"/>
+                      </property>
+                      <property name="suffix">
+                       <string>  mm</string>
+                      </property>
+                      <property name="prefix">
+                       <string/>
+                      </property>
+                      <property name="minimum">
+                       <number>1</number>
+                      </property>
+                      <property name="value">
+                       <number>12</number>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QCheckBox" name="addTBPL">
+                      <property name="text">
+                       <string/>
+                      </property>
+                      <property name="icon">
+                       <iconset resource="resource_1.qrc">
+                        <normaloff>:/section/images/plate_tb_check.svg</normaloff>:/section/images/plate_tb_check.svg</iconset>
+                      </property>
+                      <property name="iconSize">
+                       <size>
+                        <width>32</width>
+                        <height>32</height>
+                       </size>
+                      </property>
+                      <property name="checked">
+                       <bool>true</bool>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
                  </item>
-                 <item>
-                  <property name="text">
-                   <string>CPE</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="resource_1.qrc">
-                    <normaloff>:/section/images/cpe.png</normaloff>:/section/images/cpe.png</iconset>
-                  </property>
+                 <item row="1" column="0">
+                  <widget class="QFrame" name="frame_lr">
+                   <property name="frameShape">
+                    <enum>QFrame::NoFrame</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_6">
+                    <item>
+                     <widget class="QSpinBox" name="lvSpinBox">
+                      <property name="enabled">
+                       <bool>true</bool>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true"/>
+                      </property>
+                      <property name="suffix">
+                       <string>  cm</string>
+                      </property>
+                      <property name="prefix">
+                       <string/>
+                      </property>
+                      <property name="minimum">
+                       <number>5</number>
+                      </property>
+                      <property name="value">
+                       <number>25</number>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QSpinBox" name="tvSpinBox">
+                      <property name="enabled">
+                       <bool>true</bool>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true"/>
+                      </property>
+                      <property name="suffix">
+                       <string>  mm</string>
+                      </property>
+                      <property name="prefix">
+                       <string/>
+                      </property>
+                      <property name="minimum">
+                       <number>1</number>
+                      </property>
+                      <property name="value">
+                       <number>12</number>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QCheckBox" name="addLRPL">
+                      <property name="text">
+                       <string/>
+                      </property>
+                      <property name="icon">
+                       <iconset resource="resource_1.qrc">
+                        <normaloff>:/section/images/plate_lr_check.svg</normaloff>:/section/images/plate_lr_check.svg</iconset>
+                      </property>
+                      <property name="iconSize">
+                       <size>
+                        <width>32</width>
+                        <height>32</height>
+                       </size>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
                  </item>
-                 <item>
-                  <property name="text">
-                   <string>UNP</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="resource_1.qrc">
-                    <normaloff>:/section/images/unp.png</normaloff>:/section/images/unp.png</iconset>
-                  </property>
+                 <item row="2" column="0">
+                  <widget class="QFrame" name="frame_web">
+                   <property name="frameShape">
+                    <enum>QFrame::NoFrame</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_7">
+                    <item>
+                     <widget class="QSpinBox" name="lwSpinBox">
+                      <property name="enabled">
+                       <bool>true</bool>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true"/>
+                      </property>
+                      <property name="suffix">
+                       <string>  cm</string>
+                      </property>
+                      <property name="prefix">
+                       <string/>
+                      </property>
+                      <property name="minimum">
+                       <number>5</number>
+                      </property>
+                      <property name="value">
+                       <number>14</number>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QSpinBox" name="twSpinBox">
+                      <property name="enabled">
+                       <bool>true</bool>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true"/>
+                      </property>
+                      <property name="suffix">
+                       <string>  mm</string>
+                      </property>
+                      <property name="prefix">
+                       <string/>
+                      </property>
+                      <property name="minimum">
+                       <number>1</number>
+                      </property>
+                      <property name="value">
+                       <number>8</number>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QCheckBox" name="addWebPL">
+                      <property name="text">
+                       <string/>
+                      </property>
+                      <property name="icon">
+                       <iconset resource="resource_1.qrc">
+                        <normaloff>:/section/images/plate_web_check.svg</normaloff>:/section/images/plate_web_check.svg</iconset>
+                      </property>
+                      <property name="iconSize">
+                       <size>
+                        <width>32</width>
+                        <height>32</height>
+                       </size>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
                  </item>
-                 <item>
-                  <property name="text">
-                   <string>UPA</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="resource_1.qrc">
-                    <normaloff>:/section/images/upa.png</normaloff>:/section/images/upa.png</iconset>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>BOX</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="resource_1.qrc">
-                    <normaloff>:/section/images/BOX.png</normaloff>:/section/images/BOX.png</iconset>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-               <item>
-                <widget class="QComboBox" name="sectionsBox">
-                 <property name="currentIndex">
-                  <number>-1</number>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
+                </layout>
+               </widget>
+              </item>
+             </layout>
             </item>
             <item>
-             <widget class="QGroupBox" name="groupBox_3">
-              <property name="title">
-               <string>Plate dimentions</string>
-              </property>
-              <layout class="QGridLayout" name="gridLayout">
-               <item row="0" column="0">
-                <widget class="QFrame" name="frame_tb">
-                 <property name="frameShape">
-                  <enum>QFrame::NoFrame</enum>
-                 </property>
-                 <property name="frameShadow">
-                  <enum>QFrame::Raised</enum>
-                 </property>
-                 <layout class="QHBoxLayout" name="horizontalLayout_5">
-                  <item>
-                   <widget class="QSpinBox" name="lhSpinBox">
-                    <property name="styleSheet">
-                     <string notr="true"/>
-                    </property>
-                    <property name="suffix">
-                     <string>  cm</string>
-                    </property>
-                    <property name="prefix">
-                     <string/>
-                    </property>
-                    <property name="minimum">
-                     <number>5</number>
-                    </property>
-                    <property name="value">
-                     <number>25</number>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QSpinBox" name="thSpinBox">
-                    <property name="styleSheet">
-                     <string notr="true"/>
-                    </property>
-                    <property name="suffix">
-                     <string>  mm</string>
-                    </property>
-                    <property name="prefix">
-                     <string/>
-                    </property>
-                    <property name="minimum">
-                     <number>1</number>
-                    </property>
-                    <property name="value">
-                     <number>12</number>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QCheckBox" name="addTBPL">
+             <layout class="QHBoxLayout" name="horizontalLayout">
+              <item>
+               <widget class="QPushButton" name="calculate_Button">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>135</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <family>Noto Sans</family>
+                  <pointsize>10</pointsize>
+                  <weight>50</weight>
+                  <italic>true</italic>
+                  <bold>false</bold>
+                 </font>
+                </property>
+                <property name="toolTip">
+                 <string>add section</string>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">font: italic 10pt &quot;Noto Sans&quot;;</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset resource="resource.qrc">
+                  <normaloff>:/section/images/run.svg</normaloff>:/section/images/run.svg</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>33</width>
+                  <height>135</height>
+                 </size>
+                </property>
+                <property name="shortcut">
+                 <string>Ctrl+R</string>
+                </property>
+                <property name="flat">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QGroupBox" name="groupBox_4">
+                <property name="title">
+                 <string>Section dist.</string>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_3">
+                 <item>
+                  <widget class="QLabel" name="label">
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="pixmap">
+                    <pixmap resource="resource_1.qrc">:/section/images/dist.svg</pixmap>
+                   </property>
+                   <property name="scaledContents">
+                    <bool>false</bool>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="distSpinBox">
+                   <property name="suffix">
+                    <string>  cm</string>
+                   </property>
+                   <property name="prefix">
+                    <string/>
+                   </property>
+                   <property name="value">
+                    <number>7</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QGroupBox" name="groupBox_5">
+                <property name="title">
+                 <string>Equivalent Section</string>
+                </property>
+                <layout class="QGridLayout" name="gridLayout_3">
+                 <item row="2" column="0">
+                  <widget class="QLabel" name="label_4">
+                   <property name="text">
+                    <string>Type</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QComboBox" name="useAsBox">
+                   <item>
                     <property name="text">
-                     <string/>
+                     <string>Beam</string>
                     </property>
                     <property name="icon">
                      <iconset resource="resource_1.qrc">
-                      <normaloff>:/section/images/plate_tb_check.svg</normaloff>:/section/images/plate_tb_check.svg</iconset>
+                      <normaloff>:/section/images/beam.svg</normaloff>:/section/images/beam.svg</iconset>
                     </property>
-                    <property name="iconSize">
-                     <size>
-                      <width>32</width>
-                      <height>32</height>
-                     </size>
-                    </property>
-                    <property name="checked">
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-               <item row="1" column="0">
-                <widget class="QFrame" name="frame_lr">
-                 <property name="frameShape">
-                  <enum>QFrame::NoFrame</enum>
-                 </property>
-                 <property name="frameShadow">
-                  <enum>QFrame::Raised</enum>
-                 </property>
-                 <layout class="QHBoxLayout" name="horizontalLayout_6">
-                  <item>
-                   <widget class="QSpinBox" name="lvSpinBox">
-                    <property name="enabled">
-                     <bool>true</bool>
-                    </property>
-                    <property name="styleSheet">
-                     <string notr="true"/>
-                    </property>
-                    <property name="suffix">
-                     <string>  cm</string>
-                    </property>
-                    <property name="prefix">
-                     <string/>
-                    </property>
-                    <property name="minimum">
-                     <number>5</number>
-                    </property>
-                    <property name="value">
-                     <number>25</number>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QSpinBox" name="tvSpinBox">
-                    <property name="enabled">
-                     <bool>true</bool>
-                    </property>
-                    <property name="styleSheet">
-                     <string notr="true"/>
-                    </property>
-                    <property name="suffix">
-                     <string>  mm</string>
-                    </property>
-                    <property name="prefix">
-                     <string/>
-                    </property>
-                    <property name="minimum">
-                     <number>1</number>
-                    </property>
-                    <property name="value">
-                     <number>12</number>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QCheckBox" name="addLRPL">
+                   </item>
+                   <item>
                     <property name="text">
-                     <string/>
+                     <string>Column</string>
                     </property>
                     <property name="icon">
                      <iconset resource="resource_1.qrc">
-                      <normaloff>:/section/images/plate_lr_check.svg</normaloff>:/section/images/plate_lr_check.svg</iconset>
+                      <normaloff>:/section/images/column.svg</normaloff>:/section/images/column.svg</iconset>
                     </property>
-                    <property name="iconSize">
-                     <size>
-                      <width>32</width>
-                      <height>32</height>
-                     </size>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-               <item row="2" column="0">
-                <widget class="QFrame" name="frame_web">
-                 <property name="frameShape">
-                  <enum>QFrame::NoFrame</enum>
-                 </property>
-                 <property name="frameShadow">
-                  <enum>QFrame::Raised</enum>
-                 </property>
-                 <layout class="QHBoxLayout" name="horizontalLayout_7">
-                  <item>
-                   <widget class="QSpinBox" name="lwSpinBox">
-                    <property name="enabled">
-                     <bool>true</bool>
-                    </property>
-                    <property name="styleSheet">
-                     <string notr="true"/>
-                    </property>
-                    <property name="suffix">
-                     <string>  cm</string>
-                    </property>
-                    <property name="prefix">
-                     <string/>
-                    </property>
-                    <property name="minimum">
-                     <number>5</number>
-                    </property>
-                    <property name="value">
-                     <number>14</number>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QSpinBox" name="twSpinBox">
-                    <property name="enabled">
-                     <bool>true</bool>
-                    </property>
-                    <property name="styleSheet">
-                     <string notr="true"/>
-                    </property>
-                    <property name="suffix">
-                     <string>  mm</string>
-                    </property>
-                    <property name="prefix">
-                     <string/>
-                    </property>
-                    <property name="minimum">
-                     <number>1</number>
-                    </property>
-                    <property name="value">
-                     <number>8</number>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QCheckBox" name="addWebPL">
+                   </item>
+                   <item>
                     <property name="text">
-                     <string/>
+                     <string>Brace</string>
                     </property>
                     <property name="icon">
                      <iconset resource="resource_1.qrc">
-                      <normaloff>:/section/images/plate_web_check.svg</normaloff>:/section/images/plate_web_check.svg</iconset>
+                      <normaloff>:/section/images/brace.svg</normaloff>:/section/images/brace.svg</iconset>
                     </property>
-                    <property name="iconSize">
-                     <size>
-                      <width>32</width>
-                      <height>32</height>
-                     </size>
+                   </item>
+                  </widget>
+                 </item>
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="label_2">
+                   <property name="text">
+                    <string>Use as</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="1">
+                  <widget class="QComboBox" name="equivalent_type_box">
+                   <item>
+                    <property name="text">
+                     <string>Compaction</string>
                     </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-              </layout>
-             </widget>
+                    <property name="icon">
+                     <iconset resource="resource_1.qrc">
+                      <normaloff>:/section/images/compct.svg</normaloff>:/section/images/compct.svg</iconset>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Shear</string>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="resource_1.qrc">
+                      <normaloff>:/section/images/As.svg</normaloff>:/section/images/As.svg</iconset>
+                    </property>
+                   </item>
+                  </widget>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="label_3">
+                   <property name="text">
+                    <string>Ductility</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1">
+                  <widget class="QComboBox" name="ductilityBox">
+                   <item>
+                    <property name="text">
+                     <string>Medium</string>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="resource_1.qrc">
+                      <normaloff>:/section/images/r_med.svg</normaloff>:/section/images/r_med.svg</iconset>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>High</string>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="resource_1.qrc">
+                      <normaloff>:/section/images/r_hight.svg</normaloff>:/section/images/r_hight.svg</iconset>
+                    </property>
+                   </item>
+                  </widget>
+                 </item>
+                 <item row="3" column="0">
+                  <widget class="QLabel" name="label_5">
+                   <property name="text">
+                    <string>Convert to</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="1">
+                  <widget class="QComboBox" name="convert_to_box">
+                   <item>
+                    <property name="text">
+                     <string>IPE</string>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="resource_1.qrc">
+                      <normaloff>:/section/images/IPE.png</normaloff>:/section/images/IPE.png</iconset>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>BOX</string>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="resource_1.qrc">
+                      <normaloff>:/section/images/BOX.png</normaloff>:/section/images/BOX.png</iconset>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>2UNP</string>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="resource_1.qrc">
+                      <normaloff>:/section/images/2UNP.svg</normaloff>:/section/images/2UNP.svg</iconset>
+                    </property>
+                   </item>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+             </layout>
             </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout">
             <item>
-             <widget class="QPushButton" name="calculate_Button">
-              <property name="enabled">
-               <bool>true</bool>
+             <spacer name="verticalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
               </property>
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="maximumSize">
+              <property name="sizeHint" stdset="0">
                <size>
-                <width>135</width>
-                <height>16777215</height>
+                <width>20</width>
+                <height>40</height>
                </size>
               </property>
-              <property name="font">
-               <font>
-                <family>Noto Sans</family>
-                <pointsize>10</pointsize>
-                <weight>50</weight>
-                <italic>true</italic>
-                <bold>false</bold>
-               </font>
-              </property>
-              <property name="toolTip">
-               <string>add section</string>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">font: italic 10pt &quot;Noto Sans&quot;;</string>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="icon">
-               <iconset resource="resource.qrc">
-                <normaloff>:/section/images/run.svg</normaloff>:/section/images/run.svg</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>33</width>
-                <height>135</height>
-               </size>
-              </property>
-              <property name="shortcut">
-               <string>Ctrl+R</string>
-              </property>
-              <property name="flat">
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QGroupBox" name="groupBox_4">
-              <property name="title">
-               <string>Section dist.</string>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_3">
-               <item>
-                <widget class="QLabel" name="label">
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="pixmap">
-                  <pixmap resource="resource_1.qrc">:/section/images/dist.svg</pixmap>
-                 </property>
-                 <property name="scaledContents">
-                  <bool>false</bool>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QSpinBox" name="distSpinBox">
-                 <property name="suffix">
-                  <string>  cm</string>
-                 </property>
-                 <property name="prefix">
-                  <string/>
-                 </property>
-                 <property name="value">
-                  <number>7</number>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item>
-             <widget class="QGroupBox" name="groupBox_5">
-              <property name="title">
-               <string>Equivalent Section</string>
-              </property>
-              <layout class="QGridLayout" name="gridLayout_3">
-               <item row="2" column="0">
-                <widget class="QLabel" name="label_4">
-                 <property name="text">
-                  <string>Type</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="1">
-                <widget class="QComboBox" name="useAsBox">
-                 <item>
-                  <property name="text">
-                   <string>Beam</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="resource_1.qrc">
-                    <normaloff>:/section/images/beam.svg</normaloff>:/section/images/beam.svg</iconset>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Column</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="resource_1.qrc">
-                    <normaloff>:/section/images/column.svg</normaloff>:/section/images/column.svg</iconset>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Brace</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="resource_1.qrc">
-                    <normaloff>:/section/images/brace.svg</normaloff>:/section/images/brace.svg</iconset>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-               <item row="0" column="0">
-                <widget class="QLabel" name="label_2">
-                 <property name="text">
-                  <string>Use as</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="1">
-                <widget class="QComboBox" name="equivalent_type_box">
-                 <item>
-                  <property name="text">
-                   <string>Compaction</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="resource_1.qrc">
-                    <normaloff>:/section/images/compct.svg</normaloff>:/section/images/compct.svg</iconset>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Shear</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="resource_1.qrc">
-                    <normaloff>:/section/images/As.svg</normaloff>:/section/images/As.svg</iconset>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-               <item row="1" column="0">
-                <widget class="QLabel" name="label_3">
-                 <property name="text">
-                  <string>Ductility</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="1">
-                <widget class="QComboBox" name="ductilityBox">
-                 <item>
-                  <property name="text">
-                   <string>Medium</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="resource_1.qrc">
-                    <normaloff>:/section/images/r_med.svg</normaloff>:/section/images/r_med.svg</iconset>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>High</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="resource_1.qrc">
-                    <normaloff>:/section/images/r_hight.svg</normaloff>:/section/images/r_hight.svg</iconset>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-               <item row="3" column="0">
-                <widget class="QLabel" name="label_5">
-                 <property name="text">
-                  <string>Convert to</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="1">
-                <widget class="QComboBox" name="convert_to_box">
-                 <item>
-                  <property name="text">
-                   <string>IPE</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="resource_1.qrc">
-                    <normaloff>:/section/images/IPE.png</normaloff>:/section/images/IPE.png</iconset>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>BOX</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="resource_1.qrc">
-                    <normaloff>:/section/images/BOX.png</normaloff>:/section/images/BOX.png</iconset>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>2UNP</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="resource_1.qrc">
-                    <normaloff>:/section/images/2UNP.svg</normaloff>:/section/images/2UNP.svg</iconset>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-              </layout>
-             </widget>
+             </spacer>
             </item>
            </layout>
-          </item>
-          <item>
-           <spacer name="verticalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
+          </widget>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -1050,16 +1057,6 @@
     </item>
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>1118</width>
-     <height>22</height>
-    </rect>
-   </property>
-  </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources>
@@ -1067,12 +1064,4 @@
   <include location="resource.qrc"/>
  </resources>
  <connections/>
- <buttongroups>
-  <buttongroup name="number_buttonGroup"/>
-  <buttongroup name="section_buttonGroup">
-   <property name="exclusive">
-    <bool>true</bool>
-   </property>
-  </buttongroup>
- </buttongroups>
 </ui>

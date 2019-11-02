@@ -8,7 +8,7 @@ import os
 pg.setConfigOption('background', 'w')
 pg.setConfigOption('foreground', 'c')
 
-from pre import sections
+# from pre import sections
 
 
 class PlotSectionAndEqSection(object):

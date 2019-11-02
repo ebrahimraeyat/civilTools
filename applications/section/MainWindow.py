@@ -84,6 +84,7 @@ class Ui(QMainWindow, main_window):
         qsettings.setValue("saveState", self.saveState())
         # qsettings.setValue( "maximized", self.isMaximized() )
         qsettings.setValue("MainSplitter", self.mainSplitter.saveState())
+        qsettings.setValue("splitter", self.splitter.saveState())
         # if not self.isMaximized() == True :
         qsettings.setValue("pos", self.pos())
         qsettings.setValue("size", self.size())
@@ -97,6 +98,7 @@ class Ui(QMainWindow, main_window):
         self.move(qsettings.value("pos", self.pos()))
         self.resize(qsettings.value("size", self.size()))
         self.mainSplitter.restoreState(qsettings.value("MainSplitter", self.mainSplitter.saveState()))
+        self.splitter.restoreState(qsettings.value("splitter", self.splitter.saveState()))
 
     def resizeColumns(self, tableView=None):
         for column in (sec.NAME, sec.AREA,
@@ -166,6 +168,8 @@ class Ui(QMainWindow, main_window):
         self.sectionsBox.setCurrentIndex(4)
         self.mainSplitter.setStretchFactor(0, 1)
         self.mainSplitter.setStretchFactor(1, 3)
+        self.splitter.setStretchFactor(0, 3)
+        self.splitter.setStretchFactor(1, 1)
         self.tableView1.verticalHeader().setSectionsMovable(True)
         self.tableView1.verticalHeader().setDragEnabled(True)
         self.tableView1.verticalHeader().setDragDropMode(QAbstractItemView.InternalMove)
