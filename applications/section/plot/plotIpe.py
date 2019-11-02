@@ -169,8 +169,6 @@ class PlotSectionAndEqSection(object):
         y4 = p1.y + ipe.d_equivalentI
         xs = [x1, x4, x4, x3, x3, x4, x4, x1, x1, x2, x2, x1, x1]
         ys = [y4, y4, y3, y3, y2, y2, y1, y1, y2, y2, y3, y3, y4]
-        print(xs, ys)
-        print((x2 + x3) / 2, (y2 + y3) / 2)
         a = np.array(xs)
         b = np.array(ys)
         finitecurve = pg.PlotDataItem(a, b, connect="finite", pen=pen)
@@ -193,8 +191,6 @@ class PlotSectionAndEqSection(object):
         ys = [y1, y1, y2, y2, y3, y3, y4, y4, y1]
         a = np.array(xs)
         b = np.array(ys)
-        print(xs, ys)
-        print((x1 + x2) / 2, (y2 + y3) / 2)
         finitecurve = pg.PlotDataItem(a, b, connect="finite", pen=pen)
         self.add_pline_to_script_file(a, b)
         return finitecurve
@@ -209,8 +205,6 @@ class PlotSectionAndEqSection(object):
         ys = [y1, y1, y2, y2, y1]
         a = np.array(xs)
         b = np.array(ys)
-        print(xs, ys)
-        print((x1 + x2) / 2, (y1 + y2) / 2)
         finitecurve = pg.PlotDataItem(a, b, connect="finite", pen=pen)
         self.add_pline_to_script_file(a, b)
         return finitecurve

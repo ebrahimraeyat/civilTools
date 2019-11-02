@@ -32,7 +32,7 @@ class Section(object):
 
     def __init__(self, cc=0, composite=None, useAs='B', ductility='M',
                  TBPlate=None, LRPlate=None, webPlate=None, slender=None, isDouble=False,
-                 isSouble=False, convert_type='slender', **kwargs):
+                 isSouble=False, convert_type='Compaction', **kwargs):
         self.type = kwargs['_type']
         self.name = kwargs['name']
         self.area = kwargs['area']
@@ -78,7 +78,7 @@ class Section(object):
 
         self.V2, self.V3 = self.shear_coefftiont()
 
-        if convert_type == 'shear':
+        if convert_type == 'Shear':
             self.bf_equivalentI, self.tf_equivalentI, self.d_equivalentI, self.tw_equivalentI = \
                 self.equivalent_section_to_I_with_shear_correction()
         self.components = []
