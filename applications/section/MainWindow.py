@@ -33,6 +33,8 @@ main_window = uic.loadUiType(os.path.join(abs_path, 'mainwindow.ui'))[0]
 
 class Ui(QMainWindow, main_window):
 
+    main_sections = ['IPE', 'CPE', 'UNP', 'UPA', 'BOX']
+
     sectionProp = {
         'IPE': ipesProp,
         'UNP': unpsProp,
@@ -41,15 +43,15 @@ class Ui(QMainWindow, main_window):
         'UPA': upasProp,
     }
     double_box = {
-        'IPE': ['تک', 'دوبل', 'سوبل'],
-        'CPE': ['تک', 'دوبل', 'سوبل'],
-        'UNP': ['تک', 'دوبل'],
-        'UPA': ['تک', 'دوبل'],
-        'BOX': ['تک'],
+        'IPE': ['single', 'double', 'souble'],
+        'CPE': ['single', 'double', 'souble'],
+        'UNP': ['single', 'double'],
+        'UPA': ['single', 'double'],
+        'BOX': ['single'],
     }
-    useAsDict = {'تیر': 'B', 'ستون': 'C'}
-    ductilityDict = {'متوسط': 'M', 'زیاد': 'H'}
-    doubleList1 = ['تک', 'دوبل', 'سوبل']
+    useAsDict = {'Beam': 'B', 'Column': 'C', 'Brace': 'C'}
+    ductilityDict = {'Medium': 'M', 'High': 'H'}
+    doubleList1 = ['single', 'double', 'souble']
     doubleList2 = [[False, False], [True, False], [False, True]]
     doubleDict = dict(zip(doubleList1, doubleList2))
     DOWN = 1
@@ -67,6 +69,7 @@ class Ui(QMainWindow, main_window):
             'BOX': 0,
             'UPA': 4,
         }
+
         self.currentSectionProp = None
         # self.filename = None
         self.printer = None
@@ -74,17 +77,6 @@ class Ui(QMainWindow, main_window):
         self.updateSectionShape()
         self.create_connections()
         self.load_settings()
-        # QTimer.singleShot(0, self.initialLoad)
-
-    # def initialLoad(self):
-        # if  QFile.exists(self.model1.filename):
-        # try:
-        # self.model1.load()
-        # self.model1.sortByName()
-        # self.resizeColumns(self.tableView1)
-        # except IOError, err:
-        # QMessageBox.warning(self, "Sections - Error",
-        #"Failed to load: {0}".format(err))
 
     def closeEvent(self, event):
         qsettings = QSettings("civiltools", "section")
@@ -143,14 +135,14 @@ class Ui(QMainWindow, main_window):
         self.lvSpinBox.valueChanged.connect(self.updateSectionShape)
         self.tvSpinBox.valueChanged.connect(self.updateSectionShape)
         self.distSpinBox.valueChanged.connect(self.updateSectionShape)
-        self.addTBPLGroupBox.clicked.connect(self.updateSectionShape)
-        self.addLRPLGroupBox.clicked.connect(self.updateSectionShape)
-        self.addWebPLGroupBox.toggled.connect(self.updateSectionShape)
+        self.addTBPL.stateChanged.connect(self.updateSectionShape)
+        self.addLRPL.stateChanged.connect(self.updateSectionShape)
+        self.addWebPL.stateChanged.connect(self.updateSectionShape)
         self.sectionsBox.currentIndexChanged.connect(self.updateSectionShape)
         self.doubleBox.currentIndexChanged.connect(self.updateSectionShape)
         self.ductilityBox.currentIndexChanged.connect(self.updateSectionShape)
         self.useAsBox.currentIndexChanged.connect(self.updateSectionShape)
-        self.convert_type_radio_button.toggled.connect(self.updateSectionShape)
+        self.equivalent_type_box.currentIndexChanged.connect(self.updateSectionShape)
         self.shear_button.clicked.connect(self.convert_all_section_to_shear)
         self.tableView1.horizontalHeader().sectionClicked.connect(self.sortTable)
         # self.up_button.clicked.connect(partial(self.move_current_rows, self.UP))
@@ -169,9 +161,6 @@ class Ui(QMainWindow, main_window):
         self.saveToFileButton.clicked.connect(self.export_to_dat)
         self.load_from_dat_button.clicked.connect(self.load_from_dat)
         self.calculate_Button.clicked.connect(self.acceptOne)
-        self.doubleBox.addItems(self.doubleList1)
-        self.doubleBox.setCurrentIndex(1)
-        self.sectionTypeBox.addItems(self.sectionProp.keys())
         sectionType = self.currentSectionType()
         self.sectionsBox.addItems(self.getSectionLabels(sectionType))
         self.sectionsBox.setCurrentIndex(4)
@@ -192,7 +181,6 @@ class Ui(QMainWindow, main_window):
         # print self.last_sectionBox_index
 
     def updateGui(self):
-        index = self.doubleBox.currentIndex()
         sectionType = self.currentSectionType()
         index = self.doubleBox.currentIndex()
         self.doubleBox.blockSignals(True)
@@ -202,15 +190,15 @@ class Ui(QMainWindow, main_window):
         if self.doubleBox.count() >= index + 1:
             self.doubleBox.setCurrentIndex(index)
         if sectionType in ('UNP', 'BOX', 'UPA'):
-            self.addWebPLGroupBox.setChecked(False)
-            self.addWebPLGroupBox.setEnabled(False)
+            self.addWebPL.setChecked(False)
+            self.frame_web.setEnabled(False)
             if sectionType == 'BOX':
-                self.addLRPLGroupBox.setChecked(True)
-                self.addTBPLGroupBox.setChecked(True)
+                self.addLRPL.setChecked(True)
+                self.addTBPL.setChecked(True)
                 self.updateSectionShape()
 
         elif sectionType in ('IPE', 'CPE'):
-            self.addWebPLGroupBox.setEnabled(True)
+            self.frame_web.setEnabled(True)
 
     def getSectionLabels(self, sectionType='IPE'):
         if sectionType == 'IPE':
@@ -243,18 +231,16 @@ class Ui(QMainWindow, main_window):
         lw = self.lwSpinBox.value() * 10
         tw = self.twSpinBox.value()
         dist = self.distSpinBox.value()
-        isTBPlate = self.addTBPLGroupBox.isChecked()
-        isLRPlate = self.addLRPLGroupBox.isChecked()
-        isWebPlate = self.addWebPLGroupBox.isChecked()
+        isTBPlate = self.addTBPL.isChecked()
+        isLRPlate = self.addLRPL.isChecked()
+        isWebPlate = self.addWebPL.isChecked()
         useAs = self.useAsDict[self.useAsBox.currentText()]
         ductility = self.ductilityDict[self.ductilityBox.currentText()]
         isDouble = self.doubleDict[self.doubleBox.currentText()][0]
         isSouble = self.doubleDict[self.doubleBox.currentText()][1]
         sectionSize = int(re.sub("[^0-9]", "", self.sectionsBox.currentText()))
         sectionType = self.currentSectionType()
-        convert_type = 'slender'
-        if self.convert_type_radio_button.isChecked():
-            convert_type = "shear"
+        convert_type = self.equivalent_type_box.currentText()
         return [lh, th, lv, tv, lw, tw, dist, isTBPlate, isLRPlate, isWebPlate, useAs, ductility, isDouble, isSouble, sectionSize, sectionType, convert_type]
 
     def acceptOne(self):
@@ -306,6 +292,27 @@ class Ui(QMainWindow, main_window):
         self.model1.names = set()
         self.model1.dirty = False
 
+    # def current_section_prop(self):
+    #     [lh, th, lv, tv, lw, tw, dist, isTBPlate, isLRPlate, isWebPlate, useAs, ductility, isDouble, isSouble, sectionSize, sectionType, convert_type] = self.currentSectionOne()
+
+    #     class Plate:
+    #         def __init__(self, b, t):
+    #             self.bf = b
+    #             self.tf = t
+    #             self.name = f"Plate{b}X{t}"
+
+    #     class Section:
+
+    #         def __init__(self):
+    #             self.isSouble = isSouble
+    #             self.cc = dist
+    #             self.isDouble = isDouble
+    #             self.TBPlate = Plate(lh, th)
+    #             self.LRPlate = Plate(lv, tv)
+    #             self.webPlate = Plate(lw
+
+    #     return Section()
+
     def updateSectionShape(self):
         self.currentSection = sec.createSection(self.currentSectionOne())
         plotWidget = PlotSectionAndEqSection(self.currentSection, len(self.model1.sections))
@@ -316,9 +323,9 @@ class Ui(QMainWindow, main_window):
         self.model1.beginResetModel()
         sections = copy.deepcopy(self.model1.sections)
         for section in sections:
-            if not 'shear' in section.name:
+            if not section.convert_type == 'Shear':
                 prop = section.prop
-                prop[-1] = 'shear'
+                prop[-1] = 'Shear'
                 shear_section = sec.createSection(prop)
                 shear_section.name += 'S'
                 self.model1.sections.append(shear_section)

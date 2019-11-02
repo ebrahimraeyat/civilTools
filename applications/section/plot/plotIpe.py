@@ -4,9 +4,11 @@ import pyqtgraph as pg
 import numpy as np
 import os
 #from PyQt4.QtCore import QTextStream, QFile, QIODevice
-## Switch to using white background and black foreground
+# Switch to using white background and black foreground
 pg.setConfigOption('background', 'w')
 pg.setConfigOption('foreground', 'c')
+
+from pre import sections
 
 
 class PlotSectionAndEqSection(object):
@@ -36,7 +38,7 @@ class PlotSectionAndEqSection(object):
         win.showGrid(x=False, y=False)
         p1 = Point(0, 0)
         #pl1 = pg.PolyLineROI([[0,0], [10,10], [10,30], [30,10]], closed=True)
-        #win.addItem(pl1)
+        # win.addItem(pl1)
         ipeText = pg.TextItem(html=baseSection.name)
         if not baseSectionType == 'BOX':
             win.addItem(self.drawBaseSection[baseSectionType](baseSection, p1))
@@ -73,7 +75,7 @@ class PlotSectionAndEqSection(object):
             ym = ymax / 2
             ymax = ymax + 2 * self.section.TBPlate.tf
             self.textItem(win, html=self.section.TBPlate.name +
-                                             ' mm', pos=Point(xm, ymax), anchor=(.5, 1))
+                          ' mm', pos=Point(xm, ymax), anchor=(.5, 1))
 
         if self.section.LRPlate:
             p5 = Point(- (self.section.LRPlate.bf / 2), ym)
@@ -82,7 +84,7 @@ class PlotSectionAndEqSection(object):
             win.addItem(self.drawPlate(self.section.LRPlate, p6, 'g'))
             ymax = max(ymax, self.section.LRPlate.tf)
             self.textItem(win, html=self.section.LRPlate.name +
-                                             ' mm', pos=Point(xmax, ym), anchor=(.5, 2), isRotate=True)
+                          ' mm', pos=Point(xmax, ym), anchor=(.5, 2), isRotate=True)
 
         if self.section.webPlate:
             if baseSectionType == 'BOX':
@@ -93,14 +95,14 @@ class PlotSectionAndEqSection(object):
                 multiplier = 1
             elif self.section.isSouble:
                 multiplier = 2
-            #if multiplier:
+            # if multiplier:
             p9 = Point(multiplier * self.section.cc + (self.section.bf + self.section.tw + self.section.webPlate.bf) / 2, ym)
             win.addItem(self.drawPlate(self.section.webPlate, p9, 'g'))
 
             win.addItem(self.drawPlate(self.section.webPlate, p8, 'g'))
 
-            #self.textItem(win, html=self.section.LRPlate.name +
-                                             #' mm', pos=Point(xmax, ym), anchor=(.5, 2), isRotate=True)
+            # self.textItem(win, html=self.section.LRPlate.name +
+            #' mm', pos=Point(xmax, ym), anchor=(.5, 2), isRotate=True)
         xmax1 = self.section.xmax
         if self.section.TBPlate:
             xmax1 = max(self.section.xmax, self.section.TBPlate.xmax)
@@ -113,14 +115,14 @@ class PlotSectionAndEqSection(object):
         self.add_text_to_script_file(self.section.name, Point(0, -80))
 
         html = 'bf={:.0f},\t tf={:.1f} mm'.format(
-                                        self.section.bf_equivalentI, self.section.tf_equivalentI)
+            self.section.bf_equivalentI, self.section.tf_equivalentI)
         self.textItem(win, html=html, pos=Point(p7.x + self.section.bf_equivalentI / 2,
-                                        1.02 * self.section.d_equivalentI), anchor=(.5, 1))
+                                                1.02 * self.section.d_equivalentI), anchor=(.5, 1))
 
         html = 'd={:.0f},\ttw={:.1f} mm'.format(
-                                        self.section.d_equivalentI, self.section.tw_equivalentI)
+            self.section.d_equivalentI, self.section.tw_equivalentI)
         self.textItem(win, html=html, pos=Point(p7.x + self.section.bf_equivalentI, ym),
-                         anchor=(.5, 1.2), isRotate=True)
+                      anchor=(.5, 1.2), isRotate=True)
         win.setAspectLocked()
         return win
 
@@ -165,8 +167,10 @@ class PlotSectionAndEqSection(object):
         y2 = p1.y + ipe.tf_equivalentI
         y3 = p1.y + ipe.d_equivalentI - ipe.tf_equivalentI
         y4 = p1.y + ipe.d_equivalentI
-        a = np.array([x1, x4, x4, x3, x3, x4, x4, x1, x1, x2, x2, x1, x1])
-        b = np.array([y4, y4, y3, y3, y2, y2, y1, y1, y2, y2, y3, y3, y4])
+        xs = [x1, x4, x4, x3, x3, x4, x4, x1, x1, x2, x2, x1, x1]
+        ys = [y4, y4, y3, y3, y2, y2, y1, y1, y2, y2, y3, y3, y4]
+        a = np.array(xs)
+        b = np.array(ys)
         finitecurve = pg.PlotDataItem(a, b, connect="finite", pen=pen)
         self.add_pline_to_script_file(a, b)
         return finitecurve
@@ -183,8 +187,10 @@ class PlotSectionAndEqSection(object):
         y2 = p1.y + unp.tf_equivalentI
         y3 = p1.y + unp.d_equivalentI - unp.tf_equivalentI
         y4 = p1.y + unp.d_equivalentI
-        a = np.array([x1, x3, x3, x2, x2, x3, x3, x1, x1])
-        b = np.array([y1, y1, y2, y2, y3, y3, y4, y4, y1])
+        xs = [x1, x3, x3, x2, x2, x3, x3, x1, x1]
+        ys = [y1, y1, y2, y2, y3, y3, y4, y4, y1]
+        a = np.array(xs)
+        b = np.array(ys)
         finitecurve = pg.PlotDataItem(a, b, connect="finite", pen=pen)
         self.add_pline_to_script_file(a, b)
         return finitecurve
@@ -195,8 +201,10 @@ class PlotSectionAndEqSection(object):
         x2 = cp.x + pl.bf / 2
         y1 = cp.y - pl.tf / 2
         y2 = cp.y + pl.tf / 2
-        a = np.array([x1, x2, x2, x1, x1])
-        b = np.array([y1, y1, y2, y2, y1])
+        xs = [x1, x2, x2, x1, x1]
+        ys = [y1, y1, y2, y2, y1]
+        a = np.array(xs)
+        b = np.array(ys)
         finitecurve = pg.PlotDataItem(a, b, connect="finite", pen=pen)
         self.add_pline_to_script_file(a, b)
         return finitecurve
