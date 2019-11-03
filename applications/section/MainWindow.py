@@ -187,12 +187,19 @@ class Ui(QMainWindow, main_window):
     def updateGui(self):
         sectionType = self.currentSectionType()
         index = self.doubleBox.currentIndex()
+        items = self.double_box[sectionType]
         self.doubleBox.blockSignals(True)
-        self.doubleBox.clear()
-        self.doubleBox.addItems(self.double_box[sectionType])
+        for i, item in enumerate(self.doubleList1):
+            if not item in items:
+                self.doubleBox.model().item(i).setEnabled(False)
+            else:
+                self.doubleBox.model().item(i).setEnabled(True)
         self.doubleBox.blockSignals(False)
-        if self.doubleBox.count() >= index + 1:
+        if len(items) >= index + 1:
             self.doubleBox.setCurrentIndex(index)
+        else:
+            self.doubleBox.setCurrentIndex(0)
+
         if sectionType in ('UNP', 'BOX', 'UPA'):
             self.addWebPL.setChecked(False)
             self.frame_web.setEnabled(False)
