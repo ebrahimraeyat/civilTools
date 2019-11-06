@@ -3,7 +3,7 @@ import numpy as np
 from scipy.sparse import csc_matrix, coo_matrix, linalg
 from scipy.optimize import brentq
 import matplotlib
-matplotlib.use('agg')
+matplotlib.use('Qt5Agg')
 import matplotlib.pyplot as plt
 import matplotlib.tri as tri
 import matplotlib.cm as cm

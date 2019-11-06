@@ -173,6 +173,8 @@ class Ui(QMainWindow, main_window):
         self.tableView1.verticalHeader().setSectionsMovable(True)
         self.tableView1.verticalHeader().setDragEnabled(True)
         self.tableView1.verticalHeader().setDragDropMode(QAbstractItemView.InternalMove)
+        for i in (1, 2):
+            self.convert_to_box.model().item(i).setEnabled(False)
 
     def setSectionLabels(self):
         sectionType = self.currentSectionType()
@@ -257,6 +259,8 @@ class Ui(QMainWindow, main_window):
     def acceptOne(self):
         # section = self.currentSectionOne()
         # if not section.name in self.model1.names:
+        if self.currentSection.is_closed:
+            self.currentSection.j_func()
         self.model1.beginResetModel()
         self.model1.sections.append(self.currentSection)
         self.model1.endResetModel()
