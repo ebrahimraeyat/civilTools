@@ -14,6 +14,7 @@ sys.path.insert(0, civiltools_path)
 main_window = uic.loadUiType(civiltools_path + '/main_form.ui')[0]
 about_window, about_base = uic.loadUiType(civiltools_path + '/about.ui')
 update_window, update_base = uic.loadUiType(civiltools_path + '/update.ui')
+serial_base, serial_window = uic.loadUiType(civiltools_path + '/serial.ui')
 python_exe = 'pythonw'
 if sys.platform.startswith('linux'):
     python_exe = 'python'
@@ -59,6 +60,19 @@ class FormWidget(QtWidgets.QWidget, main_window):
         self.child_win.show()
 
     def git_updates(self):
+        if not internet():
+            msg = "You are not connected to the Internet, please check your internet connection."
+            QtWidgets.QMessageBox.warning(None, 'update', str(msg))
+            return
+
+        if sys.platform == "win32":
+            serial = str(subprocess.check_output("wmic csproduct get uuid")).split("\\r\\r\\n")[1].split()[0]
+            if not serial_number(serial):
+                serial_win = SerialForm(self)
+                serial_win.serial.setText(serial)
+                serial_win.exec_()
+                return
+
         update_win = UpdateForm(self)
         from git import Repo, Git
         repo = Repo(civiltools_path)
@@ -77,10 +91,6 @@ class FormWidget(QtWidgets.QWidget, main_window):
 
         if (QMessageBox.question(self, "update", ("update to latest version?!"),
                                  QMessageBox.Yes | QMessageBox.No) == QMessageBox.No):
-            return
-        if not internet():
-            msg = "You are not connected to the Internet, please check your internet connection."
-            QtWidgets.QMessageBox.warning(None, 'update', str(msg))
             return
 
         import git
@@ -113,6 +123,16 @@ class FormWidget(QtWidgets.QWidget, main_window):
                 msg = 'error occured during update\nplease contact with @roknabadi'
         # msg += '\n please restart the programm.'
         QtWidgets.QMessageBox.information(None, 'update', msg)
+
+
+def serial_number(serial):
+    import urllib.request
+    url = 'https://gist.githubusercontent.com/ebrahimraeyat/1ca5731b3761a3c9c47147d4d3b482d1/raw/1176d09330f834d14b3fb86faef0337b2a371ab3/civiltools.txt'
+    response = urllib.request.urlopen(url)
+    data = response.read()      # a `bytes` object
+    text = data.decode('utf-8')
+    print(text)
+    return serial in text
 
 
 def onerror(func, path, exc_info):
@@ -156,6 +176,12 @@ class AboutForm(about_base, about_window):
 class UpdateForm(update_base, update_window):
     def __init__(self, parent=None):
         super(UpdateForm, self).__init__()
+        self.setupUi(self)
+
+
+class SerialForm(serial_base, serial_window):
+    def __init__(self, parent=None):
+        super(SerialForm, self).__init__()
         self.setupUi(self)
 
 
