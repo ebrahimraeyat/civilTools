@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>civiltools</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -1032,6 +1032,9 @@
                </widget>
               </item>
              </layout>
+            </item>
+            <item>
+             <layout class="QVBoxLayout" name="mesh_and_equal_layout"/>
             </item>
             <item>
              <spacer name="verticalSpacer_2">

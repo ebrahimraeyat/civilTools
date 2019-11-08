@@ -109,20 +109,23 @@ class Section(object):
         self.J = (self.Ix + self.Iy -
                   omega.dot(k.dot(np.transpose(omega))))
 
-    def solve_warping(self):
+    def create_warping_section(self):
         geometry = MergedSection(self.geometry_list)
         geometry.clean_geometry(verbose=True)
         n = len(self.geometry_list)
-        mesh = geometry.create_mesh(mesh_sizes=n * [2.5])
-        warping_section = CrossSection(geometry, mesh)
-        warping_section.calculate_geometric_properties()
-        cx = warping_section.section_props.cx
-        cy = warping_section.section_props.cy
-        for el in warping_section.elements:
+        mesh = geometry.create_mesh(mesh_sizes=n * [5])
+        self.warping_section = CrossSection(geometry, mesh)
+
+    def solve_warping(self):
+        if not self.warping_section:
+            self.create_warping_section()
+        self.warping_section.calculate_geometric_properties()
+        cx = self.warping_section.section_props.cx
+        cy = self.warping_section.section_props.cy
+        for el in self.warping_section.elements:
             el.coords[0, :] -= cx
             el.coords[1, :] -= cy
-        # warping_section.plot_mesh()
-        (k, k_lg, f_torsion) = warping_section.assemble_torsion()
+        (k, k_lg, f_torsion) = self.warping_section.assemble_torsion()
         omega = solver.solve_direct(k, f_torsion)
         return omega, k
 
@@ -578,7 +581,9 @@ def AddPlateLR(section, plate):
     p5 = (-plate.bf, y)
     p6 = (section.xmax, y)
     geometry1 = RectangularSection(d=plate.tf, b=plate.bf, shift=p5)
+    geometry1.holes.append([bf / 4, d / 2])
     geometry2 = RectangularSection(d=plate.tf, b=plate.bf, shift=p6)
+    geometry2.holes.append([p6[0] - bf / 4, d / 2])
     geometry_list = section.geometry_list + [geometry1, geometry2]
     composite = 'TBLRPLATE'
     if not TBPlate:

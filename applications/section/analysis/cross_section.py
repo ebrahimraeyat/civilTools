@@ -10,10 +10,10 @@ import matplotlib.cm as cm
 import matplotlib.patches as mpatches
 from matplotlib.colors import ListedColormap
 import meshpy.triangle as triangle
-import sectionproperties.pre.pre as pre
-import sectionproperties.analysis.fea as fea
-import sectionproperties.analysis.solver as solver
-import sectionproperties.post.post as post
+from pre import pre
+from analysis import fea
+from analysis import solver
+from post import post
 
 
 class CrossSection:

@@ -2,8 +2,8 @@ import numpy as np
 import matplotlib
 matplotlib.use('Qt5Agg')
 import matplotlib.pyplot as plt
-import sectionproperties.pre.pre as pre
-import sectionproperties.post.post as post
+from pre import pre
+# from post import post
 
 
 # TODO: ensure dimensions are floats
