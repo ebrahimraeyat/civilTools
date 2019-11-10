@@ -127,7 +127,7 @@ class FormWidget(QtWidgets.QWidget, main_window):
 
 def serial_number(serial):
     import urllib.request
-    url = 'https://gist.githubusercontent.com/ebrahimraeyat/1ca5731b3761a3c9c47147d4d3b482d1/raw/1176d09330f834d14b3fb86faef0337b2a371ab3/civiltools.txt'
+    url = 'https://gist.githubusercontent.com/ebrahimraeyat/1ca5731b3761a3c9c47147d4d3b482d1/raw'
     response = urllib.request.urlopen(url)
     data = response.read()      # a `bytes` object
     text = data.decode('utf-8')
