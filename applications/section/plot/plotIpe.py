@@ -8,6 +8,8 @@ import os
 pg.setConfigOption('background', 'w')
 pg.setConfigOption('foreground', 'c')
 
+from pre.sections import ISection
+
 # from pre import sections
 
 
@@ -96,8 +98,14 @@ class PlotSectionAndEqSection(object):
         if self.section.TBPlate:
             xmax1 = max(self.section.xmax, self.section.TBPlate.xmax)
 
-        p7 = Point(xmax1 + baseSection.bf, ym - self.section.d_equivalentI / 2)
-        # win.addItem(self.drawIpe(self.section, p7, False, 'm'))
+        p7 = [xmax1 + baseSection.bf, ym - self.section.d_equivalentI / 2]
+        geometry = ISection(d=self.section.d_equivalentI,
+                            b=self.section.bf_equivalentI,
+                            t_f=self.section.tf_equivalentI,
+                            t_w=self.section.tw_equivalentI,
+                            r=self.section.tf_equivalentI,
+                            n_r=16, shift=p7)
+        win.addItem(self.plot_item(geometry, 'm'))
 
         win.addItem(ipeText)
         ipeText.setPos(baseSection.xm, ym)
@@ -105,12 +113,12 @@ class PlotSectionAndEqSection(object):
 
         html = 'bf={:.0f},\t tf={:.1f} mm'.format(
             self.section.bf_equivalentI, self.section.tf_equivalentI)
-        self.textItem(win, html=html, pos=Point(p7.x + self.section.bf_equivalentI / 2,
+        self.textItem(win, html=html, pos=Point(p7[0] + self.section.bf_equivalentI / 2,
                                                 1.02 * self.section.d_equivalentI), anchor=(.5, 1))
 
         html = 'd={:.0f},\ttw={:.1f} mm'.format(
             self.section.d_equivalentI, self.section.tw_equivalentI)
-        self.textItem(win, html=html, pos=Point(p7.x + self.section.bf_equivalentI, ym),
+        self.textItem(win, html=html, pos=Point(p7[0] + self.section.bf_equivalentI, ym),
                       anchor=(.5, 1.2), isRotate=True)
         win.setAspectLocked()
         return win
