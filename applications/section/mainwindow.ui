@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>civiltools</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -20,7 +20,7 @@
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -459,10 +459,10 @@
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
-          <widget class="QWidget" name="">
+          <widget class="QWidget" name="layoutWidget">
            <layout class="QGridLayout" name="drawLayout"/>
           </widget>
-          <widget class="QWidget" name="">
+          <widget class="QWidget" name="layoutWidget">
            <layout class="QVBoxLayout" name="verticalLayout_2">
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -881,7 +881,7 @@
                     <string/>
                    </property>
                    <property name="value">
-                    <number>7</number>
+                    <number>9</number>
                    </property>
                   </widget>
                  </item>
@@ -1032,6 +1032,9 @@
                </widget>
               </item>
              </layout>
+            </item>
+            <item>
+             <layout class="QVBoxLayout" name="mesh_and_equal_layout"/>
             </item>
             <item>
              <spacer name="verticalSpacer_2">

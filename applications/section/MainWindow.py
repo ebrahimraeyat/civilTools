@@ -12,12 +12,17 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5 import uic, QtCore
+
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
+from matplotlib.figure import Figure
+
 import sec
 from plot.plotIpe import PlotSectionAndEqSection
 
 
 __url__ = "http://ebrahimraeyat.blog.ir"
-__version__ = "0.8"
+__version__ = "3.0"
 link_ebrahim = ('Website: <a href="%s"><span style=" '
                 'text-decoration: underline; color:#0000ff;">'
                 '%s</span></a>') % (__url__, __url__)
@@ -173,6 +178,14 @@ class Ui(QMainWindow, main_window):
         self.tableView1.verticalHeader().setSectionsMovable(True)
         self.tableView1.verticalHeader().setDragEnabled(True)
         self.tableView1.verticalHeader().setDragDropMode(QAbstractItemView.InternalMove)
+        for i in (1, 2):
+            self.convert_to_box.model().item(i).setEnabled(False)
+
+        self.figure = Figure()
+        # this is the Canvas Widget that displays the `figure`
+        # it takes the `figure` instance as a parameter to __init__
+        self.canvas = FigureCanvas(self.figure)
+        self.mesh_and_equal_layout.addWidget(self.canvas)
 
     def setSectionLabels(self):
         sectionType = self.currentSectionType()
@@ -257,6 +270,11 @@ class Ui(QMainWindow, main_window):
     def acceptOne(self):
         # section = self.currentSectionOne()
         # if not section.name in self.model1.names:
+        self.figure.clear()
+        if self.currentSection.is_closed:
+            self.currentSection.create_warping_section()
+            self.plot_mesh()
+            self.currentSection.j_func()
         self.model1.beginResetModel()
         self.model1.sections.append(self.currentSection)
         self.model1.endResetModel()
@@ -303,32 +321,16 @@ class Ui(QMainWindow, main_window):
         self.model1.names = set()
         self.model1.dirty = False
 
-    # def current_section_prop(self):
-    #     [lh, th, lv, tv, lw, tw, dist, isTBPlate, isLRPlate, isWebPlate, useAs, ductility, isDouble, isSouble, sectionSize, sectionType, convert_type] = self.currentSectionOne()
-
-    #     class Plate:
-    #         def __init__(self, b, t):
-    #             self.bf = b
-    #             self.tf = t
-    #             self.name = f"Plate{b}X{t}"
-
-    #     class Section:
-
-    #         def __init__(self):
-    #             self.isSouble = isSouble
-    #             self.cc = dist
-    #             self.isDouble = isDouble
-    #             self.TBPlate = Plate(lh, th)
-    #             self.LRPlate = Plate(lv, tv)
-    #             self.webPlate = Plate(lw
-
-    #     return Section()
-
     def updateSectionShape(self):
         self.currentSection = sec.createSection(self.currentSectionOne())
         plotWidget = PlotSectionAndEqSection(self.currentSection, len(self.model1.sections))
         self.drawLayout.addWidget(plotWidget.plot(), 0, 0)
         self.currentSection.autocadScrText = plotWidget.autocadScrText
+
+    def plot_mesh(self):
+        ax = self.figure.add_subplot(111, aspect=1)
+        self.currentSection.warping_section.plot_mesh(ax=ax)
+        self.canvas.draw()
 
     def convert_all_section_to_shear(self):
         self.model1.beginResetModel()

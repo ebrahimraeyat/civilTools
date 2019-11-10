@@ -4,12 +4,18 @@ from __future__ import division
 import os
 import sys
 from math import sqrt
+import copy
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 abs_path = os.path.dirname(__file__)
 sys.path.insert(0, abs_path)
 import pandas as pd
+import numpy as np
 from slender_params import slenderParameters
+
+from pre.sections import Geometry, ISection, PfcSection, RectangularSection, MergedSection
+from analysis.cross_section import CrossSection, SectionProperties
+from analysis import solver
 
 column_count = 23
 NAME, AREA, ASX, ASY, IX, IY, ZX, ZY, \
@@ -32,7 +38,7 @@ class Section(object):
 
     def __init__(self, cc=0, composite=None, useAs='B', ductility='M',
                  TBPlate=None, LRPlate=None, webPlate=None, slender=None, isDouble=False,
-                 isSouble=False, convert_type='Compaction', **kwargs):
+                 isSouble=False, convert_type='Compaction', geometry_list=[], is_closed=False, **kwargs):
         self.type = kwargs['_type']
         self.name = kwargs['name']
         self.area = kwargs['area']
@@ -64,6 +70,8 @@ class Section(object):
         self.slender = slender
         self.isDouble = isDouble
         self.isSouble = isSouble
+        self.geometry_list = geometry_list
+        self.is_closed = is_closed
         self.calculateSectionProp()
         try:
             self.baseSection = kwargs['baseSection']
@@ -96,21 +104,30 @@ class Section(object):
         self.Rx = sqrt(self.Ix / self.area)
         self.Ry = sqrt(self.Iy / self.area)
 
-    def j_func():
-        return (self.Ix + self.Iy -
-                omega.dot(k.dot(np.transpose(omega))))
+    def j_func(self):
+        omega, k = self.solve_warping()
+        self.J = (self.Ix + self.Iy -
+                  omega.dot(k.dot(np.transpose(omega))))
 
-    def solve_warping():
+    def create_warping_section(self):
+        geometry = MergedSection(self.geometry_list)
+        geometry.clean_geometry(verbose=True)
+        n = len(self.geometry_list)
+        mesh = geometry.create_mesh(mesh_sizes=n * [5])
+        self.warping_section = CrossSection(geometry, mesh)
 
-        warping_section = CrossSection(self.geometry, self.mesh,
-                                       self.materials)
-        (k, k_lg, f_torsion) = warping_section.assemble_torsion()
-        if solver_type == 'cgs':
-            omega = solver.solve_cgs(k, f_torsion, k_precond)
-        elif solver_type == 'direct':
-            omega = solver.solve_direct(k, f_torsion)
-
-        return omega
+    def solve_warping(self):
+        if not self.warping_section:
+            self.create_warping_section()
+        self.warping_section.calculate_geometric_properties()
+        cx = self.warping_section.section_props.cx
+        cy = self.warping_section.section_props.cy
+        for el in self.warping_section.elements:
+            el.coords[0, :] -= cx
+            el.coords[1, :] -= cy
+        (k, k_lg, f_torsion) = self.warping_section.assemble_torsion()
+        omega = solver.solve_direct(k, f_torsion)
+        return omega, k
 
     def __str__(self):
         secType = self.sectionType[str(self.type)]
@@ -389,17 +406,26 @@ def DoubleSection(section, dist=0):
         dw = dist + 2 * bf - tw
     cw = 2 * baseSection.cw + (tw * hw ** 3 / 12) * dw ** 2 / 2
     J = 0
-    if dist > 0:
-        J = 2 * baseSection.J
     if dist == 0:
         name = '2' + section.name
+        is_closed = True
     else:
         name = '2' + section.name + 'c{:.0f}'.format(cc / 10)
+        J = 2 * baseSection.J
+        is_closed = False
+    new_geometry = copy.deepcopy(baseSection.geometry_list[0])
+    # if _type in ("UNP", "UPA"):
+    new_geometry.rotate_section(180, rot_point=[bf, d / 2])
+    new_geometry.shift = [dist, 0]
+    new_geometry.shift_section()
+    new_geometry.holes.append([bf + dist / 2, d / 2])
+    geometry_list = [baseSection.geometry_list[0], new_geometry]
     return Section(_type=_type, name=name, area=area, xm=xm, ym=ym,
                    xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy,
                    Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=d, tw=tw, r1=r1, cw=cw, J=J, isDouble=True, cc=cc,
                    useAs=useAs, ductility=ductility, baseSection=baseSection,
-                   composite='notPlate', convert_type=convert_type)
+                   composite='notPlate', convert_type=convert_type, geometry_list=geometry_list,
+                   is_closed=is_closed)
 
 
 def SoubleSection(section, dist=0):
@@ -428,15 +454,31 @@ def SoubleSection(section, dist=0):
     ductility = baseSection.ductility
     convert_type = section.convert_type
     cc = dist + 2 * (baseSection.bf - baseSection.xm)
+    J = 0
     if dist == 0:
         name = '3' + section.name
+        is_closed = True
     else:
         name = '3' + section.name + 'c{:.0f}'.format(cc / 10)
+        J = 3 * baseSection.J
+        is_closed = False
+
+    x_shift = bf + dist
+    geometry2 = copy.deepcopy(baseSection.geometry_list[0])
+    geometry2.shift = [x_shift, 0]
+    geometry2.shift_section()
+    geometry2.holes.append([bf + dist / 2, d / 2])
+    x_shift = 2 * (bf + dist)
+    geometry3 = copy.deepcopy(baseSection.geometry_list[0])
+    geometry3.shift = [x_shift, 0]
+    geometry3.shift_section()
+    geometry3.holes.append([2 * bf + dist, d / 2])
+    geometry_list = [baseSection.geometry_list[0], geometry2, geometry3]
     return Section(_type=_type, name=name, area=area, xm=xm, ym=ym,
                    xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy,
                    Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=d, tw=tw, r1=r1, cw=0, J=0, isDouble=False, isSouble=True, cc=cc,
                    useAs=useAs, ductility=ductility, baseSection=baseSection,
-                   composite='notPlate', convert_type=convert_type)
+                   composite='notPlate', convert_type=convert_type, geometry_list=geometry_list, is_closed=is_closed)
 
 
 def AddPlateTB(section, plate):
@@ -475,10 +517,18 @@ def AddPlateTB(section, plate):
     cw = section.cw + plate.Iy * (dp ** 2 / 2)
     if _type == 'BOX':
         cw = 0
+    # if palate.bf > self.cc - bf:
+    is_closed = True
+    x = xm - plate.bf / 2
+    p3 = (x, section.ymax)
+    p4 = (x, -plate.tf)
+    geometry1 = RectangularSection(d=plate.tf, b=plate.bf, shift=p3)
+    geometry2 = RectangularSection(d=plate.tf, b=plate.bf, shift=p4)
+    geometry_list = section.geometry_list + [geometry1, geometry2]
     return Section(_type=_type, name=name, area=area, xm=xm, ym=ym,
                    xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy, Zx=Zx, Zy=Zy, bf=bf, tf=tf,
                    d=d, tw=tw, r1=r1, cw=cw, J=0, isDouble=isDouble, isSouble=isSouble, baseSection=baseSection, cc=cc,
-                   useAs=useAs, TBPlate=plate, ductility=ductility, composite='TBPlate', convert_type=convert_type)
+                   useAs=useAs, TBPlate=plate, ductility=ductility, composite='TBPlate', convert_type=convert_type, geometry_list=geometry_list, is_closed=is_closed)
 
 
 def AddPlateLR(section, plate):
@@ -513,6 +563,9 @@ def AddPlateLR(section, plate):
     dp = section.xmax + plate.xmax
     cw = section.cw + plate.Ix * (dp ** 2 / 2)
     J = 0
+    is_closed = section.is_closed
+    if not is_closed:
+        J = section.J + 2 * plate.J
     if _type == 'BOX':
         cw = 0
         if bool(TBPlate):
@@ -523,7 +576,15 @@ def AddPlateLR(section, plate):
             t1 = TBPlate.tf
             t2 = plate.bf
             J = 4 * (Am ** 2) / (2 * a / t1 + 2 * b / t2)
-
+            is_closed = True
+    y = baseSection.ym - plate.tf / 2
+    p5 = (-plate.bf, y)
+    p6 = (section.xmax, y)
+    geometry1 = RectangularSection(d=plate.tf, b=plate.bf, shift=p5)
+    geometry1.holes.append([bf / 4, d / 2])
+    geometry2 = RectangularSection(d=plate.tf, b=plate.bf, shift=p6)
+    geometry2.holes.append([p6[0] - bf / 4, d / 2])
+    geometry_list = section.geometry_list + [geometry1, geometry2]
     composite = 'TBLRPLATE'
     if not TBPlate:
         composite = 'LRPLATE'
@@ -531,7 +592,8 @@ def AddPlateLR(section, plate):
                    xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy, Zx=Zx, Zy=Zy, bf=bf, tf=tf,
                    d=d, tw=tw, r1=r1, cw=cw, J=J, isDouble=isDouble, isSouble=isSouble, baseSection=baseSection, cc=cc,
                    useAs=useAs, TBPlate=TBPlate, LRPlate=plate,
-                   ductility=ductility, composite=composite, convert_type=convert_type)
+                   ductility=ductility, composite=composite, convert_type=convert_type,
+                   geometry_list=geometry_list, is_closed=is_closed)
 
 
 def AddPlateWeb(section, plate):
@@ -569,11 +631,27 @@ def AddPlateWeb(section, plate):
     composite = 'TBLRPLATE'
     if not TBPlate:
         composite = 'LRPLATE'
+    J = 0
+    is_closed = section.is_closed
+    if not is_closed:
+        J = section.J + 2 * plate.J
+    y = baseSection.ym - plate.tf / 2
+    p8 = ((bf - tw) / 2 - plate.bf, y)
+    multiplier = 0
+    if isDouble:
+        multiplier = 1
+    elif isSouble:
+        multiplier = 2
+    p9 = (multiplier * section.cc + (bf + tw) / 2, y)
+    geometry1 = RectangularSection(d=plate.tf, b=plate.bf, shift=p8)
+    geometry2 = RectangularSection(d=plate.tf, b=plate.bf, shift=p9)
+    geometry_list = section.geometry_list + [geometry1, geometry2]
     return Section(_type=_type, name=name, area=area, xm=xm, ym=ym,
                    xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy, Zx=Zx, Zy=Zy, bf=bf, tf=tf,
-                   d=d, tw=tw, r1=r1, cw=cw, J=0, isDouble=isDouble, isSouble=isSouble, baseSection=baseSection, cc=cc,
+                   d=d, tw=tw, r1=r1, cw=cw, J=J, isDouble=isDouble, isSouble=isSouble, baseSection=baseSection, cc=cc,
                    useAs=useAs, TBPlate=TBPlate, LRPlate=LRPlate, webPlate=plate,
-                   ductility=ductility, composite=composite, convert_type=convert_type)
+                   ductility=ductility, composite=composite, convert_type=convert_type,
+                   geometry_list=geometry_list, is_closed=is_closed)
 
 
 class Ipe(Section):
@@ -588,9 +666,11 @@ class Ipe(Section):
         df = d - tf
         cw = (tf * bf ** 3 / 12) * (df ** 2 / 2)
         J = (2 * bf * tf ** 3 + (d - 2 * tf) * tw ** 3) / 3
+        geometry = ISection(d=d, b=bf, t_f=tf, t_w=tw, r=r1, n_r=16)
         super(Ipe, self).__init__(_type='IPE', name=name, area=area, xm=xm, ym=ym,
                                   xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy,
-                                  Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=d, tw=tw, r1=r1, cw=cw, J=J)
+                                  Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=d, tw=tw, r1=r1, cw=cw, J=J,
+                                  geometry_list=[geometry])
 
     @staticmethod
     def createStandardIpes():
@@ -634,9 +714,11 @@ class Unp(Section):
         df = d - tf
         cw = (tf * bf ** 3 / 12) * (df ** 2 / 2)
         J = (2 * bf * tf ** 3 + (d - 2 * tf) * tw ** 3) / 3
+        geometry = PfcSection(d=d, b=bf, t_f=tf, t_w=tw, r=r1, n_r=8)
         super(Unp, self).__init__(_type='UNP', name=name, area=area, xm=xm, ym=ym,
                                   xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy,
-                                  Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=d, tw=tw, r1=r1, cw=cw, J=J)
+                                  Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=d, tw=tw, r1=r1,
+                                  cw=cw, J=J, geometry_list=[geometry])
 
     @staticmethod
     def createStandardUnps():
@@ -670,9 +752,11 @@ class Upa(Section):
         df = d - tf
         cw = (tf * bf ** 3 / 12) * (df ** 2 / 2)
         J = (2 * bf * tf ** 3 + (d - 2 * tf) * tw ** 3) / 3
+        geometry = PfcSection(d=d, b=bf, t_f=tf, t_w=tw, r=r1, n_r=16)
         super(Upa, self).__init__(_type='UPA', name=name, area=area, xm=xm, ym=ym,
                                   xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy,
-                                  Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=d, tw=tw, r1=r1, cw=cw, J=J)
+                                  Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=d, tw=tw, r1=r1,
+                                  geometry_list=[geometry], cw=cw, J=J)
 
     @staticmethod
     def createStandardUpas():
@@ -717,9 +801,11 @@ class Cpe(Section):
         ASx = 5 / 3 * bf * tf
         df = d - tf
         cw = (tf * bf ** 3 / 12) * (df ** 2 / 2)
+        geometry = ISection(d=d, b=bf, t_f=tf, t_w=tw, r=r1, n_r=16)
         super(Cpe, self).__init__(_type='CPE', name=name, area=area, xm=xm, ym=ym,
                                   xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy,
-                                  Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=d, tw=tw, r1=r1, cw=cw, J=0)
+                                  Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=d, tw=tw, r1=r1,
+                                  geometry_list=[geometry], cw=cw, J=0)
 
     @staticmethod
     def createStandardCpes():
@@ -740,8 +826,10 @@ class Plate(Section):
     def __init__(self, xmax, ymax):
         if xmax > ymax:
             name = f'{xmax/10:.0f}X{ymax}'
+            j = xmax * ymax ** 3 / 3
         else:
             name = f'{ymax/10:.0f}X{xmax}'
+            j = ymax * xmax ** 3 / 3
         area = xmax * ymax
         xm = xmax / 2
         ym = ymax / 2
@@ -756,7 +844,7 @@ class Plate(Section):
         self.cc = 0
         super(Plate, self).__init__(_type='PLATE', name=name, area=area, xm=xm, ym=ym,
                                     xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy,
-                                    Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=0, tw=0, r1=0, cw=0, J=0)
+                                    Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=0, tw=0, r1=0, cw=0, J=j)
 
 
 class Box(Section):
@@ -1099,4 +1187,18 @@ class SectionTableModel(QAbstractTableModel):
 
 
 if __name__ == '__main__':
-    model = SectionTableModel()
+    IPE = Ipe.createStandardIpes()
+    __ductility = 'M'
+    __useAs = 'C'
+    IPE22 = IPE[22]
+    IPE22.ductility = __ductility
+    IPE22.useAs = __useAs
+    IPE22_double = DoubleSection(IPE22, 0)
+    geometry = MergedSection(IPE22_double.geometry_list)
+    # geometry.plot_geometry()
+    geometry.holes.append([110, 110])
+    # # geometry.clean_geometry(verbose=True)
+    n = len(IPE22_double.geometry_list)
+    mesh = geometry.create_mesh(mesh_sizes=n * [2.5])
+    # warping_section = CrossSection(geometry, mesh)
+    # warping_section.plot_mesh()
