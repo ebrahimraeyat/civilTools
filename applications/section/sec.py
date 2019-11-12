@@ -226,8 +226,12 @@ class Section(object):
 
     def equivalentSectionI(self):
 
+        if self.baseSection.type in ('UNP', 'UPA'):
+            bf = self.baseSection.bf * 2
+        else:
+            bf = self.baseSection.bf
         if not self.composite:
-            return self.bf, self.tf, self.d, self.tw
+            return bf, self.tf, self.d, self.tw
 
         if self.isSouble:
             return 3 * self.bf, 3 * self.tf, self.d, self.tw
@@ -242,10 +246,7 @@ class Section(object):
         useAs = str(self.useAs)
         ductility = str(self.ductility)
         xm = self.baseSection.xm
-        if baseSection.type in ('UNP', 'UPA'):
-            bf = self.baseSection.bf * 2
-        else:
-            bf = self.baseSection.bf
+
         tf = self.baseSection.tf
         d = self.baseSection.d
         tw = self.baseSection.tw

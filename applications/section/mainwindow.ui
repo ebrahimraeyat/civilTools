@@ -7,20 +7,20 @@
     <x>0</x>
     <y>0</y>
     <width>1118</width>
-    <height>744</height>
+    <height>742</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>civiltools</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout_4">
+   <layout class="QHBoxLayout" name="horizontalLayout_4">
     <item>
      <widget class="QSplitter" name="mainSplitter">
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
-      <widget class="QWidget" name="layoutWidget">
+      <widget class="QWidget" name="">
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -459,6 +459,9 @@
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
+          <widget class="QWidget" name="layoutWidget_2">
+           <layout class="QVBoxLayout" name="mesh_and_equal_layout"/>
+          </widget>
           <widget class="QWidget" name="layoutWidget">
            <layout class="QGridLayout" name="drawLayout"/>
           </widget>
@@ -1032,9 +1035,6 @@
                </widget>
               </item>
              </layout>
-            </item>
-            <item>
-             <layout class="QVBoxLayout" name="mesh_and_equal_layout"/>
             </item>
             <item>
              <spacer name="verticalSpacer_2">
