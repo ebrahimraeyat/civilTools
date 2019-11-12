@@ -171,7 +171,7 @@ class Section(object):
         fh.write('<?xml version="1.0" encoding="utf-8"?>\n'
                  '<PROPERTY_FILE xmlns="http://www.csiberkeley.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.csiberkeley.com CSIExtendedSectionPropertyFile.xsd">\n'
                  '   <EbrahimRaeyat_Presents>\n'
-                 '      <Comment_on_CopyRight> This database is provided by: EbrahimRaeyat, (2017); http://www.ebrahimraeyat.blog.ir </Comment_on_CopyRight>\n'
+                 '      <Comment_on_CopyRight> This database is provided by: EbrahimRaeyat, (2019); http://www.ebrahimraeyat.blog.ir </Comment_on_CopyRight>\n'
                  '   </EbrahimRaeyat_Presents>\n'
                  '  <CONTROL>\n'
                  '      <FILE_ID>CSI Frame Properties</FILE_ID>\n'
@@ -242,7 +242,10 @@ class Section(object):
         useAs = str(self.useAs)
         ductility = str(self.ductility)
         xm = self.baseSection.xm
-        bf = self.baseSection.bf
+        if baseSection.type in ('UNP', 'UPA'):
+            bf = self.baseSection.bf * 2
+        else:
+            bf = self.baseSection.bf
         tf = self.baseSection.tf
         d = self.baseSection.d
         tw = self.baseSection.tw
