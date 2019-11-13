@@ -174,7 +174,9 @@ class Ui(QMainWindow, main_window):
         self.mainSplitter.setStretchFactor(0, 1)
         self.mainSplitter.setStretchFactor(1, 3)
         self.splitter.setStretchFactor(0, 1)
-        self.splitter.setStretchFactor(1, 3)
+        self.splitter.setStretchFactor(1, 1)
+        self.splitter.setStretchFactor(2, 1)
+
         self.tableView1.verticalHeader().setSectionsMovable(True)
         self.tableView1.verticalHeader().setDragEnabled(True)
         self.tableView1.verticalHeader().setDragDropMode(QAbstractItemView.InternalMove)
