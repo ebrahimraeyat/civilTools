@@ -828,17 +828,19 @@ class Cpe(Section):
 class Plate(Section):
 
     def __init__(self, xmax, ymax):
+        area = xmax * ymax
         if xmax > ymax:
             name = f'{xmax/10:.0f}X{ymax}'
             j = xmax * ymax ** 3 / 3
+            ASy = 0
+            ASx = area
         else:
             name = f'{ymax/10:.0f}X{xmax}'
             j = ymax * xmax ** 3 / 3
-        area = xmax * ymax
+            ASy = area
+            ASx = 0
         xm = xmax / 2
         ym = ymax / 2
-        ASy = 0
-        ASx = area
         Ix = xmax * ymax ** 3 / 12
         Iy = ymax * xmax ** 3 / 12
         Zx = xmax * ymax ** 2 / 4
