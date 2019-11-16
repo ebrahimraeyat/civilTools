@@ -538,11 +538,15 @@ def AddPlateTB(section, plate):
 def AddPlateLR(section, plate):
 
     _type = section.type
+    baseSection = section.baseSection
     # plate_name = name = 'PL%sX%s' % (plate.ymax, plate.xmax)
     name = section.name + 'LR' + plate.name
     area = section.area + 2 * plate.area
     ymax = max(section.ymax, plate.ymax)
     xmax = section.xmax + 2 * plate.xmax
+    if not baseSection.type in ('UNP, UPA'):
+        if section.TBPlate:
+            xmax = max(xmax, section.TBPlate.bf)
     xm = xmax / 2
     ym = section.ym
     ASx = section.ASx
