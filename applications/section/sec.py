@@ -492,9 +492,12 @@ def AddPlateTB(section, plate):
        section equal to bf/(2*tf)'''
 
     _type = section.type
+    baseSection = section.baseSection
     name = section.name + 'F' + plate.name
     area = section.area + 2 * plate.area
     xmax = section.xmax
+    # if not baseSection.type in ('UNP, UPA'):
+    #     xmax = max(xmax, plate.bf)
     #xmax = max(section.xmax, plate.xmax)
     ymax = section.ymax + 2 * plate.ymax
     xm = xmax / 2
@@ -507,7 +510,6 @@ def AddPlateTB(section, plate):
     Zy = section.Zy + 2 * plate.Zy
     isDouble = section.isDouble
     isSouble = section.isSouble
-    baseSection = section.baseSection
     bf = baseSection.bf
     tf = baseSection.tf
     d = baseSection.d
@@ -544,9 +546,6 @@ def AddPlateLR(section, plate):
     area = section.area + 2 * plate.area
     ymax = max(section.ymax, plate.ymax)
     xmax = section.xmax + 2 * plate.xmax
-    if not baseSection.type in ('UNP, UPA'):
-        if section.TBPlate:
-            xmax = max(xmax, section.TBPlate.bf)
     xm = xmax / 2
     ym = section.ym
     ASx = section.ASx
