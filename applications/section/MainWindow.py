@@ -147,9 +147,9 @@ class Ui(QMainWindow, main_window):
         self.addWebPL.stateChanged.connect(self.updateSectionShape)
         self.sectionsBox.currentIndexChanged.connect(self.updateSectionShape)
         self.doubleBox.currentIndexChanged.connect(self.updateSectionShape)
-        self.ductilityBox.currentIndexChanged.connect(self.updateSectionShape)
-        self.useAsBox.currentIndexChanged.connect(self.updateSectionShape)
-        self.equivalent_type_box.currentIndexChanged.connect(self.updateSectionShape)
+        self.ductilityList.itemPressed.connect(self.updateSectionShape)
+        self.useAsList.itemPressed.connect(self.updateSectionShape)
+        self.equivalent_type_list.itemPressed.connect(self.updateSectionShape)
         self.shear_button.clicked.connect(self.convert_all_section_to_shear)
         self.tableView1.horizontalHeader().sectionClicked.connect(self.sortTable)
         # self.up_button.clicked.connect(partial(self.move_current_rows, self.UP))
@@ -178,8 +178,8 @@ class Ui(QMainWindow, main_window):
         self.tableView1.verticalHeader().setSectionsMovable(True)
         self.tableView1.verticalHeader().setDragEnabled(True)
         self.tableView1.verticalHeader().setDragDropMode(QAbstractItemView.InternalMove)
-        for i in (1, 2):
-            self.convert_to_box.model().item(i).setEnabled(False)
+        # for i in (1, 2):
+        #     self.convert_to_box.model().item(i).setEnabled(False)
 
         self.figure = Figure()
         # this is the Canvas Widget that displays the `figure`
@@ -258,13 +258,13 @@ class Ui(QMainWindow, main_window):
         isTBPlate = self.addTBPL.isChecked()
         isLRPlate = self.addLRPL.isChecked()
         isWebPlate = self.addWebPL.isChecked()
-        useAs = self.useAsDict[self.useAsBox.currentText()]
-        ductility = self.ductilityDict[self.ductilityBox.currentText()]
+        useAs = self.useAsDict[self.useAsList.currentItem().text()]
+        ductility = self.ductilityDict[self.ductilityList.currentItem().text()]
         isDouble = self.doubleDict[self.doubleBox.currentText()][0]
         isSouble = self.doubleDict[self.doubleBox.currentText()][1]
         sectionSize = int(re.sub("[^0-9]", "", self.sectionsBox.currentText()))
         sectionType = self.currentSectionType()
-        convert_type = self.equivalent_type_box.currentText()
+        convert_type = self.equivalent_type_list.currentItem().text()
         return [lh, th, lv, tv, lw, tw, dist, isTBPlate, isLRPlate, isWebPlate, useAs, ductility, isDouble, isSouble, sectionSize, sectionType, convert_type]
 
     def acceptOne(self):

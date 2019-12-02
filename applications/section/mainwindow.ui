@@ -796,63 +796,6 @@
                 </layout>
                </widget>
               </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout">
-              <item>
-               <widget class="QPushButton" name="calculate_Button">
-                <property name="enabled">
-                 <bool>true</bool>
-                </property>
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>135</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="font">
-                 <font>
-                  <family>Noto Sans</family>
-                  <pointsize>10</pointsize>
-                  <weight>50</weight>
-                  <italic>true</italic>
-                  <bold>false</bold>
-                 </font>
-                </property>
-                <property name="toolTip">
-                 <string>add section</string>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true">font: italic 10pt &quot;Noto Sans&quot;;</string>
-                </property>
-                <property name="text">
-                 <string/>
-                </property>
-                <property name="icon">
-                 <iconset resource="resource.qrc">
-                  <normaloff>:/section/images/run.svg</normaloff>:/section/images/run.svg</iconset>
-                </property>
-                <property name="iconSize">
-                 <size>
-                  <width>33</width>
-                  <height>135</height>
-                 </size>
-                </property>
-                <property name="shortcut">
-                 <string>Ctrl+R</string>
-                </property>
-                <property name="flat">
-                 <bool>false</bool>
-                </property>
-               </widget>
-              </item>
               <item>
                <widget class="QGroupBox" name="groupBox_4">
                 <property name="title">
@@ -888,24 +831,100 @@
                    </property>
                   </widget>
                  </item>
+                 <item>
+                  <widget class="QPushButton" name="calculate_Button">
+                   <property name="enabled">
+                    <bool>true</bool>
+                   </property>
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>135</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <family>Noto Sans</family>
+                     <pointsize>10</pointsize>
+                     <weight>50</weight>
+                     <italic>true</italic>
+                     <bold>false</bold>
+                    </font>
+                   </property>
+                   <property name="toolTip">
+                    <string>add section</string>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">font: italic 10pt &quot;Noto Sans&quot;;</string>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="icon">
+                    <iconset resource="resource.qrc">
+                     <normaloff>:/section/images/run.svg</normaloff>:/section/images/run.svg</iconset>
+                   </property>
+                   <property name="iconSize">
+                    <size>
+                     <width>33</width>
+                     <height>135</height>
+                    </size>
+                   </property>
+                   <property name="shortcut">
+                    <string>Ctrl+R</string>
+                   </property>
+                   <property name="flat">
+                    <bool>false</bool>
+                   </property>
+                  </widget>
+                 </item>
                 </layout>
                </widget>
               </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout">
               <item>
                <widget class="QGroupBox" name="groupBox_5">
                 <property name="title">
                  <string>Equivalent Section</string>
                 </property>
                 <layout class="QGridLayout" name="gridLayout_3">
-                 <item row="2" column="0">
-                  <widget class="QLabel" name="label_4">
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="label_2">
                    <property name="text">
-                    <string>Type</string>
+                    <string>Use as</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="0" column="1">
-                  <widget class="QComboBox" name="useAsBox">
+                 <item row="1" column="1">
+                  <widget class="QLabel" name="label_3">
+                   <property name="text">
+                    <string>Ductility</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="0">
+                  <widget class="QListWidget" name="useAsList">
+                   <property name="verticalScrollBarPolicy">
+                    <enum>Qt::ScrollBarAsNeeded</enum>
+                   </property>
+                   <property name="sizeAdjustPolicy">
+                    <enum>QAbstractScrollArea::AdjustIgnored</enum>
+                   </property>
+                   <property name="selectionMode">
+                    <enum>QAbstractItemView::ExtendedSelection</enum>
+                   </property>
+                   <property name="currentRow">
+                    <number>0</number>
+                   </property>
                    <item>
                     <property name="text">
                      <string>Beam</string>
@@ -935,15 +954,20 @@
                    </item>
                   </widget>
                  </item>
-                 <item row="0" column="0">
-                  <widget class="QLabel" name="label_2">
-                   <property name="text">
-                    <string>Use as</string>
+                 <item row="2" column="2">
+                  <widget class="QListWidget" name="equivalent_type_list">
+                   <property name="verticalScrollBarPolicy">
+                    <enum>Qt::ScrollBarAsNeeded</enum>
                    </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="1">
-                  <widget class="QComboBox" name="equivalent_type_box">
+                   <property name="sizeAdjustPolicy">
+                    <enum>QAbstractScrollArea::AdjustIgnored</enum>
+                   </property>
+                   <property name="selectionMode">
+                    <enum>QAbstractItemView::ExtendedSelection</enum>
+                   </property>
+                   <property name="currentRow">
+                    <number>0</number>
+                   </property>
                    <item>
                     <property name="text">
                      <string>Compaction</string>
@@ -964,15 +988,76 @@
                    </item>
                   </widget>
                  </item>
-                 <item row="1" column="0">
-                  <widget class="QLabel" name="label_3">
+                 <item row="1" column="3">
+                  <widget class="QLabel" name="label_5">
                    <property name="text">
-                    <string>Ductility</string>
+                    <string>Convert to</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="1" column="1">
-                  <widget class="QComboBox" name="ductilityBox">
+                 <item row="2" column="3">
+                  <widget class="QListWidget" name="equivalent_type_list_2">
+                   <property name="verticalScrollBarPolicy">
+                    <enum>Qt::ScrollBarAsNeeded</enum>
+                   </property>
+                   <property name="sizeAdjustPolicy">
+                    <enum>QAbstractScrollArea::AdjustIgnored</enum>
+                   </property>
+                   <property name="selectionMode">
+                    <enum>QAbstractItemView::ExtendedSelection</enum>
+                   </property>
+                   <property name="currentRow">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <property name="text">
+                     <string>IPE</string>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="resource_1.qrc">
+                      <normaloff>:/section/images/IPE.png</normaloff>:/section/images/IPE.png</iconset>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>BOX</string>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="resource_1.qrc">
+                      <normaloff>:/section/images/BOX.png</normaloff>:/section/images/BOX.png</iconset>
+                    </property>
+                    <property name="flags">
+                     <set>ItemIsSelectable|ItemIsDragEnabled|ItemIsUserCheckable</set>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>2UNP</string>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="resource_1.qrc">
+                      <normaloff>:/section/images/2UNP.svg</normaloff>:/section/images/2UNP.svg</iconset>
+                    </property>
+                    <property name="flags">
+                     <set>ItemIsSelectable|ItemIsDragEnabled|ItemIsUserCheckable</set>
+                    </property>
+                   </item>
+                  </widget>
+                 </item>
+                 <item row="2" column="1">
+                  <widget class="QListWidget" name="ductilityList">
+                   <property name="verticalScrollBarPolicy">
+                    <enum>Qt::ScrollBarAsNeeded</enum>
+                   </property>
+                   <property name="sizeAdjustPolicy">
+                    <enum>QAbstractScrollArea::AdjustIgnored</enum>
+                   </property>
+                   <property name="selectionMode">
+                    <enum>QAbstractItemView::ExtendedSelection</enum>
+                   </property>
+                   <property name="currentRow">
+                    <number>0</number>
+                   </property>
                    <item>
                     <property name="text">
                      <string>Medium</string>
@@ -993,42 +1078,11 @@
                    </item>
                   </widget>
                  </item>
-                 <item row="3" column="0">
-                  <widget class="QLabel" name="label_5">
+                 <item row="1" column="2">
+                  <widget class="QLabel" name="label_4">
                    <property name="text">
-                    <string>Convert to</string>
+                    <string>Type</string>
                    </property>
-                  </widget>
-                 </item>
-                 <item row="3" column="1">
-                  <widget class="QComboBox" name="convert_to_box">
-                   <item>
-                    <property name="text">
-                     <string>IPE</string>
-                    </property>
-                    <property name="icon">
-                     <iconset resource="resource_1.qrc">
-                      <normaloff>:/section/images/IPE.png</normaloff>:/section/images/IPE.png</iconset>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>BOX</string>
-                    </property>
-                    <property name="icon">
-                     <iconset resource="resource_1.qrc">
-                      <normaloff>:/section/images/BOX.png</normaloff>:/section/images/BOX.png</iconset>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>2UNP</string>
-                    </property>
-                    <property name="icon">
-                     <iconset resource="resource_1.qrc">
-                      <normaloff>:/section/images/2UNP.svg</normaloff>:/section/images/2UNP.svg</iconset>
-                    </property>
-                   </item>
                   </widget>
                  </item>
                 </layout>
