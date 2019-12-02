@@ -1003,7 +1003,7 @@ class SectionTableModel(QAbstractTableModel):
             elif column == CW:
                 return '{0:.0f}'.format(section.cw / 1e6)
             elif column == J:
-                return '{0:.0f}'.format(section.J)
+                return '{0:.0f}'.format(section.J / 10000)
             # elif column == SLENDER:
                 # return '{0:.1f}'.format(section.slender))
             elif column == V2:
@@ -1092,7 +1092,7 @@ class SectionTableModel(QAbstractTableModel):
             elif section == CW:
                 return "cw (cm6)"
             elif section == J:
-                return "J (mm4)"
+                return "J (cm4)"
             elif section == SLENDER:
                 return "Slender"
             elif section == V2:
