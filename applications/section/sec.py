@@ -17,9 +17,9 @@ from pre.sections import Geometry, ISection, PfcSection, RectangularSection, Mer
 from analysis.cross_section import CrossSection, SectionProperties
 from analysis import solver
 
-column_count = 23
+column_count = 18
 NAME, AREA, ASX, ASY, IX, IY, ZX, ZY, \
-    Sx, Sy, RX, RY, CW, J, BF, TF, D, TW, XM, YM, V2, V3, SLENDER = range(column_count)
+    Sx, Sy, RX, RY, CW, J, BF, TF, D, TW = range(column_count)
 
 LH, TH, LV, TV, LW, _TW, DIST, ISTBPLATE, ISLRPLATE, ISWEBPLATE, USEAS, DUCTILITY, ISDOUBLE, \
     ISSOUBLE, SECTIONSIZE, SECTIONTYPE, CONVERT_TYPE = range(17)
@@ -90,6 +90,7 @@ class Section(object):
             self.bf_equivalentI, self.tf_equivalentI, self.d_equivalentI, self.tw_equivalentI = \
                 self.equivalent_section_to_I_with_shear_correction()
         self.components = []
+        self.conversions = {}
 
     def equivalent_section_to_I_with_shear_correction(self):
         BF = self.xmax
@@ -162,9 +163,6 @@ class Section(object):
                       self.Ry, self.Zx, self.Zy, self.J, self.cw, secType)
         return s
 
-    def __lt__(self, other):
-        return self.name.lower() < other.name.lower()
-
     @staticmethod
     def exportXml(fname, sections):
         fh = open(fname, 'w')
@@ -224,7 +222,7 @@ class Section(object):
             IPES['CW'][row] = section.cw
         IPES.to_excel(fname, index=False)
 
-    def equivalentSectionI(self):
+    def equivalentSectionI(self, useAs=None, ductility=None):
 
         if self.baseSection.type in ('UNP', 'UPA'):
             bf = self.baseSection.bf * 2
@@ -243,8 +241,10 @@ class Section(object):
                 (self.LRPlate.tf + 2 * self.TBPlate.tf), 2 * self.LRPlate.bf
 
         composite = str(self.composite)
-        useAs = str(self.useAs)
-        ductility = str(self.ductility)
+        if not useAs:
+            useAs = str(self.useAs)
+        if not ductility:
+            ductility = str(self.ductility)
         xm = self.baseSection.xm
 
         tf = self.baseSection.tf
@@ -921,6 +921,17 @@ def createSection(sectionProp):
     if isWebPlate:
         p3 = Plate(sectionProp[_TW], sectionProp[LW])
         section = AddPlateWeb(section, p3)
+    for use_as in ('B', 'C'):
+        for ductil in ('M', 'H'):
+            name = '{}{}{}'.format(section.name, use_as, ductil)
+            section.conversions[name] = section.equivalentSectionI(
+                useAs=use_as, ductility=ductil)
+    # shear section
+    name = f'{section.name}_S'
+    section.conversions[name] = section.equivalent_section_to_I_with_shear_correction()
+
+    # if use_as == useAs and ductil == ductility:
+
     if isSouble or isDouble or isTBPlate or isLRPlate or isWebPlate:
         # section.equivalentSectionI()
         section.name = '{}{}{}'.format(section.name, useAs, ductility)
@@ -928,6 +939,33 @@ def createSection(sectionProp):
     section.prop = sectionProp
 
     return section
+
+
+class SectionProperties:
+    def __init__(self, section, name):
+        self.name = name
+        self.area = section.area
+        self.ASx = section.ASx
+        self.ASy = section.ASy
+        self.Ix = section.Ix
+        self.Iy = section.Iy
+        self.Zx = section.Zx
+        self.Zy = section.Zy
+        self.cw = section.cw
+        self.J = section.J
+        self.xm = section.xm
+        self.ym = section.ym
+        self.Rx = section.Rx
+        self.Ry = section.Ry
+        self.Sx = section.Sx
+        self.Sy = section.Sy
+        self.xmax = section.xmax
+        self.ymax = section.ymax
+        self.baseSection_name = section.baseSection.name
+        self.bf_equivalentI, self.tf_equivalentI, self.d_equivalentI, self.tw_equivalentI = section.conversions[name]
+
+    def __lt__(self, other):
+        return self.name.lower() < other.name.lower()
 
 
 class SectionTableModel(QAbstractTableModel):
@@ -965,7 +1003,7 @@ class SectionTableModel(QAbstractTableModel):
                 not (0 <= index.row() < len(self.sections))):
             return
         section = self.sections[index.row()]
-        baseSection = section.baseSection
+        baseSection_name = section.baseSection_name
         column = index.column()
         if role == Qt.DisplayRole:
             if column == NAME:
@@ -1006,40 +1044,40 @@ class SectionTableModel(QAbstractTableModel):
                 return '{0:.0f}'.format(section.J / 10000)
             # elif column == SLENDER:
                 # return '{0:.1f}'.format(section.slender))
-            elif column == V2:
-                return '{0:.1f}'.format(section.V2)
-            elif column == V3:
-                return '{0:.1f}'.format(section.V3)
-            elif column == XM:
-                return '{0:.1f}'.format(section.xm / 10.)
-            elif column == YM:
-                return '{0:.1f}'.format(section.ym / 10.)
+            # elif column == V2:
+            #     return '{0:.1f}'.format(section.V2)
+            # elif column == V3:
+            #     return '{0:.1f}'.format(section.V3)
+            # elif column == XM:
+            #     return '{0:.1f}'.format(section.xm / 10.)
+            # elif column == YM:
+            #     return '{0:.1f}'.format(section.ym / 10.)
 
         elif role == Qt.TextAlignmentRole:
             if column == NAME:
                 return int(Qt.AlignLeft | Qt.AlignVCenter)
             return int(Qt.AlignCenter | Qt.AlignVCenter)
         elif role == Qt.BackgroundColorRole:
-            if column == SLENDER:
-                if section.slender == u'لاغر':
-                    return QColor(250, 40, 0)
-                else:
-                    return QColor(100, 250, 0)
-            elif '14' in baseSection.name:
+            # if column == SLENDER:
+            #     if section.slender == u'لاغر':
+            #         return QColor(250, 40, 0)
+            #     else:
+            #         return QColor(100, 250, 0)
+            if '14' in baseSection_name:
                 return QColor(150, 200, 150)
-            elif '16' in baseSection.name:
+            elif '16' in baseSection_name:
                 return QColor(150, 200, 250)
-            elif '18' in baseSection.name:
+            elif '18' in baseSection_name:
                 return QColor(250, 200, 250)
-            elif '20' in baseSection.name:
+            elif '20' in baseSection_name:
                 return QColor(250, 250, 130)
-            elif '22' in baseSection.name:
+            elif '22' in baseSection_name:
                 return QColor(10, 250, 250)
-            elif '24' in baseSection.name:
+            elif '24' in baseSection_name:
                 return QColor(210, 230, 230)
-            elif '27' in baseSection.name:
+            elif '27' in baseSection_name:
                 return QColor(110, 230, 230)
-            elif '30' in baseSection.name:
+            elif '30' in baseSection_name:
                 return QColor(210, 130, 230)
             else:
                 return QColor(150, 150, 250)
@@ -1093,16 +1131,16 @@ class SectionTableModel(QAbstractTableModel):
                 return "cw (cm6)"
             elif section == J:
                 return "J (cm4)"
-            elif section == SLENDER:
-                return "Slender"
-            elif section == V2:
-                return "V2 coef."
-            elif section == V3:
-                return "V3 coef."
-            elif section == XM:
-                return "xm (cm)"
-            elif section == YM:
-                return "ym (cm)"
+            # elif section == SLENDER:
+            #     return "Slender"
+            # elif section == V2:
+            #     return "V2 coef."
+            # elif section == V3:
+            #     return "V3 coef."
+            # elif section == XM:
+            #     return "xm (cm)"
+            # elif section == YM:
+            #     return "ym (cm)"
 
         return int(section + 1)
 
@@ -1117,7 +1155,8 @@ class SectionTableModel(QAbstractTableModel):
             section = self.sections[index.row()]
             column = index.column()
             if column == NAME:
-                section.name = value
+                if value != '':
+                    section.name = value
             try:
                 value = float(value)
                 if value > 0:
@@ -1147,15 +1186,15 @@ class SectionTableModel(QAbstractTableModel):
                         section.cw = value
                     elif column == J:
                         section.J = value
-                    elif column == XM:
-                        section.xm = value
-                    elif column == YM:
-                        section.ym = value
+                    # elif column == XM:
+                    #     section.xm = value
+                    # elif column == YM:
+                    #     section.ym = value
 
                     section.Rx = sqrt(section.Ix / section.area)
                     section.Ry = sqrt(section.Iy / section.area)
                     section.Sx = section.Ix / section.ym
-                    section.Sy = section.Iy / section.xm
+                    section.Sy = section.Iy / (section.xmax - section.xm)
             except ValueError:
                 pass
 

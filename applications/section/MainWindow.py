@@ -126,9 +126,9 @@ class Ui(QMainWindow, main_window):
                 QMessageBox.warning(self, "sections - Error", f"Failed to save: {err}")
 
     def sortTable(self, section):
-        if section == sec.AREA:
-            self.model1.sortByArea()
-        elif section == sec.NAME:
+        # if section == sec.AREA:
+        #     self.model1.sortByArea()
+        if section == sec.NAME:
             self.model1.sortByName()
         self.resizeColumns(self.tableView1)
 
@@ -268,15 +268,19 @@ class Ui(QMainWindow, main_window):
         return [lh, th, lv, tv, lw, tw, dist, isTBPlate, isLRPlate, isWebPlate, useAs, ductility, isDouble, isSouble, sectionSize, sectionType, convert_type]
 
     def acceptOne(self):
-        # section = self.currentSectionOne()
-        # if not section.name in self.model1.names:
         self.figure.clear()
         if self.currentSection.is_closed:
             self.currentSection.create_warping_section()
             self.plot_mesh()
             self.currentSection.j_func()
         self.model1.beginResetModel()
-        self.model1.sections.append(self.currentSection)
+        for name in self.currentSection.conversions.keys():
+            n = len(self.model1.names)
+            self.model1.names.add(name)
+            if len(self.model1.names) == n:
+                continue
+            new_section = sec.SectionProperties(self.currentSection, name)
+            self.model1.sections.append(new_section)
         self.model1.endResetModel()
         # del section
 
@@ -291,23 +295,28 @@ class Ui(QMainWindow, main_window):
         self.tableView1.edit(index)
 
     def removeSection(self):
-        indices = self.tableView1.selectionModel().selectedIndexes()
-        rows_number = set()
-        for i in indices:
-            rows_number.add(i.row())
-        if not indices:
+        indexes = [QPersistentModelIndex(index) for index in self.tableView1.selectionModel().selectedRows()]
+        if not indexes:
+            QMessageBox.warning(self, "sections - selection", f"you have to select entire row/rows, not only cell/cells.")
             return
-        first = sorted(indices)[0].row()
-        rows = len(rows_number)
         if (QMessageBox.question(self, "sections - Remove",
-                                 (f"Remove {rows} sections?"),
+                                 (f"Remove selected sections?"),
                                  QMessageBox.Yes | QMessageBox.No) ==
                 QMessageBox.No):
             return
-        self.model1.beginResetModel()
-        self.model1.removeRows(first, rows)
-        self.model1.endResetModel()
+
+        for index in indexes:
+            name = self.model1.data(self.model1.index(index.row(), sec.NAME))
+            self.model1.names.remove(name)
+            self.model1.removeRow(index.row())
+        print(self.model1.names)
         self.resizeColumns(self.tableView1)
+        self.model1.dirty = True
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Delete:
+            self.removeSection()
+        QMainWindow.keyPressEvent(self, event)
 
     def clearSectionOne(self):
         if self.model1.sections == []:

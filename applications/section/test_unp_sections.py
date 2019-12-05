@@ -145,7 +145,7 @@ class TestUnpSections(unittest.TestCase):
         self.assertAlmostEqual(self.UNP22_double_4sidePlate.bf, 80, places=1)
 
     def test_UNP22_bf_equivalent(self):
-        self.assertAlmostEqual(self.UNP22.bf_equivalentI, 80, places=1)
+        self.assertAlmostEqual(self.UNP22.bf_equivalentI, 160, places=1)
         self.assertAlmostEqual(self.UNP22_double.bf_equivalentI, 240, places=1)
         self.assertAlmostEqual(self.UNP22_double_TBPlate.bf_equivalentI, 240, places=1)
         self.assertAlmostEqual(self.UNP22_double_4sidePlate.bf_equivalentI, 264, places=1)
