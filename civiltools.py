@@ -8,6 +8,7 @@ from PyQt5.QtCore import Qt
 
 _appname = 'civiltools'
 _version = '3.0'
+_branch = 'v3'
 _civiltools_mainpackages = ['civiltools']
 civiltools_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, civiltools_path)
@@ -97,7 +98,7 @@ class FormWidget(QtWidgets.QWidget, main_window):
         g = git.cmd.Git(civiltools_path)
         msg = ''
         try:
-            msg = g.pull(env={'GIT_SSL_NO_VERIFY': '1'})
+            msg = g.pull('origin', _branch, env={'GIT_SSL_NO_VERIFY': '1'})
         except:
             QMessageBox.information(self, "update", "update takes some minutes, please be patient.")
             import shutil
@@ -108,12 +109,20 @@ class FormWidget(QtWidgets.QWidget, main_window):
             civiltools_temp_dir = os.path.join(default_tmp_dir, 'civiltools' + name)
             os.mkdir(civiltools_temp_dir)
             os.chdir(civiltools_temp_dir)
-            git.Git('.').clone("https://github.com/ebrahimraeyat/civilTools.git", env={'GIT_SSL_NO_VERIFY': '1'})
+            git.Git('.').clone("https://github.com/ebrahimraeyat/civilTools.git", branch=_branch, env={'GIT_SSL_NO_VERIFY': '1'})
             shutil.rmtree(civiltools_path, onerror=onerror)
             src_folder = os.path.join(civiltools_temp_dir, 'civilTools')
             shutil.copytree(src_folder, civiltools_path)
             os.chdir(civiltools_path)
             msg = 'update done successfully.'
+
+        if sys.platform == "win32":
+            if serial_number(serial):
+                result = g.execute(['git', 'checkout', _branch])
+            else:
+                result = g.execute(['git', 'checkout', 'master'])
+        else:
+            result = g.execute(['git', 'checkout', _branch])
 
         # os.chdir(civiltools_path + '/..')
         # pip_install = f'pip install --upgrade  --install-option="--prefix={civiltools_path}/.." git+https://github.com/ebrahimraeyat/civilTools.git'
