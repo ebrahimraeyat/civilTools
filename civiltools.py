@@ -122,6 +122,7 @@ class FormWidget(QtWidgets.QWidget, main_window):
             if not msg:
                 msg = 'error occured during update\nplease contact with @roknabadi'
 
+        g = Git(civiltools_path)
         if sys.platform == "win32":
             if serial_number(serial):
                 result = g.execute(['git', 'checkout', _branch])
