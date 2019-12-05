@@ -429,6 +429,7 @@ class Ui(QMainWindow, main_window):
             filename += '.dat'
         sections = {
             'sections': self.model1.sections,
+            'names': self.model1.names,
         }
         pickle.dump(sections, open(filename, "wb"))
         self.model1.dirty = False
@@ -441,6 +442,7 @@ class Ui(QMainWindow, main_window):
         sections = pickle.load(open(filename, "rb"))
         self.model1.beginResetModel()
         self.model1.sections = sections['sections']
+        self.model1.names = sections['names']
         self.model1.endResetModel()
         self.resizeColumns(self.tableView1)
 
