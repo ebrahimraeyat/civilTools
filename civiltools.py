@@ -115,7 +115,14 @@ class FormWidget(QtWidgets.QWidget, main_window):
             shutil.copytree(src_folder, civiltools_path)
             os.chdir(civiltools_path)
             msg = 'update done successfully.'
+        # os.chdir(civiltools_path + '/..')
+        # pip_install = f'pip install --upgrade  --install-option="--prefix={civiltools_path}/.." git+https://github.com/ebrahimraeyat/civilTools.git'
+        # subprocess.Popen([python_exe, '-m', pip_install])
+        else:
+            if not msg:
+                msg = 'error occured during update\nplease contact with @roknabadi'
 
+        g = Git(civiltools_path)
         if sys.platform == "win32":
             if serial_number(serial):
                 result = g.execute(['git', 'checkout', _branch])
@@ -123,13 +130,6 @@ class FormWidget(QtWidgets.QWidget, main_window):
                 result = g.execute(['git', 'checkout', 'master'])
         else:
             result = g.execute(['git', 'checkout', _branch])
-
-        # os.chdir(civiltools_path + '/..')
-        # pip_install = f'pip install --upgrade  --install-option="--prefix={civiltools_path}/.." git+https://github.com/ebrahimraeyat/civilTools.git'
-        # subprocess.Popen([python_exe, '-m', pip_install])
-        else:
-            if not msg:
-                msg = 'error occured during update\nplease contact with @roknabadi'
         # msg += '\n please restart the programm.'
         QtWidgets.QMessageBox.information(None, 'update', msg)
 
