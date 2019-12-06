@@ -93,8 +93,7 @@ class Ui(QMainWindow, main_window):
         # if not self.isMaximized() == True :
         qsettings.setValue("pos", self.pos())
         qsettings.setValue("size", self.size())
-        self.accept()
-        event.accept()
+        self.accept(event)
 
     def load_settings(self):
         qsettings = QSettings("civiltools", "section")
@@ -112,18 +111,24 @@ class Ui(QMainWindow, main_window):
             tableView.resizeColumnToContents(column)
 
     def reject(self):
-        self.accept()
+        self.accept(event)
 
-    def accept(self):
-        if (self.model1.dirty and
-            QMessageBox.question(self, "sections - Save?",
-                                 "Save unsaved changes?",
-                                 QMessageBox.Yes | QMessageBox.No) ==
-                QMessageBox.Yes):
+    def accept(self, event):
+        # if self.model1.dirty:
+        reply = QMessageBox.question(self, "sections - Save?",
+                                     "Save unsaved changes?",
+                                     QMessageBox.Yes | QMessageBox.Cancel | QMessageBox.No)
+        if reply == QMessageBox.Yes:
             try:
                 self.export_to_dat()
+                event.accept()
             except(IOError, err):
                 QMessageBox.warning(self, "sections - Error", f"Failed to save: {err}")
+        elif reply == QMessageBox.No:
+            event.accept()
+
+        else:
+            event.ignore()
 
     def sortTable(self, section):
         # if section == sec.AREA:
