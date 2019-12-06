@@ -160,6 +160,7 @@ class Ui(QMainWindow, main_window):
         self.model1 = sec.SectionTableModel("section.dat")
         self.tableView1.setLayoutDirection(Qt.LeftToRight)
         self.tableView1.setModel(self.model1)
+        self.tableView1.setItemDelegate(sec.SectionDelegate(self))
         self.clear_all_Button.clicked.connect(self.clearSectionOne)
         self.deleteSectionButton.clicked.connect(self.removeSection)
         self.saveToXml1Button.clicked.connect(self.saveToXml1)

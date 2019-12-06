@@ -7,6 +7,7 @@ from math import sqrt
 import copy
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
+from PyQt5.QtWidgets import QItemDelegate, QTextEdit, QLineEdit, QDoubleSpinBox
 abs_path = os.path.dirname(__file__)
 sys.path.insert(0, abs_path)
 import pandas as pd
@@ -277,7 +278,7 @@ class Section(object):
                 t2 = self.webPlate.bf
 
         parameters = slenderParameters[composite][useAs][ductility]
-        #BF = eval(parameters['BF'])
+        # BF = eval(parameters['BF'])
         BF = self.xmax
         tfCriteria = eval(parameters['tfCriteria'])
         if tfCriteria:
@@ -292,7 +293,7 @@ class Section(object):
             TW = eval(parameters['TW'][1])
 
         # if self.baseSection.type == 'UNP':
-            #TF = .5 * TF
+            # TF = .5 * TF
 
         return BF, TF, D, TW
 
@@ -320,16 +321,16 @@ class Section(object):
     #'''Return BF, TF, D, TW for equivalent I section to
     # correct calculation of AS2 and AS3 that etabs calculate
     # automatically and change user input for this parameters.'''
-    #ASx = self.ASx
-    #ASy = self.ASy
+    # ASx = self.ASx
+    # ASy = self.ASy
 
-    #FS = BF / (2 * TF)
-    #TF = sqrt((.6 * ASx) / FS)
-    #BF = FS * TF
-    #WS = (D - 2 * TF) / TW
-    #delta = TF ** 2 + 4 * (ASy * WS)
-    #D = (3 * TF + sqrt(delta)) / 2
-    #TW = (D - 2 * TF) / WS
+    # FS = BF / (2 * TF)
+    # TF = sqrt((.6 * ASx) / FS)
+    # BF = FS * TF
+    # WS = (D - 2 * TF) / TW
+    # delta = TF ** 2 + 4 * (ASy * WS)
+    # D = (3 * TF + sqrt(delta)) / 2
+    # TW = (D - 2 * TF) / WS
 
     # return BF, TF, D, TW
 
@@ -340,17 +341,17 @@ class Section(object):
         # FS = flange slender
         # WS = web slender'''
 
-        #FS = self.bf / (2 * self.tf)
-        #WS = (self.d - 2 * self.tf) / self.tw
-        #TF = sqrt((.25 * self.ASx) / FS)
-        #BF = 2 * FS * TF
-        #D = TF + sqrt(TF ** 2 + WS * self.ASy)
-        #TW = (D - 2 * TF) / WS
+        # FS = self.bf / (2 * self.tf)
+        # WS = (self.d - 2 * self.tf) / self.tw
+        # TF = sqrt((.25 * self.ASx) / FS)
+        # BF = 2 * FS * TF
+        # D = TF + sqrt(TF ** 2 + WS * self.ASy)
+        # TW = (D - 2 * TF) / WS
 
-        #self.bf = BF
-        #self.tf = TF
-        #self.d = D
-        #self.tw = TW
+        # self.bf = BF
+        # self.tf = TF
+        # self.d = D
+        # self.tw = TW
 
     def isEquivalenIpeSlender(self):
         '''This function gives a equivalent ipe section and
@@ -498,7 +499,7 @@ def AddPlateTB(section, plate):
     xmax = section.xmax
     # if not baseSection.type in ('UNP, UPA'):
     #     xmax = max(xmax, plate.bf)
-    #xmax = max(section.xmax, plate.xmax)
+    # xmax = max(section.xmax, plate.xmax)
     ymax = section.ymax + 2 * plate.ymax
     xm = xmax / 2
     ym = ymax / 2
@@ -1232,6 +1233,37 @@ class SectionTableModel(QAbstractTableModel):
     #     self.sections = new_order
     #     print("BEFORE endMoveRows in edit_sequence_list.Model, %s" % self)
     #     self.endMoveRows()
+
+
+class SectionDelegate(QItemDelegate):
+    def __init__(self, parent=None):
+        super(SectionDelegate, self).__init__(parent)
+
+    def createEditor(self, parent, option, index):
+        if index.column() == NAME:
+            editor = QLineEdit(parent)
+            editor.returnPressed.connect(self.commitAndCloseEditor)
+            return editor
+        else:
+            # spinbox = QDoubleSpinBox(parent)
+            # return spinbox
+            return QItemDelegate.createEditor(self, parent, option,
+                                              index)
+
+    def setEditorData(self, editor, index):
+        text = index.model().data(index, Qt.DisplayRole)
+        if index.column() == NAME:
+            editor.setText(text)
+
+        else:
+            # editor.setValue(float(text))
+            QItemDelegate.setEditorData(self, editor, index)
+
+    def commitAndCloseEditor(self):
+        editor = self.sender()
+        if isinstance(editor, (QTextEdit, QLineEdit)):
+            self.commitData.emit(editor)
+            self.closeEditor.emit(editor)
 
 
 if __name__ == '__main__':
