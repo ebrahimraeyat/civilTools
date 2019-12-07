@@ -213,18 +213,23 @@ class Ui(QMainWindow, main_window):
                 self.doubleBox.model().item(i).setEnabled(False)
             else:
                 self.doubleBox.model().item(i).setEnabled(True)
-        self.doubleBox.blockSignals(False)
         if len(items) >= index + 1:
             self.doubleBox.setCurrentIndex(index)
         else:
             self.doubleBox.setCurrentIndex(0)
-
+        self.doubleBox.blockSignals(False)
         if sectionType in ('UNP', 'BOX', 'UPA'):
+            self.addWebPL.blockSignals(True)
             self.addWebPL.setChecked(False)
+            self.addWebPL.blockSignals(False)
             self.frame_web.setEnabled(False)
             if sectionType == 'BOX':
+                self.addLRPL.blockSignals(True)
+                self.addTBPL.blockSignals(True)
                 self.addLRPL.setChecked(True)
                 self.addTBPL.setChecked(True)
+                self.addLRPL.blockSignals(False)
+                self.addTBPL.blockSignals(False)
                 self.updateSectionShape()
 
         elif sectionType in ('IPE', 'CPE'):
