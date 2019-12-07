@@ -179,7 +179,7 @@ class Section(object):
                  '      <FORCE_UNITS>kgf</FORCE_UNITS>\n'
                  '  </CONTROL>\n\n')
         for section in sections:
-            fh.write(section.__str__())
+            fh.write(section.xml)
         fh.write('\n</PROPERTY_FILE>')
         return True, "Exported section properties to "    # "%s" % (QFileInfo(fname).fileName())
 
@@ -964,6 +964,8 @@ class SectionProperties:
         self.ymax = section.ymax
         self.baseSection_name = section.baseSection.name
         self.bf_equivalentI, self.tf_equivalentI, self.d_equivalentI, self.tw_equivalentI = section.conversions[name]
+        self.xml = section.__str__()
+        self.autocadScrText = section.autocadScrText
 
     def __lt__(self, other):
         return self.name.lower() < other.name.lower()
