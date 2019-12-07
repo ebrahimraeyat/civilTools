@@ -159,6 +159,7 @@ class PlotSectionAndEqSection(object):
         a = np.array(xs)
         b = np.array(ys)
         finitecurve = pg.PlotDataItem(a, b, connect="finite", pen=pen)
+        self.add_pline_to_script_file(a, b)
         return finitecurve
 
     def drawPlate(self, pl, cp, color='b', width=2):

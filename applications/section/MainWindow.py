@@ -320,7 +320,6 @@ class Ui(QMainWindow, main_window):
             name = self.model1.data(self.model1.index(index.row(), sec.NAME))
             self.model1.names.remove(name)
             self.model1.removeRow(index.row())
-        print(self.model1.names)
         self.resizeColumns(self.tableView1)
         self.model1.dirty = True
 
