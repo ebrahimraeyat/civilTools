@@ -1086,7 +1086,7 @@ class SectionTableModel(QAbstractTableModel):
             #     return QColor(150, 150, 250)
         # elif role == Qt.TextColorRole:
             # if column == SLENDER:
-                # return Qt.red)
+            # return Qt.red)
 
         return
 
@@ -1164,31 +1164,31 @@ class SectionTableModel(QAbstractTableModel):
                 value = float(value)
                 if value > 0:
                     if column == AREA:
-                        section.area = value
+                        section.area = value * 100
                     elif column == ASX:
-                        section.ASx = value
+                        section.ASx = value * 100
                     elif column == ASY:
-                        section.ASy = value
+                        section.ASy = value * 100
                     elif column == IX:
-                        section.Ix = value
+                        section.Ix = value * 10000
                     elif column == IY:
-                        section.Iy = value
+                        section.Iy = value * 10000
                     elif column == ZX:
-                        section.Zx = value
+                        section.Zx = value * 1000
                     elif column == ZY:
-                        section.Zy = value
+                        section.Zy = value * 1000
                     elif column == BF:
-                        section.bf_equivalentI = value
+                        section.bf_equivalentI = value * 10
                     elif column == TF:
-                        section.tf_equivalentI = value
+                        section.tf_equivalentI = value * 10
                     elif column == D:
-                        section.d_equivalentI = value
+                        section.d_equivalentI = value * 10
                     elif column == TW:
-                        section.tw_equivalentI = value
+                        section.tw_equivalentI = value * 10
                     elif column == CW:
-                        section.cw = value
+                        section.cw = value * 1e6
                     elif column == J:
-                        section.J = value
+                        section.J = value * 10000
                     # elif column == XM:
                     #     section.xm = value
                     # elif column == YM:
