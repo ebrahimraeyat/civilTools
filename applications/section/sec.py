@@ -930,6 +930,7 @@ def createSection(sectionProp):
     # shear section
     name = f'{section.name}_S'
     section.conversions[name] = section.equivalent_section_to_I_with_shear_correction()
+    section.shear_name = name
 
     # if use_as == useAs and ductil == ductility:
 
@@ -962,6 +963,7 @@ class SectionProperties:
         self.Sy = section.Sy
         self.xmax = section.xmax
         self.ymax = section.ymax
+        self.shear_name = section.shear_name
         self.baseSection_name = section.baseSection.name
         self.bf_equivalentI, self.tf_equivalentI, self.d_equivalentI, self.tw_equivalentI = section.conversions[name]
         self.xml = section.__str__()
@@ -1006,7 +1008,7 @@ class SectionTableModel(QAbstractTableModel):
                 not (0 <= index.row() < len(self.sections))):
             return
         section = self.sections[index.row()]
-        # baseSection_name = section.baseSection_name
+        baseSection_name = section.baseSection_name
         column = index.column()
         if role == Qt.DisplayRole:
             if column == NAME:
@@ -1060,30 +1062,30 @@ class SectionTableModel(QAbstractTableModel):
             if column == NAME:
                 return int(Qt.AlignLeft | Qt.AlignVCenter)
             return int(Qt.AlignCenter | Qt.AlignVCenter)
-        # elif role == Qt.BackgroundColorRole:
+        elif role == Qt.BackgroundColorRole:
             # if column == SLENDER:
             #     if section.slender == u'لاغر':
             #         return QColor(250, 40, 0)
             #     else:
             #         return QColor(100, 250, 0)
-            # if '14' in baseSection_name:
-            #     return QColor(150, 200, 150)
-            # elif '16' in baseSection_name:
-            #     return QColor(150, 200, 250)
-            # elif '18' in baseSection_name:
-            #     return QColor(250, 200, 250)
-            # elif '20' in baseSection_name:
-            #     return QColor(250, 250, 130)
-            # elif '22' in baseSection_name:
-            #     return QColor(10, 250, 250)
-            # elif '24' in baseSection_name:
-            #     return QColor(210, 230, 230)
-            # elif '27' in baseSection_name:
-            #     return QColor(110, 230, 230)
-            # elif '30' in baseSection_name:
-            #     return QColor(210, 130, 230)
-            # else:
-            #     return QColor(150, 150, 250)
+            if '14' in baseSection_name:
+                return QColor(150, 200, 150)
+            elif '16' in baseSection_name:
+                return QColor(150, 200, 250)
+            elif '18' in baseSection_name:
+                return QColor(250, 200, 250)
+            elif '20' in baseSection_name:
+                return QColor(250, 250, 130)
+            elif '22' in baseSection_name:
+                return QColor(10, 250, 250)
+            elif '24' in baseSection_name:
+                return QColor(210, 230, 230)
+            elif '27' in baseSection_name:
+                return QColor(110, 230, 230)
+            elif '30' in baseSection_name:
+                return QColor(210, 130, 230)
+            else:
+                return QColor(150, 150, 250)
         # elif role == Qt.TextColorRole:
             # if column == SLENDER:
             # return Qt.red)

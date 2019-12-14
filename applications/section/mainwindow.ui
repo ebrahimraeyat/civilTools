@@ -951,6 +951,9 @@
                      <iconset resource="resource_1.qrc">
                       <normaloff>:/section/images/brace.svg</normaloff>:/section/images/brace.svg</iconset>
                     </property>
+                    <property name="flags">
+                     <set>ItemIsDragEnabled|ItemIsUserCheckable</set>
+                    </property>
                    </item>
                   </widget>
                  </item>
@@ -984,6 +987,9 @@
                     <property name="icon">
                      <iconset resource="resource_1.qrc">
                       <normaloff>:/section/images/As.svg</normaloff>:/section/images/As.svg</iconset>
+                    </property>
+                    <property name="flags">
+                     <set>ItemIsDragEnabled|ItemIsUserCheckable</set>
                     </property>
                    </item>
                   </widget>
@@ -1027,7 +1033,7 @@
                       <normaloff>:/section/images/BOX.png</normaloff>:/section/images/BOX.png</iconset>
                     </property>
                     <property name="flags">
-                     <set>ItemIsSelectable|ItemIsDragEnabled|ItemIsUserCheckable</set>
+                     <set>ItemIsDragEnabled|ItemIsUserCheckable</set>
                     </property>
                    </item>
                    <item>
@@ -1039,7 +1045,7 @@
                       <normaloff>:/section/images/2UNP.svg</normaloff>:/section/images/2UNP.svg</iconset>
                     </property>
                     <property name="flags">
-                     <set>ItemIsSelectable|ItemIsDragEnabled|ItemIsUserCheckable</set>
+                     <set>ItemIsDragEnabled|ItemIsUserCheckable</set>
                     </property>
                    </item>
                   </widget>

@@ -6,6 +6,7 @@ import os
 import copy
 import pickle
 from functools import partial
+import itertools
 abs_path = os.path.dirname(__file__)
 sys.path.insert(0, abs_path)
 from PyQt5.QtCore import *
@@ -280,12 +281,18 @@ class Ui(QMainWindow, main_window):
 
     def acceptOne(self):
         self.figure.clear()
-        if self.currentSection.is_closed:
-            self.currentSection.create_warping_section()
-            self.plot_mesh()
-            self.currentSection.j_func()
+        if not self.j_calculated():
+            if self.currentSection.is_closed and self.currentSection.J == 0:
+                self.currentSection.create_warping_section()
+                self.plot_mesh()
+                self.currentSection.j_func()
+        ductilities = [self.ductilityDict[item.text()] for item in self.ductilityList.selectedItems()]
+        useAss = [self.useAsDict[item.text()] for item in self.useAsList.selectedItems()]
+        base_name = self.base_name()
         self.model1.beginResetModel()
-        for name in self.currentSection.conversions.keys():
+        states = [f'{state[0]}{state[1]}' for state in itertools.product(useAss, ductilities)]
+        for state in states:
+            name = f'{base_name}{state}'
             n = len(self.model1.names)
             self.model1.names.add(name)
             if len(self.model1.names) == n:
@@ -297,6 +304,20 @@ class Ui(QMainWindow, main_window):
 
         self.resizeColumns(self.tableView1)
         self.model1.dirty = True
+
+    def base_name(self):
+        shear_name = self.currentSection.shear_name
+        return shear_name[:-2]
+
+    def j_calculated(self):
+        for section in self.model1.sections:
+            if section.shear_name == self.currentSection.shear_name:
+                if section.J != 0:
+                    self.currentSection.J = section.J
+                    return True
+                else:
+                    return False
+        return False
 
     def addSection(self):
         row = self.model1.rowCount()
