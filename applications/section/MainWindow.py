@@ -374,14 +374,21 @@ class Ui(QMainWindow, main_window):
 
     def convert_all_section_to_shear(self):
         self.model1.beginResetModel()
-        sections = copy.deepcopy(self.model1.sections)
+        sections = self.model1.sections
         for section in sections:
-            if not section.convert_type == 'Shear':
-                prop = section.prop
-                prop[-1] = 'Shear'
-                shear_section = sec.createSection(prop)
-                shear_section.name += 'S'
-                self.model1.sections.append(shear_section)
+            names = self.model1.names
+            name = section.shear_name
+            if not name in names:
+                new_section = copy.deepcopy(section)
+                new_section.name = name
+                new_section.equivalent_dims()
+
+                # prop = section.prop
+                # prop[-1] = 'Shear'
+                # shear_section = sec.createSection(prop)
+                # shear_section.name += 'S'
+                self.model1.sections.append(new_section)
+                self.model1.names.add(name)
         self.model1.endResetModel()
 
     # def move_current_rows(self, direction=DOWN):
@@ -473,7 +480,7 @@ class Ui(QMainWindow, main_window):
         sections = pickle.load(open(filename, "rb"))
         self.model1.beginResetModel()
         self.model1.sections = sections['sections']
-        # self.model1.names = sections['names']
+        self.model1.names = sections['names']
         self.model1.endResetModel()
         self.resizeColumns(self.tableView1)
 

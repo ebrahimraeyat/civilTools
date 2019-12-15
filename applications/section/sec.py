@@ -965,12 +965,16 @@ class SectionProperties:
         self.ymax = section.ymax
         self.shear_name = section.shear_name
         self.baseSection_name = section.baseSection.name
-        self.bf_equivalentI, self.tf_equivalentI, self.d_equivalentI, self.tw_equivalentI = section.conversions[name]
+        self.conversions = section.conversions
+        self.equivalent_dims()
         self.xml = section.__str__()
         self.autocadScrText = section.autocadScrText
 
     def __lt__(self, other):
         return self.name.lower() < other.name.lower()
+
+    def equivalent_dims(self):
+        self.bf_equivalentI, self.tf_equivalentI, self.d_equivalentI, self.tw_equivalentI = self.conversions[self.name]
 
 
 class SectionTableModel(QAbstractTableModel):
