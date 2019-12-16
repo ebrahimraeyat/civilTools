@@ -683,7 +683,15 @@
         </item>
        </layout>
       </widget>
-      <widget class="QTableView" name="tableView1"/>
+      <widget class="QSplitter" name="splitter2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <widget class="QTableView" name="tableView1"/>
+       <widget class="QWidget" name="gridLayoutWidget">
+        <layout class="QGridLayout" name="main_section_draw"/>
+       </widget>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -741,7 +749,7 @@
     <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
-    <bool>true</bool>
+    <bool>false</bool>
    </attribute>
   </widget>
   <action name="action_Mesh_Shape">
@@ -839,7 +847,7 @@
      <normaloff>:/section/images/As.svg</normaloff>:/section/images/As.svg</iconset>
    </property>
    <property name="text">
-    <string>Convert to Shear</string>
+    <string>&amp;Convert to Shear</string>
    </property>
   </action>
   <action name="action_About">

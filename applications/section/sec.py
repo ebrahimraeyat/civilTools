@@ -969,6 +969,7 @@ class SectionProperties:
         self.equivalent_dims()
         self.xml = section.__str__()
         self.autocadScrText = section.autocadScrText
+        self.geometry_list = section.geometry_list
 
     def __lt__(self, other):
         return self.name.lower() < other.name.lower()

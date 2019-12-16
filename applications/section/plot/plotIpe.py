@@ -177,6 +177,31 @@ class PlotSectionAndEqSection(object):
         return finitecurve
 
 
+class PlotMainSection:
+    def __init__(self,
+                 geoms: list,
+                 ):
+        self.geoms = geoms
+
+    def plot(self):
+        win = pg.PlotWidget()
+        for geometry in self.geoms:
+            win.addItem(self.plot_item(geometry))
+        win.setAspectLocked()
+        return win
+
+    def plot_item(self, geometry, color='k'):
+        pen = pg.mkPen(color, width=2)
+        xs = [i[0] for i in geometry.points]
+        ys = [i[1] for i in geometry.points]
+        xs.append(xs[0])
+        ys.append(ys[0])
+        a = np.array(xs)
+        b = np.array(ys)
+        finitecurve = pg.PlotDataItem(a, b, connect="finite", pen=pen)
+        return finitecurve
+
+
 class Point(object):
 
     def __init__(self, x, y):

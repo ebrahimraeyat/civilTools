@@ -19,7 +19,7 @@ from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as Navigatio
 from matplotlib.figure import Figure
 
 import sec
-from plot.plotIpe import PlotSectionAndEqSection
+from plot.plotIpe import PlotSectionAndEqSection, PlotMainSection
 
 
 __url__ = "http://ebrahimraeyat.blog.ir"
@@ -114,6 +114,7 @@ class Ui(QMainWindow, main_window):
         # qsettings.setValue( "maximized", self.isMaximized() )
         qsettings.setValue("MainSplitter", self.mainSplitter.saveState())
         qsettings.setValue("splitter", self.splitter.saveState())
+        qsettings.setValue("splitter2", self.splitter2.saveState())
         # if not self.isMaximized() == True :
         qsettings.setValue("pos", self.pos())
         qsettings.setValue("size", self.size())
@@ -127,6 +128,7 @@ class Ui(QMainWindow, main_window):
         self.resize(qsettings.value("size", self.size()))
         self.mainSplitter.restoreState(qsettings.value("MainSplitter", self.mainSplitter.saveState()))
         self.splitter.restoreState(qsettings.value("splitter", self.splitter.saveState()))
+        self.splitter2.restoreState(qsettings.value("splitter2", self.splitter2.saveState()))
 
     def resizeColumns(self, tableView=None):
         for column in (sec.NAME, sec.AREA,
@@ -198,9 +200,12 @@ class Ui(QMainWindow, main_window):
         self.splitter.setStretchFactor(0, 1)
         self.splitter.setStretchFactor(1, 1)
         self.splitter.setStretchFactor(2, 1)
+        self.splitter2.setStretchFactor(0, 1)
+        self.splitter2.setStretchFactor(1, 1)
         self.tableView1.verticalHeader().setSectionsMovable(True)
         self.tableView1.verticalHeader().setDragEnabled(True)
         self.tableView1.verticalHeader().setDragDropMode(QAbstractItemView.InternalMove)
+        self.tableView1.clicked.connect(self.draw_main_section)
         # for i in (1, 2):
         #     self.convert_to_box.model().item(i).setEnabled(False)
 
@@ -209,6 +214,13 @@ class Ui(QMainWindow, main_window):
         # it takes the `figure` instance as a parameter to __init__
         self.canvas = FigureCanvas(self.figure)
         self.mesh_and_equal_layout.addWidget(self.canvas)
+
+    def draw_main_section(self):
+        row = self.tableView1.currentIndex().row()
+        section = self.model1.sections[row]
+        main_section_plot = PlotMainSection(section.geometry_list)
+        win = main_section_plot.plot()
+        self.main_section_draw.addWidget(win, 0, 0)
 
     def setSectionLabels(self):
         sectionType = self.currentSectionType()
