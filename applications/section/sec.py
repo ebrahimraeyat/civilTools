@@ -131,39 +131,6 @@ class Section(object):
         omega = solver.solve_direct(k, f_torsion)
         return omega, k
 
-    def __str__(self):
-        secType = self.sectionType[str(self.type)]
-        s = ('\n\n  <{}>\n'
-             '\t<LABEL>{}</LABEL>\n'
-             '\t<EDI_STD>{}</EDI_STD>\n'
-             '\t<DESIGNATION>G</DESIGNATION>\n'
-             '\t<D>{}</D>\n'
-             '\t<BF>{}</BF>\n'
-             '\t<TF>{}</TF>\n'
-             '\t<TW>{}</TW>\n'
-             '\t<FRAD>0</FRAD>\n'
-             '\t<A>{:.0f}</A>\n'
-             '\t<AS2>{:.0f}</AS2>\n'
-             '\t<AS3>{:.0f}</AS3>\n'
-             '\t<I33>{:.0f}</I33>\n'
-             '\t<I22>{:.0f}</I22>\n'
-             '\t<S33POS>{:.0f}</S33POS>\n'
-             '\t<S33NEG>{:.0f}</S33NEG>\n'
-             '\t<S22POS>{:.0f}</S22POS>\n'
-             '\t<S22NEG>{:.0f}</S22NEG>\n'
-             '\t<R33>{:.1f}</R33>\n'
-             '\t<R22>{:.1f}</R22>\n'
-             '\t<Z33>{:.0f}</Z33>\n'
-             '\t<Z22>{:.0f}</Z22>\n'
-             '\t<J>{:.0f}</J>\n'
-             '\t<CW>{:.0f}</CW>\n'
-             '  </{}>'
-             ).format(secType, self.name, self.name, self.d_equivalentI, self.bf_equivalentI, self.tf_equivalentI,
-                      self.tw_equivalentI, self.area, self.ASy, self.ASx, self.Ix, self.Iy,
-                      self.Sx, self.Sx, self.Sy, self.Sy, self.Rx,
-                      self.Ry, self.Zx, self.Zy, self.J, self.cw, secType)
-        return s
-
     @staticmethod
     def exportXml(fname, sections):
         fh = open(fname, 'w')
@@ -944,7 +911,15 @@ def createSection(sectionProp):
 
 
 class SectionProperties:
+    sectionType = {'IPE': 'STEEL_I_SECTION',
+                   'UNP': 'STEEL_I_SECTION',
+                   'CPE': 'STEEL_I_SECTION',
+                   'BOX': 'STEEL_I_SECTION',
+                   'UPA': 'STEEL_I_SECTION',
+                   }
+
     def __init__(self, section, name):
+        self.type = section.type
         self.name = name
         self.area = section.area
         self.ASx = section.ASx
@@ -967,7 +942,6 @@ class SectionProperties:
         self.baseSection_name = section.baseSection.name
         self.conversions = section.conversions
         self.equivalent_dims()
-        self.xml = section.__str__()
         self.autocadScrText = section.autocadScrText
         self.geometry_list = section.geometry_list
 
@@ -976,6 +950,40 @@ class SectionProperties:
 
     def equivalent_dims(self):
         self.bf_equivalentI, self.tf_equivalentI, self.d_equivalentI, self.tw_equivalentI = self.conversions[self.name]
+        self.xml = self.__str__()
+
+    def __str__(self):
+        secType = self.sectionType[str(self.type)]
+        s = ('\n\n  <{}>\n'
+             '\t<LABEL>{}</LABEL>\n'
+             '\t<EDI_STD>{}</EDI_STD>\n'
+             '\t<DESIGNATION>G</DESIGNATION>\n'
+             '\t<D>{}</D>\n'
+             '\t<BF>{}</BF>\n'
+             '\t<TF>{}</TF>\n'
+             '\t<TW>{}</TW>\n'
+             '\t<FRAD>0</FRAD>\n'
+             '\t<A>{:.0f}</A>\n'
+             '\t<AS2>{:.0f}</AS2>\n'
+             '\t<AS3>{:.0f}</AS3>\n'
+             '\t<I33>{:.0f}</I33>\n'
+             '\t<I22>{:.0f}</I22>\n'
+             '\t<S33POS>{:.0f}</S33POS>\n'
+             '\t<S33NEG>{:.0f}</S33NEG>\n'
+             '\t<S22POS>{:.0f}</S22POS>\n'
+             '\t<S22NEG>{:.0f}</S22NEG>\n'
+             '\t<R33>{:.1f}</R33>\n'
+             '\t<R22>{:.1f}</R22>\n'
+             '\t<Z33>{:.0f}</Z33>\n'
+             '\t<Z22>{:.0f}</Z22>\n'
+             '\t<J>{:.0f}</J>\n'
+             '\t<CW>{:.0f}</CW>\n'
+             '  </{}>'
+             ).format(secType, self.name, self.name, self.d_equivalentI, self.bf_equivalentI, self.tf_equivalentI,
+                      self.tw_equivalentI, self.area, self.ASy, self.ASx, self.Ix, self.Iy,
+                      self.Sx, self.Sx, self.Sy, self.Sy, self.Rx,
+                      self.Ry, self.Zx, self.Zy, self.J, self.cw, secType)
+        return s
 
 
 class SectionTableModel(QAbstractTableModel):
