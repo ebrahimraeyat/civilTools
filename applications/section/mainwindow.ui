@@ -799,7 +799,10 @@
      <normaloff>:/section/images/autocad.png</normaloff>:/section/images/autocad.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;Autocad (.scr)</string>
+    <string>&amp;Autocad (.dxf)</string>
+   </property>
+   <property name="iconText">
+    <string>Autocad (.dxf)</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>

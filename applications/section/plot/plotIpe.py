@@ -3,6 +3,7 @@
 import pyqtgraph as pg
 import numpy as np
 import os
+
 # from PyQt4.QtCore import QTextStream, QFile, QIODevice
 # Switch to using white background and black foreground
 pg.setConfigOption('background', 'w')
@@ -15,11 +16,12 @@ from pre.sections import ISection
 
 class PlotSectionAndEqSection(object):
 
-    def __init__(self, section, row=0):
+    def __init__(self, section, dwg, row=0):
         self.row = row
         self.autocadScrText = 'textsize{0}20{0}'.format(os.linesep)
         self.section = section
         self.geometry_list = section.geometry_list
+        self.block = dwg.blocks.new(name=self.section.uid)
 
     def plot(self):
         n = 0
@@ -109,7 +111,7 @@ class PlotSectionAndEqSection(object):
 
         win.addItem(ipeText)
         ipeText.setPos(baseSection.xm, ym)
-        self.add_text_to_script_file(self.section.name, Point(0, -80))
+        self.textItem(win, html=self.section.name, pos=Point(xmax, -70), anchor=(0, -.5), height=15)
 
         html = 'bf={:.0f},\t tf={:.1f} mm'.format(
             self.section.bf_equivalentI, self.section.tf_equivalentI)
@@ -135,7 +137,7 @@ class PlotSectionAndEqSection(object):
         # self.autocadScrText += '{}{}'.format('90' if isRotate else '0', os.linesep)
         self.autocadScrText += '{0}{1}'.format(text, os.linesep)
 
-    def textItem(self, win, html, pos=None, anchor=(0, 0), isFill=True, isRotate=False):
+    def textItem(self, win, html, pos=None, anchor=(0, 0), isFill=True, isRotate=False, height=10):
         if isFill:
             text = pg.TextItem(html=html, anchor=anchor, border='k', fill=(0, 0, 255, 100))
         else:
@@ -145,7 +147,15 @@ class PlotSectionAndEqSection(object):
         win.addItem(text)
         if pos:
             text.setPos(pos.x, pos.y)
-            pos = Point(pos.x, pos.y + anchor[1] * 20)
+            if isRotate:
+                pos = Point(pos.x + anchor[0] * 30, pos.y)
+            else:
+                pos = Point(pos.x, pos.y + anchor[1] * 20)
+            self.block.add_text(html, dxfattribs={'color': 2,
+                                                  'rotation': -90 if isRotate else 0,
+                                                  'style': 'OpenSans',
+                                                  'height': height,
+                                                  }).set_pos(tuple(pos), align='BOTTOM_CENTER')
             self.add_text_to_script_file(html, pos, isRotate)
         else:
             text.setPos(0, 0)
@@ -160,6 +170,7 @@ class PlotSectionAndEqSection(object):
         b = np.array(ys)
         finitecurve = pg.PlotDataItem(a, b, connect="finite", pen=pen)
         self.add_pline_to_script_file(a, b)
+        self.add_to_dxf(xs, ys, color)
         return finitecurve
 
     def drawPlate(self, pl, cp, color='b', width=2):
@@ -174,7 +185,13 @@ class PlotSectionAndEqSection(object):
         b = np.array(ys)
         finitecurve = pg.PlotDataItem(a, b, connect="finite", pen=pen)
         self.add_pline_to_script_file(a, b)
+        self.add_to_dxf(xs, ys, color)
         return finitecurve
+
+    def add_to_dxf(self, xs, ys, color):
+        colors = {'r': 1, 'b': 5, 'g': 3, 'm': 6}
+        col = colors[color]
+        self.block.add_polyline2d(zip(xs, ys), dxfattribs={'color': col})
 
 
 class PlotMainSection:
@@ -214,3 +231,10 @@ class Point(object):
 
     def __str__(self):
         return 'x = {}, y = {}'.format(self.x, self.y)
+
+    def __iter__(self):
+        '''
+        for implementing tuple type of point
+        '''
+        yield self.x
+        yield self.y

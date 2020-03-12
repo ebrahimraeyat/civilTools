@@ -17,6 +17,7 @@ from PyQt5 import uic, QtCore
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
+import ezdxf
 
 import sec
 from plot.plotIpe import PlotSectionAndEqSection, PlotMainSection
@@ -79,6 +80,8 @@ class Ui(QMainWindow, main_window):
         self.currentSectionProp = None
         # self.filename = None
         self.printer = None
+        self.new_dwg = ezdxf.readfile(abs_path + '/TEMPLATE.dxf')
+        self.msp = self.new_dwg.modelspace()
         self.createWidgetsOne()
         self.add_actions()
         self.updateSectionShape()
@@ -391,7 +394,7 @@ class Ui(QMainWindow, main_window):
 
     def updateSectionShape(self):
         self.currentSection = sec.createSection(self.currentSectionOne())
-        plotWidget = PlotSectionAndEqSection(self.currentSection, len(self.model1.sections))
+        plotWidget = PlotSectionAndEqSection(self.currentSection, self.new_dwg, len(self.model1.sections))
         self.drawLayout.addWidget(plotWidget.plot(), 0, 0)
         self.currentSection.autocadScrText = plotWidget.autocadScrText
 
@@ -465,12 +468,14 @@ class Ui(QMainWindow, main_window):
         sec.Section.export_to_excel(filename, self.model1.sections)
 
     def save_to_autocad_script_format(self):
-        filename = self.getFilename(['scr'])
+        filename = self.getFilename(['dxf'])
         if not filename:
             return
-        if not filename.endswith('scr'):
-            filename += '.scr'
-        sec.Section.export_to_autocad(filename, self.model1.sections)
+        if not filename.endswith('dxf'):
+            filename += '.dxf'
+        for i, section in enumerate(self.model1.sections):
+            self.msp.add_blockref(section.uid, (0, 550. * i))
+        self.new_dwg.saveas(filename)
 
     def getLastSaveDirectory(self, f):
         return os.sep.join(f.split(os.sep)[:-1])

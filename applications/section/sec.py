@@ -5,6 +5,8 @@ import os
 import sys
 from math import sqrt
 import copy
+import uuid
+
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import QItemDelegate, QTextEdit, QLineEdit, QDoubleSpinBox
@@ -12,8 +14,8 @@ abs_path = os.path.dirname(__file__)
 sys.path.insert(0, abs_path)
 import pandas as pd
 import numpy as np
-from slender_params import slenderParameters
 
+from slender_params import slenderParameters
 from pre.sections import Geometry, ISection, PfcSection, RectangularSection, MergedSection
 from analysis.cross_section import CrossSection, SectionProperties
 from analysis import solver
@@ -92,6 +94,7 @@ class Section(object):
                 self.equivalent_section_to_I_with_shear_correction()
         self.components = []
         self.conversions = {}
+        self.uid = str(uuid.uuid4().int)
 
     def equivalent_section_to_I_with_shear_correction(self):
         BF = self.xmax
@@ -944,6 +947,7 @@ class SectionProperties:
         self.equivalent_dims()
         self.autocadScrText = section.autocadScrText
         self.geometry_list = section.geometry_list
+        self.uid = section.uid
 
     def __lt__(self, other):
         return self.name.lower() < other.name.lower()
