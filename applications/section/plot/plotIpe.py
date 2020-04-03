@@ -153,7 +153,7 @@ class PlotSectionAndEqSection(object):
                 pos = Point(pos.x, pos.y + anchor[1] * 20)
             self.block.add_text(html, dxfattribs={'color': 2,
                                                   'rotation': -90 if isRotate else 0,
-                                                  'style': 'OpenSans',
+                                                  # 'style': 'SAZE_STYLE1',
                                                   'height': height,
                                                   }).set_pos(tuple(pos), align='BOTTOM_CENTER')
             self.add_text_to_script_file(html, pos, isRotate)
