@@ -21,6 +21,7 @@ import ezdxf
 
 import sec
 from plot.plotIpe import PlotSectionAndEqSection, PlotMainSection
+from exporter import exporttoxmldlg as xml
 
 
 __url__ = "http://ebrahimraeyat.blog.ir"
@@ -101,7 +102,8 @@ class Ui(QMainWindow, main_window):
         self.toolbar.addSeparator()
         self.toolbar.addAction(self.action_Shear)
 
-        self.action_Xml.triggered.connect(self.saveToXml1)
+        # self.action_Xml.triggered.connect(self.saveToXml1)
+        self.action_Xml.triggered.connect(self.save_to_xml)
         self.action_Autocad_scr.triggered.connect(self.save_to_autocad_script_format)
         self.action_Excel.triggered.connect(self.save_to_excel)
         self.action_Delete.triggered.connect(self.clearSectionOne)
@@ -451,13 +453,22 @@ class Ui(QMainWindow, main_window):
         #     selModel.select(item.index(), selModel.Select | selModel.Rows)
         # return
 
-    def saveToXml1(self):
-        filename = self.getFilename(['xml'])
-        if not filename:
+    # def saveToXml1(self):
+    #     filename = self.getFilename(['xml'])
+    #     if not filename:
+    #         return
+    #     if not filename.endswith('xml'):
+    #         filename += '.xml'
+    #     sec.Section.exportXml(filename, self.model1.sections)
+
+    def save_to_xml(self):
+        self.child_export_xml_win = xml.ExportToXml(self.model1.sections, self)
+        if self.child_export_xml_win.exec_():
+            title = "Seccess"
+            text = f"Export Sections to {self.child_export_xml_win.xml_path_line.text()}"
+            QMessageBox.information(self, title, text)
+        else:
             return
-        if not filename.endswith('xml'):
-            filename += '.xml'
-        sec.Section.exportXml(filename, self.model1.sections)
 
     def save_to_excel(self):
         filename = self.getFilename(['xlsx'])

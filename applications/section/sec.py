@@ -941,6 +941,8 @@ class SectionProperties:
         self.Sy = section.Sy
         self.xmax = section.xmax
         self.ymax = section.ymax
+        self.useAs = section.useAs
+        self.ductility = section.ductility
         self.shear_name = section.shear_name
         self.baseSection_name = section.baseSection.name
         self.conversions = section.conversions
