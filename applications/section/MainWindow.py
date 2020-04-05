@@ -8,6 +8,7 @@ import pickle
 from functools import partial
 import itertools
 abs_path = os.path.dirname(__file__)
+section_path = os.path.abspath(os.path.dirname(__file__))
 sys.path.insert(0, abs_path)
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -81,7 +82,7 @@ class Ui(QMainWindow, main_window):
         self.currentSectionProp = None
         # self.filename = None
         self.printer = None
-        self.new_dwg = ezdxf.readfile(abs_path + '/TEMPLATE.dxf')
+        self.new_dwg = ezdxf.readfile(os.path.join(section_path, 'TEMPLATE.dxf'))
         self.msp = self.new_dwg.modelspace()
         self.createWidgetsOne()
         self.add_actions()
