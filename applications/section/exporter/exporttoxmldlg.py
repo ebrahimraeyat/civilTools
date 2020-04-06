@@ -9,7 +9,7 @@ import itertools
 import sec
 
 section_path = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
-export_xml_window, xml_base = uic.loadUiType(os.path.join(section_path, 'widgets', 'export_xml.ui'))
+export_xml_window, xml_base = uic.loadUiType(os.path.join(section_path, 'widgets', 'export.ui'))
 
 useAsDict = {'Beam': 'B', 'Column': 'C', 'Brace': 'C'}
 ductilityDict = {'Medium': 'M', 'High': 'H'}
@@ -26,8 +26,10 @@ class ExportToXml(xml_base, export_xml_window):
         filename = self.xml_path_line.text()
         if not filename:
             return
-        if not filename.endswith('xml'):
-            filename += '.xml'
+        extension = self.extension_box.currentText()
+        if not filename.endswith(extension):
+            filename += f".{extension}"
+            self.xml_path_line.setText(filename)
 
         ductilities = [ductilityDict[item.text()] for item in self.ductility_list.selectedItems()]
         useAss = [useAsDict[item.text()] for item in self.use_as_list.selectedItems()]
@@ -37,9 +39,20 @@ class ExportToXml(xml_base, export_xml_window):
         for section in self.sections:
             if section.name[-2:] in states:
                 sections.append(section)
-        sec.Section.exportXml(filename, sections)
+        if extension == "xml":
+            sec.Section.exportXml(filename, sections)
+        elif extension == "xlsx":
+            sec.Section.export_to_excel(filename, sections)
 
         xml_base.accept(self)
 
     def select_file(self):
-        self.xml_path_line.setText(QFileDialog.getSaveFileName(filter="xml(*.xml)")[0])
+        filters = "All files (*.*);;xml (*.xml);;xlsx (*.xlsx)"
+        self.xml_path_line.setText(QFileDialog.getSaveFileName(filter=filters)[0])
+        filename = self.xml_path_line.text()
+        if not filename:
+            return
+        extension = self.extension_box.currentText()
+        if not filename.endswith(extension):
+            filename += f".{extension}"
+            self.xml_path_line.setText(filename)
