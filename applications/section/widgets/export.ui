@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Export to *.xml</string>
+   <string>Export Sections</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
@@ -25,6 +25,20 @@
      </item>
      <item>
       <widget class="QLineEdit" name="xml_path_line"/>
+     </item>
+     <item>
+      <widget class="QComboBox" name="extension_box">
+       <item>
+        <property name="text">
+         <string>xml</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>xlsx</string>
+        </property>
+       </item>
+      </widget>
      </item>
     </layout>
    </item>
