@@ -7,8 +7,8 @@ from PyQt5.QtWidgets import QSplashScreen, QMessageBox, QProgressBar
 from PyQt5.QtCore import Qt
 
 _appname = 'civiltools'
-_version = '3.0'
-_branch = 'v3'
+_version = '4.0'
+_branch = 'v4'
 _civiltools_mainpackages = ['civiltools']
 civiltools_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, civiltools_path)
