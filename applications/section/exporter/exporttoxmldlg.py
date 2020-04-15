@@ -49,7 +49,8 @@ class ExportToXml(xml_base, export_xml_window):
         xml_base.accept(self)
 
     def select_file(self):
-        filters = "All files (*.*);;xml (*.xml);;xlsx (*.xlsx)"
+        extension = self.extension_box.currentText()
+        filters = "{0} (*.{0});;All files (*.*)".format(extension)
         self.xml_path_line.setText(QFileDialog.getSaveFileName(filter=filters)[0])
         filename = self.xml_path_line.text()
         if not filename:
