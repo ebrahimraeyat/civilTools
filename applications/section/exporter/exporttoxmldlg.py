@@ -34,6 +34,8 @@ class ExportToXml(xml_base, export_xml_window):
         ductilities = [ductilityDict[item.text()] for item in self.ductility_list.selectedItems()]
         useAss = [useAsDict[item.text()] for item in self.use_as_list.selectedItems()]
         states = [f'{state[0]}{state[1]}' for state in itertools.product(useAss, ductilities)]
+        if self.shear_section_checkbox.isChecked():
+            states.append('_S')
 
         sections = []
         for section in self.sections:
