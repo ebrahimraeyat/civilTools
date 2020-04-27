@@ -353,7 +353,7 @@ def DoubleSection(section, dist=0):
     '''dist = distance between two sections, 0 mean that there is no
     distance between sections'''
     _type = section.type
-    dist *= 10
+    # dist *= 10
     area = 2 * section.area
     xm = section.xmax + dist / 2
     ym = section.ym
@@ -407,7 +407,7 @@ def SoubleSection(section, dist=0):
     '''dist = distance between two sections, 0 mean that there is no
     distance between sections'''
     _type = section.type
-    dist *= 10
+    # dist *= 10
     area = 3 * section.area
     xm = (section.xmax * 3 + 2 * dist) / 2
     ym = section.ym

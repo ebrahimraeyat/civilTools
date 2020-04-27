@@ -22,7 +22,7 @@ class TestUnpSections(unittest.TestCase):
         self.UNP22 = UNP[22]
         self.UNP22.ductility = self.__ductility
         self.UNP22.useAs = self.__useAs
-        self.UNP22_double = DoubleSection(self.UNP22, 8)
+        self.UNP22_double = DoubleSection(self.UNP22, 80)
 
         plate1 = Plate(250, 12)
         self.UNP22_double_TBPlate = AddPlateTB(self.UNP22_double, plate1)

@@ -392,13 +392,16 @@
                  <item>
                   <widget class="QSpinBox" name="distSpinBox">
                    <property name="suffix">
-                    <string>  cm</string>
+                    <string> mm</string>
                    </property>
                    <property name="prefix">
                     <string/>
                    </property>
+                   <property name="singleStep">
+                    <number>10</number>
+                   </property>
                    <property name="value">
-                    <number>8</number>
+                    <number>80</number>
                    </property>
                   </widget>
                  </item>
@@ -706,7 +709,7 @@
      <x>0</x>
      <y>0</y>
      <width>1118</width>
-     <height>22</height>
+     <height>30</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
