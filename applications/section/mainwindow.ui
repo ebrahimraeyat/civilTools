@@ -397,8 +397,11 @@
                    <property name="prefix">
                     <string/>
                    </property>
+                   <property name="maximum">
+                    <number>500</number>
+                   </property>
                    <property name="singleStep">
-                    <number>10</number>
+                    <number>1</number>
                    </property>
                    <property name="value">
                     <number>80</number>
