@@ -385,7 +385,7 @@ def DoubleSection(section, dist=0):
         name = '2' + section.name
         is_closed = True
     else:
-        name = '2' + section.name + 'c{:.0f}'.format(cc / 10)
+        name = '2' + section.name + 'c{:.0f}'.format(cc)
         J = 2 * baseSection.J
         is_closed = False
     new_geometry = copy.deepcopy(baseSection.geometry_list[0])
@@ -434,7 +434,7 @@ def SoubleSection(section, dist=0):
         name = '3' + section.name
         is_closed = True
     else:
-        name = '3' + section.name + 'c{:.0f}'.format(cc / 10)
+        name = '3' + section.name + 'c{:.0f}'.format(cc)
         J = 3 * baseSection.J
         is_closed = False
 
