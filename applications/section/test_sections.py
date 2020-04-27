@@ -22,7 +22,7 @@ class TestIpeSections(unittest.TestCase):
         self.IPE22 = IPE[22]
         self.IPE22.ductility = self.__ductility
         self.IPE22.useAs = self.__useAs
-        self.IPE22_double = DoubleSection(self.IPE22, 8)
+        self.IPE22_double = DoubleSection(self.IPE22, 80)
 
         plate1 = Plate(250, 12)
         self.IPE22_double_TBPlate = AddPlateTB(self.IPE22_double, plate1)
@@ -190,26 +190,24 @@ class TestIpeSections(unittest.TestCase):
         self.assertAlmostEqual(self.IPE22_double_4sidePlate.cw, 1299058883054.293, places=1)
         self.assertAlmostEqual(self.IPE22_double_TBPlate_webPlate.cw, 598176584616.7933, places=1)
 
-    #def test_equivalent_IPE22_V2(self):
+    # def test_equivalent_IPE22_V2(self):
         #self.assertEqual(self.IPE22.V2, 1)
         #self.assertAlmostEqual(self.IPE22_double.V2, 1.85778, places=4)
         #self.assertAlmostEqual(self.IPE22_double_TBPlate.V2, 1.52249, places=4)
         #self.assertAlmostEqual(self.IPE22_double_4sidePlate.V2, 5.28392, places=4)
 
-    #def test_equivalent_IPE22_V3(self):
+    # def test_equivalent_IPE22_V3(self):
         #self.assertEqual(self.IPE22.V3, 1)
         #self.assertAlmostEqual(self.IPE22_double.V3, 0.416667, places=4)
         #self.assertAlmostEqual(self.IPE22_double_TBPlate.V3, 0.736166, places=4)
         #self.assertAlmostEqual(self.IPE22_double_4sidePlate.V3, 0.63114, places=4)
 
+    # IPE22.equivalentSectionI()
 
+    # def tearDown(self):
+        # pass
 
-    #IPE22.equivalentSectionI()
-
-    #def tearDown(self):
-        #pass
-
-    #def test_000_something(self):
-        #pass
+    # def test_000_something(self):
+        # pass
 if __name__ == '__main__':
     unittest.main()

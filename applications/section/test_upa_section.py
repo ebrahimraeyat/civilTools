@@ -13,7 +13,7 @@ class TestUpaSections(unittest.TestCase):
         self.UPA08 = UPA[8]
         self.UPA08.ductility = self.__ductility
         self.UPA08.useAs = self.__useAs
-        self.UPA08_double = DoubleSection(self.UPA08, 1)
+        self.UPA08_double = DoubleSection(self.UPA08, 10)
 
     def test_UPA08_Iy(self):
         self.assertAlmostEqual(self.UPA08.Iy, 128000, places=1)
