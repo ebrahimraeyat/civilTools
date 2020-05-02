@@ -24,6 +24,7 @@ import sec
 from plot.plotIpe import PlotSectionAndEqSection, PlotMainSection
 from exporter import exporttoxmldlg as xml
 from exporter import multi_section as msection
+from exporter import progress_bar as prog_bar
 
 
 __url__ = "http://ebrahimraeyat.blog.ir"
@@ -431,23 +432,29 @@ class Ui(QMainWindow, main_window):
     def create_multi_section(self):
         self.multi_section_win = msection.MultiSection(self)
         if self.multi_section_win.exec_():
+            self.progress_bar_win = prog_bar.ProgressBar(self)
+            self.progress_bar_win.show()
             lengths = self.get_items(self.multi_section_win.plate_lengths)
             thicks = self.get_items(self.multi_section_win.plate_thicks)
             dists = self.get_items(self.multi_section_win.section_dist)
-            for dist in dists:
+            n = len(lengths) * len(thicks) * len(dists)
+            for i, dist in enumerate(dists, start=1):
                 self.distSpinBox.setValue(int(dist))
-                for length in lengths:
+                for j, length in enumerate(lengths, start=1):
                     self.lhSpinBox.setValue(int(length))
                     self.lvSpinBox.setValue(int(length))
                     self.lwSpinBox.setValue(int(length))
-                    for thick in thicks:
+                    for k, thick in enumerate(thicks, start=1):
                         self.thSpinBox.setValue(int(thick))
                         self.tvSpinBox.setValue(int(thick))
                         self.twSpinBox.setValue(int(thick))
+                        self.progress_bar_win.progress_bar_label.setText(self.currentSection.name)
                         self.acceptOne()
-
+                        self.progress_bar_win.progress_bar.setValue(int(i * j * k / n * 100))
+                        QApplication.processEvents()
+            self.progress_bar_win.close()
             title = "Seccess"
-            QMessageBox.information(self, title, "Done!")
+            QMessageBox.information(self, title, f"Done!")
 
     def get_items(self, qlistwidget):
         l = []
