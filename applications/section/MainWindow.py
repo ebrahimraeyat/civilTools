@@ -23,6 +23,7 @@ import ezdxf
 import sec
 from plot.plotIpe import PlotSectionAndEqSection, PlotMainSection
 from exporter import exporttoxmldlg as xml
+from exporter import multi_section as msection
 
 
 __url__ = "http://ebrahimraeyat.blog.ir"
@@ -94,6 +95,7 @@ class Ui(QMainWindow, main_window):
         self.toolbar.addAction(self.action_Xml)
         self.toolbar.addAction(self.action_Autocad_scr)
         self.toolbar.addAction(self.action_Excel)
+        self.toolbar.addAction(self.action_multi_section)
         self.toolbar.addSeparator()
         self.toolbar.addAction(self.action_Remove_Section)
         self.toolbar.addAction(self.action_Delete)
@@ -107,6 +109,7 @@ class Ui(QMainWindow, main_window):
         self.action_Xml.triggered.connect(self.save_to_xml)
         self.action_Autocad_scr.triggered.connect(self.save_to_autocad_script_format)
         self.action_Excel.triggered.connect(self.save_to_excel)
+        self.action_multi_section.triggered.connect(self.create_multi_section)
         self.action_Delete.triggered.connect(self.clearSectionOne)
         self.action_Remove_Section.triggered.connect(self.removeSection)
         self.action_Save.triggered.connect(self.export_to_dat)
@@ -424,6 +427,34 @@ class Ui(QMainWindow, main_window):
                 self.model1.sections.append(new_section)
                 self.model1.names.add(name)
         self.model1.endResetModel()
+
+    def create_multi_section(self):
+        self.multi_section_win = msection.MultiSection(self)
+        if self.multi_section_win.exec_():
+            lengths = self.get_items(self.multi_section_win.plate_lengths)
+            thicks = self.get_items(self.multi_section_win.plate_thicks)
+            dists = self.get_items(self.multi_section_win.section_dist)
+            for dist in dists:
+                self.distSpinBox.setValue(int(dist))
+                for length in lengths:
+                    self.lhSpinBox.setValue(int(length))
+                    self.lvSpinBox.setValue(int(length))
+                    self.lwSpinBox.setValue(int(length))
+                    for thick in thicks:
+                        self.thSpinBox.setValue(int(thick))
+                        self.tvSpinBox.setValue(int(thick))
+                        self.twSpinBox.setValue(int(thick))
+                        self.acceptOne()
+
+            title = "Seccess"
+            QMessageBox.information(self, title, "Done!")
+
+    def get_items(self, qlistwidget):
+        l = []
+        for i in range(qlistwidget.count()):
+            l.append(qlistwidget.item(i).text())
+
+        return l
 
     # def move_current_rows(self, direction=DOWN):
         # if direction not in (self.DOWN, self.UP):

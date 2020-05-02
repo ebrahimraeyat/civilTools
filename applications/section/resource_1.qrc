@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="section">
+    <file>../../images/multi_section.svg</file>
     <file>../../images/2UNP.svg</file>
     <file>../../images/dist.svg</file>
     <file>../../images/r_hight.svg</file>

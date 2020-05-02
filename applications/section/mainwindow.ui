@@ -745,6 +745,7 @@
     <addaction name="action_Remove_Section"/>
     <addaction name="action_Delete"/>
     <addaction name="action_Shear"/>
+    <addaction name="action_multi_section"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_View"/>
@@ -876,6 +877,15 @@
   <action name="action_Exit">
    <property name="text">
     <string>&amp;Exit</string>
+   </property>
+  </action>
+  <action name="action_multi_section">
+   <property name="icon">
+    <iconset resource="resource_1.qrc">
+     <normaloff>:/section/images/multi_section.svg</normaloff>:/section/images/multi_section.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Multi Section</string>
    </property>
   </action>
  </widget>
