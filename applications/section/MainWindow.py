@@ -454,7 +454,7 @@ class Ui(QMainWindow, main_window):
                         QApplication.processEvents()
             self.progress_bar_win.close()
             title = "Seccess"
-            QMessageBox.information(self, title, f"Done!")
+            QMessageBox.information(self, title, "Done!")
 
     def get_items(self, qlistwidget):
         l = []
