@@ -434,24 +434,35 @@ class Ui(QMainWindow, main_window):
         if self.multi_section_win.exec_():
             self.progress_bar_win = prog_bar.ProgressBar(self)
             self.progress_bar_win.show()
-            lengths = self.get_items(self.multi_section_win.plate_lengths)
-            thicks = self.get_items(self.multi_section_win.plate_thicks)
+            tb_width_list = self.get_items(self.multi_section_win.tb_width_list)
+            tb_thick_list = self.get_items(self.multi_section_win.tb_thick_list)
+            web_height_list = self.get_items(self.multi_section_win.web_height_list)
+            web_thick_list = self.get_items(self.multi_section_win.web_thick_list)
             dists = self.get_items(self.multi_section_win.section_dist)
-            n = len(lengths) * len(thicks) * len(dists)
+
+            for listbox in (
+                tb_width_list, tb_thick_list, web_height_list, web_thick_list, dists
+            ):
+                if not listbox:
+                    listbox.append(1)
+
+            n = len(tb_width_list) * len(tb_thick_list) * len(web_height_list) * len(web_thick_list) * len(dists)
             for i, dist in enumerate(dists, start=1):
                 self.distSpinBox.setValue(int(dist))
-                for j, length in enumerate(lengths, start=1):
-                    self.lhSpinBox.setValue(int(length))
-                    self.lvSpinBox.setValue(int(length))
-                    self.lwSpinBox.setValue(int(length))
-                    for k, thick in enumerate(thicks, start=1):
-                        self.thSpinBox.setValue(int(thick))
-                        self.tvSpinBox.setValue(int(thick))
-                        self.twSpinBox.setValue(int(thick))
-                        self.progress_bar_win.progress_bar_label.setText(self.currentSection.name)
-                        self.acceptOne()
-                        self.progress_bar_win.progress_bar.setValue(int(i * j * k / n * 100))
-                        QApplication.processEvents()
+                for j, tb_length in enumerate(tb_width_list, start=1):
+                    self.lhSpinBox.setValue(int(tb_length))
+                    for k, tb_thick in enumerate(tb_thick_list, start=1):
+                        self.thSpinBox.setValue(int(tb_thick))
+                        for x, web_height in enumerate(web_height_list, start=1):
+                            self.lwSpinBox.setValue(int(web_height))
+                            for y, web_thick in enumerate(web_thick_list, start=1):
+                                self.twSpinBox.setValue(int(web_thick))
+
+                                self.progress_bar_win.progress_bar_label.setText(
+                                    self.currentSection.name)
+                                self.acceptOne()
+                                self.progress_bar_win.progress_bar.setValue(int(i * j * k * x * y / n * 100))
+                                QApplication.processEvents()
             self.progress_bar_win.close()
             title = "Seccess"
             QMessageBox.information(self, title, "Done!")
