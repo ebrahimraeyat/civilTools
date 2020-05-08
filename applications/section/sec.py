@@ -9,7 +9,7 @@ import uuid
 
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-from PyQt5.QtWidgets import QItemDelegate, QTextEdit, QLineEdit, QDoubleSpinBox
+from PyQt5.QtWidgets import QItemDelegate, QTextEdit, QLineEdit, QDoubleSpinBox, QMessageBox
 abs_path = os.path.dirname(__file__)
 sys.path.insert(0, abs_path)
 import pandas as pd
@@ -25,7 +25,7 @@ NAME, AREA, ASX, ASY, IX, IY, ZX, ZY, \
     Sx, Sy, RX, RY, CW, J, BF, TF, D, TW = range(column_count)
 
 LH, TH, LV, TV, LW, _TW, DIST, ISTBPLATE, ISLRPLATE, ISWEBPLATE, USEAS, DUCTILITY, ISDOUBLE, \
-    ISSOUBLE, SECTIONSIZE, SECTIONTYPE, CONVERT_TYPE = range(17)
+    ISSOUBLE, SECTIONSIZE, SECTIONTYPE, CONVERT_TYPE, ISCC = range(18)
 
 MAGIC_NUMBER = 0x570C4
 FILE_VERSION = 1
@@ -41,7 +41,8 @@ class Section(object):
 
     def __init__(self, cc=0, composite=None, useAs='B', ductility='M',
                  TBPlate=None, LRPlate=None, webPlate=None, slender=None, isDouble=False,
-                 isSouble=False, convert_type='Compaction', geometry_list=[], is_closed=False, **kwargs):
+                 isSouble=False, convert_type='Compaction', geometry_list=[],
+                 is_closed=False, **kwargs):
         self.type = kwargs['_type']
         self.name = kwargs['name']
         self.area = kwargs['area']
@@ -874,7 +875,14 @@ def createSection(sectionProp):
     ductility = sectionProp[DUCTILITY]
     section.useAs = useAs
     section.ductility = ductility
-    dist = sectionProp[DIST]
+    is_cc = sectionProp[ISCC]
+    if not is_cc:
+        dist = sectionProp[DIST]
+    else:
+        dist = sectionProp[DIST] - 2 * (section.bf - section.xm)
+        if dist < 0:
+            print("distance between section is Negative!")
+            return None
     isDouble = sectionProp[ISDOUBLE]
     isSouble = sectionProp[ISSOUBLE]
     if isDouble:

@@ -176,6 +176,7 @@ class Ui(QMainWindow, main_window):
     def create_connections(self):
         self.sectionTypeBox.currentIndexChanged.connect(self.setSectionLabels)
         self.sectionTypeBox.currentIndexChanged.connect(self.updateGui)
+        self.cc_checkbox.stateChanged.connect(self.change_dist_shape)
         self.lhSpinBox.valueChanged.connect(self.updateSectionShape)
         self.thSpinBox.valueChanged.connect(self.updateSectionShape)
         self.lwSpinBox.valueChanged.connect(self.updateSectionShape)
@@ -192,6 +193,7 @@ class Ui(QMainWindow, main_window):
         self.useAsList.itemPressed.connect(self.updateSectionShape)
         self.equivalent_type_list.itemPressed.connect(self.updateSectionShape)
         self.tableView1.horizontalHeader().sectionClicked.connect(self.sortTable)
+        self.cc_checkbox.stateChanged.connect(self.updateSectionShape)
         # self.up_button.clicked.connect(partial(self.move_current_rows, self.UP))
         # self.down_button.clicked.connect(partial(self.move_current_rows, self.DOWN))
         # self.connect(self.tableView1.horizontalHeader(), SIGNAL("sectionClicked(int)"), self.sortTable)
@@ -274,6 +276,14 @@ class Ui(QMainWindow, main_window):
         elif sectionType in ('IPE', 'CPE'):
             self.frame_web.setEnabled(True)
 
+    def change_dist_shape(self):
+        if self.cc_checkbox.isChecked():
+            pixmap = QPixmap(':/section/dist_cc.svg')
+        else:
+            pixmap = QPixmap(":/section/dist.svg")
+
+        self.dist_label.setPixmap(pixmap)
+
     def getSectionLabels(self, sectionType='IPE'):
         if sectionType == 'IPE':
             sections = ipesProp.values()
@@ -315,7 +325,8 @@ class Ui(QMainWindow, main_window):
         sectionSize = int(re.sub("[^0-9]", "", self.sectionsBox.currentText()))
         sectionType = self.currentSectionType()
         convert_type = self.equivalent_type_list.currentItem().text()
-        return [lh, th, lv, tv, lw, tw, dist, isTBPlate, isLRPlate, isWebPlate, useAs, ductility, isDouble, isSouble, sectionSize, sectionType, convert_type]
+        is_cc = self.cc_checkbox.isChecked()
+        return [lh, th, lv, tv, lw, tw, dist, isTBPlate, isLRPlate, isWebPlate, useAs, ductility, isDouble, isSouble, sectionSize, sectionType, convert_type, is_cc]
 
     def acceptOne(self):
         self.figure.clear()
@@ -401,6 +412,9 @@ class Ui(QMainWindow, main_window):
 
     def updateSectionShape(self):
         self.currentSection = sec.createSection(self.currentSectionOne())
+        if not self.currentSection:
+            QMessageBox.warning(self, "cc error", "distance between sections is negative!")
+            return
         plotWidget = PlotSectionAndEqSection(self.currentSection, self.new_dwg, len(self.model1.sections))
         self.drawLayout.addWidget(plotWidget.plot(), 0, 0)
         self.currentSection.autocadScrText = plotWidget.autocadScrText

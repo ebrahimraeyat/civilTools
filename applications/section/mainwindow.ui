@@ -374,12 +374,12 @@
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_3">
                  <item>
-                  <widget class="QLabel" name="label">
+                  <widget class="QLabel" name="dist_label">
                    <property name="text">
                     <string/>
                    </property>
                    <property name="pixmap">
-                    <pixmap resource="resource_1.qrc">:/section/images/dist.svg</pixmap>
+                    <pixmap resource="resource_1.qrc">:/section/dist.svg</pixmap>
                    </property>
                    <property name="scaledContents">
                     <bool>false</bool>
@@ -390,23 +390,37 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QSpinBox" name="distSpinBox">
-                   <property name="suffix">
-                    <string> mm</string>
-                   </property>
-                   <property name="prefix">
-                    <string/>
-                   </property>
-                   <property name="maximum">
-                    <number>500</number>
-                   </property>
-                   <property name="singleStep">
-                    <number>1</number>
-                   </property>
-                   <property name="value">
-                    <number>80</number>
-                   </property>
-                  </widget>
+                  <layout class="QHBoxLayout" name="horizontalLayout_8">
+                   <item>
+                    <widget class="QSpinBox" name="distSpinBox">
+                     <property name="suffix">
+                      <string> mm</string>
+                     </property>
+                     <property name="prefix">
+                      <string/>
+                     </property>
+                     <property name="maximum">
+                      <number>500</number>
+                     </property>
+                     <property name="singleStep">
+                      <number>1</number>
+                     </property>
+                     <property name="value">
+                      <number>80</number>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="cc_checkbox">
+                     <property name="toolTip">
+                      <string>sections center to center distance</string>
+                     </property>
+                     <property name="text">
+                      <string>CC</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </item>
                  <item>
                   <widget class="QPushButton" name="calculate_Button">
