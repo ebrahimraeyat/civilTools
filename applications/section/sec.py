@@ -875,16 +875,17 @@ def createSection(sectionProp):
     ductility = sectionProp[DUCTILITY]
     section.useAs = useAs
     section.ductility = ductility
+    isDouble = sectionProp[ISDOUBLE]
+    isSouble = sectionProp[ISSOUBLE]
     is_cc = sectionProp[ISCC]
     if not is_cc:
         dist = sectionProp[DIST]
     else:
         dist = sectionProp[DIST] - 2 * (section.bf - section.xm)
-        if dist < 0:
+        if all([dist < 0, (isDouble or isSouble)]):
             print("distance between section is Negative!")
             return None
-    isDouble = sectionProp[ISDOUBLE]
-    isSouble = sectionProp[ISSOUBLE]
+
     if isDouble:
         section = DoubleSection(section, dist)
     if isSouble:
