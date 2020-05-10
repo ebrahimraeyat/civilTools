@@ -835,10 +835,13 @@
   <action name="action_Excel">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/section/images/xlsx.png</normaloff>:/section/images/xlsx.png</iconset>
+     <normaloff>:/section/images/pro.svg</normaloff>:/section/images/pro.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Excel</string>
+    <string>&amp;Proper</string>
+   </property>
+   <property name="iconText">
+    <string>proper</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+E</string>

@@ -165,12 +165,14 @@ class Section(object):
         return True, "Exported section properties to %s" % (QFileInfo(fname).fileName())
 
     @staticmethod
-    def export_to_excel(fname, sections):
+    def export_to_pro(fname, sections):
+        import os
         IPES = pd.DataFrame(columns=['TYPE', 'EDI_LABEL', 'LABEL', 'T_F', 'A', 'D', 'BF', 'TW',
                                      'TF', 'KDES', 'KDET', 'IX', 'ZX', 'SX', 'RX', 'ASX', 'IY', 'ZY', 'SY',
-                                     'RY', 'ASY', 'J', 'CW'], index=range(len(sections)))
+                                     'RY', 'ASY', 'J', 'CW'], index=range(len(sections) + 1))
         IPES['TYPE'][:] = 'W'
-        for row, section in enumerate(sections):
+        IPES['TYPE'][0] = fname
+        for row, section in enumerate(sections, start=1):
             IPES['EDI_LABEL'][row] = IPES['LABEL'][row] = section.name
             IPES['T_F'][row] = ''
             IPES['A'][row] = section.area
@@ -192,7 +194,25 @@ class Section(object):
             IPES['ASY'][row] = section.ASy
             IPES['J'][row] = section.J
             IPES['CW'][row] = section.cw
-        IPES.to_excel(fname, index=False)
+        filename = os.path.basename(fname)
+        dirname = os.path.dirname(fname)
+        fname_xlsx = os.path.join(dirname, "SECTIONS.xlsx")
+        writer = pd.ExcelWriter(fname_xlsx, engine='xlsxwriter')
+        workbook = writer.book
+        fname_xlsm = os.path.join(dirname, "SECTIONS.xlsm")
+        workbook.filename = fname_xlsm
+        vba_path = os.path.join(abs_path, "data", "vbaProject.bin")
+        workbook.add_vba_project(vba_path)
+        IPES.to_excel(writer, sheet_name='I-Wide Flange Data', index=False)
+        writer.save()
+
+        os.chdir(dirname)
+        import win32com.client
+        xl = win32com.client.Dispatch("Excel.Application")
+        xl.workbooks.Open(Filename=fname_xlsm, ReadOnly=1)
+        xl.Application.Run("SECTIONS.xlsm!Proper.CreateProperFile")
+        xl.Application.Quit()
+        del xl
 
     def equivalentSectionI(self, useAs=None, ductility=None):
 

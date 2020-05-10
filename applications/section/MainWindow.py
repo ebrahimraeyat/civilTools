@@ -535,12 +535,12 @@ class Ui(QMainWindow, main_window):
             return
 
     def save_to_excel(self):
-        filename = self.getFilename(['xlsx'])
+        filename = self.getFilename(['pro'])
         if not filename:
             return
-        if not filename.endswith('xlsx'):
-            filename += '.xlsx'
-        sec.Section.export_to_excel(filename, self.model1.sections)
+        if not filename.endswith('pro'):
+            filename += '.pro'
+        sec.Section.export_to_pro(filename, self.model1.sections)
 
     def save_to_autocad_script_format(self):
         filename = self.getFilename(['dxf'])

@@ -44,7 +44,7 @@ class ExportToXml(xml_base, export_xml_window):
         if extension == "xml":
             sec.Section.exportXml(filename, sections)
         elif extension == "xlsx":
-            sec.Section.export_to_excel(filename, sections)
+            sec.Section.export_to_pro(filename, sections)
 
         xml_base.accept(self)
 
