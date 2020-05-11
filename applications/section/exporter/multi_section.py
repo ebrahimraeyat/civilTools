@@ -42,6 +42,8 @@ class MultiSection(multi_section_base, multi_section_window):
             self.section_dist.addItems(self.data.get("section_dist", ["80"]))
             self.web_height_list.addItems(self.data.get("web_height_list", ["25"]))
             self.web_thick_list.addItems(self.data.get("web_thick_list", ["10"]))
+            self.width_box.setValue(self.data.get("width_box_value", 15))
+            self.thick_box.setValue(self.data.get("thick_box_value", 6))
 
     def add_tb_width(self):
         item = self.get_str_value(self.width_box)
@@ -97,6 +99,8 @@ class MultiSection(multi_section_base, multi_section_window):
             "web_height_list": self.get_items(self.web_height_list),
             "web_thick_list": self.get_items(self.web_thick_list),
             "section_dist": self.get_items(self.section_dist),
+            "width_box_value": self.width_box.value(),
+            "thick_box_value": self.thick_box.value(),
         }
         try:
             pickle.dump(d, open(self.file, "wb"))
