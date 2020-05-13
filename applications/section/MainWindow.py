@@ -535,19 +535,21 @@ class Ui(QMainWindow, main_window):
             return
 
     def save_to_excel(self):
-        filename = self.getFilename(['pro'])
+        ext = "xlsm"
+        filename = self.getFilename([f'*.{ext}'])
         if not filename:
             return
-        if not filename.endswith('pro'):
-            filename += '.pro'
-        sec.Section.export_to_pro(filename, self.model1.sections)
+        if not filename.endswith(f'{ext}'):
+            filename += f'.{ext}'
+        sec.Section.export_to_xlsm(filename, self.model1.sections)
 
     def save_to_autocad_script_format(self):
-        filename = self.getFilename(['dxf'])
+        ext = "dxf"
+        filename = self.getFilename([f'*.{ext}'])
         if not filename:
             return
-        if not filename.endswith('dxf'):
-            filename += '.dxf'
+        if not filename.endswith(f'{ext}'):
+            filename += f'.{ext}'
         for i, section in enumerate(self.model1.sections):
             self.msp.add_blockref(section.uid, (0, 550. * i))
         self.new_dwg.saveas(filename)
@@ -558,7 +560,7 @@ class Ui(QMainWindow, main_window):
     def getFilename(self, prefixes):
         filters = ''
         for prefix in prefixes:
-            filters += "{}(*.{})".format(prefix, prefix)
+            filters += "{}({})".format(prefix, prefix)
         filename, _ = QFileDialog.getSaveFileName(self, ' خروجی ',
                                                   self.lastDirectory, filters)
 

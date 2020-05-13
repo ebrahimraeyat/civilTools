@@ -165,13 +165,19 @@ class Section(object):
         return True, "Exported section properties to %s" % (QFileInfo(fname).fileName())
 
     @staticmethod
-    def export_to_pro(fname, sections):
+    def export_to_xlsm(fname, sections):
         import os
         IPES = pd.DataFrame(columns=['TYPE', 'EDI_LABEL', 'LABEL', 'T_F', 'A', 'D', 'BF', 'TW',
                                      'TF', 'KDES', 'KDET', 'IX', 'ZX', 'SX', 'RX', 'ASX', 'IY', 'ZY', 'SY',
                                      'RY', 'ASY', 'J', 'CW'], index=range(len(sections) + 1))
+        dirname = os.path.dirname(fname)
+        filename = os.path.basename(fname)
+        name = filename.rstrip(".xlsm")
+
+        fname_pro = os.path.join(dirname, f"{name}.pro")
         IPES['TYPE'][:] = 'W'
-        IPES['TYPE'][0] = fname
+        IPES['TYPE'][0] = fname_pro
+        IPES['EDI_LABEL'][0] = len(sections)
         for row, section in enumerate(sections, start=1):
             IPES['EDI_LABEL'][row] = IPES['LABEL'][row] = section.name
             IPES['T_F'][row] = ''
@@ -194,25 +200,19 @@ class Section(object):
             IPES['ASY'][row] = section.ASy
             IPES['J'][row] = section.J
             IPES['CW'][row] = section.cw
-        filename = os.path.basename(fname)
-        dirname = os.path.dirname(fname)
-        fname_xlsx = os.path.join(dirname, "SECTIONS.xlsx")
-        writer = pd.ExcelWriter(fname_xlsx, engine='xlsxwriter')
-        workbook = writer.book
-        fname_xlsm = os.path.join(dirname, "SECTIONS.xlsm")
-        workbook.filename = fname_xlsm
-        vba_path = os.path.join(abs_path, "data", "vbaProject.bin")
-        workbook.add_vba_project(vba_path)
-        IPES.to_excel(writer, sheet_name='I-Wide Flange Data', index=False)
-        writer.save()
 
-        os.chdir(dirname)
-        import win32com.client
-        xl = win32com.client.Dispatch("Excel.Application")
-        xl.workbooks.Open(Filename=fname_xlsm, ReadOnly=1)
-        xl.Application.Run("SECTIONS.xlsm!Proper.CreateProperFile")
-        xl.Application.Quit()
-        del xl
+
+        from openpyxl import load_workbook
+
+        original_xlsm = os.path.join(abs_path, "data", "Proper.xlsm")
+        book = load_workbook(original_xlsm, keep_vba= True)
+        writer = pd.ExcelWriter(fname, engine='openpyxl')
+        writer.book = book
+        IPES.to_excel(writer, sheet_name = 'I-Wide Flange Data', index=False)
+        writer.save()
+        writer.close()
+
+
 
     def equivalentSectionI(self, useAs=None, ductility=None):
 
