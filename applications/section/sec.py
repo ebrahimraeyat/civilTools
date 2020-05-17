@@ -201,18 +201,15 @@ class Section(object):
             IPES['J'][row] = section.J
             IPES['CW'][row] = section.cw
 
-
         from openpyxl import load_workbook
 
         original_xlsm = os.path.join(abs_path, "data", "Proper.xlsm")
-        book = load_workbook(original_xlsm, keep_vba= True)
+        book = load_workbook(original_xlsm, keep_vba=True)
         writer = pd.ExcelWriter(fname, engine='openpyxl')
         writer.book = book
-        IPES.to_excel(writer, sheet_name = 'I-Wide Flange Data', index=False)
+        IPES.to_excel(writer, sheet_name='I-Wide Flange Data', index=False)
         writer.save()
         writer.close()
-
-
 
     def equivalentSectionI(self, useAs=None, ductility=None):
 
