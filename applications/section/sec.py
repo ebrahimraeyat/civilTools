@@ -1203,8 +1203,10 @@ class SectionTableModel(QAbstractTableModel):
             section = self.sections[index.row()]
             column = index.column()
             if column == NAME:
-                if value != '':
+                if all([value != '', value not in self.names]):
                     section.name = value
+                    section.xml = section.__str__()
+                    self.names.add(value)
             try:
                 value = float(value)
                 if value > 0:

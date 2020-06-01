@@ -39,7 +39,8 @@ class ExportToXml(xml_base, export_xml_window):
 
         sections = []
         for section in self.sections:
-            if section.name[-2:] in states:
+            useAs_ductility = section.useAs + section.ductility
+            if useAs_ductility in states:
                 sections.append(section)
         if extension == "xml":
             sec.Section.exportXml(filename, sections)
