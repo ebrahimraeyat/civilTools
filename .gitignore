@@ -150,3 +150,9 @@ ENV/
 
 # dotvscode
 .vscode
+
+# ETABS
+*.$et
+*.ico
+*.ebk
+
