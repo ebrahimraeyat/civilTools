@@ -363,6 +363,10 @@ class Ui(QMainWindow, main_window):
         export_result = export.Export(self, self.dirty, self.lastDirectory, self.final_building)
         export_result.to_word()
 
+    def export_to_etabs(self):
+        export_result = export.Export(self, self.dirty, self.lastDirectory, self.final_building)
+        export_result.to_etabs()
+
     def save(self):
         export_result = export.Export(self, self.dirty, self.lastDirectory, None)
         export_result.to_json()
@@ -386,17 +390,18 @@ class Ui(QMainWindow, main_window):
         # exportDialog = exportDialog.ExportDialog(self.p.scene())
         # exportDialog.show(self.p)
 
-    def export_to_etabs(self):
+    # def export_to_etabs(self):
         # TODO
         # results = self.final_building.results
         # if results[0] is True:
-        self.child_export_etabs_win = etabs.ExportToEtabs(self.final_building, self)
-        if self.child_export_etabs_win.exec_():
-            title = 'Seccess'
-            text = 'Export File to {}'.format(self.child_export_etabs_win.output_path_line.text())
-            QMessageBox.information(self, title, text)
-        else:
-            return
+        # self.child_export_etabs_win = etabs.ExportToEtabs(self.final_building, self)
+        # if self.child_export_etabs_win.exec_():
+        #     title = 'Seccess'
+        #     text = 'Export File to {}'.format(self.child_export_etabs_win.output_path_line.text())
+        #     QMessageBox.information(self, title, text)
+        # else:
+        #     return
+
 
 
 def main():

@@ -7,7 +7,8 @@ from functools import reduce
 import pyqtgraph as pg
 from exporter import export_to_word as word
 from exporter import config
-
+from pathlib import Path
+import sys
 
 def getLastSaveDirectory(f):
     f = str(f)
@@ -51,6 +52,12 @@ class Export:
             filename += '.json'
         self.lastDirectory = getLastSaveDirectory(filename)
         config.save(self.widget, filename)
+
+    def to_etabs(self):
+        civiltools_path = Path(__file__).parent.parent.parent
+        sys.path.insert(0, str(civiltools_path))
+        from etabs_api import functions
+        functions.get_drift_periods_calculate_cfactor_and_apply_to_edb(self.widget)
 
 
 class ExportGraph:

@@ -23,7 +23,7 @@ def apply_table(SapModel):
     [NumFatalErrors, NumErrorMsgs, NumWarnMsgs, NumInfoMsgs, ImportLog,
         ret] = SapModel.DatabaseTables.ApplyEditedTables(FillImportLog, NumFatalErrors,
                                                         NumErrorMsgs, NumWarnMsgs, NumInfoMsgs, ImportLog)
-    return ImportLog
+    return NumFatalErrors
 
 def read_table(table_key, SapModel):
     GroupName = table_key
@@ -34,23 +34,19 @@ def read_table(table_key, SapModel):
     TableData = []
     return SapModel.DatabaseTables.GetTableForDisplayArray(table_key, FieldKeyList, GroupName, TableVersion, FieldsKeysIncluded, NumberRecords, TableData)
 
-def get_drift_periods(
-            t_filename="T.EDB",
-            ):
-    '''
-    This function create an Etabs file called T.EDB from current open Etabs file,
-    then in T.EDB file change the stiffness properties of frame elements according 
-    to ACI 318 to get periods of structure, for this it set M22 and M33 stiffness of
-    beams to 0.5 and column and wall to 1.0. Then it run the analysis and get the x and y period of structure.
-    '''
-    myETABSObject = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
-    SapModel = myETABSObject.SapModel
-    asli_file_path = Path(SapModel.GetModelFilename())
-    dir_path = asli_file_path.parent.absolute()
-    t_file_path = dir_path / t_filename
-    SapModel.File.Save(str(t_file_path))
+def close_etabs(ETABSObject):
+    SapModel = ETABSObject.SapModel
+    SapModel.SetModelIsLocked(False)
+    ETABSObject.ApplicationExit(False)
+    SapModel = None
+    ETABSObject = None
 
-    [_, TableVersion, FieldsKeysIncluded, NumberRecords, TableData, _] = read_table("Frame Assignments - Summary", SapModel)
+def get_beams_columns(etabs=None):
+    if not etabs:
+        etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
+    SapModel = etabs.SapModel
+    table_key = "Frame Assignments - Summary"
+    [_, _, FieldsKeysIncluded, _, TableData, _] = read_table(table_key, SapModel)
     data = reshape_data(FieldsKeysIncluded, TableData)
 
     beams = []
@@ -64,9 +60,30 @@ def get_drift_periods(
             beams.append(name)
         elif type_ == 'Column':
             columns.append(name)
-        else:
-            print(f"not recognize frame element!, name = {frame_obj}")
+        # else:
+        #     print(f"not recognize frame element!, name = {frame_obj}")
+    return beams, columns
 
+def get_drift_periods(
+            etabs=None,
+            t_filename="T.EDB",
+            ):
+    '''
+    This function create an Etabs file called T.EDB from current open Etabs file,
+    then in T.EDB file change the stiffness properties of frame elements according 
+    to ACI 318 to get periods of structure, for this it set M22 and M33 stiffness of
+    beams to 0.5 and column and wall to 1.0. Then it run the analysis and get the x and y period of structure.
+    '''
+    if not etabs:
+        etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
+    SapModel = etabs.SapModel
+    asli_file_path = Path(SapModel.GetModelFilename())
+    if asli_file_path.suffix.lower() != '.edb':
+        asli_file_path = asli_file_path.with_suffix(".EDB")
+    dir_path = asli_file_path.parent.absolute()
+    t_file_path = dir_path / t_filename
+    SapModel.File.Save(str(t_file_path))
+    beams, columns = get_beams_columns(etabs)
     TableKey = "Frame Assignments - Property Modifiers"
     [_, TableVersion, FieldsKeysIncluded, NumberRecords, TableData, _] = read_table(TableKey, SapModel)
     data = reshape_data(FieldsKeysIncluded, TableData)
@@ -109,21 +126,17 @@ def get_drift_periods(
     Tx_drift = periods[ux_max_i]
     Ty_drift = periods[uy_max_i]
     SapModel.File.OpenFile(str(asli_file_path))
-    return Tx_drift, Ty_drift
+    return Tx_drift, Ty_drift, asli_file_path
 
-def get_drifts(no_story, cdx, cdy):
+
+
+def get_drifts(no_story, cdx, cdy, show_table=False):
     myETABSObject = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
     SapModel = myETABSObject.SapModel
     SapModel.SetModelIsLocked(False)
     SapModel.Analyze.RunAnalysis()
     TableKey = 'Diaphragm Max Over Avg Drifts'
     [_, _, FieldsKeysIncluded, _, TableData, _] = read_table(TableKey, SapModel)
-    # SapModel.SetModelIsLocked(False)
-    # close the program
-    # myETABSObject.ApplicationExit(False)
-    # SapModel = None
-    # myETABSObject = None
-
     data = reshape_data(FieldsKeysIncluded, TableData)
     item_index = FieldsKeysIncluded.index("Item")
     # average_drift_index = FieldsKeysIncluded.index("Avg Drift")
@@ -138,4 +151,90 @@ def get_drifts(no_story, cdx, cdy):
             cd = cdy
         allowable_drift = limit / cd
         row.append(allowable_drift)
+    if show_table:
+        pass
     return data
+
+def apply_cfactor_to_tabledata(TableData, FieldsKeysIncluded, building):
+    data = reshape_data(FieldsKeysIncluded, TableData)
+    i_xdir = FieldsKeysIncluded.index('XDir')
+    i_ydir = FieldsKeysIncluded.index('YDir')
+    i_c = FieldsKeysIncluded.index('C')
+    i_k = FieldsKeysIncluded.index('K')
+    i_name = FieldsKeysIncluded.index('Name')
+
+    cx, cy = str(building.results[1]), str(building.results[2])
+    kx, ky = str(building.kx), str(building.ky)
+    cx_drift, cy_drift = str(building.results_drift[1]), str(building.results_drift[2])
+    kx_drift, ky_drift = str(building.kx_drift), str(building.ky_drift)
+    
+    for earthquake in data:
+        if 'drift' in earthquake[i_name].lower():
+            if earthquake[i_xdir] == 'Yes':
+                earthquake[i_c] = str(cx_drift)
+                earthquake[i_k] = str(kx_drift)
+            elif earthquake[i_ydir] == 'Yes':
+                earthquake[i_c] = str(cy_drift)
+                earthquake[i_k] = str(ky_drift)
+        elif earthquake[i_xdir] == 'Yes':
+            earthquake[i_c] = str(cx)
+            earthquake[i_k] = str(kx)
+        elif earthquake[i_ydir] == 'Yes':
+            earthquake[i_c] = str(cy)
+            earthquake[i_k] = str(ky)
+    table_data = unique_data(data)
+    return table_data
+
+def apply_cfactor_to_edb(
+        building,
+        ):
+    myETABSObject = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
+    SapModel = myETABSObject.SapModel
+    SapModel.SetModelIsLocked(False)
+    TableKey = 'Load Pattern Definitions - Auto Seismic - User Coefficient'
+    [_, TableVersion, FieldsKeysIncluded, NumberRecords, TableData, _] = read_table(TableKey, SapModel)
+    TableData1 = apply_cfactor_to_tabledata(TableData, FieldsKeysIncluded, building)
+    FieldsKeysIncluded1 = [
+                            'Name',
+                            'Is Auto Load',
+                            'X Dir?',
+                            'X Dir Plus Ecc?',
+                            'X Dir Minus Ecc?',
+                            'Y Dir?',
+                            'Y Dir Plus Ecc?',
+                            'Y Dir Minus Ecc?',
+                            'Ecc Ratio',
+                            'Top Story',
+                            'Bot Story',
+                            'C',
+                            'K',
+                            ]
+    SapModel.DatabaseTables.SetTableForEditingArray(TableKey, TableVersion, FieldsKeysIncluded1, NumberRecords, TableData1)
+    NumFatalErrors = apply_table(SapModel)
+    SapModel.File.Save()
+    return NumFatalErrors
+
+def get_drift_periods_calculate_cfactor_and_apply_to_edb(
+        widget,
+        etabs=None,
+        ):
+    if not etabs:
+        etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
+    Tx, Ty, _ = get_drift_periods(etabs)
+    widget.xTAnalaticalSpinBox.setValue(Tx)
+    widget.yTAnalaticalSpinBox.setValue(Ty)
+    widget.calculate()
+    num_errors = apply_cfactor_to_edb(widget.final_building)
+    return num_errors
+
+def calculate_drifts(
+            widget,
+            no_story=None,
+            etabs=None):
+    get_drift_periods_calculate_cfactor_and_apply_to_edb(widget, etabs)
+    if not no_story:
+        no_story = widget.storySpinBox.value()
+    cdx = widget.final_building.x_system.cd
+    cdy = widget.final_building.y_system.cd
+    drifts = get_drifts(no_story, cdx, cdy, True)
+    return drifts
