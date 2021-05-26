@@ -57,7 +57,7 @@ class Export:
         civiltools_path = Path(__file__).parent.parent.parent
         sys.path.insert(0, str(civiltools_path))
         from etabs_api import functions
-        functions.calculate_drifts(self.widget)
+        functions.apply_cfactor_to_edb(self.building)
 
 class ExportGraph:
     def __init__(self, widget, lastDirectory, p):
