@@ -5,8 +5,7 @@ from pathlib import Path
 import pandas as pd
 from PyQt5.QtCore import QAbstractTableModel, Qt 
 from PyQt5.QtGui import QColor
-
-from PyQt5 import uic
+from PyQt5 import QtCore, QtWidgets, uic
 
 civiltools_path = Path(__file__).parent.parent
 sys.path.insert(0, str(civiltools_path))
@@ -76,15 +75,90 @@ class DriftModel(ResultsModel):
 
 class ResultWidget(result_base, result_window):
     # main widget for user interface
-    def __init__(self, data, headers, parent=None):
+    def __init__(self, data, headers, model, parent=None):
         super(ResultWidget, self).__init__(parent)
         self.setupUi(self)
         self.data = data
         self.headers = headers
-
-    def show_results(self, model):
         self.model = model(self.data, self.headers)
-        self.result_table_view.setModel(self.model)
+        self.proxy = QtCore.QSortFilterProxyModel(self)
+        self.proxy.setSourceModel(self.model)
+        self.result_table_view.setModel(self.proxy)
+        self.comboBox.addItems(self.headers)
+        self.lineEdit.textChanged.connect(self.on_lineEdit_textChanged)
+        self.comboBox.currentIndexChanged.connect(self.on_comboBox_currentIndexChanged)
+        self.horizontalHeader = self.result_table_view.horizontalHeader()
+        self.horizontalHeader.sectionClicked.connect(self.on_view_horizontalHeader_sectionClicked)
+
+    @QtCore.pyqtSlot(int)
+    def on_view_horizontalHeader_sectionClicked(self, logicalIndex):
+        self.logicalIndex   = logicalIndex
+        self.menuValues     = QtWidgets.QMenu(self)
+        self.signalMapper   = QtCore.QSignalMapper(self)  
+
+        self.comboBox.blockSignals(True)
+        self.comboBox.setCurrentIndex(self.logicalIndex)
+        self.comboBox.blockSignals(True)
+
+
+        valuesUnique = list(self.model.df.iloc[:, self.logicalIndex].unique())
+
+        actionAll = QtWidgets.QAction("All", self)
+        actionAll.triggered.connect(self.on_actionAll_triggered)
+        self.menuValues.addAction(actionAll)
+        self.menuValues.addSeparator()
+
+        for actionNumber, actionName in enumerate(sorted(list(set(valuesUnique)))):              
+            action = QtWidgets.QAction(actionName, self)
+            self.signalMapper.setMapping(action, actionNumber)  
+            action.triggered.connect(self.signalMapper.map)  
+            self.menuValues.addAction(action)
+
+        self.signalMapper.mapped.connect(self.on_signalMapper_mapped)  
+
+        headerPos = self.result_table_view.mapToGlobal(self.horizontalHeader.pos())        
+
+        posY = headerPos.y() + self.horizontalHeader.height()
+        posX = headerPos.x() + self.horizontalHeader.sectionPosition(self.logicalIndex)
+
+        self.menuValues.exec_(QtCore.QPoint(posX, posY))
+
+    @QtCore.pyqtSlot()
+    def on_actionAll_triggered(self):
+        filterColumn = self.logicalIndex
+        filterString = QtCore.QRegExp(  "",
+                                        QtCore.Qt.CaseInsensitive,
+                                        QtCore.QRegExp.RegExp
+                                        )
+
+        self.proxy.setFilterRegExp(filterString)
+        self.proxy.setFilterKeyColumn(filterColumn)
+
+    @QtCore.pyqtSlot(int)
+    def on_signalMapper_mapped(self, i):
+        stringAction = self.signalMapper.mapping(i).text()
+        filterColumn = self.logicalIndex
+        filterString = QtCore.QRegExp(  stringAction,
+                                        QtCore.Qt.CaseSensitive,
+                                        QtCore.QRegExp.FixedString
+                                        )
+
+        self.proxy.setFilterRegExp(filterString)
+        self.proxy.setFilterKeyColumn(filterColumn)
+
+    @QtCore.pyqtSlot(str)
+    def on_lineEdit_textChanged(self, text):
+        search = QtCore.QRegExp(    text,
+                                    QtCore.Qt.CaseInsensitive,
+                                    QtCore.QRegExp.RegExp
+                                    )
+
+        self.proxy.setFilterRegExp(search)
+
+    @QtCore.pyqtSlot(int)
+    def on_comboBox_currentIndexChanged(self, index):
+        self.proxy.setFilterKeyColumn(index)
+
 
 
     # def saveResults(self):
@@ -101,8 +175,7 @@ class ResultWidget(result_base, result_window):
     #     pass
 
 def show_results(data, headers, model):
-    child_results_win = ResultWidget(data, headers)
-    child_results_win.show_results(model)
+    child_results_win = ResultWidget(data, headers, model)
     child_results_win.exec_()
 
 
