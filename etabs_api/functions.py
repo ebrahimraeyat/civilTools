@@ -146,6 +146,12 @@ def select_all_load_cases(SapModel):
     n, load_case_names = get_load_cases(SapModel)
     SapModel.DatabaseTables.GetLoadCasesSelectedForDisplay(n, load_case_names)
 
+def select_load_cases(SapModel, names):
+    n = len(names)
+    SapModel.DatabaseTables.GetLoadCasesSelectedForDisplay(0, [])
+    SapModel.DatabaseTables.GetLoadCasesSelectedForDisplay(n, names)
+    
+
 def get_beams_columns(
         etabs=None,
         type_=2,
@@ -250,11 +256,18 @@ def get_drifts(no_story, cdx, cdy, show_table=False, etabs=None):
     # ret = SapModel.Analyze.RunAnalysis()
     # if ret != 0:
     #     raise RuntimeError
-    select_all_load_cases(SapModel)
+    drift_load_pattern_names = get_drift_load_pattern_names(SapModel)
+    all_load_case_names = get_load_patterns(SapModel)
+    names = [i for i in drift_load_pattern_names if i in all_load_case_names]
+    print(names)
+    select_load_cases(SapModel, names)
     TableKey = 'Diaphragm Max Over Avg Drifts'
     [_, _, FieldsKeysIncluded, _, TableData, _] = read_table(TableKey, SapModel)
     data = reshape_data(FieldsKeysIncluded, TableData)
-    item_index = FieldsKeysIncluded.index("Item")
+    try:
+        item_index = FieldsKeysIncluded.index("Item")
+    except ValueError:
+        return None, None
     # average_drift_index = FieldsKeysIncluded.index("Avg Drift")
     if no_story <= 5:
         limit = .025

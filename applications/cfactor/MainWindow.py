@@ -377,7 +377,11 @@ class Ui(QMainWindow, main_window):
         cdx = self.final_building.x_system.cd
         cdy = self.final_building.y_system.cd
         data, headers = functions.get_drifts(no_story, cdx, cdy)
-        table_model.show_results(data, headers)
+        if not data:
+            err = "Please select at least one load case in ETABS table"
+            QMessageBox.critical(self, "Error", str(err))
+            return None
+        table_model.show_results(data, headers, table_model.DriftModel)
         
 
     def save(self):

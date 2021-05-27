@@ -3,7 +3,6 @@ import sys
 from pathlib import Path
 # import comtypes.client
 import pandas as pd
-from PyQt5.QtWidgets import QApplication
 from PyQt5.QtCore import QAbstractTableModel, Qt 
 from PyQt5.QtGui import QColor
 
@@ -15,9 +14,9 @@ result_window, result_base = uic.loadUiType(str(civiltools_path / 'widgets' / 'r
 
 
 class ResultsModel(QAbstractTableModel):
-    # create pandas model class to display dataframe in QTableView
-    # https://learndataanalysis.org/display-pandas-dataframe-with-pyqt5-qtableview-widget/
-
+    '''
+    MetaClass Model for showing Results
+    '''
     def __init__(self, data, headers):
         QAbstractTableModel.__init__(self)
         self._data = data
@@ -30,6 +29,17 @@ class ResultsModel(QAbstractTableModel):
         return len(self._data[0])
 
     def data(self, index, role=Qt.DisplayRole):
+        return None
+
+    def headerData(self, col, orientation, role):
+        return None
+
+
+class DriftModel(ResultsModel):
+    def __init__(self, data, headers):
+        super(DriftModel, self).__init__(data, headers)
+
+    def data(self, index, role=Qt.DisplayRole):
         row = index.row()
         col = index.column()
         max_i = self.headers.index('Max Drift')
@@ -39,8 +49,6 @@ class ResultsModel(QAbstractTableModel):
         green = QColor(0, 255, 0)
         if index.isValid():
             value = self._data[row][col]
-            # max_drift = float(self._data[row][max_i])
-            # avg_drift = float(self._data[row][avg_i])
             allow_drift = float(self._data[row][allow_i])
             if role == Qt.DisplayRole:
                 return str(value)
@@ -53,15 +61,13 @@ class ResultsModel(QAbstractTableModel):
             elif role == Qt.TextAlignmentRole:
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
                 
-
-        return None
-
     def headerData(self, col, orientation, role):
         if role != Qt.DisplayRole:
             return
         if orientation == Qt.Horizontal:
             return self.headers[col]
         return int(col + 1)
+
 
 
 class ResultWidget(result_base, result_window):
@@ -72,8 +78,8 @@ class ResultWidget(result_base, result_window):
         self.data = data
         self.headers = headers
 
-    def show_results(self):
-        self.model = ResultsModel(self.data, self.headers)
+    def show_results(self, model):
+        self.model = model(self.data, self.headers)
         self.result_table_view.setModel(self.model)
 
 
@@ -90,9 +96,9 @@ class ResultWidget(result_base, result_window):
     #     self.statustext.setText(mess_save)
     #     pass
 
-def show_results(data, headers):
+def show_results(data, headers, model):
     child_results_win = ResultWidget(data, headers)
-    child_results_win.show_results()
+    child_results_win.show_results(model)
     child_results_win.exec_()
 
 
@@ -323,14 +329,3 @@ def show_results(data, headers):
 
 # ret = testModel.model_close()
 # print(ret)
-
-# set up main application with get_file_dialog widget
-def main():
-   app = QApplication(sys.argv)
-   ex = get_model_dialog()
-   ex.show()
-   sys.exit(app.exec_())
-
-# run widget
-if __name__ == '__main__':
-    main()
