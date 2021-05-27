@@ -19,14 +19,14 @@ class ResultsModel(QAbstractTableModel):
     '''
     def __init__(self, data, headers):
         QAbstractTableModel.__init__(self)
-        self._data = data
+        self.df = pd.DataFrame(data, columns=headers)
         self.headers = headers
 
     def rowCount(self, parent=None):
-        return len(self._data)
+        return self.df.shape[0]
 
     def columnCount(self, parent=None):
-        return len(self._data[0])
+        return self.df.shape[1]
 
     def data(self, index, role=Qt.DisplayRole):
         return None
@@ -42,6 +42,14 @@ class ResultsModel(QAbstractTableModel):
 class DriftModel(ResultsModel):
     def __init__(self, data, headers):
         super(DriftModel, self).__init__(data, headers)
+        self.df = self.df[[
+            'Story',
+            'OutputCase',
+            'Max Drift',
+            'Avg Drift',
+            'Allowable Drift'
+        ]]
+        self.headers = tuple(self.df.columns)
 
     def data(self, index, role=Qt.DisplayRole):
         row = index.row()
@@ -52,8 +60,8 @@ class DriftModel(ResultsModel):
         red = QColor(255, 0, 0)
         green = QColor(0, 255, 0)
         if index.isValid():
-            value = self._data[row][col]
-            allow_drift = float(self._data[row][allow_i])
+            value = self.df.iloc[row][col]
+            allow_drift = float(self.df.iloc[row][allow_i])
             if role == Qt.DisplayRole:
                 return str(value)
             elif role == Qt.BackgroundColorRole:
