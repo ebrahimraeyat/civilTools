@@ -89,6 +89,15 @@ class ResultWidget(result_base, result_window):
         self.comboBox.currentIndexChanged.connect(self.on_comboBox_currentIndexChanged)
         self.horizontalHeader = self.result_table_view.horizontalHeader()
         self.horizontalHeader.sectionClicked.connect(self.on_view_horizontalHeader_sectionClicked)
+        self.push_button_to_excel.clicked.connect(self.export_to_excel)
+
+    def export_to_excel(self):
+        filename, _ = QtWidgets.QFileDialog.getSaveFileName(self, 'export to excel',
+                                                  '', "excel(*.xlsx)")
+        if filename == '':
+            return
+        with pd.ExcelWriter(filename) as writer:
+                self.model.df.to_excel(writer, sheet_name='drift_results')
 
     @QtCore.pyqtSlot(int)
     def on_view_horizontalHeader_sectionClicked(self, logicalIndex):
