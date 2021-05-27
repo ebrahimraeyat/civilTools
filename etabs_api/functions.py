@@ -2,6 +2,8 @@ from os.path import sameopenfile
 import comtypes.client
 from pathlib import Path
 
+civiltools_path = Path(__file__).parent.parent
+
 
 def reshape_data(FieldsKeysIncluded, table_data):
     n = len(FieldsKeysIncluded)
@@ -244,10 +246,10 @@ def get_drifts(no_story, cdx, cdy, show_table=False, etabs=None):
     if not etabs:
         etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
     SapModel = etabs.SapModel
-    SapModel.SetModelIsLocked(False)
-    ret = SapModel.Analyze.RunAnalysis()
-    if ret != 0:
-        raise RuntimeError
+    # SapModel.SetModelIsLocked(False)
+    # ret = SapModel.Analyze.RunAnalysis()
+    # if ret != 0:
+    #     raise RuntimeError
     select_all_load_cases(SapModel)
     TableKey = 'Diaphragm Max Over Avg Drifts'
     [_, _, FieldsKeysIncluded, _, TableData, _] = read_table(TableKey, SapModel)
@@ -264,10 +266,12 @@ def get_drifts(no_story, cdx, cdy, show_table=False, etabs=None):
         elif row[item_index].endswith("Y"):
             cd = cdy
         allowable_drift = limit / cd
-        row.append(allowable_drift)
+        row.append(f'{allowable_drift:.4f}')
     if show_table:
         pass
-    return data
+    fields = list(FieldsKeysIncluded)
+    fields.append('Allowable Drift')
+    return data, fields
 
 def apply_cfactor_to_tabledata(TableData, FieldsKeysIncluded, building, SapModel):
     data = reshape_data(FieldsKeysIncluded, TableData)
@@ -359,8 +363,15 @@ def calculate_drifts(
         no_story = widget.storySpinBox.value()
     cdx = widget.final_building.x_system.cd
     cdy = widget.final_building.y_system.cd
-    drifts = get_drifts(no_story, cdx, cdy, True, etabs)
+    drifts, _ = get_drifts(no_story, cdx, cdy, True, etabs)
     return drifts
+
+def show_results(data, headers=None):
+    import sys
+    sys.path.insert(0, civiltools_path)
+    from etabs_api import table_model
+
+
 
 class Build:
     def __init__(self):
@@ -377,6 +388,8 @@ if __name__ == '__main__':
     # x, y = get_load_patterns_in_XYdirection(SapModel)
     # print(x)
     # print(y)
-    building = Build()
-    apply_cfactor_to_edb_and_analyze(building)
+    # building = Build()
+    # apply_cfactor_to_edb_and_analyze(building)
     # get_beqams_columns()
+
+    get_drifts(4, 4, 4)

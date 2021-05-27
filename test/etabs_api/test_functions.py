@@ -142,7 +142,7 @@ def test_apply_cfactor_to_edb_and_analyze(rezazadeh):
 
 # def test_get_drifts(myETABSObject):
 #     no_story, cdx, cdy = 4, 4.5, 4.5
-#     drifts = functions.get_drifts(no_story, cdx, cdy)
+#     drifts, _ = functions.get_drifts(no_story, cdx, cdy)
 #     close_etabs(myETABSObject)
 #     assert len(drifts[0]) == 10
 #     assert len(drifts) == 30

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys
 import os
+from pathlib import Path
 abs_path = os.path.dirname(__file__)
 sys.path.insert(0, abs_path)
 from PyQt5.QtCore import *
@@ -65,6 +66,7 @@ class Ui(QMainWindow, main_window):
         self.save_button.clicked.connect(self.save)
         self.load_button.clicked.connect(self.load)
         self.spectrum_button.clicked.connect(self.exportBCurveToCsv)
+        self.pushButton_show_drift.clicked.connect(self.show_drifts)
 
     def resizeColumns(self):
         for column in (X, Y):
@@ -366,6 +368,17 @@ class Ui(QMainWindow, main_window):
     def export_to_etabs(self):
         export_result = export.Export(self, self.dirty, self.lastDirectory, self.final_building)
         export_result.to_etabs()
+
+    def show_drifts(self):
+        civiltools_path = Path(__file__).parent.parent.parent
+        sys.path.insert(0, str(civiltools_path))
+        from etabs_api import functions, table_model
+        no_story = self.storySpinBox.value()
+        cdx = self.final_building.x_system.cd
+        cdy = self.final_building.y_system.cd
+        data, headers = functions.get_drifts(no_story, cdx, cdy)
+        table_model.show_results(data, headers)
+        
 
     def save(self):
         export_result = export.Export(self, self.dirty, self.lastDirectory, None)
