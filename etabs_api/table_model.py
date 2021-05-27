@@ -32,7 +32,11 @@ class ResultsModel(QAbstractTableModel):
         return None
 
     def headerData(self, col, orientation, role):
-        return None
+        if role != Qt.DisplayRole:
+            return
+        if orientation == Qt.Horizontal:
+            return self.headers[col]
+        return int(col + 1)
 
 
 class DriftModel(ResultsModel):
@@ -60,14 +64,6 @@ class DriftModel(ResultsModel):
                         return red
             elif role == Qt.TextAlignmentRole:
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
-                
-    def headerData(self, col, orientation, role):
-        if role != Qt.DisplayRole:
-            return
-        if orientation == Qt.Horizontal:
-            return self.headers[col]
-        return int(col + 1)
-
 
 
 class ResultWidget(result_base, result_window):
