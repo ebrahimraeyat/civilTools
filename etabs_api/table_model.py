@@ -84,7 +84,7 @@ class ResultWidget(result_base, result_window):
         self.proxy = QtCore.QSortFilterProxyModel(self)
         self.proxy.setSourceModel(self.model)
         self.result_table_view.setModel(self.proxy)
-        self.comboBox.addItems(self.headers)
+        self.comboBox.addItems(self.model.headers)
         self.lineEdit.textChanged.connect(self.on_lineEdit_textChanged)
         self.comboBox.currentIndexChanged.connect(self.on_comboBox_currentIndexChanged)
         self.horizontalHeader = self.result_table_view.horizontalHeader()
