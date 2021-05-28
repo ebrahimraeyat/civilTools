@@ -6,11 +6,20 @@ import pandas as pd
 from PyQt5.QtCore import QAbstractTableModel, Qt 
 from PyQt5.QtGui import QColor
 from PyQt5 import QtCore, QtWidgets, uic
+import matplotlib.cm as cm
+from matplotlib.colors import Normalize
+import matplotlib
 
 civiltools_path = Path(__file__).parent.parent
 sys.path.insert(0, str(civiltools_path))
 result_window, result_base = uic.loadUiType(str(civiltools_path / 'widgets' / 'results.ui'))
 
+
+def color_map_color(value, norm, cmap_name='rainbow'):
+    cmap = cm.get_cmap(cmap_name)  # PiYG
+    rgb = cmap(norm(abs(value)))[:3]  # will return rgba, we take only first 3 so we get rgb
+    color = matplotlib.colors.rgb2hex(rgb)
+    return color
 
 class ResultsModel(QAbstractTableModel):
     '''
@@ -49,6 +58,8 @@ class DriftModel(ResultsModel):
             'Allowable Drift'
         ]]
         self.headers = tuple(self.df.columns)
+        self.avg_min = float(self.df['Avg Drift'].min())
+        self.max_min = float(self.df['Max Drift'].min())
 
     def data(self, index, role=Qt.DisplayRole):
         row = index.row()
@@ -56,19 +67,19 @@ class DriftModel(ResultsModel):
         max_i = self.headers.index('Max Drift')
         avg_i = self.headers.index('Avg Drift')
         allow_i = self.headers.index('Allowable Drift')
-        red = QColor(255, 0, 0)
-        green = QColor(0, 255, 0)
         if index.isValid():
             value = self.df.iloc[row][col]
             allow_drift = float(self.df.iloc[row][allow_i])
             if role == Qt.DisplayRole:
                 return str(value)
             elif role == Qt.BackgroundColorRole:
+                if col == avg_i:
+                    vmin=self.avg_min
+                elif col == max_i:
+                    vmin=self.max_min
                 if col in (avg_i, max_i):
-                    if float(value) < allow_drift:
-                        return green
-                    else:
-                        return red
+                    norm = Normalize(vmax=allow_drift, vmin=vmin)
+                    return QColor(color_map_color(float(value), norm))
             elif role == Qt.TextAlignmentRole:
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
 
