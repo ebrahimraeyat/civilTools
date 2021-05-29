@@ -1,6 +1,7 @@
 <RCC>
   <qresource prefix="cfactor">
     <file>../../images/etabs.jpg</file>
+    <file>../../images/drift.svg</file>
     <file>../../images/file_extension_png.png</file>
     <file>../../images/load.png</file>
     <file>../../images/run.svg</file>

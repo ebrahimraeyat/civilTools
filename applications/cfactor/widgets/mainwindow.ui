@@ -97,7 +97,7 @@
          </property>
          <property name="icon">
           <iconset resource="../resource.qrc">
-           <normaloff>:/cfactor/images/etabs.jpg</normaloff>:/cfactor/images/etabs.jpg</iconset>
+           <normaloff>:/cfactor/images/drift.svg</normaloff>:/cfactor/images/drift.svg</iconset>
          </property>
          <property name="iconSize">
           <size>
