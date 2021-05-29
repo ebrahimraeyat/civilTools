@@ -11,16 +11,8 @@ def save(widget, json_file):
 	d['t_an_x'] = widget.xTAnalaticalSpinBox.value()
 	d['t_an_y'] = widget.yTAnalaticalSpinBox.value()
 	d['infill'] = widget.infillCheckBox.isChecked()
-
-	# print(dir(index))
-	# print(type(index))
-	# print(index.parent().data(), index.row(), index.column(), index.data())
-	# print(dir(index.parent()))
-	# d['x_system'] = widget.x_treeWidget.indexOfTopLevelItem(widget.x_treeWidget.currentItem().parent())
-	# d['x_lateral'] = widget.x_treeWidget.currentItem().parent().indexOfChild(widget.x_treeWidget.currentItem())
-	# d['y_system'] = widget.y_treeWidget.indexOfTopLevelItem(widget.y_treeWidget.currentItem().parent())
-	# d['y_lateral'] = widget.y_treeWidget.currentItem().parent().indexOfChild(widget.y_treeWidget.currentItem())
-
+	d['x_system'] = find_selected_item_in_treewidget(widget.x_treeWidget)
+	d['y_system'] = find_selected_item_in_treewidget(widget.y_treeWidget)
 	with open(json_file, 'w') as f:
 		json.dump(d, f)
 
@@ -41,4 +33,33 @@ def load(widget, json_file):
 	widget.xTAnalaticalSpinBox.setValue(d['t_an_x'])
 	widget.yTAnalaticalSpinBox.setValue(d['t_an_y'])
 	widget.infillCheckBox.setChecked(d['infill'])
+	x_item = d.get('x_system', None)
+	y_item = d.get('y_system', None)
+	if x_item and y_item:
+		select_treewidget_item(widget.x_treeWidget, *x_item)
+		select_treewidget_item(widget.y_treeWidget, *y_item)
 
+def find_selected_item_in_treewidget(treewidget):
+	root_item = treewidget.invisibleRootItem()
+	top_level_count = root_item.childCount()
+
+	for i in range(top_level_count):
+		top_level_item = root_item.child(i)
+		child_num = top_level_item.childCount()
+		for n in range(child_num):
+			child_item = top_level_item.child(n)
+			if child_item.isSelected():
+				return i, n
+
+def select_treewidget_item(treewidget, i, n):
+	if i is None:
+		return
+	cur_i, cur_n = find_selected_item_in_treewidget(treewidget)
+	root_item = treewidget.invisibleRootItem()
+	if cur_i == i and cur_n == n:
+		return
+	else:
+		root_item.child(cur_i).child(cur_n).setSelected(False)
+		root_item.child(cur_i).setExpanded(False)
+		root_item.child(i).child(n).setSelected(True)
+		root_item.child(i).setExpanded(True)
