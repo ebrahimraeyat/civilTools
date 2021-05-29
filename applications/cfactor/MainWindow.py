@@ -14,7 +14,6 @@ from models import *
 import pyqtgraph as pg
 from plots.plotB import PlotB as pl
 import export
-from exporter import exporttoetabsdlg1 as etabs
 from exporter import config
 
 rTable = RFactorTable()
@@ -417,12 +416,13 @@ class Ui(QMainWindow, main_window):
         if data == 'not analyzed':
             text = "Structure did not analyzed, Do you want to run analysis?"
             title = "analysis"
-            if self.ok_to_continue(title, text):
+            ret = self.ok_to_continue(title, text)
+            if ret == QMessageBox.Yes:
                 import comtypes.client
                 etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
                 SapModel = etabs.SapModel
                 SapModel.Analyze.RunAnalysis()
-                return None
+            return None
         elif not data:
             err = "Please select at least one load case in ETABS table"
             QMessageBox.critical(self, "Error", str(err))
