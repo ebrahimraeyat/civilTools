@@ -130,9 +130,13 @@ class Ui(QMainWindow, main_window):
         qsettings.setValue("hsplitter", self.hsplitter.saveState())
         qsettings.setValue("v1splitter", self.v1splitter.saveState())
         qsettings.setValue("v2splitter", self.v2splitter.saveState())
-        if self.ok_to_continue():
+        ret = self.ok_to_continue()
+        if ret == QMessageBox.Yes:
             self.save_config()
-        event.accept()
+        elif ret == QMessageBox.No:
+            event.accept()
+        elif ret == QMessageBox.Cancel:
+            event.ignore()
 
     def load_settings(self):
         qsettings = QSettings("civiltools", "cfactor")
@@ -171,8 +175,8 @@ class Ui(QMainWindow, main_window):
         config.save(self, json_file)
 
     def ok_to_continue(self, title='save config?', message='save configuration file?'):
-        return bool(QMessageBox.question(self, title, message,
-                                         QMessageBox.Yes | QMessageBox.No) == QMessageBox.Yes)
+        return QMessageBox.question(self, title, message,
+                                         QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel)
 
     def helpAbout(self):
         QMessageBox.about(self, "درباره نرم افزار محاسبه ضریب زلزله",
