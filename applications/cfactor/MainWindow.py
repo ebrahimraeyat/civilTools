@@ -21,7 +21,7 @@ rTable = RFactorTable()
 systemTypes = rTable.getSystemTypes()
 
 __url__ = "http://ebrahimraeyat.blog.ir"
-__version__ = "4.5"
+__version__ = "5.0"
 link_ebrahim = ('Website: <a href="%s"><span style=" '
                 'text-decoration: underline; color:#0000ff;">'
                 '%s</span></a>') % (__url__, __url__)
@@ -50,9 +50,7 @@ class Ui(QMainWindow, main_window):
         self.load_settings()
         self.load_config()
         self.calculate()
-
-    def load_config(self, json_file=os.path.join(abs_path, 'exporter', 'config.json')):
-        config.load(self, json_file)
+        self.setWindowTitle(f"CFactor v{__version__}")
 
     def add_actions(self):
         self.toolbar.addAction(self.action_to_etabs)
@@ -146,7 +144,30 @@ class Ui(QMainWindow, main_window):
         self.v1splitter.restoreState(qsettings.value("v1splitter", self.v1splitter.saveState()))
         self.v2splitter.restoreState(qsettings.value("v2splitter", self.v2splitter.saveState()))
 
-    def save_config(self, json_file=os.path.join(abs_path, 'exporter', 'config.json')):
+    def load_config(self, json_file=None):
+        if not json_file:
+            appdata_dir = Path(os.getenv('APPDATA'))
+            civiltoos_dir = appdata_dir / 'civiltools'
+            if not civiltoos_dir.exists():
+                civiltoos_dir.mkdir()
+                return
+            else:
+                json_file = civiltoos_dir / 'cfactor.json'
+                if not json_file.exists():
+                    return
+                else:
+                    config.load(self, json_file)
+        config.load(self, json_file)
+
+    def save_config(self, json_file=None):
+        if not json_file:
+            appdata_dir = Path(os.getenv('APPDATA'))
+            civiltoos_dir = appdata_dir / 'civiltools'
+            if not civiltoos_dir.exists():
+                civiltoos_dir.mkdir()
+                return
+            else:
+                json_file = civiltoos_dir / 'cfactor.json'
         config.save(self, json_file)
 
     def ok_to_continue(self, title='save config?', message='save configuration file?'):
