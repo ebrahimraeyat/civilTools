@@ -327,23 +327,8 @@ def apply_cfactor_to_edb(
     select_all_load_patterns(SapModel)
     TableKey = 'Load Pattern Definitions - Auto Seismic - User Coefficient'
     [_, TableVersion, FieldsKeysIncluded, NumberRecords, TableData, _] = read_table(TableKey, SapModel)
-    TableData1 = apply_cfactor_to_tabledata(TableData, FieldsKeysIncluded, building, SapModel)
-    FieldsKeysIncluded1 = [
-                            'Name',
-                            'Is Auto Load',
-                            'X Dir?',
-                            'X Dir Plus Ecc?',
-                            'X Dir Minus Ecc?',
-                            'Y Dir?',
-                            'Y Dir Plus Ecc?',
-                            'Y Dir Minus Ecc?',
-                            'Ecc Ratio',
-                            'Top Story',
-                            'Bot Story',
-                            'C',
-                            'K',
-                            ]
-    SapModel.DatabaseTables.SetTableForEditingArray(TableKey, TableVersion, FieldsKeysIncluded1, NumberRecords, TableData1)
+    TableData = apply_cfactor_to_tabledata(TableData, FieldsKeysIncluded, building, SapModel)
+    SapModel.DatabaseTables.SetTableForEditingArray(TableKey, TableVersion, FieldsKeysIncluded, NumberRecords, TableData)
     NumFatalErrors = apply_table(SapModel)
     print(f"NumFatalErrors = {NumFatalErrors}")
     SapModel.File.Save()
@@ -380,12 +365,6 @@ def calculate_drifts(
     cdy = widget.final_building.y_system.cd
     drifts, _ = get_drifts(no_story, cdx, cdy, True, etabs)
     return drifts
-
-def show_results(data, headers=None):
-    import sys
-    sys.path.insert(0, civiltools_path)
-    from etabs_api import table_model
-
 
 
 class Build:
