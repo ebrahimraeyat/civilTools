@@ -252,6 +252,8 @@ def get_drifts(no_story, cdx, cdy, show_table=False, etabs=None):
     if not etabs:
         etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
     SapModel = etabs.SapModel
+    if not SapModel.GetModelIsLocked():
+        return 'not analyzed', None
     # SapModel.SetModelIsLocked(False)
     # ret = SapModel.Analyze.RunAnalysis()
     # if ret != 0:

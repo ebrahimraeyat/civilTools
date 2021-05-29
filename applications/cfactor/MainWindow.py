@@ -45,6 +45,7 @@ class Ui(QMainWindow, main_window):
         #self.__userH = 200
         # self.setMaxAllowedHeight()
         self.create_connections()
+        self.add_actions()
         # self.create_actions()
         self.load_settings()
         self.load_config()
@@ -52,6 +53,23 @@ class Ui(QMainWindow, main_window):
 
     def load_config(self, json_file=os.path.join(abs_path, 'exporter', 'config.json')):
         config.load(self, json_file)
+
+    def add_actions(self):
+        self.toolbar.addAction(self.action_to_etabs)
+        self.toolbar.addAction(self.action_show_drift)
+        self.toolbar.addAction(self.action_automatic_drift)
+        self.toolbar.addSeparator()
+        self.toolbar.addAction(self.action_open)
+        self.toolbar.addAction(self.action_save)
+        self.toolbar.addAction(self.action_save_spectrals)
+        self.toolbar.addAction(self.action_word)
+
+        self.action_to_etabs.triggered.connect(self.export_to_etabs)
+        self.action_show_drift.triggered.connect(self.show_drifts)
+        self.action_open.triggered.connect(self.load)
+        self.action_save.triggered.connect(self.save)
+        self.action_save_spectrals.triggered.connect(self.exportBCurveToCsv)
+        self.action_word.triggered.connect(self.export_to_word)
 
     def create_connections(self):
         self.calculate_button.clicked.connect(self.calculate)
@@ -61,12 +79,6 @@ class Ui(QMainWindow, main_window):
         # "editingFinished()"), self.userInputHeight)
         self.ostanBox.currentIndexChanged.connect(self.set_shahrs_of_current_ostan)
         self.shahrBox.currentIndexChanged.connect(self.setA)
-        self.pushButton_etabs.clicked.connect(self.export_to_etabs)
-        self.pushButton_word.clicked.connect(self.export_to_word)
-        self.save_button.clicked.connect(self.save)
-        self.load_button.clicked.connect(self.load)
-        self.spectrum_button.clicked.connect(self.exportBCurveToCsv)
-        self.pushButton_show_drift.clicked.connect(self.show_drifts)
 
     def resizeColumns(self):
         for column in (X, Y):
@@ -137,8 +149,8 @@ class Ui(QMainWindow, main_window):
     def save_config(self, json_file=os.path.join(abs_path, 'exporter', 'config.json')):
         config.save(self, json_file)
 
-    def ok_to_continue(self):
-        return bool(QMessageBox.question(self, 'save config?', 'save configuration file?',
+    def ok_to_continue(self, title='save config?', message='save configuration file?'):
+        return bool(QMessageBox.question(self, title, message,
                                          QMessageBox.Yes | QMessageBox.No) == QMessageBox.Yes)
 
     def helpAbout(self):
@@ -349,14 +361,14 @@ class Ui(QMainWindow, main_window):
                 self.final_building.results_drift[2], self.final_building.ky_drift)
             self.updateBCurve(self.final_building)
             self.dirty = True
-            self.pushButton_etabs.setEnabled(True)
-            self.pushButton_word.setEnabled(True)
-            self.save_button.setEnabled(True)
+            self.action_to_etabs.setEnabled(True)
+            self.action_word.setEnabled(True)
+            self.action_save.setEnabled(True)
 
         else:
-            self.pushButton_etabs.setEnabled(False)
-            self.pushButton_word.setEnabled(False)
-            self.save_button.setEnabled(False)
+            self.action_to_etabs.setEnabled(False)
+            self.action_word.setEnabled(False)
+            self.action_save.setEnabled(False)
             title, err, direction = results[1:]
             QMessageBox.critical(self, title % direction, str(err))
             return
@@ -377,7 +389,16 @@ class Ui(QMainWindow, main_window):
         cdx = self.final_building.x_system.cd
         cdy = self.final_building.y_system.cd
         data, headers = functions.get_drifts(no_story, cdx, cdy)
-        if not data:
+        if data == 'not analyzed':
+            text = "Structure did not analyzed, Do you want to run analysis?"
+            title = "analysis"
+            if self.ok_to_continue(title, text):
+                import comtypes.client
+                etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
+                SapModel = etabs.SapModel
+                SapModel.Analyze.RunAnalysis()
+                return None
+        elif not data:
             err = "Please select at least one load case in ETABS table"
             QMessageBox.critical(self, "Error", str(err))
             return None

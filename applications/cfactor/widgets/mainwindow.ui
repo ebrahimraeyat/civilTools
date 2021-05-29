@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1518</width>
-    <height>798</height>
+    <height>812</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,275 +25,6 @@
     <enum>Qt::LeftToRight</enum>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_2">
-    <item>
-     <widget class="QFrame" name="frame_5">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
-        <widget class="QPushButton" name="pushButton_etabs">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>50</height>
-          </size>
-         </property>
-         <property name="cursor">
-          <cursorShape>PointingHandCursor</cursorShape>
-         </property>
-         <property name="toolTip">
-          <string>اعمال ضریب زلزله در فایل ایتبز</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="../resource.qrc">
-           <normaloff>:/cfactor/images/etabs.jpg</normaloff>:/cfactor/images/etabs.jpg</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>40</width>
-           <height>40</height>
-          </size>
-         </property>
-         <property name="shortcut">
-          <string>Ctrl+S</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton_show_drift">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>50</height>
-          </size>
-         </property>
-         <property name="cursor">
-          <cursorShape>PointingHandCursor</cursorShape>
-         </property>
-         <property name="toolTip">
-          <string>نمایش دریفت (سازه در حالت آنالیز شده باشد)</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="../resource.qrc">
-           <normaloff>:/cfactor/images/drift.svg</normaloff>:/cfactor/images/drift.svg</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>40</width>
-           <height>40</height>
-          </size>
-         </property>
-         <property name="shortcut">
-          <string>Ctrl+S</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton_word">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>50</height>
-          </size>
-         </property>
-         <property name="cursor">
-          <cursorShape>PointingHandCursor</cursorShape>
-         </property>
-         <property name="toolTip">
-          <string>خروجی به word</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="../resource.qrc">
-           <normaloff>:/cfactor/images/word.png</normaloff>:/cfactor/images/word.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>40</width>
-           <height>40</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton_4">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>50</height>
-          </size>
-         </property>
-         <property name="cursor">
-          <cursorShape>PointingHandCursor</cursorShape>
-         </property>
-         <property name="toolTip">
-          <string>ذخیره ضریب بازتاب</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="../resource.qrc">
-           <normaloff>:/cfactor/images/file_extension_png.png</normaloff>:/cfactor/images/file_extension_png.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>40</width>
-           <height>40</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="spectrum_button">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>50</height>
-          </size>
-         </property>
-         <property name="cursor">
-          <cursorShape>PointingHandCursor</cursorShape>
-         </property>
-         <property name="toolTip">
-          <string>ذخیره اعداد طیف</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="../resource.qrc">
-           <normaloff>:/cfactor/images/xlsx.png</normaloff>:/cfactor/images/xlsx.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>40</width>
-           <height>40</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="load_button">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>50</height>
-          </size>
-         </property>
-         <property name="cursor">
-          <cursorShape>PointingHandCursor</cursorShape>
-         </property>
-         <property name="toolTip">
-          <string>بارگذاری پروژه</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="../resource.qrc">
-           <normaloff>:/cfactor/images/load.png</normaloff>:/cfactor/images/load.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>40</width>
-           <height>40</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="save_button">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>50</height>
-          </size>
-         </property>
-         <property name="cursor">
-          <cursorShape>PointingHandCursor</cursorShape>
-         </property>
-         <property name="toolTip">
-          <string>ذخیره پروژه</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="../resource.qrc">
-           <normaloff>:/cfactor/images/save.png</normaloff>:/cfactor/images/save.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>40</width>
-           <height>40</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-      <zorder>pushButton_word</zorder>
-      <zorder>pushButton_4</zorder>
-      <zorder>spectrum_button</zorder>
-      <zorder>pushButton_etabs</zorder>
-      <zorder>verticalSpacer</zorder>
-      <zorder>save_button</zorder>
-      <zorder>load_button</zorder>
-      <zorder>pushButton_show_drift</zorder>
-     </widget>
-    </item>
     <item>
      <widget class="QSplitter" name="hsplitter">
       <property name="orientation">
@@ -1298,7 +1029,8 @@ p, li { white-space: pre-wrap; }
     </item>
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menubar">
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
@@ -1307,8 +1039,102 @@ p, li { white-space: pre-wrap; }
      <height>30</height>
     </rect>
    </property>
+   <property name="layoutDirection">
+    <enum>Qt::LeftToRight</enum>
+   </property>
+   <widget class="QMenu" name="menuETABS">
+    <property name="title">
+     <string>ETABS</string>
+    </property>
+    <addaction name="action_to_etabs"/>
+    <addaction name="action_show_drift"/>
+    <addaction name="action_automatic_drift"/>
+   </widget>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="action_open"/>
+    <addaction name="action_save"/>
+    <addaction name="action_word"/>
+    <addaction name="action_save_spectrals"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuETABS"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolbar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="layoutDirection">
+    <enum>Qt::LeftToRight</enum>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <action name="action_to_etabs">
+   <property name="icon">
+    <iconset resource="../resource.qrc">
+     <normaloff>:/cfactor/images/etabs.jpg</normaloff>:/cfactor/images/etabs.jpg</iconset>
+   </property>
+   <property name="text">
+    <string>Export to Etabs</string>
+   </property>
+  </action>
+  <action name="action_show_drift">
+   <property name="icon">
+    <iconset resource="../resource.qrc">
+     <normaloff>:/cfactor/images/drift.svg</normaloff>:/cfactor/images/drift.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show Drift</string>
+   </property>
+  </action>
+  <action name="action_automatic_drift">
+   <property name="text">
+    <string>Automatic Drift</string>
+   </property>
+  </action>
+  <action name="action_open">
+   <property name="icon">
+    <iconset resource="../resource.qrc">
+     <normaloff>:/cfactor/images/load.png</normaloff>:/cfactor/images/load.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Open</string>
+   </property>
+  </action>
+  <action name="action_save">
+   <property name="icon">
+    <iconset resource="../resource.qrc">
+     <normaloff>:/cfactor/images/save.png</normaloff>:/cfactor/images/save.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Save</string>
+   </property>
+  </action>
+  <action name="action_word">
+   <property name="icon">
+    <iconset resource="../resource.qrc">
+     <normaloff>:/cfactor/images/word.png</normaloff>:/cfactor/images/word.png</iconset>
+   </property>
+   <property name="text">
+    <string>Export Word</string>
+   </property>
+  </action>
+  <action name="action_save_spectrals">
+   <property name="icon">
+    <iconset resource="../resource.qrc">
+     <normaloff>:/cfactor/images/xlsx.png</normaloff>:/cfactor/images/xlsx.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save Spectrals</string>
+   </property>
+  </action>
  </widget>
  <tabstops>
   <tabstop>ostanBox</tabstop>
@@ -1320,12 +1146,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>xTAnalaticalSpinBox</tabstop>
   <tabstop>yTAnalaticalSpinBox</tabstop>
   <tabstop>infillCheckBox</tabstop>
-  <tabstop>pushButton_etabs</tabstop>
-  <tabstop>pushButton_word</tabstop>
-  <tabstop>pushButton_4</tabstop>
-  <tabstop>spectrum_button</tabstop>
-  <tabstop>load_button</tabstop>
-  <tabstop>save_button</tabstop>
   <tabstop>x_treeWidget</tabstop>
   <tabstop>structure_properties_table</tabstop>
   <tabstop>accText</tabstop>
