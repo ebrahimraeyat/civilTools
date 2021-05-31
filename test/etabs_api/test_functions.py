@@ -133,11 +133,11 @@ def create_building():
 #     close_etabs(myETABSObject)
 #     assert NumFatalErrors == 0
 
-def test_apply_cfactor_to_edb_and_analyze(rezazadeh):
-    building = create_building()
-    ret = functions.apply_cfactor_to_edb_and_analyze(building)
-    assert ret == 0
-    close_etabs(myETABSObject)
+# def test_apply_cfactor_to_edb_and_analyze(rezazadeh):
+#     building = create_building()
+#     ret = functions.apply_cfactor_to_edb_and_analyze(building)
+#     assert ret == 0
+#     close_etabs(myETABSObject)
 
 
 # def test_get_drifts(myETABSObject):

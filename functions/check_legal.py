@@ -8,10 +8,15 @@ from pathlib import Path
 class CheckLegal:
 
     def __init__(self,
-                file_path,
+                filename,
                 gist_url,
                 ):
-        self.file_Path = file_path
+        appdata_dir = Path(os.getenv('APPDATA'))
+        civiltoos_dir = appdata_dir / 'civiltools'
+        if not civiltoos_dir.exists():
+            civiltoos_dir.mkdir()
+        else:
+            self.filename = civiltoos_dir / filename
         self.gist_url = gist_url
 
     def allowed_to_continue(self):
@@ -39,13 +44,19 @@ class CheckLegal:
             self.initiate()
             return True
         else:
-            with open(self.filename, 'rb') as f:
-                b = f.read()
-                text = base64.b64decode(b).decode('utf-8').split('-')
+            text = self.get_registered_numbers()
             if text[0] == 1 or text[1] <= 2:
                 return True
             else:
                 return False
+
+    def get_registered_numbers(self):
+        if not Path(self.filename).exists():
+            return False
+        with open(self.filename, 'rb') as f:
+            b = f.read()
+            text = base64.b64decode(b).decode('utf-8').split('-')
+            return int(text[0]), int(text[1])
 
     def add_using_feature(self):
         if  Path(self.filename).exists():
