@@ -423,7 +423,6 @@ class Ui(QMainWindow, main_window):
             QMessageBox.critical(self, "Error", str(err))
             return None
         table_model.show_results(data, headers, table_model.DriftModel)
-        
 
     def save(self):
         export_result = export.Export(self, self.dirty, self.lastDirectory, None)
