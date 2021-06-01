@@ -10,13 +10,16 @@ class CheckLegal:
     def __init__(self,
                 filename,
                 gist_url,
+                dir_name='cfactor'
                 ):
         appdata_dir = Path(os.getenv('APPDATA'))
         civiltoos_dir = appdata_dir / 'civiltools'
         if not civiltoos_dir.exists():
             civiltoos_dir.mkdir()
-        else:
-            self.filename = civiltoos_dir / filename
+        cfactor_dir = civiltoos_dir / dir_name
+        if not cfactor_dir.exists():
+            cfactor_dir.mkdir()
+        self.filename = cfactor_dir / filename
         self.gist_url = gist_url
 
     def allowed_to_continue(self):

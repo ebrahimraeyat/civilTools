@@ -150,11 +150,11 @@ class Ui(QMainWindow, main_window):
     def load_config(self, json_file=None):
         if not json_file:
             appdata_dir = Path(os.getenv('APPDATA'))
-            civiltoos_dir = appdata_dir / 'civiltools'
-            if not civiltoos_dir.exists():
+            cfactor_dir = appdata_dir / 'civiltools' / 'cfactor'
+            if not cfactor_dir.exists():
                 return
             else:
-                json_file = civiltoos_dir / 'cfactor.json'
+                json_file = cfactor_dir / 'cfactor.json'
                 if not json_file.exists():
                     return
         config.load(self, json_file)
@@ -165,7 +165,10 @@ class Ui(QMainWindow, main_window):
             civiltoos_dir = appdata_dir / 'civiltools'
             if not civiltoos_dir.exists():
                 civiltoos_dir.mkdir()
-            json_file = civiltoos_dir / 'cfactor.json'
+            cfactor_dir = civiltoos_dir / 'cfactor'
+            if not cfactor_dir.exists():
+                cfactor_dir.mkdir()
+            json_file = cfactor_dir / 'cfactor.json'
         config.save(self, json_file)
 
     def ok_to_continue(self, title='save config?', message='save configuration file?'):
