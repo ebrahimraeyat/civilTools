@@ -10,16 +10,16 @@ class CheckLegal:
     def __init__(self,
                 filename,
                 gist_url,
-                dir_name='cfactor'
+                dir_name='cfactor',
                 ):
         appdata_dir = Path(os.getenv('APPDATA'))
         civiltoos_dir = appdata_dir / 'civiltools'
         if not civiltoos_dir.exists():
             civiltoos_dir.mkdir()
-        cfactor_dir = civiltoos_dir / dir_name
-        if not cfactor_dir.exists():
-            cfactor_dir.mkdir()
-        self.filename = cfactor_dir / filename
+        application_dir = civiltoos_dir / dir_name
+        if not application_dir.exists():
+            application_dir.mkdir()
+        self.filename = application_dir / filename
         self.gist_url = gist_url
 
     def allowed_to_continue(self):
@@ -27,8 +27,9 @@ class CheckLegal:
             if not self.is_registered:
                 if not internet():
                     return False, 'INTERNET'
-                serial = str(subprocess.check_output("wmic csproduct get uuid")).split("\\r\\r\\n")[1].split()[0]
-                if not self.serial_number(serial):
+                
+                self.serial = str(subprocess.check_output("wmic csproduct get uuid")).split("\\r\\r\\n")[1].split()[0]
+                if not self.serial_number(self.serial):
                     return False, 'SERIAL'
                 else:
                     self.register()
@@ -37,9 +38,10 @@ class CheckLegal:
         return True, ''
 
     def initiate(self):
-        with open(self.filename, 'wb') as f:
-            b = base64.b64encode('0-0'.encode('utf-8'))
-            f.write(b)
+        if not self.filename.exists():
+            with open(self.filename, 'wb') as f:
+                b = base64.b64encode('0-0'.encode('utf-8'))
+                f.write(b)
 
     @property
     def is_registered(self):
@@ -55,32 +57,36 @@ class CheckLegal:
 
     def get_registered_numbers(self):
         if not Path(self.filename).exists():
-            return False
+            self.initiate()
         with open(self.filename, 'rb') as f:
             b = f.read()
             text = base64.b64decode(b).decode('utf-8').split('-')
             return int(text[0]), int(text[1])
 
     def add_using_feature(self):
-        if  Path(self.filename).exists():
-            with open(self.filename, 'rb') as f:
-                b = f.read()
-                text = base64.b64decode(b).decode('utf-8').split('-')
-                text[1] += 1
-                text = '-'.join(*[text])
-            with open(self.filename, 'wb') as f:
-                b = base64.b64encode(text.encode('utf-8'))
+        if  not Path(self.filename).exists():
+            self.initiate()
+        with open(self.filename, 'rb') as f:
+            b = f.read()
+            text = base64.b64decode(b).decode('utf-8').split('-')
+            text[1] = str(int(text[1]) + 1)
+            text = '-'.join(*[text])
+        with open(self.filename, 'wb') as f:
+            b = base64.b64encode(text.encode('utf-8'))
+            f.write(b)
         return
 
     def register(self):
-        if  Path(self.filename).exists():
-            with open(self.filename, 'rb') as f:
-                b = f.read()
-                text = base64.b64decode(b).decode('utf-8').split('-')
-                text[0] = 1
-                text = '-'.join(*[text])
-            with open(self.filename, 'wb') as f:
-                b = base64.b64encode(text.encode('utf-8'))
+        if  not Path(self.filename).exists():
+            self.initiate()
+        with open(self.filename, 'rb') as f:
+            b = f.read()
+            text = base64.b64decode(b).decode('utf-8').split('-')
+            text[0] = '1'
+            text = '-'.join([*text])
+        with open(self.filename, 'wb') as f:
+            b = base64.b64encode(text.encode('utf-8'))
+            f.write(b)
 
     def serial_number(self, serial):
         import urllib.request

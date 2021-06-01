@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
+from os.path import dirname
 import sys
 import os
 from pathlib import Path
 abs_path = os.path.dirname(__file__)
 sys.path.insert(0, abs_path)
+civiltools_path = Path(__file__).parent.parent.parent
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -26,6 +28,7 @@ link_ebrahim = ('Website: <a href="%s"><span style=" '
                 '%s</span></a>') % (__url__, __url__)
 
 main_window = uic.loadUiType(os.path.join(abs_path, 'widgets', 'mainwindow.ui'))[0]
+serial_base, serial_window = uic.loadUiType(civiltools_path / 'widgets' / 'serial.ui')
 
 
 class Ui(QMainWindow, main_window):
@@ -403,9 +406,45 @@ class Ui(QMainWindow, main_window):
         export_result = export.Export(self, self.dirty, self.lastDirectory, self.final_building)
         export_result.to_etabs()
 
-    def show_drifts(self):
-        civiltools_path = Path(__file__).parent.parent.parent
+    def allowed_to_continue(self,
+                            filename,
+                            gist_url,
+                            dir_name,
+                            ):
         sys.path.insert(0, str(civiltools_path))
+        from functions import check_legal
+        check = check_legal.CheckLegal(
+                                    filename,
+                                    gist_url,
+                                    dir_name,
+        )
+        allow, text = check.allowed_to_continue()
+        if allow:
+            return True, check
+        else:
+            if text in ('INTERNET', 'SERIAL'):
+                # msg = "You must register to continue, but you are not connected to the Internet, please check your internet connection."
+                # QMessageBox.warning(None, 'Register!', str(msg))
+                # return False
+            # elif text == 'SERIAL':
+                serial_win = SerialForm(self)
+                serial_win.serial.setText(check.serial)
+                serial_win.exec_()
+                return False, check
+            elif text == 'REGISTERED':
+                msg = "Congrajulation! You are now registered, enjoy using this features!"
+                QMessageBox.information(None, 'Registered', str(msg))
+                return True, check
+        return False, check
+
+    def show_drifts(self):
+        allow, check = self.allowed_to_continue(
+            'drift.bin',
+            'https://gist.githubusercontent.com/ebrahimraeyat/7f10571fab2a08b7a17ab782778e53e1/raw',
+            'cfactor'
+            )
+        if not allow:
+            return
         from etabs_api import functions, table_model
         no_story = self.storySpinBox.value()
         cdx = self.final_building.x_system.cd
@@ -426,6 +465,7 @@ class Ui(QMainWindow, main_window):
             QMessageBox.critical(self, "Error", str(err))
             return None
         table_model.show_results(data, headers, table_model.DriftModel)
+        check.add_using_feature()
 
     def save(self):
         export_result = export.Export(self, self.dirty, self.lastDirectory, None)
@@ -462,7 +502,10 @@ class Ui(QMainWindow, main_window):
         # else:
         #     return
 
-
+class SerialForm(serial_base, serial_window):
+    def __init__(self, parent=None):
+        super(SerialForm, self).__init__()
+        self.setupUi(self)
 
 def main():
     app = QApplication(sys.argv)
