@@ -32,10 +32,6 @@ StyleSheet = '''
 '''
 
 
-class ProgressBar(QProgressBar):
-
-    def __init__(self, *args, **kwargs):
-        super(ProgressBar, self).__init__(*args, **kwargs)
 
 
 class Window(QWidget):
@@ -47,7 +43,7 @@ class Window(QWidget):
         self.label = QLabel()
         layout.addWidget(self.label)
         layout.addWidget(
-            ProgressBar(self, minimum=0, maximum=0, textVisible=False,
+            QProgressBar(self, minimum=0, maximum=0, textVisible=False,
                         objectName="GreenProgressBar"))
 
 
