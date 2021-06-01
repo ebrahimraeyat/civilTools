@@ -403,8 +403,16 @@ class Ui(QMainWindow, main_window):
         export_result.to_word()
 
     def export_to_etabs(self):
+        allow, check = self.allowed_to_continue(
+            'export_to_etabs.bin',
+            'https://gist.githubusercontent.com/ebrahimraeyat/7f10571fab2a08b7a17ab782778e53e1/raw',
+            'cfactor'
+            )
+        if not allow:
+            return
         export_result = export.Export(self, self.dirty, self.lastDirectory, self.final_building)
         export_result.to_etabs()
+        self.show_warning_about_number_of_use(check)
 
     def allowed_to_continue(self,
                             filename,
@@ -419,7 +427,7 @@ class Ui(QMainWindow, main_window):
                                     dir_name,
         )
         allow, text = check.allowed_to_continue()
-        if allow:
+        if allow and not text:
             return True, check
         else:
             if text in ('INTERNET', 'SERIAL'):
@@ -439,7 +447,7 @@ class Ui(QMainWindow, main_window):
 
     def show_drifts(self):
         allow, check = self.allowed_to_continue(
-            'drift.bin',
+            'show_drifts.bin',
             'https://gist.githubusercontent.com/ebrahimraeyat/7f10571fab2a08b7a17ab782778e53e1/raw',
             'cfactor'
             )
@@ -465,7 +473,15 @@ class Ui(QMainWindow, main_window):
             QMessageBox.critical(self, "Error", str(err))
             return None
         table_model.show_results(data, headers, table_model.DriftModel)
+        self.show_warning_about_number_of_use(check)
+
+    def show_warning_about_number_of_use(self, check):
         check.add_using_feature()
+        _, no_of_use = check.get_registered_numbers()
+        n = check.n - no_of_use
+        if n > 0:
+            msg = f"You can use this feature {n} more times!\n then you must register the software."
+            QMessageBox.warning(None, 'Not registered!', str(msg))
 
     def save(self):
         export_result = export.Export(self, self.dirty, self.lastDirectory, None)

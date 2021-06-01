@@ -11,6 +11,7 @@ class CheckLegal:
                 filename,
                 gist_url,
                 dir_name='cfactor',
+                n=5,
                 ):
         appdata_dir = Path(os.getenv('APPDATA'))
         civiltoos_dir = appdata_dir / 'civiltools'
@@ -21,14 +22,15 @@ class CheckLegal:
             application_dir.mkdir()
         self.filename = application_dir / filename
         self.gist_url = gist_url
+        self.n = n
 
     def allowed_to_continue(self):
         if sys.platform == "win32":
             if not self.is_registered:
+                self.serial = str(subprocess.check_output("wmic csproduct get uuid")).split("\\r\\r\\n")[1].split()[0]
                 if not internet():
                     return False, 'INTERNET'
                 
-                self.serial = str(subprocess.check_output("wmic csproduct get uuid")).split("\\r\\r\\n")[1].split()[0]
                 if not self.serial_number(self.serial):
                     return False, 'SERIAL'
                 else:
@@ -50,7 +52,7 @@ class CheckLegal:
             return True
         else:
             text = self.get_registered_numbers()
-            if text[0] == 1 or text[1] <= 2:
+            if text[0] == 1 or text[1] <= self.n:
                 return True
             else:
                 return False
