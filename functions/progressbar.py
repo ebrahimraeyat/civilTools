@@ -1,5 +1,8 @@
-import sys
-from PyQt5.QtWidgets import QWidget, QApplication, QVBoxLayout, QProgressBar, QLabel
+from pathlib import Path
+
+from PyQt5 import uic
+
+civiltools_path = Path(__file__).absolute().parent.parent
 
 StyleSheet = '''
 #RedProgressBar {
@@ -31,31 +34,12 @@ StyleSheet = '''
 }
 '''
 
+update_base, update_window = uic.loadUiType(civiltools_path / 'widgets' / 'update.ui')
 
 
+class UpdateWindow(update_base, update_window):
 
-class Window(QWidget):
-
-    def __init__(self, *args, **kwargs):
-        super(Window, self).__init__(*args, **kwargs)
-        self.resize(600, 200)
-        layout = QVBoxLayout(self)
-        self.label = QLabel()
-        layout.addWidget(self.label)
-        layout.addWidget(
-            QProgressBar(self, minimum=0, maximum=0, textVisible=False,
-                        objectName="GreenProgressBar"))
-
-
-def show(text=None):
-    app = QApplication(sys.argv)
-    app.setStyleSheet(StyleSheet)
-    w = Window()
-    if text:
-        w.label.setText(text)
-    w.show()
-    return w, app
-    # sys.exit(app.exec_())
-
-if __name__ == "__main__":
-    show()
+    def __init__(self, parent=None):
+        super(UpdateWindow, self).__init__()
+        self.setStyleSheet(StyleSheet)
+        self.setupUi(self)

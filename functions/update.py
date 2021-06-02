@@ -32,6 +32,9 @@ class GitUpdate:
             import tempfile
             default_tmp_dir = tempfile._get_default_tempdir()
             name = next(tempfile._get_candidate_names())
+            civiltools_temp = Path(default_tmp_dir) /  'civiltools'
+            if not civiltools_temp.exists():
+                civiltools_temp.mkdir()
             civiltools_temp_dir = Path(default_tmp_dir) /  'civiltools' / name
             civiltools_temp_dir.mkdir()
             os.chdir(str(civiltools_temp_dir))

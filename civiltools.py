@@ -68,11 +68,12 @@ class FormWidget(QtWidgets.QWidget, main_window):
         if (QMessageBox.question(self, "update", ("update to latest version?!"),
                                     QMessageBox.Yes | QMessageBox.No) == QMessageBox.No):
             return
-        window, app = progressbar.show("updating, please be patient...")
-        app.exec_()
+        self.update_win = progressbar.UpdateWindow(self)
+        self.update_win.show()
+        msg = 'Please wait...'
         up = update.GitUpdate(branch)
         msg = up.git_update()
-        window.label.setText(msg)
+        self.update_win.label.setText(msg)
 
 
 class AboutForm(about_base, about_window):
@@ -113,7 +114,6 @@ def main():
     window.show()
     splash.finish(window)
     sys.exit(app.exec_())
-
 
 if __name__ == '__main__':
     main()
