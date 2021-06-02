@@ -160,6 +160,9 @@ def create_building():
 #     close_etabs(myETABSObject)
 #     assert len(drifts[0]) == 10
 
+def test_is_etabs_running():
+    ret = functions.is_etabs_running()
+    assert not ret
 
 # def test_get_drift_periods_and_calculate_cfactor(mocker):
 #     mocker.patch(

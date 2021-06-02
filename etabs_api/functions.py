@@ -366,6 +366,12 @@ def calculate_drifts(
     drifts, _ = get_drifts(no_story, cdx, cdy, True, etabs)
     return drifts
 
+def is_etabs_running():
+    try:
+        comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
+        return True
+    except OSError:
+        return False
 
 class Build:
     def __init__(self):

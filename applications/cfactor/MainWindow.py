@@ -410,8 +410,42 @@ class Ui(QMainWindow, main_window):
             )
         if not allow:
             return
+        if not self.is_etabs_running:
+            return
         export_result = export.Export(self, self.dirty, self.lastDirectory, self.final_building)
         export_result.to_etabs()
+        self.show_warning_about_number_of_use(check)
+
+    def show_drifts(self):
+        allow, check = self.allowed_to_continue(
+            'show_drifts.bin',
+            'https://gist.githubusercontent.com/ebrahimraeyat/7f10571fab2a08b7a17ab782778e53e1/raw',
+            'cfactor'
+            )
+        if not allow:
+            return
+        if not self.is_etabs_running:
+            return
+        from etabs_api import functions, table_model
+        no_story = self.storySpinBox.value()
+        cdx = self.final_building.x_system.cd
+        cdy = self.final_building.y_system.cd
+        data, headers = functions.get_drifts(no_story, cdx, cdy)
+        if data == 'not analyzed':
+            text = "Structure did not analyzed, Do you want to run analysis?"
+            title = "analysis"
+            ret = self.ok_to_continue(title, text)
+            if ret == QMessageBox.Yes:
+                import comtypes.client
+                etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
+                SapModel = etabs.SapModel
+                SapModel.Analyze.RunAnalysis()
+            return None
+        elif not data:
+            err = "Please select at least one load case in ETABS table"
+            QMessageBox.critical(self, "Error", str(err))
+            return None
+        table_model.show_results(data, headers, table_model.DriftModel)
         self.show_warning_about_number_of_use(check)
 
     def allowed_to_continue(self,
@@ -444,36 +478,6 @@ class Ui(QMainWindow, main_window):
                 QMessageBox.information(None, 'Registered', str(msg))
                 return True, check
         return False, check
-
-    def show_drifts(self):
-        allow, check = self.allowed_to_continue(
-            'show_drifts.bin',
-            'https://gist.githubusercontent.com/ebrahimraeyat/7f10571fab2a08b7a17ab782778e53e1/raw',
-            'cfactor'
-            )
-        if not allow:
-            return
-        from etabs_api import functions, table_model
-        no_story = self.storySpinBox.value()
-        cdx = self.final_building.x_system.cd
-        cdy = self.final_building.y_system.cd
-        data, headers = functions.get_drifts(no_story, cdx, cdy)
-        if data == 'not analyzed':
-            text = "Structure did not analyzed, Do you want to run analysis?"
-            title = "analysis"
-            ret = self.ok_to_continue(title, text)
-            if ret == QMessageBox.Yes:
-                import comtypes.client
-                etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
-                SapModel = etabs.SapModel
-                SapModel.Analyze.RunAnalysis()
-            return None
-        elif not data:
-            err = "Please select at least one load case in ETABS table"
-            QMessageBox.critical(self, "Error", str(err))
-            return None
-        table_model.show_results(data, headers, table_model.DriftModel)
-        self.show_warning_about_number_of_use(check)
 
     def show_warning_about_number_of_use(self, check):
         check.add_using_feature()
@@ -518,10 +522,20 @@ class Ui(QMainWindow, main_window):
         # else:
         #     return
 
+    @property
+    def is_etabs_running(self):
+        from etabs_api import functions
+        etabs = functions.is_etabs_running()
+        if not etabs:
+            QMessageBox.warning(self, 'ETABS', 'Please open etabs file!')
+            return False
+        return True
+
 class SerialForm(serial_base, serial_window):
     def __init__(self, parent=None):
         super(SerialForm, self).__init__()
         self.setupUi(self)
+
 
 def main():
     app = QApplication(sys.argv)
