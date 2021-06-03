@@ -319,8 +319,8 @@ p, li { white-space: pre-wrap; }
         <string>راهنما</string>
        </property>
        <property name="icon">
-        <iconset>
-         <normaloff>images/about.png</normaloff>images/about.png</iconset>
+        <iconset resource="resource.qrc">
+         <normaloff>:/civiltools/images/help.png</normaloff>:/civiltools/images/help.png</iconset>
        </property>
        <property name="iconSize">
         <size>
