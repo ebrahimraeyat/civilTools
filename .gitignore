@@ -156,3 +156,13 @@ ENV/
 *.ico
 *.ebk
 
+
+# tex
+*.aux
+*.fls
+*.log
+*.out
+*.toc
+*.xdv
+*.fdb_latexmk
+

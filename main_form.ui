@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>637</width>
-    <height>533</height>
+    <height>593</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -300,6 +300,23 @@ p, li { white-space: pre-wrap; }
       <widget class="QPushButton" name="about_Button">
        <property name="text">
         <string>   درباره</string>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normaloff>images/about.png</normaloff>images/about.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>64</width>
+         <height>64</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="help_button">
+       <property name="text">
+        <string>راهنما</string>
        </property>
        <property name="icon">
         <iconset>

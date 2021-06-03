@@ -33,6 +33,7 @@ class FormWidget(QtWidgets.QWidget, main_window):
         self.dynamic_button.clicked.connect(self.run_dynamic)
         self.about_Button.clicked.connect(self.about)
         self.update_Button.clicked.connect(self.git_updates)
+        self.help_button.clicked.connect(self.help)
 
     def run_section(self):
         os.chdir(civiltools_path + "/applications/section")
@@ -58,6 +59,11 @@ class FormWidget(QtWidgets.QWidget, main_window):
     def about(self):
         self.child_win = AboutForm(self)
         self.child_win.show()
+
+    def help(self):
+        import webbrowser
+        path = civiltools_path +  "/help" + "/help.pdf"
+        webbrowser.open_new(path)
 
     def git_updates(self):
         from functions import update, progressbar
