@@ -1129,7 +1129,7 @@ p, li { white-space: pre-wrap; }
   <action name="action_save_spectrals">
    <property name="icon">
     <iconset resource="../resource.qrc">
-     <normaloff>:/cfactor/images/xlsx.png</normaloff>:/cfactor/images/xlsx.png</iconset>
+     <normaloff>:/cfactor/images/spec.svg</normaloff>:/cfactor/images/spec.svg</iconset>
    </property>
    <property name="text">
     <string>Save Spectrals</string>
