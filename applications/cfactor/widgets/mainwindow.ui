@@ -1095,6 +1095,9 @@ p, li { white-space: pre-wrap; }
    </property>
   </action>
   <action name="action_automatic_drift">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Automatic Drift</string>
    </property>
