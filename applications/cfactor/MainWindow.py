@@ -414,6 +414,8 @@ class Ui(QMainWindow, main_window):
             return
         export_result = export.Export(self, self.dirty, self.lastDirectory, self.final_building)
         export_result.to_etabs()
+        msg = "Successfully writed to Etabs."
+        QMessage.information(None, "done", msg)
         self.show_warning_about_number_of_use(check)
 
     def show_drifts(self):
