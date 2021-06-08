@@ -410,7 +410,7 @@ class Ui(QMainWindow, main_window):
             )
         if not allow:
             return
-        if not self.is_etabs_running:
+        if not self.is_etabs_running():
             return
         export_result = export.Export(self, self.dirty, self.lastDirectory, self.final_building)
         export_result.to_etabs()
@@ -426,7 +426,7 @@ class Ui(QMainWindow, main_window):
             )
         if not allow:
             return
-        if not self.is_etabs_running:
+        if not self.is_etabs_running():
             return
         from etabs_api import functions, table_model
         no_story = self.storySpinBox.value()
@@ -524,7 +524,6 @@ class Ui(QMainWindow, main_window):
         # else:
         #     return
 
-    @property
     def is_etabs_running(self):
         from etabs_api import functions
         etabs = functions.is_etabs_running()
