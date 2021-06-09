@@ -11,10 +11,10 @@ _version = '5.0'
 branch = 'v5'
 civiltools_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, civiltools_path)
-main_window = uic.loadUiType(civiltools_path + '/main_form.ui')[0]
-about_window, about_base = uic.loadUiType(civiltools_path + '/about.ui')
-update_window, update_base = uic.loadUiType(civiltools_path + '/update.ui')
-serial_base, serial_window = uic.loadUiType(civiltools_path + '/serial.ui')
+main_window = uic.loadUiType(civiltools_path + '/widgets' + '/main_form.ui')[0]
+about_window, about_base = uic.loadUiType(civiltools_path + '/widgets' + '/about.ui')
+update_window, update_base = uic.loadUiType(civiltools_path + '/widgets' + '/update.ui')
+serial_base, serial_window = uic.loadUiType(civiltools_path + '/widgets' + '/serial.ui')
 python_exe = 'pythonw'
 if sys.platform.startswith('linux'):
     python_exe = 'python'

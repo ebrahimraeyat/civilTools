@@ -38,7 +38,7 @@
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="resource.qrc">
+           <iconset resource="../resource.qrc">
             <normaloff>:/civiltools/images/civil-engineering.jpg</normaloff>:/civiltools/images/civil-engineering.jpg</iconset>
           </property>
           <property name="iconSize">
@@ -110,7 +110,7 @@ p, li { white-space: pre-wrap; }
               <string>    مقاطع معادل</string>
              </property>
              <property name="icon">
-              <iconset resource="resource.qrc">
+              <iconset resource="../resource.qrc">
                <normaloff>:/civiltools/images/2IPE.svg</normaloff>:/civiltools/images/2IPE.svg</iconset>
              </property>
              <property name="iconSize">
@@ -130,7 +130,7 @@ p, li { white-space: pre-wrap; }
               <string>    ضریب زلزله</string>
              </property>
              <property name="icon">
-              <iconset resource="resource.qrc">
+              <iconset resource="../resource.qrc">
                <normaloff>:/civiltools/images/cfactor.svg</normaloff>:/civiltools/images/cfactor.svg</iconset>
              </property>
              <property name="iconSize">
@@ -153,7 +153,7 @@ p, li { white-space: pre-wrap; }
               <string>    برش پانچ</string>
              </property>
              <property name="icon">
-              <iconset resource="resource.qrc">
+              <iconset resource="../resource.qrc">
                <normaloff>:/civiltools/images/punch.svg</normaloff>:/civiltools/images/punch.svg</iconset>
              </property>
              <property name="iconSize">
@@ -201,7 +201,7 @@ p, li { white-space: pre-wrap; }
             <string>دینامیک سازه</string>
            </property>
            <property name="icon">
-            <iconset resource="resource.qrc">
+            <iconset resource="../resource.qrc">
              <normaloff>:/civiltools/images/dynamic.png</normaloff>:/civiltools/images/dynamic.png</iconset>
            </property>
            <property name="iconSize">
@@ -224,7 +224,7 @@ p, li { white-space: pre-wrap; }
             <string>    رکورد زلزله</string>
            </property>
            <property name="icon">
-            <iconset resource="resource.qrc">
+            <iconset resource="../resource.qrc">
              <normaloff>:/civiltools/images/cfactor.png</normaloff>:/civiltools/images/cfactor.png</iconset>
            </property>
            <property name="iconSize">
@@ -265,8 +265,8 @@ p, li { white-space: pre-wrap; }
         <string>    خروج</string>
        </property>
        <property name="icon">
-        <iconset>
-         <normaloff>images/quit.png</normaloff>images/quit.png</iconset>
+        <iconset resource="../resource.qrc">
+         <normaloff>:/civiltools/images/quit.png</normaloff>:/civiltools/images/quit.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -285,7 +285,7 @@ p, li { white-space: pre-wrap; }
         <string>    آپدیت</string>
        </property>
        <property name="icon">
-        <iconset resource="resource.qrc">
+        <iconset resource="../resource.qrc">
          <normaloff>:/civiltools/images/update.png</normaloff>:/civiltools/images/update.png</iconset>
        </property>
        <property name="iconSize">
@@ -302,8 +302,8 @@ p, li { white-space: pre-wrap; }
         <string>   درباره</string>
        </property>
        <property name="icon">
-        <iconset>
-         <normaloff>images/about.png</normaloff>images/about.png</iconset>
+        <iconset resource="../resource.qrc">
+         <normaloff>:/civiltools/images/about.png</normaloff>:/civiltools/images/about.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -319,7 +319,7 @@ p, li { white-space: pre-wrap; }
         <string>راهنما</string>
        </property>
        <property name="icon">
-        <iconset resource="resource.qrc">
+        <iconset resource="../resource.qrc">
          <normaloff>:/civiltools/images/help.png</normaloff>:/civiltools/images/help.png</iconset>
        </property>
        <property name="iconSize">
@@ -335,7 +335,7 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <resources>
-  <include location="resource.qrc"/>
+  <include location="../resource.qrc"/>
  </resources>
  <connections>
   <connection>
