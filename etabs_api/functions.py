@@ -122,17 +122,15 @@ def select_all_load_patterns(SapModel):
     SapModel.DatabaseTables.SetLoadPatternsSelectedForDisplay(load_pattern_names)
 
 def get_load_cases(SapModel):
-    n, load_case_names, *args = SapModel.LoadCases.GetNameList(0, [])
-    return n, load_case_names
+    load_case_names = SapModel.LoadCases.GetNameList(0, [])[1]
+    return load_case_names
 
 def select_all_load_cases(SapModel):
     n, load_case_names = get_load_cases(SapModel)
     SapModel.DatabaseTables.GetLoadCasesSelectedForDisplay(n, load_case_names)
 
 def select_load_cases(SapModel, names):
-    n = len(names)
-    SapModel.DatabaseTables.GetLoadCasesSelectedForDisplay(0, [])
-    SapModel.DatabaseTables.GetLoadCasesSelectedForDisplay(n, names)
+    SapModel.DatabaseTables.SetLoadCasesSelectedForDisplay(names)
     
 
 def get_beams_columns(
@@ -242,7 +240,7 @@ def get_drifts(no_story, cdx, cdy, show_table=False, etabs=None):
     # if ret != 0:
     #     raise RuntimeError
     drift_load_pattern_names = get_drift_load_pattern_names(SapModel)
-    all_load_case_names = get_load_patterns(SapModel)
+    all_load_case_names = get_load_cases(SapModel)
     names = [i for i in drift_load_pattern_names if i in all_load_case_names]
     print(names)
     select_load_cases(SapModel, names)
