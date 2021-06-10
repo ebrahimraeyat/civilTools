@@ -88,50 +88,24 @@ def get_load_patterns_in_XYdirection(SapModel):
     i_ydir_minus = FieldsKeysIncluded.index('YDirMinusE')
     i_name = FieldsKeysIncluded.index('Name')
     data = reshape_data(FieldsKeysIncluded, TableData)
-    names_x = []
-    names_y = []
+    names_x = set()
+    names_y = set()
     all_load_pattern_names = get_load_patterns(SapModel)
     for earthquake in data:
         name = earthquake[i_name]
-        if name in names_x + names_y:
-            continue
-        ecc_x = 0
-        ecc_y = 0
-        if earthquake[i_xdir] == 'Yes':
-            ecc_x +=1
-        if earthquake[i_xdir_minus] == 'Yes':
-            ecc_x +=1
-        if earthquake[i_xdir_plus] == 'Yes':
-            ecc_x +=1
-        if f"/{ecc_x})" in name:
-            continue
-        if ecc_x == 1:
-            names_x.append(name)
-        elif ecc_x > 1:
-            names_x.append(name)
-            for i in range(ecc_x):
-                new_name = f"{name}({i+1}/{ecc_x})"
-                if not new_name in all_load_pattern_names:
-                    continue
-                names_x.append(new_name)
-
-        if earthquake[i_ydir] == 'Yes':
-            ecc_y +=1
-        if earthquake[i_ydir_minus] == 'Yes':
-            ecc_y +=1
-        if earthquake[i_ydir_plus] == 'Yes':
-            ecc_y +=1
-        if f"/{ecc_y})" in name:
-            continue
-        if ecc_y == 1:
-            names_y.append(name)
-        elif ecc_y > 1:
-            names_y.append(name)
-            for i in range(ecc_y):
-                new_name = f"{name}({i+1}/{ecc_y})"
-                if not new_name in all_load_pattern_names:
-                    continue
-                names_y.append(new_name)
+        if any((
+            earthquake[i_xdir] == 'Yes',
+            earthquake[i_xdir_minus] == 'Yes',
+            earthquake[i_xdir_plus] == 'Yes',
+        )):
+            names_x.add(name)
+        elif any((
+            earthquake[i_ydir] == 'Yes',
+            earthquake[i_ydir_minus] == 'Yes',
+            earthquake[i_ydir_plus] == 'Yes',
+        )):
+            names_y.add(name)
+        
     return names_x, names_y
 
 def select_all_load_patterns(SapModel):
