@@ -62,16 +62,9 @@ def get_special_load_pattern_names(SapModel, n=5):
 def get_drift_load_pattern_names(SapModel):
     '''
     Drift loadType number is 37, when user tick the eccentricity of load,
-    etabs create aditional (1/3), (2/3) and (3/3) load, we can not this loads
-    to be include in return list
+    etabs create aditional (1/3), (2/3) and (3/3) load when structure is analyzed
     '''
-    names = get_special_load_pattern_names(SapModel, 37)
-    drift_load_pattern_names = []
-    for lp in names:
-        if '(' in lp and lp.endswith(')'):
-            continue
-        drift_load_pattern_names.append(lp)
-    return drift_load_pattern_names
+    return get_special_load_pattern_names(SapModel, 37)
 
 def get_load_patterns_in_XYdirection(SapModel):
     '''
@@ -118,7 +111,6 @@ def select_all_load_patterns(SapModel):
                 ')' in name,
             )):
                 load_pattern_names.remove(name)
-    print(load_pattern_names)
     SapModel.DatabaseTables.SetLoadPatternsSelectedForDisplay(load_pattern_names)
 
 def get_load_cases(SapModel):
