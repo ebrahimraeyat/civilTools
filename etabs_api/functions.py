@@ -108,7 +108,17 @@ def get_load_patterns_in_XYdirection(SapModel):
     return names_x, names_y
 
 def select_all_load_patterns(SapModel):
-    load_pattern_names = get_load_patterns(SapModel)
+    load_pattern_names = list(get_load_patterns(SapModel))
+    if not SapModel.GetModelIsLocked():
+        names = tuple(load_pattern_names)
+        for name in names:
+            if all((
+                '(' in name,
+                '/' in name,
+                ')' in name,
+            )):
+                load_pattern_names.remove(name)
+    print(load_pattern_names)
     SapModel.DatabaseTables.SetLoadPatternsSelectedForDisplay(load_pattern_names)
 
 def get_load_cases(SapModel):
