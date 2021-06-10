@@ -90,7 +90,6 @@ def get_load_patterns_in_XYdirection(SapModel):
     data = reshape_data(FieldsKeysIncluded, TableData)
     names_x = set()
     names_y = set()
-    all_load_pattern_names = get_load_patterns(SapModel)
     for earthquake in data:
         name = earthquake[i_name]
         if any((
