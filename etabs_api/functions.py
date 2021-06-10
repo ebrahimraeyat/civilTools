@@ -126,8 +126,8 @@ def get_load_cases(SapModel):
     return load_case_names
 
 def select_all_load_cases(SapModel):
-    n, load_case_names = get_load_cases(SapModel)
-    SapModel.DatabaseTables.GetLoadCasesSelectedForDisplay(n, load_case_names)
+    load_case_names = get_load_cases(SapModel)
+    SapModel.DatabaseTables.SetLoadCasesSelectedForDisplay(load_case_names)
 
 def select_load_cases(SapModel, names):
     SapModel.DatabaseTables.SetLoadCasesSelectedForDisplay(names)
