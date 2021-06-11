@@ -113,6 +113,15 @@ def select_all_load_patterns(SapModel):
                 load_pattern_names.remove(name)
     SapModel.DatabaseTables.SetLoadPatternsSelectedForDisplay(load_pattern_names)
 
+def is_auto_load_yes_in_seismic_load_patterns(TableData, FieldsKeysIncluded) -> bool:
+    data = reshape_data(FieldsKeysIncluded, TableData)
+    i_is_auto_load = FieldsKeysIncluded.index('IsAuto')
+    for e in data:
+        if e[i_is_auto_load] == 'Yes':
+            return True
+    return False
+
+
 def get_load_cases(SapModel):
     load_case_names = SapModel.LoadCases.GetNameList(0, [])[1]
     return load_case_names
@@ -300,7 +309,11 @@ def apply_cfactor_to_edb(
     select_all_load_patterns(SapModel)
     TableKey = 'Load Pattern Definitions - Auto Seismic - User Coefficient'
     [_, TableVersion, FieldsKeysIncluded, NumberRecords, TableData, _] = read_table(TableKey, SapModel)
+    if is_auto_load_yes_in_seismic_load_patterns(TableData, FieldsKeysIncluded):
+        return 1
     TableData = apply_cfactor_to_tabledata(TableData, FieldsKeysIncluded, building, SapModel)
+    # ('Name', 'IsAuto', 'XDir', 'XDirPlusE', 'XDirMinusE', 'YDir', 'YDirPlusE', 'YDirMinusE', 'EccRatio',
+    # 'TopStory', 'BotStory', 'OverStory', 'OverDiaph', 'OverEcc', 'C', 'K', 'WeightUsed', 'BaseShear')
     FieldsKeysIncluded1 = ['Name', 'Is Auto Load', 'X Dir?', 'X Dir Plus Ecc?', 'X Dir Minus Ecc?',
                            'Y Dir?', 'Y Dir Plus Ecc?', 'Y Dir Minus Ecc?',
                            'Ecc Ratio', 'Top Story', 'Bot Story',
@@ -361,7 +374,7 @@ class Build:
         self.results_drift = [True, 1, 1]
             
 if __name__ == '__main__':
-    # etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
+    etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
     # SapModel = etabs.SapModel
     # x, y = get_load_patterns_in_XYdirection(SapModel)
     # print(x)
@@ -369,5 +382,8 @@ if __name__ == '__main__':
     # building = Build()
     # apply_cfactor_to_edb_and_analyze(building)
     # get_beqams_columns()
-
-    get_drifts(4, 4, 4)
+    SapModel = etabs.SapModel
+    TableKey = 'Load Pattern Definitions - Auto Seismic - User Coefficient'
+    [_, _, FieldsKeysIncluded, _, TableData, _] = read_table(TableKey, SapModel)
+    is_auto_load_yes_in_seismic_load_patterns(TableData, FieldsKeysIncluded)
+    # get_drifts(4, 4, 4)
