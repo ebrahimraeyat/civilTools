@@ -413,7 +413,12 @@ class Ui(QMainWindow, main_window):
         if not self.is_etabs_running():
             return
         export_result = export.Export(self, self.dirty, self.lastDirectory, self.final_building)
-        export_result.to_etabs()
+        ret = export_result.to_etabs()
+        if ret == 1:
+            msg = "Data can not be written to your Etabs file,\n If you want to correct this problem, try Run analysis."
+            title = "Remove Error?"
+            QMessageBox.information(None, title, msg)
+            return
         msg = "Successfully writed to Etabs."
         QMessageBox.information(None, "done", msg)
         self.show_warning_about_number_of_use(check)

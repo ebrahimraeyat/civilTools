@@ -102,15 +102,15 @@ def get_load_patterns_in_XYdirection(SapModel):
 
 def select_all_load_patterns(SapModel):
     load_pattern_names = list(get_load_patterns(SapModel))
-    if not SapModel.GetModelIsLocked():
-        names = tuple(load_pattern_names)
-        for name in names:
-            if all((
-                '(' in name,
-                '/' in name,
-                ')' in name,
-            )):
-                load_pattern_names.remove(name)
+    # if not SapModel.GetModelIsLocked():
+    #     names = tuple(load_pattern_names)
+    #     for name in names:
+    #         if all((
+    #             '(' in name,
+    #             '/' in name,
+    #             ')' in name,
+    #         )):
+    #             load_pattern_names.remove(name)
     SapModel.DatabaseTables.SetLoadPatternsSelectedForDisplay(load_pattern_names)
 
 def is_auto_load_yes_in_seismic_load_patterns(TableData, FieldsKeysIncluded) -> bool:
@@ -374,16 +374,17 @@ class Build:
         self.results_drift = [True, 1, 1]
             
 if __name__ == '__main__':
-    etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
+    # etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
     # SapModel = etabs.SapModel
+    # get_load_patterns(SapModel)
     # x, y = get_load_patterns_in_XYdirection(SapModel)
     # print(x)
     # print(y)
-    # building = Build()
-    # apply_cfactor_to_edb_and_analyze(building)
+    building = Build()
+    apply_cfactor_to_edb(building)
     # get_beqams_columns()
-    SapModel = etabs.SapModel
-    TableKey = 'Load Pattern Definitions - Auto Seismic - User Coefficient'
-    [_, _, FieldsKeysIncluded, _, TableData, _] = read_table(TableKey, SapModel)
-    is_auto_load_yes_in_seismic_load_patterns(TableData, FieldsKeysIncluded)
+    # SapModel = etabs.SapModel
+    # TableKey = 'Load Pattern Definitions - Auto Seismic - User Coefficient'
+    # [_, _, FieldsKeysIncluded, _, TableData, _] = read_table(TableKey, SapModel)
+    # is_auto_load_yes_in_seismic_load_patterns(TableData, FieldsKeysIncluded)
     # get_drifts(4, 4, 4)
