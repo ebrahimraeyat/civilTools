@@ -26,7 +26,7 @@ def apply_table(SapModel):
     [NumFatalErrors, NumErrorMsgs, NumWarnMsgs, NumInfoMsgs, ImportLog,
         ret] = SapModel.DatabaseTables.ApplyEditedTables(FillImportLog, NumFatalErrors,
                                                         NumErrorMsgs, NumWarnMsgs, NumInfoMsgs, ImportLog)
-    return NumFatalErrors
+    return NumFatalErrors, ret
 
 def read_table(table_key, SapModel):
     GroupName = table_key
@@ -202,8 +202,8 @@ def get_drift_periods(
     FieldsKeysIncluded = ('Story', 'Label', 'UniqueName', 'Area Modifier', 'As2 Modifier', 'As3 Modifier', 'J Modifier', 'I22 Modifier', 'I33 Modifier', 'Mass Modifier', 'Weight Modifier')
     SapModel.DatabaseTables.SetTableForEditingArray(TableKey, TableVersion, FieldsKeysIncluded, NumberRecords, TableData1)
     print("apply table\n")
-    log = apply_table(SapModel)
-    print(f"number errors = {log}")
+    log, ret = apply_table(SapModel)
+    print(f"number errors, ret = {log}, {ret}")
     # print(log)
 
     # run model (this will create the analysis model)
@@ -348,8 +348,8 @@ def apply_cfactor_to_edb(
                            'C',
                            'K']
     SapModel.DatabaseTables.SetTableForEditingArray(TableKey, TableVersion, FieldsKeysIncluded1, NumberRecords, TableData)
-    NumFatalErrors = apply_table(SapModel)
-    print(f"NumFatalErrors = {NumFatalErrors}")
+    NumFatalErrors, ret = apply_table(SapModel)
+    print(f"NumFatalErrors, ret = {NumFatalErrors}, {ret}")
     SapModel.File.Save()
     return NumFatalErrors
 
@@ -444,9 +444,9 @@ def write_section_props_to_etabs(sections, etabs=None):
     TableData = apply_section_props_to_tabledata(TableData, FieldsKeysIncluded, sections)
     FieldsKeysIncluded1 = get_section_property_FieldsKeysIncluded(FieldsKeysIncluded)
     SapModel.DatabaseTables.SetTableForEditingArray(TableKey, TableVersion, FieldsKeysIncluded1, NumberRecords, TableData)
-    NumFatalErrors = apply_table(SapModel)
-    print(f"NumFatalErrors = {NumFatalErrors}")
-    return NumFatalErrors
+    NumFatalErrors, ret = apply_table(SapModel)
+    print(f"NumFatalErrors, ret = {NumFatalErrors}, {ret}")
+    return NumFatalErrors, ret
 
 def apply_sections_to_etabs(sections, mat_name='STEEL_CIVILTOOLS', etabs=None):
     if not etabs:
@@ -455,8 +455,9 @@ def apply_sections_to_etabs(sections, mat_name='STEEL_CIVILTOOLS', etabs=None):
     print('writed sections name to etabs')
     SapModel = etabs.SapModel
     SapModel.File.Save()
-    write_section_props_to_etabs(sections, etabs)
+    NumFatalErrors, ret = write_section_props_to_etabs(sections, etabs)
     print('writed sections properties to etabs')
+    return NumFatalErrors, ret
 
 
 
