@@ -38,7 +38,7 @@ class GitUpdate:
             civiltools_temp_dir = Path(default_tmp_dir) /  'civiltools' / name
             civiltools_temp_dir.mkdir()
             os.chdir(str(civiltools_temp_dir))
-            git.Git('.').clone(self.git_url, branch=self.branch, env={'GIT_SSL_NO_VERIFY': '1'})
+            git.Git('.').clone(self.git_url, branch=self.branch, depth=1, env={'GIT_SSL_NO_VERIFY': '1'})
             shutil.rmtree(str(civiltools_path), onerror=onerror)
             src_folder = civiltools_temp_dir / 'civilTools'
             shutil.copytree(str(src_folder), str(civiltools_path))
