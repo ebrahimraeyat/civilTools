@@ -11,6 +11,7 @@ import itertools
 abs_path = os.path.dirname(__file__)
 section_path = os.path.abspath(os.path.dirname(__file__))
 sys.path.insert(0, abs_path)
+civiltools_path = Path(__file__).absolute().parent.parent.parent
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -41,7 +42,7 @@ cpesProp = sec.Cpe.createStandardCpes()
 boxProp = sec.Box.createStandardBox()
 
 main_window = uic.loadUiType(os.path.join(abs_path, 'mainwindow.ui'))[0]
-
+serial_base, serial_window = uic.loadUiType(civiltools_path / 'widgets' / 'serial.ui')
 
 class Ui(QMainWindow, main_window):
 
@@ -547,11 +548,20 @@ class Ui(QMainWindow, main_window):
         sec.Section.export_to_xlsm(Path(filename), self.model1.sections)
 
     def export_to_etabs(self):
-        from pathlib import Path
-        civiltools_path = Path(__file__).absolute().parent.parent.parent
+        allow, check = self.allowed_to_continue(
+            'sections_to_etabs.bin',
+            'https://gist.githubusercontent.com/ebrahimraeyat/988ef54bcd7f42246744fd519d220a2c/raw',
+            'section',
+            n=2,
+            )
+        if not allow:
+            return
         sys.path.insert(0, str(civiltools_path))
         from etabs_api import functions
-        functions.import_sections_to_etabs(self.model1.sections)        
+        functions.import_sections_to_etabs(self.model1.sections)
+        msg = "Successfully writed to Etabs."
+        QMessageBox.information(None, "done", msg)
+        self.show_warning_about_number_of_use(check)       
 
     def save_to_autocad_script_format(self):
         ext = "dxf"
@@ -614,6 +624,53 @@ class Ui(QMainWindow, main_window):
                 <p>برای دریافت آخرین نسخه نرم افزار و مطالب مفید دیگر
                 به وبلاگ زیر مراجعه نمایید:
                     <p> {1}""".format(__version__, link_ebrahim))
+
+    def allowed_to_continue(self,
+                            filename,
+                            gist_url,
+                            dir_name,
+                            n,
+                            ):
+        sys.path.insert(0, str(civiltools_path))
+        from functions import check_legal
+        check = check_legal.CheckLegal(
+                                    filename,
+                                    gist_url,
+                                    dir_name,
+                                    n,
+        )
+        allow, text = check.allowed_to_continue()
+        if allow and not text:
+            return True, check
+        else:
+            if text in ('INTERNET', 'SERIAL'):
+                # msg = "You must register to continue, but you are not connected to the Internet, please check your internet connection."
+                # QMessageBox.warning(None, 'Register!', str(msg))
+                # return False
+            # elif text == 'SERIAL':
+                serial_win = SerialForm(self)
+                serial_win.serial.setText(check.serial)
+                serial_win.exec_()
+                return False, check
+            elif text == 'REGISTERED':
+                msg = "Congrajulation! You are now registered, enjoy using this features!"
+                QMessageBox.information(None, 'Registered', str(msg))
+                return True, check
+        return False, check
+
+    def show_warning_about_number_of_use(self, check):
+        check.add_using_feature()
+        _, no_of_use = check.get_registered_numbers()
+        n = check.n - no_of_use
+        if n > 0:
+            msg = f"You can use this feature {n} more times!\n then you must register the software."
+            QMessageBox.warning(None, 'Not registered!', str(msg))
+
+class SerialForm(serial_base, serial_window):
+    def __init__(self, parent=None):
+        super(SerialForm, self).__init__()
+        self.setupUi(self)
+
 
 
 def main():

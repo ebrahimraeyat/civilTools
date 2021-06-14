@@ -461,6 +461,8 @@ def apply_sections_to_etabs(sections, mat_name='STEEL_CIVILTOOLS', etabs=None):
     return NumFatalErrors, ret
 
 def import_sections_to_etabs(sections, mat_name='STEEL_CIVILTOOLS', etabs=None):
+    if not sections:
+        return
     if not etabs:
         etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
     # filename = get_temp_filename('.xml')
