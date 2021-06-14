@@ -141,7 +141,7 @@ class Section(object):
         fh.write('<?xml version="1.0" encoding="utf-8"?>\n'
                  '<PROPERTY_FILE xmlns="http://www.csiberkeley.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.csiberkeley.com CSIExtendedSectionPropertyFile.xsd">\n'
                  '   <EbrahimRaeyat_Presents>\n'
-                 '      <Comment_on_CopyRight> This database is provided by: EbrahimRaeyat, (2019); http://www.ebrahimraeyat.blog.ir </Comment_on_CopyRight>\n'
+                 '      <Comment_on_CopyRight> This database is provided by: EbrahimRaeyat, (2021); http://www.ebrahimraeyat.blog.ir </Comment_on_CopyRight>\n'
                  '   </EbrahimRaeyat_Presents>\n'
                  '  <CONTROL>\n'
                  '      <FILE_ID>CSI Frame Properties</FILE_ID>\n'
@@ -1011,6 +1011,9 @@ class SectionProperties:
                       self.Sx, self.Sx, self.Sy, self.Sy, self.Rx,
                       self.Ry, self.Zx, self.Zy, self.J, self.cw, secType)
         return s
+    @staticmethod
+    def exportXml(fname, sections):
+        Section.exportXml(fname, sections)
 
 
 class SectionTableModel(QAbstractTableModel):

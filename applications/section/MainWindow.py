@@ -551,7 +551,7 @@ class Ui(QMainWindow, main_window):
         civiltools_path = Path(__file__).absolute().parent.parent.parent
         sys.path.insert(0, str(civiltools_path))
         from etabs_api import functions
-        functions.apply_sections_to_etabs(self.model1.sections)        
+        functions.import_sections_to_etabs(self.model1.sections)        
 
     def save_to_autocad_script_format(self):
         ext = "dxf"
