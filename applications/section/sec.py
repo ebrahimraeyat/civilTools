@@ -171,7 +171,7 @@ class Section(object):
                                      'TF', 'KDES', 'KDET', 'IX', 'ZX', 'SX', 'RX', 'ASX', 'IY', 'ZY', 'SY',
                                      'RY', 'ASY', 'J', 'CW'], index=range(len(sections) + 1))
 
-        fname_pro = fname.with_suffix('.dat')
+        fname_pro = fname.with_suffix('.pro')
         IPES['TYPE'][:] = 'W'
         IPES['TYPE'][0] = str(fname_pro)
         IPES['EDI_LABEL'][0] = len(sections)
