@@ -754,6 +754,7 @@
      <addaction name="action_Xml"/>
      <addaction name="action_Autocad_scr"/>
      <addaction name="action_Excel"/>
+     <addaction name="action_ETABS"/>
     </widget>
     <addaction name="menu_Export"/>
     <addaction name="action_Remove_Section"/>
@@ -903,6 +904,18 @@
    </property>
    <property name="text">
     <string>&amp;Multi Section</string>
+   </property>
+  </action>
+  <action name="action_ETABS">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resource_1.qrc">
+     <normaloff>:/section/images/etabs.jpg</normaloff>:/section/images/etabs.jpg</iconset>
+   </property>
+   <property name="text">
+    <string>ETABS</string>
    </property>
   </action>
  </widget>

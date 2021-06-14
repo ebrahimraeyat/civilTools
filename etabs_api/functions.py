@@ -299,6 +299,34 @@ def apply_cfactor_to_tabledata(TableData, FieldsKeysIncluded, building, SapModel
     table_data = unique_data(data)
     return table_data
 
+def apply_section_props_to_tabledata(TableData, FieldsKeysIncluded, sections):
+    data = reshape_data(FieldsKeysIncluded, TableData)
+    i_shape = FieldsKeysIncluded.index('Shape')
+    i_name = FieldsKeysIncluded.index('Name')
+    for prop in data:
+        if prop[i_shape] == 'Steel I/Wide Flange':
+            name = prop[i_name]
+            for section in sections:
+                if section.name == name:
+                    prop[FieldsKeysIncluded.index('Area')] = str(section.area)
+                    prop[FieldsKeysIncluded.index('J')] = str(section.J)
+                    prop[FieldsKeysIncluded.index('I33')] = str(section.Ix)
+                    prop[FieldsKeysIncluded.index('I22')] = str(section.Iy)
+                    prop[FieldsKeysIncluded.index('As2')] = str(section.ASy)
+                    prop[FieldsKeysIncluded.index('As3')] = str(section.ASx)
+                    prop[FieldsKeysIncluded.index('S33Pos')] = str(section.Sx)
+                    prop[FieldsKeysIncluded.index('S33Neg')] = str(section.Sx)
+                    prop[FieldsKeysIncluded.index('S22Pos')] = str(section.Sy)
+                    prop[FieldsKeysIncluded.index('S22Neg')] = str(section.Sy)
+                    prop[FieldsKeysIncluded.index('Z33')] = str(section.Zx)
+                    prop[FieldsKeysIncluded.index('Z22')] = str(section.Zy)
+                    prop[FieldsKeysIncluded.index('R33')] = str(section.Rx)
+                    prop[FieldsKeysIncluded.index('R22')] = str(section.Ry)
+                    prop[FieldsKeysIncluded.index('Cw')] = str(section.cw)
+                    break
+    table_data = unique_data(data)
+    return table_data
+
 def apply_cfactor_to_edb(
         building,
         ):
@@ -318,7 +346,7 @@ def apply_cfactor_to_edb(
                            'Y Dir?', 'Y Dir Plus Ecc?', 'Y Dir Minus Ecc?',
                            'Ecc Ratio', 'Top Story', 'Bot Story',
                            'C',
-                           'K'] 
+                           'K']
     SapModel.DatabaseTables.SetTableForEditingArray(TableKey, TableVersion, FieldsKeysIncluded1, NumberRecords, TableData)
     NumFatalErrors = apply_table(SapModel)
     print(f"NumFatalErrors = {NumFatalErrors}")
@@ -364,6 +392,74 @@ def is_etabs_running():
     except OSError:
         return False
 
+def write_section_names_to_etabs(sections, mat_name='STEEL_CIVILTOOLS', etabs=None):
+    if not etabs:
+        etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
+    SapModel = etabs.SapModel
+    mat_names = SapModel.Propmaterial.GetNameList()[1]
+    if not mat_name in mat_names:
+        SapModel.Propmaterial.SetMaterial(mat_name, 1)
+    ret = set()
+    for section in sections:
+        d = section.d_equivalentI
+        bf = section.bf_equivalentI
+        tw = section.tw_equivalentI
+        tf = section.tf_equivalentI
+        name = section.name
+        r = SapModel.PropFrame.SetISection(name, mat_name, d, bf, tf, tw, bf, tf, -1, "", "")
+        ret.add(r)
+    return ret 
+
+def get_section_property_FieldsKeysIncluded(in_fields):
+    convert_keys = {
+        'FilletRad' : 'Fillet Radius',
+        'CGOffset3' : 'CG Offset 3', 
+        'CGOffset2' : 'CG Offset 2',
+        'PNAOffset3': 'PNA Offset 3',
+        'PNAOffset2': 'PNA Offset 2',
+        'SCOffset3' : 'SC Offset 3',
+        'SCOffset2' : 'SC Offset 2',
+        'AMod' : 'Area Modifier',
+        'A2Mod' : 'As2 Modifier',
+        'A3Mod' : 'As3 Modifier',
+        'JMod' : 'J Modifier',
+        'I3Mod' : 'I33 Modifier',
+        'I2Mod' :  'I22 Modifier',
+        'MMod' : 'Mass Modifier',
+        'WMod' : 'Weight Modifier',
+    }
+
+    out_fields = []
+    for f in in_fields:
+        out_f = convert_keys.get(f, f)
+        out_fields.append(out_f)
+    return out_fields
+
+def write_section_props_to_etabs(sections, etabs=None):
+    if not etabs:
+        etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
+    SapModel = etabs.SapModel
+    TableKey = 'Frame Section Property Definitions - Summary'
+    [_, TableVersion, FieldsKeysIncluded, NumberRecords, TableData, _] = read_table(TableKey, SapModel)
+    TableData = apply_section_props_to_tabledata(TableData, FieldsKeysIncluded, sections)
+    FieldsKeysIncluded1 = get_section_property_FieldsKeysIncluded(FieldsKeysIncluded)
+    SapModel.DatabaseTables.SetTableForEditingArray(TableKey, TableVersion, FieldsKeysIncluded1, NumberRecords, TableData)
+    NumFatalErrors = apply_table(SapModel)
+    print(f"NumFatalErrors = {NumFatalErrors}")
+    return NumFatalErrors
+
+def apply_sections_to_etabs(sections, mat_name='STEEL_CIVILTOOLS', etabs=None):
+    if not etabs:
+        etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
+    write_section_names_to_etabs(sections, mat_name, etabs)
+    print('writed sections name to etabs')
+    SapModel = etabs.SapModel
+    SapModel.File.Save()
+    write_section_props_to_etabs(sections, etabs)
+    print('writed sections properties to etabs')
+
+
+
 class Build:
     def __init__(self):
         self.kx = 1
@@ -372,10 +468,15 @@ class Build:
         self.ky_drift = 1
         self.results = [True, 1, 1]
         self.results_drift = [True, 1, 1]
+
+
+
             
 if __name__ == '__main__':
-    # etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
-    # SapModel = etabs.SapModel
+    etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
+    SapModel = etabs.SapModel
+    TableKey = 'Frame Section Property Definitions - Summary'
+    [_, TableVersion, FieldsKeysIncluded, NumberRecords, TableData, _] = read_table(TableKey, SapModel)
     # get_load_patterns(SapModel)
     # x, y = get_load_patterns_in_XYdirection(SapModel)
     # print(x)

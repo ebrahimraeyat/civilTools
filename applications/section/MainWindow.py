@@ -93,6 +93,7 @@ class Ui(QMainWindow, main_window):
         self.load_settings()
 
     def add_actions(self):
+        self.toolbar.addAction(self.action_ETABS)
         self.toolbar.addAction(self.action_Xml)
         self.toolbar.addAction(self.action_Autocad_scr)
         self.toolbar.addAction(self.action_Excel)
@@ -107,6 +108,7 @@ class Ui(QMainWindow, main_window):
         self.toolbar.addAction(self.action_Shear)
 
         # self.action_Xml.triggered.connect(self.saveToXml1)
+        self.action_ETABS.triggered.connect(self.export_to_etabs)
         self.action_Xml.triggered.connect(self.save_to_xml)
         self.action_Autocad_scr.triggered.connect(self.save_to_autocad_script_format)
         self.action_Excel.triggered.connect(self.save_to_excel)
@@ -542,6 +544,13 @@ class Ui(QMainWindow, main_window):
         if not filename.endswith(f'{ext}'):
             filename += f'.{ext}'
         sec.Section.export_to_xlsm(filename, self.model1.sections)
+
+    def export_to_etabs(self):
+        from pathlib import Path
+        civiltools_path = Path(__file__).absolute().parent.parent.parent
+        sys.path.insert(0, str(civiltools_path))
+        from etabs_api import functions
+        functions.apply_sections_to_etabs(self.model1.sections)        
 
     def save_to_autocad_script_format(self):
         ext = "dxf"
