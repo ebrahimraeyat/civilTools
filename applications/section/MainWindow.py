@@ -3,6 +3,7 @@
 import re
 import sys
 import os
+from pathlib import Path
 import copy
 import pickle
 from functools import partial
@@ -543,7 +544,7 @@ class Ui(QMainWindow, main_window):
             return
         if not filename.endswith(f'{ext}'):
             filename += f'.{ext}'
-        sec.Section.export_to_xlsm(filename, self.model1.sections)
+        sec.Section.export_to_xlsm(Path(filename), self.model1.sections)
 
     def export_to_etabs(self):
         from pathlib import Path

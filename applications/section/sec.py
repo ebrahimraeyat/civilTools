@@ -170,13 +170,10 @@ class Section(object):
         IPES = pd.DataFrame(columns=['TYPE', 'EDI_LABEL', 'LABEL', 'T_F', 'A', 'D', 'BF', 'TW',
                                      'TF', 'KDES', 'KDET', 'IX', 'ZX', 'SX', 'RX', 'ASX', 'IY', 'ZY', 'SY',
                                      'RY', 'ASY', 'J', 'CW'], index=range(len(sections) + 1))
-        dirname = os.path.dirname(fname)
-        filename = os.path.basename(fname)
-        name = filename.rstrip(".xlsm")
 
-        fname_pro = os.path.join(dirname, f"{name}.pro")
+        fname_pro = fname.with_suffix('.dat')
         IPES['TYPE'][:] = 'W'
-        IPES['TYPE'][0] = fname_pro
+        IPES['TYPE'][0] = str(fname_pro)
         IPES['EDI_LABEL'][0] = len(sections)
         for row, section in enumerate(sections, start=1):
             IPES['EDI_LABEL'][row] = IPES['LABEL'][row] = section.name
