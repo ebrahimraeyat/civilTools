@@ -66,6 +66,7 @@ class Ui(QMainWindow, main_window):
 
         self.action_to_etabs.triggered.connect(self.export_to_etabs)
         self.action_show_drift.triggered.connect(self.show_drifts)
+        self.action_automatic_drift.triggered.connect(self.get_drift_automatically)
         self.action_open.triggered.connect(self.load)
         self.action_save.triggered.connect(self.save)
         self.action_save_spectrals.triggered.connect(self.exportBCurveToCsv)
@@ -454,6 +455,30 @@ class Ui(QMainWindow, main_window):
             return None
         table_model.show_results(data, headers, table_model.DriftModel)
         self.show_warning_about_number_of_use(check)
+
+    def get_drift_automatically(self):
+        allow, check = self.allowed_to_continue(
+            'show_drifts.bin',
+            'https://gist.githubusercontent.com/ebrahimraeyat/7f10571fab2a08b7a17ab782778e53e1/raw',
+            'cfactor'
+            )
+        if not allow:
+            return
+        if not self.is_etabs_running():
+            return
+        from etabs_api import functions, table_model
+        num_errors, etabs = functions.get_drift_periods_calculate_cfactor_and_apply_to_edb(self)
+        SapModel = etabs.SapModel
+        SapModel.Analyze.RunAnalysis()
+        no_story = self.storySpinBox.value()
+        cdx = self.final_building.x_system.cd
+        cdy = self.final_building.y_system.cd
+        data, headers = functions.get_drifts(no_story, cdx, cdy)
+        table_model.show_results(data, headers, table_model.DriftModel)
+        # msg = 'Successfully obtained earthquake factores and writed to etabs file.'
+        # QMessageBox.information(self, 'Done', msg)
+        self.show_warning_about_number_of_use(check)
+        return num_errors
 
     def allowed_to_continue(self,
                             filename,
