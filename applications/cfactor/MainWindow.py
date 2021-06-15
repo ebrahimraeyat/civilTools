@@ -420,7 +420,7 @@ class Ui(QMainWindow, main_window):
             title = "Remove Error?"
             QMessageBox.information(None, title, msg)
             return
-        msg = "Successfully writed to Etabs."
+        msg = "Successfully written to Etabs."
         QMessageBox.information(None, "done", msg)
         self.show_warning_about_number_of_use(check)
 
@@ -475,7 +475,7 @@ class Ui(QMainWindow, main_window):
         cdy = self.final_building.y_system.cd
         data, headers = functions.get_drifts(no_story, cdx, cdy)
         table_model.show_results(data, headers, table_model.DriftModel)
-        # msg = 'Successfully obtained earthquake factores and writed to etabs file.'
+        # msg = 'Successfully obtained earthquake factores and written to etabs file.'
         # QMessageBox.information(self, 'Done', msg)
         self.show_warning_about_number_of_use(check)
         return num_errors

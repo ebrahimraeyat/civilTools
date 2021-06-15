@@ -559,7 +559,7 @@ class Ui(QMainWindow, main_window):
         sys.path.insert(0, str(civiltools_path))
         from etabs_api import functions
         functions.import_sections_to_etabs(self.model1.sections)
-        msg = "Successfully writed to Etabs."
+        msg = "Successfully written to Etabs."
         QMessageBox.information(None, "done", msg)
         self.show_warning_about_number_of_use(check)       
 
