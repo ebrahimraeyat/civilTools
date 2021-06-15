@@ -251,6 +251,7 @@ def get_drifts(no_story, cdx, cdy, show_table=False, etabs=None):
     data = reshape_data(FieldsKeysIncluded, TableData)
     try:
         item_index = FieldsKeysIncluded.index("Item")
+        case_name_index = FieldsKeysIncluded.index("OutputCase")
     except ValueError:
         return None, None
     # average_drift_index = FieldsKeysIncluded.index("Avg Drift")
@@ -258,18 +259,26 @@ def get_drifts(no_story, cdx, cdy, show_table=False, etabs=None):
         limit = .025
     else:
         limit = .02
+    x_names, y_names = get_load_patterns_in_XYdirection(SapModel)
+    new_data = []
     for row in data:
+        name = row[case_name_index]
         if row[item_index].endswith("X"):
+            if not name in x_names:
+                continue
             cd = cdx
         elif row[item_index].endswith("Y"):
+            if not name in y_names:
+                continue
             cd = cdy
         allowable_drift = limit / cd
         row.append(f'{allowable_drift:.4f}')
+        new_data.append(row)
     if show_table:
         pass
     fields = list(FieldsKeysIncluded)
     fields.append('Allowable Drift')
-    return data, fields
+    return new_data, fields
 
 def apply_cfactor_to_tabledata(TableData, FieldsKeysIncluded, building, SapModel):
     data = reshape_data(FieldsKeysIncluded, TableData)
@@ -499,19 +508,19 @@ class Build:
 
             
 if __name__ == '__main__':
-    etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
-    SapModel = etabs.SapModel
-    TableKey = 'Frame Section Property Definitions - Summary'
-    [_, TableVersion, FieldsKeysIncluded, NumberRecords, TableData, _] = read_table(TableKey, SapModel)
+    # etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
+    # SapModel = etabs.SapModel
+    # TableKey = 'Frame Section Property Definitions - Summary'
+    # [_, TableVersion, FieldsKeysIncluded, NumberRecords, TableData, _] = read_table(TableKey, SapModel)
     # get_load_patterns(SapModel)
     # x, y = get_load_patterns_in_XYdirection(SapModel)
     # print(x)
     # print(y)
-    building = Build()
-    apply_cfactor_to_edb(building)
+    # building = Build()
+    # apply_cfactor_to_edb(building)
     # get_beqams_columns()
     # SapModel = etabs.SapModel
     # TableKey = 'Load Pattern Definitions - Auto Seismic - User Coefficient'
     # [_, _, FieldsKeysIncluded, _, TableData, _] = read_table(TableKey, SapModel)
     # is_auto_load_yes_in_seismic_load_patterns(TableData, FieldsKeysIncluded)
-    # get_drifts(4, 4, 4)
+    get_drifts(4, 4, 4)
