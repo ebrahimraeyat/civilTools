@@ -231,7 +231,7 @@ def get_drift_periods(
     SapModel.File.OpenFile(str(asli_file_path))
     return Tx_drift, Ty_drift, asli_file_path
 
-def get_drifts(no_story, cdx, cdy, show_table=False, etabs=None):
+def get_drifts(no_story, cdx, cdy, etabs=None):
     if not etabs:
         etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
     SapModel = etabs.SapModel
@@ -274,8 +274,6 @@ def get_drifts(no_story, cdx, cdy, show_table=False, etabs=None):
         allowable_drift = limit / cd
         row.append(f'{allowable_drift:.4f}')
         new_data.append(row)
-    if show_table:
-        pass
     fields = list(FieldsKeysIncluded)
     fields.append('Allowable Drift')
     return new_data, fields
