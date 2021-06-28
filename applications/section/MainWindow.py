@@ -540,7 +540,7 @@ class Ui(QMainWindow, main_window):
 
     def save_to_excel(self):
         ext = "xlsm"
-        filename = self.getFilename([f'*.{ext}'])
+        filename = self.getFilename([f'{ext}'])
         if not filename:
             return
         if not filename.endswith(f'{ext}'):
@@ -565,7 +565,7 @@ class Ui(QMainWindow, main_window):
 
     def save_to_autocad_script_format(self):
         ext = "dxf"
-        filename = self.getFilename([f'*.{ext}'])
+        filename = self.getFilename([f'{ext}'])
         if not filename:
             return
         if not filename.endswith(f'{ext}'):
@@ -580,7 +580,7 @@ class Ui(QMainWindow, main_window):
     def getFilename(self, prefixes):
         filters = ''
         for prefix in prefixes:
-            filters += "{}({})".format(prefix, prefix)
+            filters += f"{prefix}(*.{prefix})"
         filename, _ = QFileDialog.getSaveFileName(self, ' خروجی ',
                                                   self.lastDirectory, filters)
 
