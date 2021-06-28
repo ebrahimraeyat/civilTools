@@ -16,8 +16,8 @@ import pandas as pd
 import numpy as np
 
 from slender_params import slenderParameters
-from pre.sections import Geometry, ISection, PfcSection, RectangularSection, MergedSection
-from analysis.cross_section import CrossSection, SectionProperties
+from pre.sections import ISection, PfcSection, RectangularSection, MergedSection
+from analysis.cross_section import CrossSection
 from analysis import solver
 
 column_count = 18
@@ -1205,7 +1205,6 @@ class SectionTableModel(QAbstractTableModel):
             if column == NAME:
                 if all([value != '', value not in self.names]):
                     section.name = value
-                    section.xml = section.__str__()
                     self.names.add(value)
             try:
                 value = float(value)
@@ -1247,7 +1246,7 @@ class SectionTableModel(QAbstractTableModel):
                     section.Sy = section.Iy / (section.xmax - section.xm)
             except ValueError:
                 pass
-
+            section.xml = section.__str__()
             self.dirty = True
             self.dataChanged.emit(index, index)
             return True
