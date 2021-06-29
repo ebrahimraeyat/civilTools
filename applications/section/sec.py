@@ -119,11 +119,11 @@ class Section(object):
         geometry = MergedSection(self.geometry_list)
         geometry.clean_geometry(verbose=True)
         n = len(self.geometry_list)
-        mesh = geometry.create_mesh(mesh_sizes=n * [5])
+        mesh = geometry.create_mesh(mesh_sizes=n * [50])
         self.warping_section = CrossSection(geometry, mesh)
 
     def solve_warping(self):
-        if not self.warping_section:
+        if not hasattr(self, 'warping_section'):
             self.create_warping_section()
         self.warping_section.calculate_geometric_properties()
         cx = self.warping_section.section_props.cx
@@ -659,7 +659,7 @@ class Ipe(Section):
         df = d - tf
         cw = (tf * bf ** 3 / 12) * (df ** 2 / 2)
         J = (2 * bf * tf ** 3 + (d - 2 * tf) * tw ** 3) / 3
-        geometry = ISection(d=d, b=bf, t_f=tf, t_w=tw, r=r1, n_r=16)
+        geometry = ISection(d=d, b=bf, t_f=tf, t_w=tw, r=r1, n_r=4)
         super(Ipe, self).__init__(_type='IPE', name=name, area=area, xm=xm, ym=ym,
                                   xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy,
                                   Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=d, tw=tw, r1=r1, cw=cw, J=J,
@@ -707,7 +707,7 @@ class Unp(Section):
         df = d - tf
         cw = (tf * bf ** 3 / 12) * (df ** 2 / 2)
         J = (2 * bf * tf ** 3 + (d - 2 * tf) * tw ** 3) / 3
-        geometry = PfcSection(d=d, b=bf, t_f=tf, t_w=tw, r=r1, n_r=8)
+        geometry = PfcSection(d=d, b=bf, t_f=tf, t_w=tw, r=r1, n_r=4)
         super(Unp, self).__init__(_type='UNP', name=name, area=area, xm=xm, ym=ym,
                                   xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy,
                                   Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=d, tw=tw, r1=r1,
@@ -743,7 +743,7 @@ class Upa(Section):
         ASx = 5 / 3 * bf * tf
         df = d - tf
         cw = (tf * bf ** 3 / 12) * (df ** 2 / 2)
-        geometry = PfcSection(d=d, b=bf, t_f=tf, t_w=tw, r=r1, n_r=16)
+        geometry = PfcSection(d=d, b=bf, t_f=tf, t_w=tw, r=r1, n_r=4)
         super(Upa, self).__init__(_type='UPA', name=name, area=area, xm=xm, ym=ym,
                                   xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy,
                                   Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=d, tw=tw, r1=r1,
@@ -792,7 +792,7 @@ class Cpe(Section):
         ASx = 5 / 3 * bf * tf
         df = d - tf
         cw = (tf * bf ** 3 / 12) * (df ** 2 / 2)
-        geometry = ISection(d=d, b=bf, t_f=tf, t_w=tw, r=r1, n_r=16)
+        geometry = ISection(d=d, b=bf, t_f=tf, t_w=tw, r=r1, n_r=4)
         super(Cpe, self).__init__(_type='CPE', name=name, area=area, xm=xm, ym=ym,
                                   xmax=xmax, ymax=ymax, ASy=ASy, ASx=ASx, Ix=Ix, Iy=Iy,
                                   Zx=Zx, Zy=Zy, bf=bf, tf=tf, d=d, tw=tw, r1=r1,

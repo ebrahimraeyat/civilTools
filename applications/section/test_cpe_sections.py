@@ -25,6 +25,7 @@ class TestCpeSections(unittest.TestCase):
         self.CPE22_double = DoubleSection(self.CPE22, 0)
 
         plate1 = Plate(250, 12)
+        self.CPE22_TBPlate = AddPlateTB(self.CPE22, plate1)
         self.CPE22_double_TBPlate = AddPlateTB(self.CPE22_double, plate1)
 
         plate2 = Plate(12, 200)
@@ -134,6 +135,9 @@ class TestCpeSections(unittest.TestCase):
         self.assertAlmostEqual(self.CPE22_double_TBPlate.bf, 110, places=1)
         self.assertAlmostEqual(self.CPE22_double_4sidePlate.bf, 110, places=1)
 
+    def test_CPE22_J(self):
+        self.CPE22_TBPlate.j_func()
+        assert self.CPE22_TBPlate.J == 200
 
 
     #CPE22.equivalentSectionI()
