@@ -16,9 +16,9 @@ import pandas as pd
 import numpy as np
 
 from slender_params import slenderParameters
-from pre.sections import ISection, PfcSection, RectangularSection, MergedSection
-from analysis.cross_section import CrossSection
-from analysis import solver
+from sectionproperties.pre.sections import ISection, PfcSection, RectangularSection, MergedSection
+from sectionproperties.analysis.cross_section import CrossSection
+from sectionproperties.analysis import solver
 
 column_count = 18
 NAME, AREA, ASX, ASY, IX, IY, ZX, ZY, \
@@ -110,10 +110,12 @@ class Section(object):
         self.Rx = sqrt(self.Ix / self.area)
         self.Ry = sqrt(self.Iy / self.area)
 
+    
+
     def j_func(self):
-        omega, k = self.solve_warping()
-        self.J = (self.Ix + self.Iy -
-                  omega.dot(k.dot(np.transpose(omega))))
+        self.solve_warping()
+        self.warping_section.calculate_warping_properties()
+        self.J = self.warping_section.get_j()
 
     def create_warping_section(self):
         geometry = MergedSection(self.geometry_list)
@@ -126,14 +128,6 @@ class Section(object):
         if not hasattr(self, 'warping_section'):
             self.create_warping_section()
         self.warping_section.calculate_geometric_properties()
-        cx = self.warping_section.section_props.cx
-        cy = self.warping_section.section_props.cy
-        for el in self.warping_section.elements:
-            el.coords[0, :] -= cx
-            el.coords[1, :] -= cy
-        (k, k_lg, f_torsion) = self.warping_section.assemble_torsion()
-        omega = solver.solve_direct(k, f_torsion)
-        return omega, k
 
     @staticmethod
     def exportXml(fname, sections):

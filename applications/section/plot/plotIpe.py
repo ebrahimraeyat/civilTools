@@ -9,7 +9,7 @@ import os
 pg.setConfigOption('background', 'w')
 pg.setConfigOption('foreground', 'c')
 
-from pre.sections import ISection
+from sectionproperties.pre.sections import ISection
 
 # from pre import sections
 
