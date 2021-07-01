@@ -101,6 +101,43 @@ def get_load_patterns_in_XYdirection(SapModel):
         
     return names_x, names_y
 
+def get_top_bot_stories(SapModel):
+    '''
+    return bot_x, top_x, bot_y, top_y stories name"
+    '''
+    x_names, y_names = get_load_patterns_in_XYdirection(SapModel)
+    TableKey = 'Load Pattern Definitions - Auto Seismic - User Coefficient'
+    [_, TableVersion, FieldsKeysIncluded, NumberRecords, TableData, _] = read_table(TableKey, SapModel)
+    data = reshape_data(FieldsKeysIncluded, TableData)
+    i_top_story = FieldsKeysIncluded.index('TopStory')
+    i_bot_story = FieldsKeysIncluded.index('BotStory')
+    i_name = FieldsKeysIncluded.index('Name')
+    for e in data:
+        if e[i_name] in x_names:
+            bot_story_x = e[i_bot_story]
+            top_story_x = e[i_top_story]
+            break
+    for e in data:
+        if e[i_name] in y_names:
+            bot_story_y = e[i_bot_story]
+            top_story_y = e[i_top_story]
+            break
+    return bot_story_x, top_story_x, bot_story_y, top_story_y
+
+def get_top_bot_levels(SapModel):
+    bot_story_x, top_story_x, bot_story_y, top_story_y = get_top_bot_stories(SapModel)
+    bot_level_x = SapModel.Story.GetElevation(bot_story_x)[0]    
+    top_level_x = SapModel.Story.GetElevation(top_story_x)[0]
+    bot_level_y = SapModel.Story.GetElevation(bot_story_y)[0]    
+    top_level_y = SapModel.Story.GetElevation(top_story_y)[0]
+    return bot_level_x, top_level_x, bot_level_y, top_level_y
+
+def get_heights(SapModel):
+    bot_level_x, top_level_x, bot_level_y, top_level_y = get_top_bot_levels(SapModel)
+    hx = top_level_x - bot_level_x
+    hy = top_level_y - bot_level_y
+    return hx, hy
+
 def select_all_load_patterns(SapModel):
     load_pattern_names = list(get_load_patterns(SapModel))
     # if not SapModel.GetModelIsLocked():
@@ -506,8 +543,9 @@ class Build:
 
             
 if __name__ == '__main__':
-    # etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
-    # SapModel = etabs.SapModel
+    etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
+    SapModel = etabs.SapModel
+    get_top_bot_stories(SapModel)
     # TableKey = 'Frame Section Property Definitions - Summary'
     # [_, TableVersion, FieldsKeysIncluded, NumberRecords, TableData, _] = read_table(TableKey, SapModel)
     # get_load_patterns(SapModel)
