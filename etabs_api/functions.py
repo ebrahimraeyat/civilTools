@@ -138,6 +138,14 @@ def get_heights(SapModel):
     hy = top_level_y - bot_level_y
     return hx, hy
 
+def get_no_of_stories(SapModel):
+    # bot_story_x, top_story_x, bot_story_y, top_story_y = get_top_bot_stories(SapModel)
+    bot_level_x, top_level_x, bot_level_y, top_level_y = get_top_bot_levels(SapModel)
+    levels = SapModel.Story.GetStories()[2]
+    no_of_x_story = len([i for i in levels if bot_level_x < i <= top_level_x])
+    no_of_y_story = len([i for i in levels if bot_level_y < i <= top_level_y])
+    return no_of_x_story, no_of_y_story
+    
 def select_all_load_patterns(SapModel):
     load_pattern_names = list(get_load_patterns(SapModel))
     # if not SapModel.GetModelIsLocked():
