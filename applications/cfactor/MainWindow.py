@@ -467,18 +467,18 @@ class Ui(QMainWindow, main_window):
         if not self.is_etabs_running():
             return
         from etabs_api import functions, table_model
-        num_errors, etabs = functions.get_drift_periods_calculate_cfactor_and_apply_to_edb(self)
-        SapModel = etabs.SapModel
-        SapModel.Analyze.RunAnalysis()
-        no_story = self.storySpinBox.value()
-        cdx = self.final_building.x_system.cd
-        cdy = self.final_building.y_system.cd
-        data, headers = functions.get_drifts(no_story, cdx, cdy)
-        table_model.show_results(data, headers, table_model.DriftModel)
+        drifts, headers = functions.calculate_drifts(self)
+        # SapModel = etabs.SapModel
+        # SapModel.Analyze.RunAnalysis()
+        # no_story = self.storySpinBox.value()
+        # cdx = self.final_building.x_system.cd
+        # cdy = self.final_building.y_system.cd
+        # data, headers = functions.get_drifts(no_story, cdx, cdy)
+        table_model.show_results(drifts, headers, table_model.DriftModel)
         # msg = 'Successfully obtained earthquake factores and written to etabs file.'
         # QMessageBox.information(self, 'Done', msg)
         self.show_warning_about_number_of_use(check)
-        return num_errors
+        # return True
 
     def allowed_to_continue(self,
                             filename,

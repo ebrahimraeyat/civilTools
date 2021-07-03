@@ -145,7 +145,7 @@ def get_no_of_stories(SapModel):
     no_of_x_story = len([i for i in levels if bot_level_x < i <= top_level_x])
     no_of_y_story = len([i for i in levels if bot_level_y < i <= top_level_y])
     return no_of_x_story, no_of_y_story
-    
+
 def select_all_load_patterns(SapModel):
     load_pattern_names = list(get_load_patterns(SapModel))
     # if not SapModel.GetModelIsLocked():
@@ -429,14 +429,21 @@ def get_drift_periods_calculate_cfactor_and_apply_to_edb(
 def calculate_drifts(
             widget,
             no_story=None,
-            etabs=None):
+            etabs=None,
+            auto_no_story=True,
+            ):
     _, etabs = get_drift_periods_calculate_cfactor_and_apply_to_edb(widget, etabs)
+    if auto_no_story:
+        no_story = get_no_of_stories(etabs.SapModel)[0]
+        widget.storySpinBox.setValue(no_story)
     if not no_story:
         no_story = widget.storySpinBox.value()
+    SapModel = etabs.SapModel
+    SapModel.Analyze.RunAnalysis()
     cdx = widget.final_building.x_system.cd
     cdy = widget.final_building.y_system.cd
-    drifts, _ = get_drifts(no_story, cdx, cdy, True, etabs)
-    return drifts
+    drifts, headers = get_drifts(no_story, cdx, cdy)
+    return drifts, headers
 
 def is_etabs_running():
     try:
