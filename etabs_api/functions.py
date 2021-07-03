@@ -431,14 +431,20 @@ def calculate_drifts(
             no_story=None,
             etabs=None,
             auto_no_story=True,
+            auto_height=True,
             ):
-    _, etabs = get_drift_periods_calculate_cfactor_and_apply_to_edb(widget, etabs)
+    if not etabs:
+        etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
+    SapModel = etabs.SapModel
+    if auto_height:
+        hx = get_heights(SapModel)[0]
+        widget.HSpinBox.setValue(hx)
     if auto_no_story:
-        no_story = get_no_of_stories(etabs.SapModel)[0]
+        no_story = get_no_of_stories(SapModel)[0]
         widget.storySpinBox.setValue(no_story)
     if not no_story:
         no_story = widget.storySpinBox.value()
-    SapModel = etabs.SapModel
+    get_drift_periods_calculate_cfactor_and_apply_to_edb(widget, etabs)
     SapModel.Analyze.RunAnalysis()
     cdx = widget.final_building.x_system.cd
     cdy = widget.final_building.y_system.cd
