@@ -124,16 +124,32 @@ def get_top_bot_stories(SapModel):
             break
     return bot_story_x, top_story_x, bot_story_y, top_story_y
 
-def get_top_bot_levels(SapModel):
-    bot_story_x, top_story_x, bot_story_y, top_story_y = get_top_bot_stories(SapModel)
+def get_top_bot_levels(
+                    SapModel,
+                    bot_story_x='',
+                    top_story_x='',
+                    bot_story_y='',
+                    top_story_y='',
+                    auto_story=True,
+                    ):
+    if auto_story and not all([bot_story_x, top_story_x, bot_story_y, top_story_y]):
+        bot_story_x, top_story_x, bot_story_y, top_story_y = get_top_bot_stories(SapModel)
     bot_level_x = SapModel.Story.GetElevation(bot_story_x)[0]    
     top_level_x = SapModel.Story.GetElevation(top_story_x)[0]
     bot_level_y = SapModel.Story.GetElevation(bot_story_y)[0]    
     top_level_y = SapModel.Story.GetElevation(top_story_y)[0]
     return bot_level_x, top_level_x, bot_level_y, top_level_y
 
-def get_heights(SapModel):
-    bot_level_x, top_level_x, bot_level_y, top_level_y = get_top_bot_levels(SapModel)
+def get_heights(
+                SapModel,
+                bot_story_x='',
+                top_story_x='',
+                bot_story_y='',
+                top_story_y='',
+                auto_story=True,
+                ):
+    bot_level_x, top_level_x, bot_level_y, top_level_y = get_top_bot_levels(
+        SapModel, bot_story_x, top_story_x, bot_story_y, top_story_y, auto_story)
     hx = top_level_x - bot_level_x
     hy = top_level_y - bot_level_y
     return hx, hy
@@ -430,8 +446,8 @@ def calculate_drifts(
             widget,
             no_story=None,
             etabs=None,
-            auto_no_story=True,
-            auto_height=True,
+            auto_no_story=False,
+            auto_height=False,
             ):
     if not etabs:
         etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
