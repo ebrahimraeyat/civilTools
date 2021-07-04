@@ -193,6 +193,7 @@ def select_all_load_cases(SapModel):
     SapModel.DatabaseTables.SetLoadCasesSelectedForDisplay(load_case_names)
 
 def select_load_cases(SapModel, names):
+    SapModel.DatabaseTables.SetLoadCombinationsSelectedForDisplay('')
     SapModel.DatabaseTables.SetLoadCasesSelectedForDisplay(names)
     
 
