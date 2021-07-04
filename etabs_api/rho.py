@@ -21,6 +21,14 @@ def get_ex_ey_earthquake_name(SapModel):
             y_name = name
             break
     return x_name, y_name
-    
 
+def get_from_list_table(
+            list_table: list,
+            columns: list,
+            values: list,
+            ) -> filter:
+    from operator import itemgetter
+    itemget = itemgetter(*columns)
+    result = filter(lambda x: itemget(x) == values, list_table)
+    return result
 
