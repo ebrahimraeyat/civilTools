@@ -101,6 +101,12 @@ def get_load_patterns_in_XYdirection(SapModel):
         
     return names_x, names_y
 
+def get_xy_seismic_load_patterns(SapModel):
+    x_names, y_names = get_load_patterns_in_XYdirection(SapModel)
+    drift_load_pattern_names = get_drift_load_pattern_names(SapModel)
+    xy_names = x_names.union(y_names).difference(drift_load_pattern_names)
+    return xy_names
+
 def get_top_bot_stories(SapModel):
     '''
     return bot_x, top_x, bot_y, top_y stories name"
