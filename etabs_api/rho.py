@@ -66,11 +66,18 @@ def get_story_forces(SapModel, loadcase, direction='X'):
         i_v = FieldsKeysIncluded.index('VX')
     else:
         i_v = FieldsKeysIncluded.index('VY')
-    story_forces = [(row[i_story], abs(float(row[i_v]))) for row in result]
+    story_forces = {row[i_story]: abs(float(row[i_v])) for row in result}
     return story_forces
 
-# def get_stories_with_shear_greater_than_35_base_shear(SapModel):
-#     for row in data:
+def get_stories_with_shear_greater_than_35_base_shear(SapModel, loadcase, direction='X'):
+    story_forces = get_story_forces(SapModel, loadcase, direction)
+    max_force = max(list(story_forces.values()))
+    stories = []
+    for key, value in story_forces.items():
+        if value / max_force > .35:
+            stories.append(key)
+    return stories
+    
 
 if __name__ == '__main__':
     etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
