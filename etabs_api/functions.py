@@ -299,6 +299,39 @@ def get_drift_periods(
     SapModel.File.OpenFile(str(asli_file_path))
     return Tx_drift, Ty_drift, asli_file_path
 
+def get_diaphragm_max_over_avg_drifts(
+                SapModel,
+                loadcases=[],
+                ):
+    if not SapModel.GetModelIsLocked():
+        return None
+    if not loadcases:
+        xy_names = get_xy_seismic_load_patterns(SapModel)
+        all_load_case_names = get_load_cases(SapModel)
+        loadcases = [i for i in xy_names if i in all_load_case_names]
+    print(loadcases)
+    select_load_cases(SapModel, loadcases)
+    TableKey = 'Diaphragm Max Over Avg Drifts'
+    [_, _, FieldsKeysIncluded, _, TableData, _] = read_table(TableKey, SapModel)
+    data = reshape_data(FieldsKeysIncluded, TableData)
+    try:
+        item_index = FieldsKeysIncluded.index("Item")
+        case_name_index = FieldsKeysIncluded.index("OutputCase")
+    except ValueError:
+        return None
+    new_data = []
+    x_names, y_names = get_load_patterns_in_XYdirection(SapModel)
+    for row in data:
+        name = row[case_name_index]
+        if row[item_index].endswith("X"):
+            if not name in x_names:
+                continue
+        elif row[item_index].endswith("Y"):
+            if not name in y_names:
+                continue
+        new_data.append(row)
+    return new_data
+
 def get_drifts(no_story, cdx, cdy, etabs=None):
     if not etabs:
         etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
