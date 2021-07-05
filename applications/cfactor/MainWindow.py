@@ -426,12 +426,20 @@ class Ui(QMainWindow, main_window):
         self.show_warning_about_number_of_use(check)
 
     def show_torsion_table(self):
+        allow, check = self.allowed_to_continue(
+            'torsion.bin',
+            'https://gist.githubusercontent.com/ebrahimraeyat/d1591790a52a62b3e66bb70f45738105/raw',
+            'cfactor',
+            n=2,
+            )
+        if not allow:
+            return
         if not self.is_etabs_running():
             return
         from etabs_api import functions, table_model
         data, headers = functions.get_diaphragm_max_over_avg_drifts()
         table_model.show_results(data, headers, table_model.TorsionModel, functions.show_point)
-
+        self.show_warning_about_number_of_use(check)
 
     def show_drifts(self):
         allow, check = self.allowed_to_continue(
