@@ -493,6 +493,7 @@ class Ui(QMainWindow, main_window):
                             filename,
                             gist_url,
                             dir_name,
+                            n=5,
                             ):
         sys.path.insert(0, str(civiltools_path))
         from functions import check_legal
@@ -500,6 +501,7 @@ class Ui(QMainWindow, main_window):
                                     filename,
                                     gist_url,
                                     dir_name,
+                                    n,
         )
         allow, text = check.allowed_to_continue()
         if allow and not text:
