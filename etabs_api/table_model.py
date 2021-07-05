@@ -84,6 +84,41 @@ class DriftModel(ResultsModel):
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
 
 
+class TorsionModel(ResultsModel):
+    def __init__(self, data, headers):
+        super(TorsionModel, self).__init__(data, headers)
+        self.df = self.df[[
+            'Story',
+            'OutputCase',
+            'Max Drift',
+            'Avg Drift',
+            'Label',
+            'Ratio',
+        ]]
+        self.headers = tuple(self.df.columns)
+
+    def data(self, index, role=Qt.DisplayRole):
+        row = index.row()
+        col = index.column()
+        i_ratio = self.headers.index('Ratio')
+        if index.isValid():
+            value = self.df.iloc[row][col]
+            if role == Qt.DisplayRole:
+                return str(value)
+            elif role == Qt.BackgroundColorRole:
+                value = float(self.df.iloc[row][i_ratio])
+                # if col == i_ratio:
+                    # value = float(value)
+                if value <= 1.2:
+                    return QColor('cyan')
+                elif 1.2 < value < 1.4:
+                    return QColor('yellow')
+                elif value > 1.4:
+                    return QColor('red')
+            elif role == Qt.TextAlignmentRole:
+                return int(Qt.AlignCenter | Qt.AlignVCenter)
+
+
 class ResultWidget(result_base, result_window):
     # main widget for user interface
     def __init__(self, data, headers, model, parent=None):

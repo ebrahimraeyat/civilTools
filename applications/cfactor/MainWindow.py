@@ -71,6 +71,7 @@ class Ui(QMainWindow, main_window):
         self.action_save.triggered.connect(self.save)
         self.action_save_spectrals.triggered.connect(self.exportBCurveToCsv)
         self.action_word.triggered.connect(self.export_to_word)
+        self.action_torsion_table.triggered.connect(self.show_torsion_table)
 
     def create_connections(self):
         self.calculate_button.clicked.connect(self.calculate)
@@ -424,6 +425,14 @@ class Ui(QMainWindow, main_window):
         QMessageBox.information(None, "done", msg)
         self.show_warning_about_number_of_use(check)
 
+    def show_torsion_table(self):
+        if not self.is_etabs_running():
+            return
+        from etabs_api import functions, table_model
+        data, headers = functions.get_diaphragm_max_over_avg_drifts()
+        table_model.show_results(data, headers, table_model.TorsionModel)
+
+
     def show_drifts(self):
         allow, check = self.allowed_to_continue(
             'show_drifts.bin',
@@ -555,6 +564,7 @@ class Ui(QMainWindow, main_window):
         #     return
 
     def is_etabs_running(self):
+        sys.path.insert(0, str(civiltools_path))
         from etabs_api import functions
         etabs = functions.is_etabs_running()
         if not etabs:
