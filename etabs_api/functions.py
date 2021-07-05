@@ -608,7 +608,16 @@ def import_sections_to_etabs(sections, mat_name='STEEL_CIVILTOOLS', etabs=None):
         ret.add(r)
     return ret
 
-
+def show_point(story, label, SapModel=None):
+    if not SapModel:
+        etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
+        SapModel = etabs.SapModel
+    SapModel.SelectObj.All(Deselect=True)
+    name = SapModel.PointObj.GetNameFromLabel(label, story)[0]
+    SapModel.PointObj.SetSelected(name, True)
+    SapModel.View.RefreshView()
+    return True
+    
 
 class Build:
     def __init__(self):

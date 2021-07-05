@@ -430,7 +430,7 @@ class Ui(QMainWindow, main_window):
             return
         from etabs_api import functions, table_model
         data, headers = functions.get_diaphragm_max_over_avg_drifts()
-        table_model.show_results(data, headers, table_model.TorsionModel)
+        table_model.show_results(data, headers, table_model.TorsionModel, functions.show_point)
 
 
     def show_drifts(self):

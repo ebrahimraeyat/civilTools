@@ -96,6 +96,7 @@ class TorsionModel(ResultsModel):
             'Ratio',
         ]]
         self.headers = tuple(self.df.columns)
+        self.col_function = (0, 4)
 
     def data(self, index, role=Qt.DisplayRole):
         row = index.row()
@@ -121,9 +122,10 @@ class TorsionModel(ResultsModel):
 
 class ResultWidget(result_base, result_window):
     # main widget for user interface
-    def __init__(self, data, headers, model, parent=None):
+    def __init__(self, data, headers, model, function, parent=None):
         super(ResultWidget, self).__init__(parent)
         self.setupUi(self)
+        self.function = function
         self.data = data
         self.headers = headers
         self.model = model(self.data, self.headers)
@@ -136,6 +138,15 @@ class ResultWidget(result_base, result_window):
         self.horizontalHeader = self.result_table_view.horizontalHeader()
         self.horizontalHeader.sectionClicked.connect(self.on_view_horizontalHeader_sectionClicked)
         self.push_button_to_excel.clicked.connect(self.export_to_excel)
+        self.result_table_view.clicked.connect(self.row_clicked)
+
+    def row_clicked(self):
+        if self.function:
+           row = self.result_table_view.currentIndex().row()
+           args = []
+           for col in self.model.col_function:
+               args.append(self.model.df.iloc[row][col])
+           self.function(*args) 
 
     def export_to_excel(self):
         filename, _ = QtWidgets.QFileDialog.getSaveFileName(self, 'export to excel',
@@ -229,8 +240,8 @@ class ResultWidget(result_base, result_window):
     #     self.statustext.setText(mess_save)
     #     pass
 
-def show_results(data, headers, model):
-    child_results_win = ResultWidget(data, headers, model)
+def show_results(data, headers, model, function=None):
+    child_results_win = ResultWidget(data, headers, model, function)
     child_results_win.exec_()
 
 
