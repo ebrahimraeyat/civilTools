@@ -85,6 +85,15 @@ def get_story_forces_with_percentages(
             stories.append(key)
     return stories 
 
+def get_base_react(SapModel):
+    loadcases = get_ex_ey_earthquake_name(SapModel)
+    SapModel.Results.Setup.SetCaseSelectedForOutput(loadcases[0])
+    SapModel.Results.Setup.SetCaseSelectedForOutput(loadcases[1])
+    base_react = SapModel.Results.BaseReact()
+    vx = base_react[4][0]
+    vy = base_react[5][1]
+    return vx, vy
+
 if __name__ == '__main__':
     etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
     SapModel = etabs.SapModel
