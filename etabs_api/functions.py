@@ -612,7 +612,7 @@ def show_point(story, label, SapModel=None):
     if not SapModel:
         etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
         SapModel = etabs.SapModel
-    SapModel.SelectObj.All(Deselect=True)
+    SapModel.SelectObj.ClearSelection()
     name = SapModel.PointObj.GetNameFromLabel(label, story)[0]
     SapModel.PointObj.SetSelected(name, True)
     SapModel.View.RefreshView()
