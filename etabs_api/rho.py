@@ -86,6 +86,7 @@ def get_story_forces_with_percentages(
     return stories 
 
 def get_base_react(SapModel):
+    SapModel.SetPresentUnits(units["kgf_m_C"])
     loadcases = get_ex_ey_earthquake_name(SapModel)
     SapModel.Results.Setup.SetCaseSelectedForOutput(loadcases[0])
     SapModel.Results.Setup.SetCaseSelectedForOutput(loadcases[1])
