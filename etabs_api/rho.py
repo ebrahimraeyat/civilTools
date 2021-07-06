@@ -76,14 +76,19 @@ def get_story_forces_with_percentages(
             SapModel,
             loadcases: list=None,
             ):
-    story_forces, loadcases = get_story_forces(SapModel, loadcases)
-    x_loadcase, y_loadcase = loadcases
-    max_force = max(list(story_forces.values()))
-    stories = []
-    for key, value in story_forces.items():
-        if value / max_force > .35:
-            stories.append(key)
-    return stories 
+    story_forces, _ , fields = get_story_forces(SapModel, loadcases)
+    vx, vy = get_base_react(SapModel)
+    new_data = []
+    i_vx = fields.index('VX')
+    i_vy = fields.index('VY')
+    for story_force in story_forces:
+        fx = float(story_force[i_vx])
+        fy = float(story_force[i_vy])
+        story_force.extend([f'{fx/vx:.3f}', f'{fy/vy:.3f}'])
+        new_data.append(story_force)
+    fields = list(fields)
+    fields.extend(['Vx %', 'Vy %'])
+    return new_data, fields
 
 def get_base_react(SapModel):
     SapModel.SetPresentUnits(units["kgf_m_C"])
