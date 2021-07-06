@@ -79,8 +79,8 @@ def get_story_forces_with_percentages(
             SapModel=None,
             loadcases: list=None,
             ):
-    story_forces, _ , fields = get_story_forces(SapModel, loadcases)
     vx, vy = get_base_react(SapModel)
+    story_forces, _ , fields = get_story_forces(SapModel, loadcases)
     new_data = []
     i_vx = fields.index('VX')
     i_vy = fields.index('VY')
