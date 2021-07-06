@@ -120,6 +120,39 @@ class TorsionModel(ResultsModel):
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
 
 
+class StoryForcesModel(ResultsModel):
+    def __init__(self, data, headers):
+        super(StoryForcesModel, self).__init__(data, headers)
+        self.df = self.df[[
+            'Story',
+            'OutputCase',
+            'VX',
+            'VY',
+            'Vx %',
+            'Vy %',
+        ]]
+        self.headers = tuple(self.df.columns)
+
+    def data(self, index, role=Qt.DisplayRole):
+        row = index.row()
+        col = index.column()
+        i_vx = self.headers.index('Vx %')
+        i_vy = self.headers.index('Vy %')
+        if index.isValid():
+            value = self.df.iloc[row][col]
+            if role == Qt.DisplayRole:
+                return str(value)
+            elif role == Qt.BackgroundColorRole:
+                fx_Percentage = float(self.df.iloc[row][i_vx])
+                fy_Percentage = float(self.df.iloc[row][i_vy])
+                if max(fx_Percentage, fy_Percentage) >= .35:
+                    return QColor('yellow')
+                else:
+                    return QColor('green')
+            elif role == Qt.TextAlignmentRole:
+                return int(Qt.AlignCenter | Qt.AlignVCenter)
+
+
 class ResultWidget(result_base, result_window):
     # main widget for user interface
     def __init__(self, data, headers, model, function, parent=None):

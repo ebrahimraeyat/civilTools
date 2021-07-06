@@ -52,9 +52,12 @@ def get_from_list_table(
 
 
 def get_story_forces(
-                SapModel,
+                SapModel=None,
                 loadcases: list=None,
                 ):
+    if not SapModel:
+        etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
+        SapModel = etabs.SapModel
     if not SapModel.GetModelIsLocked():
         return None
     if not loadcases:
@@ -73,7 +76,7 @@ def get_story_forces(
     return story_forces, loadcases, FieldsKeysIncluded
 
 def get_story_forces_with_percentages(
-            SapModel,
+            SapModel=None,
             loadcases: list=None,
             ):
     story_forces, _ , fields = get_story_forces(SapModel, loadcases)
@@ -90,7 +93,10 @@ def get_story_forces_with_percentages(
     fields.extend(['Vx %', 'Vy %'])
     return new_data, fields
 
-def get_base_react(SapModel):
+def get_base_react(SapModel=None):
+    if not SapModel:
+        etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
+        SapModel = etabs.SapModel
     SapModel.SetPresentUnits(units["kgf_m_C"])
     loadcases = get_ex_ey_earthquake_name(SapModel)
     SapModel.Results.Setup.SetCaseSelectedForOutput(loadcases[0])

@@ -1055,6 +1055,7 @@ p, li { white-space: pre-wrap; }
        <normaloff>:/cfactor/images/torsion.jpg</normaloff>:/cfactor/images/torsion.jpg</iconset>
      </property>
      <addaction name="action_torsion_table"/>
+     <addaction name="action_story_forces"/>
     </widget>
     <addaction name="action_to_etabs"/>
     <addaction name="action_show_drift"/>
@@ -1152,6 +1153,11 @@ p, li { white-space: pre-wrap; }
   <action name="action_torsion_table">
    <property name="text">
     <string>Table</string>
+   </property>
+  </action>
+  <action name="action_story_forces">
+   <property name="text">
+    <string>story forces</string>
    </property>
   </action>
  </widget>
