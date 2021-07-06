@@ -70,10 +70,14 @@ def get_story_forces(
     values = ('Bottom',)
     result = get_from_list_table(data, columns, values)
     story_forces = list(result)
-    return story_forces, loadcases
+    return story_forces, loadcases, FieldsKeysIncluded
 
-def get_stories_with_shear_greater_than_35_base_shear(SapModel, loadcase, direction='X'):
-    story_forces = get_story_forces(SapModel, loadcase, direction)
+def get_story_forces_with_percentages(
+            SapModel,
+            loadcases: list=None,
+            ):
+    story_forces, loadcases = get_story_forces(SapModel, loadcases)
+    x_loadcase, y_loadcase = loadcases
     max_force = max(list(story_forces.values()))
     stories = []
     for key, value in story_forces.items():
