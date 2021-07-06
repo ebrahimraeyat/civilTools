@@ -43,30 +43,33 @@ def get_from_list_table(
             ) -> filter:
     from operator import itemgetter
     itemget = itemgetter(*columns)
-    result = filter(lambda x: itemget(x) == values, list_table)
+    assert len(columns) == len(values)
+    if len(columns) == 1:
+        result = filter(lambda x: itemget(x) == values[0], list_table)
+    else:
+        result = filter(lambda x: itemget(x) == values, list_table)
     return result
 
 
-def get_story_forces(SapModel, loadcase, direction='X'):
+def get_story_forces(
+                SapModel,
+                loadcases: list=None,
+                ):
     if not SapModel.GetModelIsLocked():
         return None
+    if not loadcases:
+        loadcases = get_ex_ey_earthquake_name(SapModel)
+    assert len(loadcases) == 2
     SapModel.SetPresentUnits(units["kgf_m_C"])
-    SapModel.DatabaseTables.SetLoadCombinationsSelectedForDisplay('')
-    SapModel.DatabaseTables.SetLoadCasesSelectedForDisplay([loadcase])
+    functions.select_load_cases(SapModel, loadcases)
     TableKey = 'Story Forces'
     [_, _, FieldsKeysIncluded, _, TableData, _] = functions.read_table(TableKey, SapModel)
-    i_story = FieldsKeysIncluded.index('Story')
     i_loc = FieldsKeysIncluded.index('Location')
-    i_case = FieldsKeysIncluded.index('OutputCase')
     data = functions.reshape_data(FieldsKeysIncluded, TableData)
-    columns = (i_case, i_loc)
-    values = (loadcase, 'Bottom')
+    columns = (i_loc,)
+    values = ('Bottom',)
     result = get_from_list_table(data, columns, values)
-    if direction == 'X':
-        i_v = FieldsKeysIncluded.index('VX')
-    else:
-        i_v = FieldsKeysIncluded.index('VY')
-    story_forces = {row[i_story]: abs(float(row[i_v])) for row in result}
+    story_forces = list(result)
     return story_forces
 
 def get_stories_with_shear_greater_than_35_base_shear(SapModel, loadcase, direction='X'):
@@ -82,5 +85,6 @@ def get_stories_with_shear_greater_than_35_base_shear(SapModel, loadcase, direct
 if __name__ == '__main__':
     etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
     SapModel = etabs.SapModel
+    get_story_forces(SapModel)
     print('')
     
