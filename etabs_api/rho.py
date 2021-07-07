@@ -162,6 +162,18 @@ def multiply_seismic_loads(
     NumFatalErrors, ret = functions.apply_table(SapModel)
     return NumFatalErrors, ret
 
+def set_end_release_frame(SapModel, name):
+    end_release = SapModel.FrameObj.GetReleases(name)
+    II = list(end_release[0])
+    JJ = list(end_release[1])
+    II[3:] = [True] * len(II[3:])
+    JJ[4:] = [True] * len(II[4:])
+    end_release[0] = tuple(II)
+    end_release[1] = tuple(JJ)
+    end_release.insert(0, name)
+    er = SapModel.FrameObj.SetReleases(*end_release)
+    return er
+
 if __name__ == '__main__':
     etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
     SapModel = etabs.SapModel
