@@ -128,6 +128,40 @@ def get_beams_rebars(SapModel):
         beams_rebars[name] = d
     return beams_rebars
 
+def multiply_seismic_loads(
+        SapModel,
+        x: float,
+        y=None,
+        ):
+    if not y:
+        y = x
+    SapModel.SetModelIsLocked(False)
+    functions.select_all_load_patterns(SapModel)
+    TableKey = 'Load Pattern Definitions - Auto Seismic - User Coefficient'
+    [_, _, FieldsKeysIncluded, _, TableData, _] = functions.read_table(TableKey, SapModel)
+    data = functions.reshape_data(FieldsKeysIncluded, TableData)
+    names_x, names_y = functions.get_load_patterns_in_XYdirection(SapModel)
+    i_c = FieldsKeysIncluded.index('C')
+    i_name = FieldsKeysIncluded.index("Name")
+    for earthquake in data:
+        name = earthquake[i_name]
+        c = float(earthquake[i_c])
+        cx = x * c
+        cy = y * c
+        if name in names_x:
+            earthquake[i_c] = str(cx)
+        elif name in names_y:
+            earthquake[i_c] = str(cy)
+    TableData = functions.unique_data(data)
+    FieldsKeysIncluded1 = ['Name', 'Is Auto Load', 'X Dir?', 'X Dir Plus Ecc?', 'X Dir Minus Ecc?',
+                           'Y Dir?', 'Y Dir Plus Ecc?', 'Y Dir Minus Ecc?',
+                           'Ecc Ratio', 'Top Story', 'Bot Story',
+                           'C',
+                           'K']
+    SapModel.DatabaseTables.SetTableForEditingArray(TableKey, 0, FieldsKeysIncluded1, 0, TableData)
+    NumFatalErrors, ret = functions.apply_table(SapModel)
+    return NumFatalErrors, ret
+
 if __name__ == '__main__':
     etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
     SapModel = etabs.SapModel
