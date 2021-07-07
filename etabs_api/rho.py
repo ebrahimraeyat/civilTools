@@ -108,10 +108,16 @@ def get_base_react(SapModel=None):
 
 def get_columns_pmm(SapModel):
     _, columns = functions.get_beams_columns(SapModel)
+    if not SapModel.GetModelIsLocked():
+        print('Run Alalysis ...')
+        SapModel.Analyze.RunAnalysis()
+    if not SapModel.DesignConcrete.GetResultsAvailable():
+        print('Start Design ...')
+        SapModel.DesignConcrete.StartDesign()
     columns_pmm = dict()
     for col in columns:
         pmm = max(SapModel.DesignConcrete.GetSummaryResultsColumn(col)[6])
-        columns_pmm[col] = [pmm]
+        columns_pmm[col] = pmm
     return columns_pmm
 
 def get_beams_rebars(SapModel):
@@ -173,6 +179,34 @@ def set_end_release_frame(SapModel, name):
     end_release.insert(0, name)
     er = SapModel.FrameObj.SetReleases(*end_release)
     return er
+
+def get_columns_pmm_weakness_structure(
+                SapModel,
+                name: str = '',
+                weakness_filename="weakness.EDB"
+                ):
+    if not name:
+        name = SapModel.SelectObj.GetSelected()[2][0]
+    asli_file_path = Path(SapModel.GetModelFilename())
+    if asli_file_path.suffix.lower() != '.edb':
+        asli_file_path = asli_file_path.with_suffix(".EDB")
+    dir_path = asli_file_path.parent.absolute()
+    weakness_file_path = dir_path / weakness_filename
+    print('get columns pmm')
+    columns_pmm = get_columns_pmm(SapModel)
+    print(f"Saving file as {weakness_filename}\n")
+    SapModel.File.Save(str(weakness_file_path))
+    print('multiply earthquake factor with 0.67')
+    multiply_seismic_loads(SapModel, .67)
+    set_end_release_frame(SapModel, name)
+    print('get columns pmm')
+    columns_pmm_weakness = get_columns_pmm(SapModel)
+    columns_pmm_main_and_weakness = []
+    for key, value in columns_pmm.items():
+        value2 = columns_pmm_weakness[key]
+        columns_pmm_main_and_weakness.append((key, value, value2))
+    SapModel.File.OpenFile(str(asli_file_path))
+    return columns_pmm_main_and_weakness
 
 if __name__ == '__main__':
     etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
