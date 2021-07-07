@@ -204,15 +204,15 @@ def select_load_cases(SapModel, names):
     
 
 def get_beams_columns(
-        etabs=None,
+        SapModel=None,
         type_=2,
         ):
     '''
     type_: 1=steel and 2=concrete
     '''
-    if not etabs:
+    if not SapModel:
         etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
-    SapModel = etabs.SapModel
+        SapModel = etabs.SapModel
     beams = []
     columns = []
     others = []
@@ -248,7 +248,7 @@ def get_drift_periods(
     print(f"Saving file as {t_file_path}\n")
     SapModel.File.Save(str(t_file_path))
     print("Get beams and columns\n")
-    beams, columns = get_beams_columns(etabs)
+    beams, columns = get_beams_columns(SapModel)
     print("get frame property modifiers and change I values\n")
     TableKey = "Frame Assignments - Property Modifiers"
     [_, TableVersion, FieldsKeysIncluded, NumberRecords, TableData, _] = read_table(TableKey, SapModel)
