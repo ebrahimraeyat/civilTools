@@ -106,6 +106,28 @@ def get_base_react(SapModel=None):
     vy = base_react[5][1]
     return vx, vy
 
+def get_columns_pmm(SapModel):
+    _, columns = functions.get_beams_columns(SapModel)
+    columns_pmm = dict()
+    for col in columns:
+        pmm = max(SapModel.DesignConcrete.GetSummaryResultsColumn(col)[6])
+        columns_pmm[col] = [pmm]
+    return columns_pmm
+
+def get_beams_rebars(SapModel):
+    SapModel.SetPresentUnits(units["kgf_cm_C"])
+    beams, _ = functions.get_beams_columns(SapModel)
+    beams_rebars = dict()
+    for name in beams:
+        d = dict()
+        beam_rebars = SapModel.DesignConcrete.GetSummaryResultsBeam(name)
+        d['location'] = beam_rebars[2]
+        d['TopArea'] = beam_rebars[4]
+        d['BotArea'] = beam_rebars[6]
+        d['VRebar'] = beam_rebars[8]
+        beams_rebars[name] = d
+    return beams_rebars
+
 if __name__ == '__main__':
     etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
     SapModel = etabs.SapModel
