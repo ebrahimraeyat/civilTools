@@ -251,6 +251,57 @@ def get_beams_rebars_weakness_structure(
     SapModel.File.OpenFile(str(asli_file_path))
     return beams_rebars_main_and_weakness
 
+def get_beams_columns_weakness_structure(
+                SapModel,
+                name: str = '',
+                weakness_filename="weakness.EDB"
+                ):
+    if not name:
+        name = SapModel.SelectObj.GetSelected()[2][0]
+    print('get columns pmm')
+    columns_pmm = get_columns_pmm(SapModel)
+    print('get beams rebars')
+    beams_rebars = get_beams_rebars(SapModel)
+    print(f"Saving file as {weakness_filename}\n")
+    asli_file_path = Path(SapModel.GetModelFilename())
+    if asli_file_path.suffix.lower() != '.edb':
+        asli_file_path = asli_file_path.with_suffix(".EDB")
+    dir_path = asli_file_path.parent.absolute()
+    weakness_file_path = dir_path / weakness_filename
+    SapModel.File.Save(str(weakness_file_path))
+    print('multiply earthquake factor with 0.67')
+    multiply_seismic_loads(SapModel, .67)
+    set_end_release_frame(SapModel, name)
+    print('get columns pmm')
+    columns_pmm_weakness = get_columns_pmm(SapModel)
+    columns_pmm_main_and_weakness = []
+    for key, value in columns_pmm.items():
+        value2 = columns_pmm_weakness[key]
+        columns_pmm_main_and_weakness.append((key, value, value2, value2/value2))
+    col_fields = ('name', 'PMM Ratio1', 'PMM ratio2', 'Ratio')
+    print('get beams rebars')
+    beams_rebars_weakness = get_beams_rebars(SapModel)
+    beams_rebars_main_and_weakness = []
+    for key, d in beams_rebars.items():
+        d2 = beams_rebars_weakness[key]
+        beams_rebars_main_and_weakness.append((
+            key,
+            d['location'],
+            d['TopArea'],
+            d2['TopArea'],
+            d['BotArea'],
+            d2['BotArea'],
+            d['VRebar'],
+            d2['VRebar'],
+            ))
+    beam_fields = ('name', 'location', 'Top Area1', 'Top Area2',
+            'Bot Area1', 'Bot Area2', 'VRebar1', 'VRebar2')
+    SapModel.File.OpenFile(str(asli_file_path))
+    return (columns_pmm_main_and_weakness, col_fields,
+           beams_rebars_main_and_weakness, beam_fields)
+
+
+
 if __name__ == '__main__':
     etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
     SapModel = etabs.SapModel
