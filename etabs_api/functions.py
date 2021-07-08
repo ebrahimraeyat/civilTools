@@ -589,16 +589,14 @@ def import_sections_to_etabs(sections, mat_name='STEEL_CIVILTOOLS', etabs=None):
         return
     if not etabs:
         etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
-    # filename = get_temp_filename('.xml')
     SapModel = etabs.SapModel
     mat_names = SapModel.Propmaterial.GetNameList()[1]
     if not mat_name in mat_names:
         SapModel.Propmaterial.SetMaterial(mat_name, 1)
     import tempfile
     default_tmp_dir = tempfile._get_default_tempdir()
-    name = next(tempfile._get_candidate_names()) + '.xml'
+    name = 'civiltools.xml'
     filename = Path(default_tmp_dir) /  name
-    # os.chdir(str(default_tmp_dir))
     section = sections[0]
     section.exportXml(filename, sections)
     ret = set()
