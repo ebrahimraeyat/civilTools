@@ -106,29 +106,69 @@ def get_base_react(SapModel=None):
     vy = base_react[5][1]
     return vx, vy
 
-def get_columns_pmm(SapModel):
+def get_columns_pmm(SapModel, frame_names=None):
     if not SapModel.GetModelIsLocked():
         print('Run Alalysis ...')
         SapModel.Analyze.RunAnalysis()
+    if frame_names:
+        for fname in frame_names:
+            SapModel.FrmeObj.SetSelected(fname, True)
     if not SapModel.DesignConcrete.GetResultsAvailable():
         print('Start Design ...')
         SapModel.DesignConcrete.StartDesign()
     _, columns = functions.get_beams_columns(SapModel)
     columns_pmm = dict()
     for col in columns:
+        if frame_names and not col in frame_names:
+            continue
         pmm = max(SapModel.DesignConcrete.GetSummaryResultsColumn(col)[6])
         columns_pmm[col] = round(pmm, 3)
     return columns_pmm
 
-def get_beams_rebars(SapModel):
+def get_beams_rebars(SapModel, frame_names=None):
     SapModel.SetPresentUnits(units["kgf_cm_C"])
+    if not SapModel.GetModelIsLocked():
+        print('Run Alalysis ...')
+        SapModel.Analyze.RunAnalysis()
+    if frame_names:
+        for fname in frame_names:
+            SapModel.FrmeObj.SetSelected(fname, True)
+    if not SapModel.DesignConcrete.GetResultsAvailable():
+        print('Start Design ...')
+        SapModel.DesignConcrete.StartDesign()
+    beams, _ = functions.get_beams_columns(SapModel)
+    beams_rebars = []
+    for name in beams:
+        if frame_names and not name in frame_names:
+            continue
+        beam_rebars = SapModel.DesignConcrete.GetSummaryResultsBeam(name)
+        label, story, _ = SapModel.FrameObj.GetLabelFromName(name)
+        locations = beam_rebars[2]
+        top_area = beam_rebars[4]
+        bot_area = beam_rebars[6]
+        vrebar = beam_rebars[8]
+        for l, ta, ba, v in zip(locations, top_area, bot_area, vrebar):
+            beams_rebars.append((
+                story,
+                label,
+                l, ta, ba, v,
+                ))
+    return beams_rebars
+
+def get_columns_pmm_and_beams_rebars(SapModel, frame_names):
     if not SapModel.GetModelIsLocked():
         print('Run Alalysis ...')
         SapModel.Analyze.RunAnalysis()
     if not SapModel.DesignConcrete.GetResultsAvailable():
         print('Start Design ...')
         SapModel.DesignConcrete.StartDesign()
-    beams, _ = functions.get_beams_columns(SapModel)
+    beams, columns = functions.get_beams_columns(SapModel)
+    beams = set(frame_names).intersection(beams)
+    columns = set(frame_names).intersection(columns)
+    columns_pmm = dict()
+    for col in columns:
+        pmm = max(SapModel.DesignConcrete.GetSummaryResultsColumn(col)[6])
+        columns_pmm[col] = round(pmm, 3)
     beams_rebars = dict()
     for name in beams:
         d = dict()
@@ -138,7 +178,7 @@ def get_beams_rebars(SapModel):
         d['BotArea'] = beam_rebars[6]
         d['VRebar'] = beam_rebars[8]
         beams_rebars[name] = d
-    return beams_rebars
+    return columns_pmm, beams_rebars
 
 def multiply_seismic_loads(
         SapModel,
@@ -258,10 +298,10 @@ def get_beams_columns_weakness_structure(
                 ):
     if not name:
         name = SapModel.SelectObj.GetSelected()[2][0]
-    print('get columns pmm')
-    columns_pmm = get_columns_pmm(SapModel)
-    print('get beams rebars')
-    beams_rebars = get_beams_rebars(SapModel)
+    label, story, _ = SapModel.FrameObj.GetLabelFromName(name)
+    story_frames = set_frame_obj_selected_in_story(SapModel, story)
+    print('get columns pmm and beams rebars')
+    columns_pmm, beams_rebars = get_columns_pmm_and_beams_rebars(SapModel, story_frames)
     print(f"Saving file as {weakness_filename}\n")
     asli_file_path = Path(SapModel.GetModelFilename())
     if asli_file_path.suffix.lower() != '.edb':
@@ -272,37 +312,46 @@ def get_beams_columns_weakness_structure(
     print('multiply earthquake factor with 0.67')
     multiply_seismic_loads(SapModel, .67)
     set_end_release_frame(SapModel, name)
-    print('get columns pmm')
-    columns_pmm_weakness = get_columns_pmm(SapModel)
+    story_frames = set_frame_obj_selected_in_story(SapModel, story)
+    print('get columns pmm and beams rebars')
+    columns_pmm_weakness, beams_rebars_weakness = get_columns_pmm_and_beams_rebars(SapModel, story_frames)
     columns_pmm_main_and_weakness = []
     for key, value in columns_pmm.items():
         value2 = columns_pmm_weakness[key]
         label, story, _ = SapModel.FrameObj.GetLabelFromName(key)
         columns_pmm_main_and_weakness.append((story, label, value, value2, value2/value2))
-
     col_fields = ('Story', 'Label', 'PMM Ratio1', 'PMM ratio2', 'Ratio')
-    print('get beams rebars')
-    beams_rebars_weakness = get_beams_rebars(SapModel)
     beams_rebars_main_and_weakness = []
     for key, d in beams_rebars.items():
         d2 = beams_rebars_weakness[key]
         label, story, _ = SapModel.FrameObj.GetLabelFromName(key)
-        beams_rebars_main_and_weakness.append((
-            story,
-            label,
-            d['location'],
-            d['TopArea'],
-            d2['TopArea'],
-            d['BotArea'],
-            d2['BotArea'],
-            d['VRebar'],
-            d2['VRebar'],
-            ))
+        locations = d['location']
+        top_area1 = d['TopArea']
+        top_area2 = d2['TopArea']
+        bot_area1 = d['BotArea']
+        bot_area2 = d2['BotArea']
+        vrebar1 = d['VRebar']
+        vrebar2 = d2['VRebar']
+        for l, ta1, ta2, ba1, ba2, v1, v2 in zip(locations,
+                top_area1, top_area2, bot_area1, bot_area2, vrebar1, vrebar2):
+            beams_rebars_main_and_weakness.append((
+                story,
+                label,
+                l, ta1, ta2, ba1, ba2, v1, v2,
+                ))
     beam_fields = ('Story', 'Label', 'location', 'Top Area1', 'Top Area2',
             'Bot Area1', 'Bot Area2', 'VRebar1', 'VRebar2')
     SapModel.File.OpenFile(str(asli_file_path))
     return (columns_pmm_main_and_weakness, col_fields,
            beams_rebars_main_and_weakness, beam_fields)
+
+def set_frame_obj_selected_in_story(SapModel, story_name):
+    frames = SapModel.FrameObj.GetNameListOnStory(story_name)[1]
+    for fname in frames:
+        SapModel.FrameObj.SetSelected(fname, True)
+    return frames
+
+
 
 if __name__ == '__main__':
     etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
