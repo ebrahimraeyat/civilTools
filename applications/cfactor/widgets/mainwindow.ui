@@ -1048,7 +1048,7 @@ p, li { white-space: pre-wrap; }
     </property>
     <widget class="QMenu" name="menuTorsion">
      <property name="title">
-      <string>Torsion</string>
+      <string>Rho Factor</string>
      </property>
      <property name="icon">
       <iconset resource="../resource.qrc">
@@ -1056,7 +1056,7 @@ p, li { white-space: pre-wrap; }
      </property>
      <addaction name="action_torsion_table"/>
      <addaction name="action_story_forces"/>
-     <addaction name="action_columns_pmm_and_beams_rebars"/>
+     <addaction name="action_weakness"/>
     </widget>
     <widget class="QMenu" name="menuDrift">
      <property name="title">
@@ -1158,8 +1158,12 @@ p, li { white-space: pre-wrap; }
    </property>
   </action>
   <action name="action_torsion_table">
+   <property name="icon">
+    <iconset resource="../resource.qrc">
+     <normaloff>:/cfactor/images/torsion.jpg</normaloff>:/cfactor/images/torsion.jpg</iconset>
+   </property>
    <property name="text">
-    <string>Show Table</string>
+    <string>Show Torsion</string>
    </property>
   </action>
   <action name="action_story_forces">
@@ -1167,7 +1171,7 @@ p, li { white-space: pre-wrap; }
     <string>story forces</string>
    </property>
   </action>
-  <action name="action_columns_pmm_and_beams_rebars">
+  <action name="action_weakness">
    <property name="text">
     <string>Weakness</string>
    </property>

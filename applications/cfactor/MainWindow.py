@@ -73,7 +73,7 @@ class Ui(QMainWindow, main_window):
         self.action_word.triggered.connect(self.export_to_word)
         self.action_torsion_table.triggered.connect(self.show_torsion_table)
         self.action_story_forces.triggered.connect(self.show_story_forces)
-        self.action_column_pmm_and_beams_rebars.triggered.connect(self.show_column_pmm_and_beams_rebars_table)
+        self.action_weakness.triggered.connect(self.show_weakness_ratio)
 
 
     def create_connections(self):
@@ -444,7 +444,7 @@ class Ui(QMainWindow, main_window):
         table_model.show_results(data, headers, table_model.TorsionModel, functions.show_point)
         self.show_warning_about_number_of_use(check)
     
-    def show_column_pmm_and_beams_rebars_table(self):
+    def show_weakness_ratio(self):
         allow, check = self.allowed_to_continue(
             'torsion.bin',
             'https://gist.githubusercontent.com/ebrahimraeyat/d1591790a52a62b3e66bb70f45738105/raw',
