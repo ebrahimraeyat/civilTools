@@ -292,10 +292,13 @@ def get_beams_rebars_weakness_structure(
     return beams_rebars_main_and_weakness
 
 def get_beams_columns_weakness_structure(
-                SapModel,
+                SapModel=None,
                 name: str = '',
                 weakness_filename="weakness.EDB"
                 ):
+    if not SapModel:
+        etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
+        SapModel = etabs.SapModel
     if not name:
         name = SapModel.SelectObj.GetSelected()[2][0]
     label, story, _ = SapModel.FrameObj.GetLabelFromName(name)
@@ -319,7 +322,8 @@ def get_beams_columns_weakness_structure(
     for key, value in columns_pmm.items():
         value2 = columns_pmm_weakness[key]
         label, story, _ = SapModel.FrameObj.GetLabelFromName(key)
-        columns_pmm_main_and_weakness.append((story, label, value, value2, value2/value2))
+        ratio = round(value2/value, 3)
+        columns_pmm_main_and_weakness.append((story, label, value, value2, ratio))
     col_fields = ('Story', 'Label', 'PMM Ratio1', 'PMM ratio2', 'Ratio')
     beams_rebars_main_and_weakness = []
     for key, d in beams_rebars.items():
@@ -337,10 +341,15 @@ def get_beams_columns_weakness_structure(
             beams_rebars_main_and_weakness.append((
                 story,
                 label,
-                l, ta1, ta2, ba1, ba2, v1, v2,
+                l,
+                ta1, ta2,
+                ba1, ba2,
+                v1, v2,
                 ))
-    beam_fields = ('Story', 'Label', 'location', 'Top Area1', 'Top Area2',
-            'Bot Area1', 'Bot Area2', 'VRebar1', 'VRebar2')
+    beam_fields = ('Story', 'Label', 'location',
+            'Top Area1', 'Top Area2',
+            'Bot Area1', 'Bot Area2',
+            'VRebar1', 'VRebar2')
     SapModel.File.OpenFile(str(asli_file_path))
     return (columns_pmm_main_and_weakness, col_fields,
            beams_rebars_main_and_weakness, beam_fields)

@@ -1056,10 +1056,17 @@ p, li { white-space: pre-wrap; }
      </property>
      <addaction name="action_torsion_table"/>
      <addaction name="action_story_forces"/>
+     <addaction name="action_columns_pmm_and_beams_rebars"/>
+    </widget>
+    <widget class="QMenu" name="menuDrift">
+     <property name="title">
+      <string>Drift</string>
+     </property>
+     <addaction name="action_show_drift"/>
+     <addaction name="action_automatic_drift"/>
     </widget>
     <addaction name="action_to_etabs"/>
-    <addaction name="action_show_drift"/>
-    <addaction name="action_automatic_drift"/>
+    <addaction name="menuDrift"/>
     <addaction name="menuTorsion"/>
    </widget>
    <widget class="QMenu" name="menuFile">
@@ -1152,12 +1159,22 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="action_torsion_table">
    <property name="text">
-    <string>Table</string>
+    <string>Show Table</string>
    </property>
   </action>
   <action name="action_story_forces">
    <property name="text">
     <string>story forces</string>
+   </property>
+  </action>
+  <action name="action_columns_pmm_and_beams_rebars">
+   <property name="text">
+    <string>Weakness</string>
+   </property>
+  </action>
+  <action name="actionfdfd">
+   <property name="text">
+    <string>fdfd</string>
    </property>
   </action>
  </widget>

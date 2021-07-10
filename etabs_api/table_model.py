@@ -153,6 +153,77 @@ class StoryForcesModel(ResultsModel):
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
 
 
+class ColumnsRatioModel(ResultsModel):
+    def __init__(self, data, headers):
+        super(ColumnsRatioModel, self).__init__(data, headers)
+        # self.col_function = (0, 4)
+    def data(self, index, role=Qt.DisplayRole):
+        row = index.row()
+        col = index.column()
+        if index.isValid():
+            value = self.df.iloc[row][col]
+            if role == Qt.DisplayRole:
+                return str(value)
+            elif role == Qt.BackgroundColorRole:
+                ratio = float(self.df.iloc[row]['Ratio'])
+                if ratio > 1:
+                    return QColor('red')
+                else:
+                    return QColor('green')
+            elif role == Qt.TextAlignmentRole:
+                return int(Qt.AlignCenter | Qt.AlignVCenter)
+
+
+class BeamsRebarsModel(ResultsModel):
+    def __init__(self, data, headers):
+        super(BeamsRebarsModel, self).__init__(data, headers)
+        self.i_location = self.headers.index('location')
+        self.i_ta1 = self.headers.index('Top Area1')
+        self.i_ta2 = self.headers.index('Top Area2')
+        self.i_ba1 = self.headers.index('Bot Area1')
+        self.i_ba2 = self.headers.index('Bot Area2')
+        self.i_v1 = self.headers.index('VRebar1')
+        self.i_v2 = self.headers.index('VRebar2')
+        # self.col_function = (0, 4)
+
+    def data(self, index, role=Qt.DisplayRole):
+        row = index.row()
+        col = index.column()
+        if index.isValid():
+            value = self.df.iloc[row][col]
+            if role == Qt.DisplayRole:
+                if col in (
+                            self.i_ta1,
+                            self.i_ta2,
+                            self.i_ba1,
+                            self.i_ba2,
+                            self.i_v1,
+                            self.i_v2,
+                            ):
+                    value = round(value, 1)
+                if col == self.i_location:
+                    value = int(value)
+                return str(value)
+            elif role == Qt.BackgroundColorRole:
+                if col in (self.i_ta1, self.i_ta2):
+                    if self.df.iloc[row][self.i_ta2] > self.df.iloc[row][self.i_ta1]:
+                        return QColor('red')
+                    else:
+                        return QColor('green')
+                if col in (self.i_ba1, self.i_ba2):
+                    if self.df.iloc[row][self.i_ba2] > self.df.iloc[row][self.i_ba1]:
+                        return QColor('red')
+                    else:
+                        return QColor('green')
+                if col in (self.i_v1, self.i_v2):
+                    if self.df.iloc[row][self.i_v2] > self.df.iloc[row][self.i_v1]:
+                        return QColor('red')
+                    else:
+                        return QColor('green')
+            elif role == Qt.TextAlignmentRole:
+                return int(Qt.AlignCenter | Qt.AlignVCenter)
+
+
 class ResultWidget(result_base, result_window):
     # main widget for user interface
     def __init__(self, data, headers, model, function, parent=None):

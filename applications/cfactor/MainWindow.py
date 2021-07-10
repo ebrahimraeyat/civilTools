@@ -73,6 +73,8 @@ class Ui(QMainWindow, main_window):
         self.action_word.triggered.connect(self.export_to_word)
         self.action_torsion_table.triggered.connect(self.show_torsion_table)
         self.action_story_forces.triggered.connect(self.show_story_forces)
+        self.action_column_pmm_and_beams_rebars.triggered.connect(self.show_column_pmm_and_beams_rebars_table)
+
 
     def create_connections(self):
         self.calculate_button.clicked.connect(self.calculate)
@@ -440,6 +442,23 @@ class Ui(QMainWindow, main_window):
         from etabs_api import functions, table_model
         data, headers = functions.get_diaphragm_max_over_avg_drifts()
         table_model.show_results(data, headers, table_model.TorsionModel, functions.show_point)
+        self.show_warning_about_number_of_use(check)
+    
+    def show_column_pmm_and_beams_rebars_table(self):
+        allow, check = self.allowed_to_continue(
+            'torsion.bin',
+            'https://gist.githubusercontent.com/ebrahimraeyat/d1591790a52a62b3e66bb70f45738105/raw',
+            'cfactor',
+            n=2,
+            )
+        if not allow:
+            return
+        if not self.is_etabs_running():
+            return
+        from etabs_api import rho, table_model
+        data, headers, data2, headers2 = rho.get_beams_columns_weakness_structure()
+        table_model.show_results(data, headers, table_model.ColumnsRatioModel)
+        table_model.show_results(data2, headers2, table_model.BeamsRebarsModel)
         self.show_warning_about_number_of_use(check)
 
     def show_story_forces(self):
