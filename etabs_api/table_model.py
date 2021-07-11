@@ -242,10 +242,10 @@ class ResultWidget(result_base, result_window):
         self.horizontalHeader = self.result_table_view.horizontalHeader()
         self.horizontalHeader.sectionClicked.connect(self.on_view_horizontalHeader_sectionClicked)
         self.push_button_to_excel.clicked.connect(self.export_to_excel)
-        self.result_table_view.clicked.connect(self.row_clicked)
+        if self.function:
+            self.result_table_view.clicked.connect(self.row_clicked)
 
     def row_clicked(self):
-        if self.function:
            row = self.result_table_view.currentIndex().row()
            args = []
            for col in self.model.col_function:
