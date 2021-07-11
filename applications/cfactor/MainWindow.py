@@ -567,6 +567,8 @@ class Ui(QMainWindow, main_window):
         return False, check
 
     def show_warning_about_number_of_use(self, check):
+        if check.is_civiltools_registered or check.is_registered:
+            return
         check.add_using_feature()
         _, no_of_use = check.get_registered_numbers()
         n = check.n - no_of_use

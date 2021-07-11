@@ -449,8 +449,8 @@ def apply_cfactor_to_edb(
     select_all_load_patterns(SapModel)
     TableKey = 'Load Pattern Definitions - Auto Seismic - User Coefficient'
     [_, TableVersion, FieldsKeysIncluded, NumberRecords, TableData, _] = read_table(TableKey, SapModel)
-    if is_auto_load_yes_in_seismic_load_patterns(TableData, FieldsKeysIncluded):
-        return 1
+    # if is_auto_load_yes_in_seismic_load_patterns(TableData, FieldsKeysIncluded):
+    #     return 1
     TableData = apply_cfactor_to_tabledata(TableData, FieldsKeysIncluded, building, SapModel)
     # ('Name', 'IsAuto', 'XDir', 'XDirPlusE', 'XDirMinusE', 'YDir', 'YDirPlusE', 'YDirMinusE', 'EccRatio',
     # 'TopStory', 'BotStory', 'OverStory', 'OverDiaph', 'OverEcc', 'C', 'K', 'WeightUsed', 'BaseShear')
