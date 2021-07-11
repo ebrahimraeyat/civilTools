@@ -26,15 +26,20 @@ class CheckLegal:
 
     def allowed_to_continue(self):
         if sys.platform == "win32":
+            if self.is_civiltools_registered:
+                return True, ''
             if not self.is_registered:
                 self.serial = str(subprocess.check_output("wmic csproduct get uuid")).split("\\r\\r\\n")[1].split()[0]
                 if not internet():
                     return False, 'INTERNET'
-                
-                if not self.serial_number(self.serial):
+                ret1, ret2 = self.serial_number(self.serial)
+                if not (ret1 or ret2):
                     return False, 'SERIAL'
                 else:
-                    self.register()
+                    if ret1:
+                        self.register_civiltools()
+                    elif ret2:
+                        self.register()
                     return True, 'REGISTERED'
             return True, ''
         return True, ''
@@ -56,6 +61,24 @@ class CheckLegal:
                 return True
             else:
                 return False
+    
+    @property
+    def is_civiltools_registered(self):
+        filename = self.filename
+        self.filename = self.filename.parent / 'civiltools5.bin'
+        if not Path(self.filename).exists():
+            self.initiate()
+            self.filename = filename
+            return False
+        else:
+            text = self.get_registered_numbers()
+            if text[0] == 1:
+                self.filename = filename
+                return True
+            else:
+                self.filename = filename
+                return False
+    
 
     def get_registered_numbers(self):
         if not Path(self.filename).exists():
@@ -78,6 +101,12 @@ class CheckLegal:
             f.write(b)
         return
 
+    def register_civiltools(self):
+        filename = self.filename
+        self.filename = self.filename.parent / 'civiltools5.bin'
+        self.register()
+        self.filename = filename
+
     def register(self):
         if  not Path(self.filename).exists():
             self.initiate()
@@ -92,10 +121,15 @@ class CheckLegal:
 
     def serial_number(self, serial):
         import urllib.request
+        response = urllib.request.urlopen('https://gist.githubusercontent.com/ebrahimraeyat/b8cbd078eb7b211e3154804a8bb77633/raw')
+        data = response.read()      # a `bytes` object
+        text = data.decode('utf-8')
+        ret1 =  serial in text
         response = urllib.request.urlopen(self.gist_url)
         data = response.read()      # a `bytes` object
         text = data.decode('utf-8')
-        return serial in text
+        ret2 =  serial in text
+        return ret1, ret2
 
 def internet(host="8.8.8.8", port=53, timeout=3):
     import socket
