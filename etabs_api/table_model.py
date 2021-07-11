@@ -28,8 +28,7 @@ class ResultsModel(QAbstractTableModel):
     def __init__(self, data, headers):
         QAbstractTableModel.__init__(self)
         self.df = pd.DataFrame(data, columns=headers)
-        self.headers = headers
-
+        
     def rowCount(self, parent=None):
         return self.df.shape[0]
 
@@ -156,6 +155,9 @@ class StoryForcesModel(ResultsModel):
 class ColumnsRatioModel(ResultsModel):
     def __init__(self, data, headers):
         super(ColumnsRatioModel, self).__init__(data, headers)
+        all_cols = list(self.df)
+        self.df[all_cols] = self.df[all_cols].astype(str)
+        self.headers = tuple(self.df.columns)
         # self.col_function = (0, 4)
     def data(self, index, role=Qt.DisplayRole):
         row = index.row()
@@ -177,6 +179,9 @@ class ColumnsRatioModel(ResultsModel):
 class BeamsRebarsModel(ResultsModel):
     def __init__(self, data, headers):
         super(BeamsRebarsModel, self).__init__(data, headers)
+        all_cols = list(self.df)
+        self.df[all_cols] = self.df[all_cols].astype(str)
+        self.headers = tuple(self.df.columns)
         self.i_location = self.headers.index('location')
         self.i_ta1 = self.headers.index('Top Area1')
         self.i_ta2 = self.headers.index('Top Area2')
@@ -200,23 +205,23 @@ class BeamsRebarsModel(ResultsModel):
                             self.i_v1,
                             self.i_v2,
                             ):
-                    value = round(value, 1)
+                    value = round(float(value), 1)
                 if col == self.i_location:
-                    value = int(value)
+                    value = int(float(value))
                 return str(value)
             elif role == Qt.BackgroundColorRole:
                 if col in (self.i_ta1, self.i_ta2):
-                    if self.df.iloc[row][self.i_ta2] > self.df.iloc[row][self.i_ta1]:
+                    if float(self.df.iloc[row][self.i_ta2]) > float(self.df.iloc[row][self.i_ta1]):
                         return QColor('red')
                     else:
                         return QColor('green')
                 if col in (self.i_ba1, self.i_ba2):
-                    if self.df.iloc[row][self.i_ba2] > self.df.iloc[row][self.i_ba1]:
+                    if float(self.df.iloc[row][self.i_ba2]) > float(self.df.iloc[row][self.i_ba1]):
                         return QColor('red')
                     else:
                         return QColor('green')
                 if col in (self.i_v1, self.i_v2):
-                    if self.df.iloc[row][self.i_v2] > self.df.iloc[row][self.i_v1]:
+                    if float(self.df.iloc[row][self.i_v2]) > float(self.df.iloc[row][self.i_v1]):
                         return QColor('red')
                     else:
                         return QColor('green')
