@@ -356,7 +356,8 @@ def get_beams_columns_weakness_structure(
         except IndexError:
             return None
     story = SapModel.FrameObj.GetLabelFromName(name)[1]
-    story_frames = SapModel.FrameObj.GetNameListOnStory(story)[1]
+    story_frames = list(SapModel.FrameObj.GetNameListOnStory(story)[1])
+    story_frames.remove(name)
     print('get columns pmm and beams rebars')
     columns_pmm, beams_rebars = get_columns_pmm_and_beams_rebars(SapModel, story_frames)
     print(f"Saving file as {weakness_filename}\n")

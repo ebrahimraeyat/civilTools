@@ -202,26 +202,29 @@ class BeamsRebarsModel(ResultsModel):
                             self.i_ta2,
                             self.i_ba1,
                             self.i_ba2,
+                            ):
+                    value = round(float(value), 1)
+                if col in (
                             self.i_v1,
                             self.i_v2,
                             ):
-                    value = round(float(value), 1)
+                    value = round(float(value) * 100, 1)
                 if col == self.i_location:
                     value = int(float(value))
                 return str(value)
             elif role == Qt.BackgroundColorRole:
                 if col in (self.i_ta1, self.i_ta2):
-                    if float(self.df.iloc[row][self.i_ta2]) > float(self.df.iloc[row][self.i_ta1]):
+                    if float(self.df.iloc[row][self.i_ta2]) > float(self.df.iloc[row][self.i_ta1]) * 1.02:
                         return QColor('red')
                     else:
                         return QColor('green')
                 if col in (self.i_ba1, self.i_ba2):
-                    if float(self.df.iloc[row][self.i_ba2]) > float(self.df.iloc[row][self.i_ba1]):
+                    if float(self.df.iloc[row][self.i_ba2]) > float(self.df.iloc[row][self.i_ba1]) * 1.02:
                         return QColor('red')
                     else:
                         return QColor('green')
                 if col in (self.i_v1, self.i_v2):
-                    if float(self.df.iloc[row][self.i_v2]) > float(self.df.iloc[row][self.i_v1]):
+                    if float(self.df.iloc[row][self.i_v2]) > float(self.df.iloc[row][self.i_v1]) * 1.02:
                         return QColor('red')
                     else:
                         return QColor('green')
