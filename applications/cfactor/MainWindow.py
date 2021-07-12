@@ -456,7 +456,12 @@ class Ui(QMainWindow, main_window):
         if not self.is_etabs_running():
             return
         from etabs_api import rho, table_model
-        data, headers, data2, headers2 = rho.get_beams_columns_weakness_structure()
+        ret = rho.get_beams_columns_weakness_structure()
+        if not ret:
+            err = "Please select one beam in ETABS model!"
+            QMessageBox.critical(self, "Error", str(err))
+            return None
+        data, headers, data2, headers2 = ret
         table_model.show_results(data, headers, table_model.ColumnsRatioModel)
         table_model.show_results(data2, headers2, table_model.BeamsRebarsModel)
         self.show_warning_about_number_of_use(check)

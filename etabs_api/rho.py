@@ -262,7 +262,10 @@ def get_beams_rebars_weakness_structure(
                 weakness_filename="weakness.EDB"
                 ):
     if not name:
-        name = SapModel.SelectObj.GetSelected()[2][0]
+        try:
+            name = SapModel.SelectObj.GetSelected()[2][0]
+        except IndexError:
+            return None
     asli_file_path = Path(SapModel.GetModelFilename())
     if asli_file_path.suffix.lower() != '.edb':
         asli_file_path = asli_file_path.with_suffix(".EDB")
@@ -344,7 +347,10 @@ def get_beams_columns_weakness_structure(
         etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
         SapModel = etabs.SapModel
     if not name:
-        name = SapModel.SelectObj.GetSelected()[2][0]
+        try:
+            name = SapModel.SelectObj.GetSelected()[2][0]
+        except IndexError:
+            return None
     story = SapModel.FrameObj.GetLabelFromName(name)[1]
     story_frames = SapModel.FrameObj.GetNameListOnStory(story)[1]
     print('get columns pmm and beams rebars')
