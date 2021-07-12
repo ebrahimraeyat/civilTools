@@ -1056,7 +1056,8 @@ p, li { white-space: pre-wrap; }
      </property>
      <addaction name="action_torsion_table"/>
      <addaction name="action_story_forces"/>
-     <addaction name="action_weakness"/>
+     <addaction name="action_get_weakness"/>
+     <addaction name="action_show_weakness"/>
     </widget>
     <widget class="QMenu" name="menuDrift">
      <property name="title">
@@ -1171,14 +1172,19 @@ p, li { white-space: pre-wrap; }
     <string>story forces</string>
    </property>
   </action>
-  <action name="action_weakness">
+  <action name="action_get_weakness">
    <property name="text">
-    <string>Weakness</string>
+    <string>Get Weakness</string>
    </property>
   </action>
   <action name="actionfdfd">
    <property name="text">
     <string>fdfd</string>
+   </property>
+  </action>
+  <action name="action_show_weakness">
+   <property name="text">
+    <string>Show Weakness</string>
    </property>
   </action>
  </widget>

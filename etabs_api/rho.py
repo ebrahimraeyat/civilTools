@@ -335,6 +335,10 @@ def combine_beams_columns_weakness_structure(
             'Top Area1', 'Top Area2',
             'Bot Area1', 'Bot Area2',
             'VRebar1', 'VRebar2')
+    json_file = Path(SapModel.GetModelFilepath()) / 'columns_pmm_beams_rebars.json'
+    save_to_json(json_file, (columns_pmm_main_and_weakness, col_fields,
+           beams_rebars_main_and_weakness, beam_fields))
+
     return (columns_pmm_main_and_weakness, col_fields,
            beams_rebars_main_and_weakness, beam_fields)
 
@@ -389,7 +393,16 @@ def set_frame_obj_selected(SapModel, frame_objects):
         SapModel.FrameObj.SetSelected(fname, True)
     SapModel.View.RefreshView()
 
+def save_to_json(json_file, data):
+    import json
+    with open(json_file, 'w') as f:
+        json.dump(data, f)
 
+def load_from_json(json_file):
+    import json
+    with open(json_file, 'r') as f:
+        data = json.load(f)
+    return data
 
 
 if __name__ == '__main__':

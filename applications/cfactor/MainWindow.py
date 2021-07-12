@@ -73,7 +73,8 @@ class Ui(QMainWindow, main_window):
         self.action_word.triggered.connect(self.export_to_word)
         self.action_torsion_table.triggered.connect(self.show_torsion_table)
         self.action_story_forces.triggered.connect(self.show_story_forces)
-        self.action_weakness.triggered.connect(self.show_weakness_ratio)
+        self.action_get_weakness.triggered.connect(self.get_weakness_ratio)
+        self.action_show_weakness.triggered.connect(self.show_weakness_ratio)
 
 
     def create_connections(self):
@@ -444,7 +445,7 @@ class Ui(QMainWindow, main_window):
         table_model.show_results(data, headers, table_model.TorsionModel, functions.show_point)
         self.show_warning_about_number_of_use(check)
     
-    def show_weakness_ratio(self):
+    def get_weakness_ratio(self):
         allow, check = self.allowed_to_continue(
             'torsion.bin',
             'https://gist.githubusercontent.com/ebrahimraeyat/d1591790a52a62b3e66bb70f45738105/raw',
@@ -465,6 +466,23 @@ class Ui(QMainWindow, main_window):
         table_model.show_results(data, headers, table_model.ColumnsRatioModel)
         table_model.show_results(data2, headers2, table_model.BeamsRebarsModel)
         self.show_warning_about_number_of_use(check)
+    
+    def show_weakness_ratio(self):
+        if not self.is_etabs_running():
+            return
+        import comtypes.client
+        etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
+        SapModel = etabs.SapModel
+        json_file = Path(SapModel.GetModelFilepath()) / 'columns_pmm_beams_rebars.json'
+        from etabs_api import rho, table_model
+        ret = rho.load_from_json(json_file)
+        if not ret:
+            err = "Please select one beam in ETABS model!"
+            QMessageBox.critical(self, "Error", str(err))
+            return None
+        data, headers, data2, headers2 = ret
+        table_model.show_results(data, headers, table_model.ColumnsRatioModel)
+        table_model.show_results(data2, headers2, table_model.BeamsRebarsModel)
 
     def show_story_forces(self):
         allow, check = self.allowed_to_continue(
