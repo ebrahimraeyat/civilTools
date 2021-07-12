@@ -159,9 +159,11 @@ def get_columns_pmm_and_beams_rebars(SapModel, frame_names):
     if not SapModel.GetModelIsLocked():
         print('Run Alalysis ...')
         SapModel.Analyze.RunAnalysis()
+    set_frame_obj_selected(SapModel, frame_names)
     if not SapModel.DesignConcrete.GetResultsAvailable():
         print('Start Design ...')
         SapModel.DesignConcrete.StartDesign()
+    SapModel.SetPresentUnits(units["kgf_cm_C"])
     beams, columns = functions.get_beams_columns(SapModel)
     beams = set(frame_names).intersection(beams)
     columns = set(frame_names).intersection(columns)
@@ -291,33 +293,13 @@ def get_beams_rebars_weakness_structure(
     SapModel.File.OpenFile(str(asli_file_path))
     return beams_rebars_main_and_weakness
 
-def get_beams_columns_weakness_structure(
-                SapModel=None,
-                name: str = '',
-                weakness_filename="weakness.EDB"
-                ):
-    if not SapModel:
-        etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
-        SapModel = etabs.SapModel
-    if not name:
-        name = SapModel.SelectObj.GetSelected()[2][0]
-    label, story, _ = SapModel.FrameObj.GetLabelFromName(name)
-    story_frames = set_frame_obj_selected_in_story(SapModel, story)
-    print('get columns pmm and beams rebars')
-    columns_pmm, beams_rebars = get_columns_pmm_and_beams_rebars(SapModel, story_frames)
-    print(f"Saving file as {weakness_filename}\n")
-    asli_file_path = Path(SapModel.GetModelFilename())
-    if asli_file_path.suffix.lower() != '.edb':
-        asli_file_path = asli_file_path.with_suffix(".EDB")
-    dir_path = asli_file_path.parent.absolute()
-    weakness_file_path = dir_path / weakness_filename
-    SapModel.File.Save(str(weakness_file_path))
-    print('multiply earthquake factor with 0.67')
-    multiply_seismic_loads(SapModel, .67)
-    set_end_release_frame(SapModel, name)
-    story_frames = set_frame_obj_selected_in_story(SapModel, story)
-    print('get columns pmm and beams rebars')
-    columns_pmm_weakness, beams_rebars_weakness = get_columns_pmm_and_beams_rebars(SapModel, story_frames)
+def combine_beams_columns_weakness_structure(
+            SapModel,
+            columns_pmm,
+            beams_rebars,
+            columns_pmm_weakness,
+            beams_rebars_weakness,
+            ):
     columns_pmm_main_and_weakness = []
     for key, value in columns_pmm.items():
         value2 = columns_pmm_weakness[key]
@@ -350,15 +332,57 @@ def get_beams_columns_weakness_structure(
             'Top Area1', 'Top Area2',
             'Bot Area1', 'Bot Area2',
             'VRebar1', 'VRebar2')
-    SapModel.File.OpenFile(str(asli_file_path))
     return (columns_pmm_main_and_weakness, col_fields,
            beams_rebars_main_and_weakness, beam_fields)
 
+def get_beams_columns_weakness_structure(
+                SapModel=None,
+                name: str = '',
+                weakness_filename="weakness.EDB"
+                ):
+    if not SapModel:
+        etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
+        SapModel = etabs.SapModel
+    if not name:
+        name = SapModel.SelectObj.GetSelected()[2][0]
+    story = SapModel.FrameObj.GetLabelFromName(name)[1]
+    story_frames = SapModel.FrameObj.GetNameListOnStory(story)[1]
+    print('get columns pmm and beams rebars')
+    columns_pmm, beams_rebars = get_columns_pmm_and_beams_rebars(SapModel, story_frames)
+    print(f"Saving file as {weakness_filename}\n")
+    asli_file_path = Path(SapModel.GetModelFilename())
+    if asli_file_path.suffix.lower() != '.edb':
+        asli_file_path = asli_file_path.with_suffix(".EDB")
+    dir_path = asli_file_path.parent.absolute()
+    weakness_file_path = dir_path / weakness_filename
+    SapModel.File.Save(str(weakness_file_path))
+    print('multiply earthquake factor with 0.67')
+    multiply_seismic_loads(SapModel, .67)
+    set_end_release_frame(SapModel, name)
+    print('get columns pmm and beams rebars')
+    columns_pmm_weakness, beams_rebars_weakness = get_columns_pmm_and_beams_rebars(SapModel, story_frames)
+    columns_pmm_main_and_weakness, col_fields, \
+        beams_rebars_main_and_weakness, beam_fields = combine_beams_columns_weakness_structure(
+            SapModel,
+            columns_pmm,
+            beams_rebars,
+            columns_pmm_weakness,
+            beams_rebars_weakness, 
+        )
+    SapModel.File.OpenFile(str(asli_file_path))
+    return (columns_pmm_main_and_weakness, col_fields,
+        beams_rebars_main_and_weakness, beam_fields)
+    
 def set_frame_obj_selected_in_story(SapModel, story_name):
     frames = SapModel.FrameObj.GetNameListOnStory(story_name)[1]
-    for fname in frames:
-        SapModel.FrameObj.SetSelected(fname, True)
+    set_frame_obj_selected(frames)
     return frames
+
+def set_frame_obj_selected(SapModel, frame_objects):
+    for fname in frame_objects:
+        SapModel.FrameObj.SetSelected(fname, True)
+    SapModel.View.RefreshView()
+
 
 
 
