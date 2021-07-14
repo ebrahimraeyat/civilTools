@@ -457,11 +457,28 @@ def get_center_of_rigidity(SapModel):
         story_rigidity[story] = (x, y)
     return story_rigidity
 
+
+def get_story_diaphragm(SapModel, story_name):
+    '''
+    Try to get Story diaphragm with point or area
+    '''
+    areas = SapModel.AreaObj.GetNameListOnStory(story_name)[1]
+    for area in areas:
+        diaph = SapModel.AreaObj.GetDiaphragm(area)[0]
+        if diaph != 'None':
+            break
+    if diaph == 'None':
+        points = SapModel.PointObj.GetNameListOnStory(story_name)[1]
+        for point in points:
+            diaph = SapModel.PointObj.GetDiaphragm(point)[1]
+            if diaph:
+                break
+    return diaph
     
     
 if __name__ == '__main__':
     etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
     SapModel = etabs.SapModel
-    get_irregularity_of_mass(SapModel)
+    get_story_diaphragm(SapModel, "Story3")
     print('')
     
