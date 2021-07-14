@@ -75,6 +75,7 @@ class Ui(QMainWindow, main_window):
         self.action_story_forces.triggered.connect(self.show_story_forces)
         self.action_get_weakness.triggered.connect(self.get_weakness_ratio)
         self.action_show_weakness.triggered.connect(self.show_weakness_ratio)
+        self.action_get_irregularity_of_mass.triggered.connect(self.get_irregularity_of_mass)
 
 
     def create_connections(self):
@@ -483,6 +484,13 @@ class Ui(QMainWindow, main_window):
         data, headers, data2, headers2 = ret
         table_model.show_results(data, headers, table_model.ColumnsRatioModel)
         table_model.show_results(data2, headers2, table_model.BeamsRebarsModel)
+    
+    def get_irregularity_of_mass(self):
+        if not self.is_etabs_running():
+            return
+        from etabs_api import rho, table_model
+        data, headers = rho.get_irregularity_of_mass()
+        table_model.show_results(data, headers, table_model.IrregularityOfMassModel)
 
     def show_story_forces(self):
         allow, check = self.allowed_to_continue(

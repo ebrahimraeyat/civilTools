@@ -1,3 +1,4 @@
+from os import spawnl
 import sys
 import comtypes.client
 from pathlib import Path
@@ -405,10 +406,46 @@ def load_from_json(json_file):
         data = json.load(f)
     return data
 
+def get_story_mass(SapModel):
+    SapModel.SetPresentUnits(units["kgf_m_C"])
+    TableKey = 'Centers Of Mass And Rigidity'
+    [_, _, FieldsKeysIncluded, _, TableData, _] = functions.read_table(TableKey, SapModel)
+    data = functions.reshape_data(FieldsKeysIncluded, TableData)
+    i_mass_x = FieldsKeysIncluded.index('MassX')
+    # i_mass_y = FieldsKeysIncluded.index('MassY')
+    i_story = FieldsKeysIncluded.index('Story')
+    story_mass = []
+    for row in data[::-1]:
+        story = row[i_story]
+        massx = row[i_mass_x]
+        # massy = data[i_mass_y]
+        story_mass.append([story, massx])
+    return story_mass
 
+def get_irregularity_of_mass(SapModel=None, story_mass=None):
+    if not SapModel:
+        etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
+        SapModel = etabs.SapModel
+    if not story_mass:
+        story_mass = get_story_mass(SapModel)
+    for i, sm in enumerate(story_mass):
+        m_neg1 = float(story_mass[i - 1][1]) * 1.5
+        m = float(sm[1])
+        if i != len(story_mass) - 1:
+            m_plus1 = float(story_mass[i + 1][1]) * 1.5
+        else:
+            m_plus1 = m
+        if i == 0:
+            m_neg1 = m
+        sm.extend([m_neg1, m_plus1])
+    fields = ('Story', 'Mass X', '1.5 * Below', '1.5 * Above')
+    return story_mass, fields
+
+    
+    
 if __name__ == '__main__':
     etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
     SapModel = etabs.SapModel
-    get_beams_rebars(SapModel)
+    get_irregularity_of_mass(SapModel)
     print('')
     

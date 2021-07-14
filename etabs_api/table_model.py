@@ -232,6 +232,34 @@ class BeamsRebarsModel(ResultsModel):
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
 
 
+class IrregularityOfMassModel(ResultsModel):
+    def __init__(self, data, headers):
+        super(IrregularityOfMassModel, self).__init__(data, headers)
+        all_cols = list(self.df)
+        self.df[all_cols] = self.df[all_cols].astype(str)
+        self.headers = tuple(self.df.columns)
+        self.i_mass_x = self.headers.index('Mass X')
+        self.i_below = self.headers.index('1.5 * Below')
+        self.i_above = self.headers.index('1.5 * Above')
+        # self.col_function = (0, 4)
+    def data(self, index, role=Qt.DisplayRole):
+        row = index.row()
+        col = index.column()
+        if index.isValid():
+            value = self.df.iloc[row][col]
+            if role == Qt.DisplayRole:
+                return str(value)
+            elif role == Qt.BackgroundColorRole:
+                if col in (self.i_below, self.i_above):
+                    if float(self.df.iloc[row][self.i_mass_x]) > \
+                        float(self.df.iloc[row][col]):
+                        return QColor('red')
+                    else:
+                        return QColor('green')
+            elif role == Qt.TextAlignmentRole:
+                return int(Qt.AlignCenter | Qt.AlignVCenter)
+
+
 class ResultWidget(result_base, result_window):
     # main widget for user interface
     def __init__(self, data, headers, model, function, parent=None):

@@ -1066,9 +1066,16 @@ p, li { white-space: pre-wrap; }
      <addaction name="action_show_drift"/>
      <addaction name="action_automatic_drift"/>
     </widget>
+    <widget class="QMenu" name="menuIrregularity">
+     <property name="title">
+      <string>Irregularity</string>
+     </property>
+     <addaction name="action_get_irregularity_of_mass"/>
+    </widget>
     <addaction name="action_to_etabs"/>
     <addaction name="menuDrift"/>
     <addaction name="menuTorsion"/>
+    <addaction name="menuIrregularity"/>
    </widget>
    <widget class="QMenu" name="menuFile">
     <property name="title">
@@ -1185,6 +1192,11 @@ p, li { white-space: pre-wrap; }
   <action name="action_show_weakness">
    <property name="text">
     <string>Show Weakness</string>
+   </property>
+  </action>
+  <action name="action_get_irregularity_of_mass">
+   <property name="text">
+    <string>Mass</string>
    </property>
   </action>
  </widget>
