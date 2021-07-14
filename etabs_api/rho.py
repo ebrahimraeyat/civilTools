@@ -441,6 +441,22 @@ def get_irregularity_of_mass(SapModel=None, story_mass=None):
     fields = ('Story', 'Mass X', '1.5 * Below', '1.5 * Above')
     return story_mass, fields
 
+def get_center_of_rigidity(SapModel):
+    SapModel.SetPresentUnits(units["kgf_m_C"])
+    TableKey = 'Centers Of Mass And Rigidity'
+    [_, _, FieldsKeysIncluded, _, TableData, _] = functions.read_table(TableKey, SapModel)
+    data = functions.reshape_data(FieldsKeysIncluded, TableData)
+    i_xcr = FieldsKeysIncluded.index('XCR')
+    i_ycr = FieldsKeysIncluded.index('YCR')
+    i_story = FieldsKeysIncluded.index('Story')
+    story_rigidity = {}
+    for row in data:
+        story = row[i_story]
+        x = row[i_xcr]
+        y = row[i_ycr]
+        story_rigidity[story] = (x, y)
+    return story_rigidity
+
     
     
 if __name__ == '__main__':
