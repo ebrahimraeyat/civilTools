@@ -466,16 +466,23 @@ def get_story_diaphragm(SapModel, story_name):
     for area in areas:
         diaph = SapModel.AreaObj.GetDiaphragm(area)[0]
         if diaph != 'None':
-            break
-    if diaph == 'None':
-        points = SapModel.PointObj.GetNameListOnStory(story_name)[1]
-        for point in points:
-            diaph = SapModel.PointObj.GetDiaphragm(point)[1]
-            if diaph:
-                break
-    return diaph
-    
-    
+            return diaph
+    points = SapModel.PointObj.GetNameListOnStory(story_name)[1]
+    for point in points:
+        diaph = SapModel.PointObj.GetDiaphragm(point)[1]
+        if diaph:
+            return diaph
+
+def disconnect_story_diaphragm(SapModel, story_name):
+    areas = SapModel.AreaObj.GetNameListOnStory(story_name)[1]
+    for area in areas:
+        SapModel.AreaObj.SetDiaphragm(area, 'None')
+    points = SapModel.PointObj.GetNameListOnStory(story_name)[1]
+    for point in points:
+        SapModel.PointObj.SetDiaphragm(point, 1)
+
+
+
 if __name__ == '__main__':
     etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
     SapModel = etabs.SapModel
