@@ -505,12 +505,14 @@ def add_load_case_in_center_of_rigidity(SapModel, story_name, x, y):
     for lc in all_load_case:
         SapModel.Analyze.SetRunCaseFlag(lc, False)
     SapModel.Analyze.SetRunCaseFlag(lp_name, True)
-    SapModel.Analyze.RunAnalysis()
     return point_name, lp_name
 
-    
-
-
+def get_point_xy_displacement(SapModel, point_name, lp_name):
+    SapModel.Results.Setup.DeselectAllCasesAndCombosForOutput()
+    SapModel.Results.Setup.SetCaseSelectedForOutput(lp_name)
+    results = SapModel.Results.JointDispl(point_name, 0)
+    x = results[6][0]
+    y = results[7][0]
 
 
 
