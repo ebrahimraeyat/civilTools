@@ -530,11 +530,39 @@ def fix_below_stories(SapModel, story_name):
             points = SapModel.PointObj.GetNameListOnStory(name)[1]
             set_point_restraint(SapModel, points)
 
-
+def get_story_stiffness_2800_way(SapModel):
+    asli_file_path = Path(SapModel.GetModelFilename())
+    if asli_file_path.suffix.lower() != '.edb':
+        asli_file_path = asli_file_path.with_suffix(".EDB")
+    dir_path = asli_file_path.parent.absolute()
+    story_names = SapModel.Story.GetNameList()[1]
+    center_of_rigidity = get_center_of_rigidity(SapModel)
+    story_stiffness = {}
+    for story_name in story_names:
+        story_file_path = dir_path / f'STIFFNESS_{story_name}.EDB'
+        print(f"Saving file as {story_file_path}\n")
+        SapModel.File.Save(str(story_file_path))
+    for story_name in story_names:
+        story_file_path = dir_path / f'STIFFNESS_{story_name}.EDB'
+        print(f"Opening file {story_file_path}\n")
+        SapModel.File.OpenFile(str(story_file_path))
+        x, y = center_of_rigidity[story_name]
+        point_name, lp_name = add_load_case_in_center_of_rigidity(SapModel,
+                story_name, x, y)
+        fix_below_stories(SapModel, story_name)
+        SapModel.View.RefreshView()
+        SapModel.Analyze.RunAnalysis()
+        disp_x, disp_y = get_point_xy_displacement(SapModel, point_name, lp_name)
+        kx, ky = abs(disp_x) / 1000, abs(disp_y) / 1000
+        story_stiffness[story_name] = (kx, ky)
+    json_file = Path(SapModel.GetModelFilepath()) / 'story_stiffness.json'
+    save_to_json(json_file, story_stiffness)
+    SapModel.File.OpenFile(str(asli_file_path))
+    return story_stiffness
 
 if __name__ == '__main__':
     etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
     SapModel = etabs.SapModel
-    get_story_diaphragm(SapModel, "Story3")
+    get_story_stiffness_2800_way(SapModel)
     print('')
     
