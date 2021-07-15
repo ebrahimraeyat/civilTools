@@ -400,6 +400,13 @@ def save_to_json(json_file, data):
     with open(json_file, 'w') as f:
         json.dump(data, f)
 
+def save_to_json_in_edb_folder(json_name, data, SapModel=None):
+    if not SapModel:
+        etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
+        SapModel = etabs.SapModel
+    json_file = Path(SapModel.GetModelFilepath()) / json_name
+    save_to_json(json_file, data)
+
 def load_from_json(json_file):
     import json
     with open(json_file, 'r') as f:
@@ -553,16 +560,49 @@ def get_story_stiffness_2800_way(SapModel):
         SapModel.View.RefreshView()
         SapModel.Analyze.RunAnalysis()
         disp_x, disp_y = get_point_xy_displacement(SapModel, point_name, lp_name)
-        kx, ky = abs(disp_x) / 1000, abs(disp_y) / 1000
-        story_stiffness[story_name] = (kx, ky)
+        kx, ky = 1000 / abs(disp_x), 1000 / abs(disp_y)
+        story_stiffness[story_name] = [kx, ky]
     json_file = Path(SapModel.GetModelFilepath()) / 'story_stiffness.json'
     save_to_json(json_file, story_stiffness)
     SapModel.File.OpenFile(str(asli_file_path))
     return story_stiffness
 
+def get_story_stiffness_table(SapModel=None, story_stiffness=None):
+    if not SapModel:
+        etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
+        SapModel = etabs.SapModel
+    if not story_stiffness:
+        story_stiffness = get_story_stiffness_2800_way(SapModel)
+    stories = list(story_stiffness.keys())
+    retval = []
+    for i, story in enumerate(stories):
+        stiffness = story_stiffness[story]
+        if i == 0:
+            stiffness.extend(['-', '-'])
+        else:
+            k1 = story_stiffness[stories[i - 1]]
+            stiffness.extend([k1[0], k1[1]])
+
+        if len(stories[:i]) >= 3:
+            # k1 = story_stiffness[stories[i - 1]]
+            k2 = story_stiffness[stories[i - 2]]
+            k3 = story_stiffness[stories[i - 3]]
+            ave_kx = (k1[0] + k2[0] + k3[0]) / 3
+            ave_ky = (k1[1] + k2[1] + k3[1]) / 3
+            stiffness.extend([ave_kx, ave_ky])
+        else:
+            stiffness.extend(['-', '-'])
+        retval.append((story, *stiffness))
+    fields = ('Story', 'Kx', 'Ky', 'Kx Above', 'Ky Above', 'Kx 3Above', 'Ky 3Above')
+    save_to_json_in_edb_folder('story_stiffness_table.json', retval, SapModel)
+    return retval, fields
+
+
+
 if __name__ == '__main__':
     etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
     SapModel = etabs.SapModel
-    get_story_stiffness_2800_way(SapModel)
+    ss = get_story_stiffness_table(SapModel)
+    print(ss)
     print('')
     
