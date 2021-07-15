@@ -594,7 +594,7 @@ def get_story_stiffness_table(SapModel=None, story_stiffness=None):
             stiffness.extend(['-', '-'])
         retval.append((story, *stiffness))
     fields = ('Story', 'Kx', 'Ky', 'Kx Above', 'Ky Above', 'Kx 3Above', 'Ky 3Above')
-    save_to_json_in_edb_folder('story_stiffness_table.json', retval, SapModel)
+    save_to_json_in_edb_folder('story_stiffness_table.json', (retval, fields), SapModel)
     return retval, fields
 
 

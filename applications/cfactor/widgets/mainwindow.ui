@@ -1070,7 +1070,14 @@ p, li { white-space: pre-wrap; }
      <property name="title">
       <string>Irregularity</string>
      </property>
+     <widget class="QMenu" name="menuStiffness">
+      <property name="title">
+       <string>Stiffness</string>
+      </property>
+      <addaction name="action_show_story_stiffness"/>
+     </widget>
      <addaction name="action_get_irregularity_of_mass"/>
+     <addaction name="menuStiffness"/>
     </widget>
     <addaction name="action_to_etabs"/>
     <addaction name="menuDrift"/>
@@ -1197,6 +1204,11 @@ p, li { white-space: pre-wrap; }
   <action name="action_get_irregularity_of_mass">
    <property name="text">
     <string>Mass</string>
+   </property>
+  </action>
+  <action name="action_show_story_stiffness">
+   <property name="text">
+    <string>Show Table</string>
    </property>
   </action>
  </widget>

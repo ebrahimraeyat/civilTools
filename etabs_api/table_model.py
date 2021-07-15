@@ -259,6 +259,72 @@ class IrregularityOfMassModel(ResultsModel):
             elif role == Qt.TextAlignmentRole:
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
 
+class StoryStiffnessModel(ResultsModel):
+    def __init__(self, data, headers):
+        super(StoryStiffnessModel, self).__init__(data, headers)
+        all_cols = list(self.df)
+        self.df[all_cols] = self.df[all_cols].astype(str)
+        self.headers = tuple(self.df.columns)
+        self.i_kx = self.headers.index('Kx')
+        self.i_ky = self.headers.index('Ky')
+        self.i_kx_above = self.headers.index('Kx Above')
+        self.i_ky_above = self.headers.index('Ky Above')
+        self.i_kx_3above = self.headers.index('Kx 3Above')
+        self.i_ky_3above = self.headers.index('Ky 3Above')
+        # self.col_function = (0, 4)
+    def data(self, index, role=Qt.DisplayRole):
+        row = index.row()
+        col = index.column()
+        if index.isValid():
+            value = self.df.iloc[row][col]
+            if role == Qt.DisplayRole:
+                if col in (
+                    self.i_kx,
+                    self.i_kx_above,
+                    self.i_kx_3above,
+                    self.i_ky,
+                    self.i_ky_above,
+                    self.i_ky_3above,
+                    ):
+                    if value == '-':
+                        return value
+                    return f'{float(value):.1f}'
+                return value
+            elif role == Qt.BackgroundColorRole:
+                kx = float(self.df.iloc[row][self.i_kx])
+                ky = float(self.df.iloc[row][self.i_ky])
+                if col == self.i_kx_above:
+                    kx_above = self.df.iloc[row][self.i_kx_above]
+                    if kx_above == '-':
+                        return
+                    return self.get_color(kx, float(kx_above), .6, .7)
+                elif col == self.i_ky_above:
+                    ky_above = self.df.iloc[row][self.i_ky_above]
+                    if ky_above == '-':
+                        return
+                    return self.get_color(ky, float(ky_above), .6, .7)
+                elif col == self.i_kx_3above:
+                    kx_3above = self.df.iloc[row][self.i_kx_3above]
+                    if kx_3above == '-':
+                        return
+                    return self.get_color(kx, float(kx_3above), .7, .8)
+                elif col == self.i_ky_3above:
+                    ky_3above = self.df.iloc[row][self.i_kx_3above]
+                    if ky_3above == '-':
+                        return
+                    return self.get_color(kx, float(ky_3above), .7, .8)
+            elif role == Qt.TextAlignmentRole:
+                return int(Qt.AlignCenter | Qt.AlignVCenter)
+
+    @staticmethod
+    def get_color(k, k_above, a, b):
+        if k < a * k_above:
+            return QColor('red')
+        elif k < b * k_above:
+            return QColor('yellow')
+        else:
+            return QColor('green')
+
 
 class ResultWidget(result_base, result_window):
     # main widget for user interface
