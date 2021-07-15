@@ -1075,6 +1075,7 @@ p, li { white-space: pre-wrap; }
        <string>Stiffness</string>
       </property>
       <addaction name="action_show_story_stiffness"/>
+      <addaction name="action_get_story_stiffness"/>
      </widget>
      <addaction name="action_get_irregularity_of_mass"/>
      <addaction name="menuStiffness"/>
@@ -1208,7 +1209,12 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="action_show_story_stiffness">
    <property name="text">
-    <string>Show Table</string>
+    <string>Show Story Stiffness</string>
+   </property>
+  </action>
+  <action name="action_get_story_stiffness">
+   <property name="text">
+    <string>Get Story Stiffness</string>
    </property>
   </action>
  </widget>

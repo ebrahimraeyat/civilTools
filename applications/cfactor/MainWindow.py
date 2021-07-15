@@ -75,6 +75,7 @@ class Ui(QMainWindow, main_window):
         self.action_story_forces.triggered.connect(self.show_story_forces)
         self.action_get_weakness.triggered.connect(self.get_weakness_ratio)
         self.action_show_weakness.triggered.connect(self.show_weakness_ratio)
+        self.action_get_story_stiffness.triggered.connect(self.get_story_stiffness_table)
         self.action_show_story_stiffness.triggered.connect(self.show_story_stiffness_table)
         self.action_get_irregularity_of_mass.triggered.connect(self.get_irregularity_of_mass)
 
@@ -486,6 +487,27 @@ class Ui(QMainWindow, main_window):
         table_model.show_results(data, headers, table_model.ColumnsRatioModel)
         table_model.show_results(data2, headers2, table_model.BeamsRebarsModel)
     
+    def get_story_stiffness_table(self):
+        allow, check = self.allowed_to_continue(
+            'stiffness.bin',
+            'https://gist.githubusercontent.com/ebrahimraeyat/e5635c17392c73540a46761a7247836e/raw',
+            'cfactor',
+            n=2,
+            )
+        if not allow:
+            return
+        if not self.is_etabs_running():
+            return
+        from etabs_api import rho, table_model
+        ret = rho.get_story_stiffness_table()
+        if not ret:
+            err = "Please Activate Calculate Diaphragm Center of Rigidity in ETABS!"
+            QMessageBox.critical(self, "Error", str(err))
+            return None
+        data, headers = ret
+        table_model.show_results(data, headers, table_model.StoryStiffnessModel)
+        self.show_warning_about_number_of_use(check)
+
     def show_story_stiffness_table(self):
         if not self.is_etabs_running():
             return
