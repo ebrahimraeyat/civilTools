@@ -481,6 +481,37 @@ def disconnect_story_diaphragm(SapModel, story_name):
     for point in points:
         SapModel.PointObj.SetDiaphragm(point, 1)
 
+def assign_diaph_to_story_points(SapModel, story_name, diaph):
+    points = SapModel.PointObj.GetNameListOnStory(story_name)[1]
+    for point in points:
+        SapModel.PointObj.SetDiaphragm(point, 3, diaph)
+
+
+def add_load_case_in_center_of_rigidity(SapModel, story_name, x, y):
+    SapModel.SetPresentUnits(7)
+    z = SapModel.story.GetElevation(story_name)[0]
+    point_name = SapModel.PointObj.AddCartesian(float(x),float(y) , z)[0]  
+    diaph = get_story_diaphragm(SapModel, story_name)
+    # disconnect_story_diaphragm(SapModel, story_name)
+    # assign_diaph_to_story_points(SapModel, story_name, diaph)
+    SapModel.PointObj.SetDiaphragm(point_name, 3, diaph)
+    LTYPE_OTHER = 8
+    lp_name = f'STIFFNESS_{story_name}'
+    SapModel.LoadPatterns.Add(lp_name, LTYPE_OTHER, 0, True)
+    load = 1000
+    PointLoadValue = [load,load,0,0,0,0]
+    SapModel.PointObj.SetLoadForce(point_name, lp_name, PointLoadValue)
+    all_load_case = SapModel.Analyze.GetCaseStatus()[1]
+    for lc in all_load_case:
+        SapModel.Analyze.SetRunCaseFlag(lc, False)
+    SapModel.Analyze.SetRunCaseFlag(lp_name, True)
+    SapModel.Analyze.RunAnalysis()
+    return point_name, lp_name
+
+    
+
+
+
 
 
 if __name__ == '__main__':
