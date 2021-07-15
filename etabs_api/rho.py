@@ -513,6 +513,22 @@ def get_point_xy_displacement(SapModel, point_name, lp_name):
     results = SapModel.Results.JointDispl(point_name, 0)
     x = results[6][0]
     y = results[7][0]
+    return x, y
+
+def set_point_restraint(SapModel,
+        point_names,
+        restraint: list= [True, True, False, False, False, False]):
+    for point_name in point_names:
+        SapModel.PointObj.SetRestraint(point_name, restraint)
+
+def fix_below_stories(SapModel, story_name):
+    stories_name = SapModel.Story.GetNameList()[1]
+    story_level = SapModel.Story.GetElevation(story_name)[0]
+    for name in stories_name:
+        level = SapModel.Story.GetElevation(name)[0]
+        if level < story_level:
+            points = SapModel.PointObj.GetNameListOnStory(name)[1]
+            set_point_restraint(SapModel, points)
 
 
 
