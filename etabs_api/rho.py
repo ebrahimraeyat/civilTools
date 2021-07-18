@@ -506,13 +506,19 @@ def add_points_in_center_of_rigidity_and_assign_diph(SapModel):
         story_point_in_center_of_rigidity[story] = point_name
     return story_point_in_center_of_rigidity
 
+def set_load_cases_to_analyze(SapModel, load_cases):
+    all_load_case = SapModel.Analyze.GetCaseStatus()[1]
+    for lc in all_load_case:
+        if not lc in load_cases:
+            SapModel.Analyze.SetRunCaseFlag(lc, False)
+        else:
+            SapModel.Analyze.SetRunCaseFlag(lc, True)
+
 def add_load_case_in_center_of_rigidity(SapModel, story_name, x, y):
     SapModel.SetPresentUnits(7)
     z = SapModel.story.GetElevation(story_name)[0]
     point_name = SapModel.PointObj.AddCartesian(float(x),float(y) , z)[0]  
     diaph = get_story_diaphragm(SapModel, story_name)
-    # disconnect_story_diaphragm(SapModel, story_name)
-    # assign_diaph_to_story_points(SapModel, story_name, diaph)
     SapModel.PointObj.SetDiaphragm(point_name, 3, diaph)
     LTYPE_OTHER = 8
     lp_name = f'STIFFNESS_{story_name}'
@@ -520,10 +526,7 @@ def add_load_case_in_center_of_rigidity(SapModel, story_name, x, y):
     load = 1000
     PointLoadValue = [load,load,0,0,0,0]
     SapModel.PointObj.SetLoadForce(point_name, lp_name, PointLoadValue)
-    all_load_case = SapModel.Analyze.GetCaseStatus()[1]
-    for lc in all_load_case:
-        SapModel.Analyze.SetRunCaseFlag(lc, False)
-    SapModel.Analyze.SetRunCaseFlag(lp_name, True)
+    set_load_cases_to_analyze(SapModel, lp_name)
     return point_name, lp_name
 
 def get_point_xy_displacement(SapModel, point_name, lp_name):
