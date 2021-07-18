@@ -201,7 +201,13 @@ def select_all_load_cases(SapModel):
 def select_load_cases(SapModel, names):
     SapModel.DatabaseTables.SetLoadCombinationsSelectedForDisplay('')
     SapModel.DatabaseTables.SetLoadCasesSelectedForDisplay(names)
-    
+
+def get_modal_loadcase_name(SapModel):
+    load_cases = get_load_cases(SapModel)
+    for lc in load_cases:
+        if SapModel.LoadCases.GetTypeOAPI(lc)[0] == 3:
+            return lc
+    return None  
 
 def get_beams_columns(
         SapModel=None,
