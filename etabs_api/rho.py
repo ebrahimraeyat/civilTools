@@ -493,6 +493,18 @@ def assign_diaph_to_story_points(SapModel, story_name, diaph):
     for point in points:
         SapModel.PointObj.SetDiaphragm(point, 3, diaph)
 
+def add_points_in_center_of_rigidity_and_assign_diph(SapModel):
+    if SapModel.GetModelIsLocked():
+        SapModel.SetModelIsLocked(False)
+    story_rigidity = get_center_of_rigidity(SapModel)
+    story_point_in_center_of_rigidity = {}
+    for story, (x, y) in story_rigidity.items():
+        z = SapModel.story.GetElevation(story)[0]
+        point_name = SapModel.PointObj.AddCartesian(float(x),float(y) , z)[0]  
+        diaph = get_story_diaphragm(SapModel, story)
+        SapModel.PointObj.SetDiaphragm(point_name, 3, diaph)
+        story_point_in_center_of_rigidity[story] = point_name
+    return story_point_in_center_of_rigidity
 
 def add_load_case_in_center_of_rigidity(SapModel, story_name, x, y):
     SapModel.SetPresentUnits(7)
