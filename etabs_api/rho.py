@@ -545,12 +545,14 @@ def get_story_stiffness_2800_way(SapModel):
     story_names = SapModel.Story.GetNameList()[1]
     center_of_rigidity = get_center_of_rigidity(SapModel)
     story_stiffness = {}
+    import shutil
     for story_name in story_names:
         story_file_path = dir_path / f'STIFFNESS_{story_name}.EDB'
         print(f"Saving file as {story_file_path}\n")
-        SapModel.File.Save(str(story_file_path))
-    for story_name in story_names:
-        story_file_path = dir_path / f'STIFFNESS_{story_name}.EDB'
+        shutil.copy(asli_file_path, story_file_path)
+    #     # SapModel.File.Save(str(story_file_path))
+    # for story_name in story_names:
+    #     story_file_path = dir_path / f'STIFFNESS_{story_name}.EDB'
         print(f"Opening file {story_file_path}\n")
         SapModel.File.OpenFile(str(story_file_path))
         x, y = center_of_rigidity[story_name]
