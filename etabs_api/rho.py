@@ -514,6 +514,24 @@ def set_load_cases_to_analyze(SapModel, load_cases):
         else:
             SapModel.Analyze.SetRunCaseFlag(lc, True)
 
+def get_xy_period(SapModel):
+    modal_name = functions.get_modal_loadcase_name(SapModel)
+    SapModel.Results.Setup.DeselectAllCasesAndCombosForOutput()
+    SapModel.Results.Setup.SetCaseSelectedForOutput(modal_name)
+    ux = SapModel.Results.ModalParticipatingMassRatios()[5]
+    uy = SapModel.Results.ModalParticipatingMassRatios()[6]
+    x_index = ux.index(max(ux))
+    y_index = uy.index(max(uy))
+    periods = SapModel.Results.ModalParticipatingMassRatios()[4]
+    Tx = periods[x_index]
+    Ty = periods[y_index]
+    return Tx, Ty, x_index, y_index
+
+def get_xy_frequency(SapModel):
+    Tx, Ty, i_x, i_y = get_xy_period(SapModel)
+    from math import pi
+    return (2 * pi / Tx, 2 * pi / Ty, i_x, i_y)
+    
 def add_load_case_in_center_of_rigidity(SapModel, story_name, x, y):
     SapModel.SetPresentUnits(7)
     z = SapModel.story.GetElevation(story_name)[0]
