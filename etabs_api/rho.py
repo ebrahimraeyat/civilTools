@@ -22,6 +22,15 @@ units = {
     "Ton_cm_C" : 15,
 }
 
+def save_as(SapModel, name):
+    if not name.lower().endswith('.edb'):
+        name += '.EDB'
+    asli_file_path = Path(SapModel.GetModelFilename())
+    dir_path = asli_file_path.parent.absolute()
+    new_file_path = dir_path / name
+    SapModel.File.Save(str(new_file_path))
+    return asli_file_path, new_file_path
+
 def get_ex_ey_earthquake_name(SapModel):
     x_names, y_names = functions.get_load_patterns_in_XYdirection(SapModel)
     x_names = sorted(x_names)
@@ -525,12 +534,48 @@ def get_xy_period(SapModel):
     periods = SapModel.Results.ModalParticipatingMassRatios()[4]
     Tx = periods[x_index]
     Ty = periods[y_index]
-    return Tx, Ty, x_index, y_index
+    return Tx, Ty, x_index + 1, y_index + 1
 
 def get_xy_frequency(SapModel):
     Tx, Ty, i_x, i_y = get_xy_period(SapModel)
     from math import pi
     return (2 * pi / Tx, 2 * pi / Ty, i_x, i_y)
+
+def get_stories_displacement_in_xy_modes(SapModel):
+    f1, _ = save_as(SapModel, 'modal_stiffness.EDB')
+    story_point = add_points_in_center_of_rigidity_and_assign_diph(SapModel)
+    modal = functions.get_modal_loadcase_name(SapModel)
+    set_load_cases_to_analyze(SapModel, modal)
+    SapModel.Analyze.RunAnalysis()
+    wx, wy, ix, iy = get_xy_frequency(SapModel)
+    TableKey = 'Joint Displacements'
+    [_, _, FieldsKeysIncluded, _, TableData, _] = functions.read_table(TableKey, SapModel)
+    data = functions.reshape_data(FieldsKeysIncluded, TableData)
+    i_story = FieldsKeysIncluded.index('Story')
+    i_name = FieldsKeysIncluded.index('UniqueName')
+    i_case = FieldsKeysIncluded.index('OutputCase')
+    i_steptype = FieldsKeysIncluded.index('StepType')
+    i_stepnumber = FieldsKeysIncluded.index('StepNumber')
+    i_ux = FieldsKeysIncluded.index('Ux')
+    i_uy = FieldsKeysIncluded.index('Uy')
+    columns = (i_story, i_name, i_case, i_steptype, i_stepnumber)
+    x_results = {}
+    for story, point in story_point.items():
+        values = (story, point, modal, 'Mode', str(ix))
+        result = get_from_list_table(data, columns, values)
+        result = list(result)
+        assert len(result) == 1
+        ux = result[0][i_ux]
+        x_results[story] = ux
+    y_results = {}
+    for story, point in story_point.items():
+        values = (story, point, modal, 'Mode', str(iy))
+        result = get_from_list_table(data, columns, values)
+        result = list(result)[0]
+        uy = result[i_uy]
+        y_results[story] = uy
+    SapModel.File.OpenFile(str(f1))
+    return x_results, y_results, wx, wy
     
 def add_load_case_in_center_of_rigidity(SapModel, story_name, x, y):
     SapModel.SetPresentUnits(7)
@@ -637,7 +682,7 @@ def get_story_stiffness_table(SapModel=None, story_stiffness=None):
 if __name__ == '__main__':
     etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
     SapModel = etabs.SapModel
-    ss = get_story_stiffness_table(SapModel)
+    ss = get_stories_displacement_in_xy_modes(SapModel)
     print(ss)
     print('')
     
