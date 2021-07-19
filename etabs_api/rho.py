@@ -565,14 +565,15 @@ def get_stories_displacement_in_xy_modes(SapModel):
         result = get_from_list_table(data, columns, values)
         result = list(result)
         assert len(result) == 1
-        ux = result[0][i_ux]
+        ux = float(result[0][i_ux])
         x_results[story] = ux
     y_results = {}
     for story, point in story_point.items():
         values = (story, point, modal, 'Mode', str(iy))
         result = get_from_list_table(data, columns, values)
-        result = list(result)[0]
-        uy = result[i_uy]
+        result = list(result)
+        assert len(result) == 1
+        uy = float(result[0][i_uy])
         y_results[story] = uy
     SapModel.File.OpenFile(str(f1))
     return x_results, y_results, wx, wy
@@ -614,6 +615,41 @@ def fix_below_stories(SapModel, story_name):
         if level < story_level:
             points = SapModel.PointObj.GetNameListOnStory(name)[1]
             set_point_restraint(SapModel, points)
+
+def get_story_stiffness_modal_way(SapModel):
+    story_mass = get_story_mass(SapModel)
+    story_mass = {key: value for key, value in story_mass}
+    stories = list(story_mass.keys())
+    dx, dy, wx, wy = get_stories_displacement_in_xy_modes(SapModel)
+    x_story_stiffness = {}
+    y_story_stiffness = {}
+    n = len(story_mass)
+    for i, (phi_x, phi_y) in enumerate(zip(dx.values(), dy.values())):
+        # story_index = stories.index(story)
+        if i == n - 1:
+            phi_neg_x = 0
+            phi_neg_y = 0
+        else:
+            story_neg = stories[i + 1]
+            phi_neg_x = dx[story_neg]
+            phi_neg_y = dy[story_neg]
+        d_phi_x = phi_x - phi_neg_x
+        d_phi_y = phi_y - phi_neg_y
+        sigma_x = 0
+        sigma_y = 0
+        for j in range(0, i + 1):
+            story_j = stories[j]
+            m_j = float(story_mass[story_j])
+            phi_j_x = dx[story_j]
+            phi_j_y = dy[story_j]
+            sigma_x += m_j * phi_j_x
+            sigma_y += m_j * phi_j_y
+        kx = wx ** 2 * sigma_x / d_phi_x
+        ky = wy ** 2 * sigma_y / d_phi_y
+        x_story_stiffness[stories[i]] = kx
+        y_story_stiffness[stories[i]] = ky
+    
+    return x_story_stiffness, y_story_stiffness
 
 def get_story_stiffness_2800_way(SapModel):
     asli_file_path = Path(SapModel.GetModelFilename())
@@ -682,7 +718,7 @@ def get_story_stiffness_table(SapModel=None, story_stiffness=None):
 if __name__ == '__main__':
     etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
     SapModel = etabs.SapModel
-    ss = get_stories_displacement_in_xy_modes(SapModel)
+    ss = get_story_stiffness_modal_way(SapModel)
     print(ss)
     print('')
     
