@@ -75,8 +75,10 @@ class Ui(QMainWindow, main_window):
         self.action_story_forces.triggered.connect(self.show_story_forces)
         self.action_get_weakness.triggered.connect(self.get_weakness_ratio)
         self.action_show_weakness.triggered.connect(self.show_weakness_ratio)
-        self.action_get_story_stiffness.triggered.connect(self.get_story_stiffness_table)
-        self.action_show_story_stiffness.triggered.connect(self.show_story_stiffness_table)
+        self.action_show_story_stiffness_2800.triggered.connect(self.show_story_stiffness_2800_table)
+        self.action_get_story_stiffness_2800.triggered.connect(self.get_story_stiffness_2800_table)
+        self.action_show_story_stiffness_modal.triggered.connect(self.show_story_stiffness_modal_table)
+        self.action_get_story_stiffness_modal.triggered.connect(self.get_story_stiffness_modal_table)
         self.action_get_irregularity_of_mass.triggered.connect(self.get_irregularity_of_mass)
 
 
@@ -487,7 +489,10 @@ class Ui(QMainWindow, main_window):
         table_model.show_results(data, headers, table_model.ColumnsRatioModel)
         table_model.show_results(data2, headers2, table_model.BeamsRebarsModel)
     
-    def get_story_stiffness_table(self):
+    def get_story_stiffness_table(self, way='2800'):
+        '''
+        way can be '2800' or 'modal'
+        '''
         allow, check = self.allowed_to_continue(
             'stiffness.bin',
             'https://gist.githubusercontent.com/ebrahimraeyat/e5635c17392c73540a46761a7247836e/raw',
@@ -499,7 +504,7 @@ class Ui(QMainWindow, main_window):
         if not self.is_etabs_running():
             return
         from etabs_api import rho, table_model
-        ret = rho.get_story_stiffness_table()
+        ret = rho.get_story_stiffness_table(way=way)
         if not ret:
             err = "Please Activate Calculate Diaphragm Center of Rigidity in ETABS!"
             QMessageBox.critical(self, "Error", str(err))
@@ -507,15 +512,17 @@ class Ui(QMainWindow, main_window):
         data, headers = ret
         table_model.show_results(data, headers, table_model.StoryStiffnessModel)
         self.show_warning_about_number_of_use(check)
-
-    def show_story_stiffness_table(self):
+    
+    def show_story_stiffness_table(self, way='2800'):
         if not self.is_etabs_running():
             return
         import comtypes.client
         etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
         SapModel = etabs.SapModel
-        json_file = Path(SapModel.GetModelFilepath()) / 'story_stiffness_table.json'
         from etabs_api import rho, table_model
+        e_name = rho.get_etabs_file_name_without_suffix(SapModel)
+        name = f'{e_name}_story_stiffness_{way}_table.json'
+        json_file = Path(SapModel.GetModelFilepath()) / name
         ret = rho.load_from_json(json_file)
         if not ret:
             err = "Can not find the results!"
@@ -524,7 +531,17 @@ class Ui(QMainWindow, main_window):
         data, headers = ret
         table_model.show_results(data, headers, table_model.StoryStiffnessModel)
 
+    def get_story_stiffness_2800_table(self):
+        self.get_story_stiffness_table(way='2800')
+
+    def show_story_stiffness_2800_table(self):
+        self.show_story_stiffness_table(way='2800')
     
+    def get_story_stiffness_modal_table(self):
+        self.get_story_stiffness_table(way='modal')
+
+    def show_story_stiffness_modal_table(self):
+        self.show_story_stiffness_table(way='modal')
     
     def get_irregularity_of_mass(self):
         if not self.is_etabs_running():

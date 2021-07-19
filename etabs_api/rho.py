@@ -26,10 +26,18 @@ def save_as(SapModel, name):
     if not name.lower().endswith('.edb'):
         name += '.EDB'
     asli_file_path = Path(SapModel.GetModelFilename())
-    dir_path = asli_file_path.parent.absolute()
-    new_file_path = dir_path / name
+    asli_file_path = asli_file_path.with_suffix('.EDB')
+    new_file_path = asli_file_path.with_name(name)
     SapModel.File.Save(str(new_file_path))
     return asli_file_path, new_file_path
+
+def get_etabs_file_name_without_suffix(SapModel=None):
+    if not SapModel:
+        etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
+        SapModel = etabs.SapModel
+    f = Path(SapModel.GetModelFilename())
+    name = f.name.replace(f.suffix, '')
+    return name
 
 def get_ex_ey_earthquake_name(SapModel):
     x_names, y_names = functions.get_load_patterns_in_XYdirection(SapModel)
@@ -617,15 +625,13 @@ def fix_below_stories(SapModel, story_name):
             set_point_restraint(SapModel, points)
 
 def get_story_stiffness_modal_way(SapModel):
-    story_mass = get_story_mass(SapModel)
+    story_mass = get_story_mass(SapModel)[::-1]
     story_mass = {key: value for key, value in story_mass}
     stories = list(story_mass.keys())
     dx, dy, wx, wy = get_stories_displacement_in_xy_modes(SapModel)
-    x_story_stiffness = {}
-    y_story_stiffness = {}
+    story_stiffness = {}
     n = len(story_mass)
     for i, (phi_x, phi_y) in enumerate(zip(dx.values(), dy.values())):
-        # story_index = stories.index(story)
         if i == n - 1:
             phi_neg_x = 0
             phi_neg_y = 0
@@ -646,15 +652,15 @@ def get_story_stiffness_modal_way(SapModel):
             sigma_y += m_j * phi_j_y
         kx = wx ** 2 * sigma_x / d_phi_x
         ky = wy ** 2 * sigma_y / d_phi_y
-        x_story_stiffness[stories[i]] = kx
-        y_story_stiffness[stories[i]] = ky
-    
-    return x_story_stiffness, y_story_stiffness
+        story_stiffness[stories[i]] = [kx, ky]
+    # save_to_json_in_edb_folder('story_stiffness_modal.json', story_stiffness, SapModel)
+    return story_stiffness
 
 def get_story_stiffness_2800_way(SapModel):
     asli_file_path = Path(SapModel.GetModelFilename())
     if asli_file_path.suffix.lower() != '.edb':
         asli_file_path = asli_file_path.with_suffix(".EDB")
+    name = get_etabs_file_name_without_suffix(SapModel)
     dir_path = asli_file_path.parent.absolute()
     story_names = SapModel.Story.GetNameList()[1]
     center_of_rigidity = get_center_of_rigidity(SapModel)
@@ -664,9 +670,6 @@ def get_story_stiffness_2800_way(SapModel):
         story_file_path = dir_path / f'STIFFNESS_{story_name}.EDB'
         print(f"Saving file as {story_file_path}\n")
         shutil.copy(asli_file_path, story_file_path)
-    #     # SapModel.File.Save(str(story_file_path))
-    # for story_name in story_names:
-    #     story_file_path = dir_path / f'STIFFNESS_{story_name}.EDB'
         print(f"Opening file {story_file_path}\n")
         SapModel.File.OpenFile(str(story_file_path))
         x, y = center_of_rigidity[story_name]
@@ -678,17 +681,24 @@ def get_story_stiffness_2800_way(SapModel):
         disp_x, disp_y = get_point_xy_displacement(SapModel, point_name, lp_name)
         kx, ky = 1000 / abs(disp_x), 1000 / abs(disp_y)
         story_stiffness[story_name] = [kx, ky]
-    json_file = Path(SapModel.GetModelFilepath()) / 'story_stiffness.json'
-    save_to_json(json_file, story_stiffness)
+    # json_file = Path(SapModel.GetModelFilepath()) / f'{name}_story_stiffness_2800.json'
+    # save_to_json(json_file, story_stiffness)
     SapModel.File.OpenFile(str(asli_file_path))
     return story_stiffness
 
-def get_story_stiffness_table(SapModel=None, story_stiffness=None):
+def get_story_stiffness_table(way='2800',SapModel=None, story_stiffness=None):
+    '''
+    way can be '2800' or 'modal'
+    '''
     if not SapModel:
         etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
         SapModel = etabs.SapModel
+    name = get_etabs_file_name_without_suffix(SapModel)
     if not story_stiffness:
-        story_stiffness = get_story_stiffness_2800_way(SapModel)
+        if way == '2800':
+            story_stiffness = get_story_stiffness_2800_way(SapModel)
+        elif way == 'modal':
+            story_stiffness = get_story_stiffness_modal_way(SapModel)
     stories = list(story_stiffness.keys())
     retval = []
     for i, story in enumerate(stories):
@@ -710,7 +720,8 @@ def get_story_stiffness_table(SapModel=None, story_stiffness=None):
             stiffness.extend(['-', '-'])
         retval.append((story, *stiffness))
     fields = ('Story', 'Kx', 'Ky', 'Kx Above', 'Ky Above', 'Kx 3Above', 'Ky 3Above')
-    save_to_json_in_edb_folder('story_stiffness_table.json', (retval, fields), SapModel)
+    json_file = f'{name}_story_stiffness_{way}_table.json'
+    save_to_json_in_edb_folder(json_file, (retval, fields), SapModel)
     return retval, fields
 
 
