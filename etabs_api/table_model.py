@@ -57,8 +57,6 @@ class DriftModel(ResultsModel):
             'Allowable Drift'
         ]]
         self.headers = tuple(self.df.columns)
-        self.avg_min = float(self.df['Avg Drift'].min())
-        self.max_min = float(self.df['Max Drift'].min())
 
     def data(self, index, role=Qt.DisplayRole):
         row = index.row()
@@ -72,13 +70,11 @@ class DriftModel(ResultsModel):
             if role == Qt.DisplayRole:
                 return str(value)
             elif role == Qt.BackgroundColorRole:
-                if col == avg_i:
-                    vmin=self.avg_min
-                elif col == max_i:
-                    vmin=self.max_min
                 if col in (avg_i, max_i):
-                    norm = Normalize(vmax=allow_drift, vmin=vmin)
-                    return QColor(color_map_color(float(value), norm))
+                    if float(value) > allow_drift:
+                        return QColor('red')
+                    else:
+                        return QColor('green')
             elif role == Qt.TextAlignmentRole:
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
 
