@@ -703,11 +703,13 @@ def get_story_stiffness_table(way='2800',SapModel=None, story_stiffness=None):
     retval = []
     for i, story in enumerate(stories):
         stiffness = story_stiffness[story]
+        kx = stiffness[0]
+        ky = stiffness[1]
         if i == 0:
             stiffness.extend(['-', '-'])
         else:
             k1 = story_stiffness[stories[i - 1]]
-            stiffness.extend([k1[0], k1[1]])
+            stiffness.extend([kx / k1[0], ky/ k1[1]])
 
         if len(stories[:i]) >= 3:
             # k1 = story_stiffness[stories[i - 1]]
@@ -715,11 +717,11 @@ def get_story_stiffness_table(way='2800',SapModel=None, story_stiffness=None):
             k3 = story_stiffness[stories[i - 3]]
             ave_kx = (k1[0] + k2[0] + k3[0]) / 3
             ave_ky = (k1[1] + k2[1] + k3[1]) / 3
-            stiffness.extend([ave_kx, ave_ky])
+            stiffness.extend([kx / ave_kx, ky / ave_ky])
         else:
             stiffness.extend(['-', '-'])
         retval.append((story, *stiffness))
-    fields = ('Story', 'Kx', 'Ky', 'Kx Above', 'Ky Above', 'Kx 3Above', 'Ky 3Above')
+    fields = ('Story', 'Kx', 'Ky', 'Kx / kx+1', 'Ky / ky+1', 'Kx / kx_3ave', 'Ky / ky_3ave')
     json_file = f'{name}_story_stiffness_{way}_table.json'
     save_to_json_in_edb_folder(json_file, (retval, fields), SapModel)
     return retval, fields
