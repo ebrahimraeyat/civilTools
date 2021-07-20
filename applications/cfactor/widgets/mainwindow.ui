@@ -1074,10 +1074,12 @@ p, li { white-space: pre-wrap; }
       <property name="title">
        <string>Stiffness</string>
       </property>
-      <addaction name="action_show_story_stiffness_2800"/>
+      <addaction name="action_show_story_stiffness_earthquake"/>
       <addaction name="action_show_story_stiffness_modal"/>
-      <addaction name="action_get_story_stiffness_2800"/>
+      <addaction name="action_show_story_stiffness_2800"/>
+      <addaction name="action_get_story_stiffness_earthquake"/>
       <addaction name="action_get_story_stiffness_modal"/>
+      <addaction name="action_get_story_stiffness_2800"/>
      </widget>
      <addaction name="action_get_irregularity_of_mass"/>
      <addaction name="menuStiffness"/>
@@ -1227,6 +1229,16 @@ p, li { white-space: pre-wrap; }
   <action name="action_get_story_stiffness_modal">
    <property name="text">
     <string>Get Story Stiffness Modal</string>
+   </property>
+  </action>
+  <action name="action_show_story_stiffness_earthquake">
+   <property name="text">
+    <string>Show Story Stiffness EQ</string>
+   </property>
+  </action>
+  <action name="action_get_story_stiffness_earthquake">
+   <property name="text">
+    <string>Get Story Stiffness EQ</string>
    </property>
   </action>
  </widget>

@@ -686,9 +686,44 @@ def get_story_stiffness_2800_way(SapModel):
     SapModel.File.OpenFile(str(asli_file_path))
     return story_stiffness
 
+def get_story_stiffness_earthquake_way(
+                SapModel=None,
+                loadcases: list=None,
+                ):
+    if not SapModel:
+        etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
+        SapModel = etabs.SapModel
+    if not loadcases:
+        loadcases = functions.get_EX_EY_load_pattern(SapModel)
+    assert len(loadcases) == 2
+    EX, EY = loadcases
+    if not SapModel.GetModelIsLocked():
+        return None
+    SapModel.SetPresentUnits(units["kgf_m_C"])
+    functions.select_load_cases(SapModel, loadcases)
+    TableKey = 'Story Stiffness'
+    [_, _, FieldsKeysIncluded, _, TableData, _] = functions.read_table(TableKey, SapModel)
+    i_story = FieldsKeysIncluded.index('Story')
+    i_case = FieldsKeysIncluded.index('OutputCase')
+    i_stiff_x = FieldsKeysIncluded.index('StiffX')
+    i_stiff_y = FieldsKeysIncluded.index('StiffY')
+    data = functions.reshape_data(FieldsKeysIncluded, TableData)
+    columns = (i_case,)
+    values_x = (EX,)
+    values_y = (EY,)
+    result_x = get_from_list_table(data, columns, values_x)
+    result_y = get_from_list_table(data, columns, values_y)
+    story_stiffness = {}
+    for x, y in zip(list(result_x), list(result_y)):
+        story = x[i_story]
+        stiff_x = float(x[i_stiff_x])
+        stiff_y = float(y[i_stiff_y])
+        story_stiffness[story] = [stiff_x, stiff_y]
+    return story_stiffness
+
 def get_story_stiffness_table(way='2800',SapModel=None, story_stiffness=None):
     '''
-    way can be '2800' or 'modal'
+    way can be '2800', 'modal' , 'earthquake'
     '''
     if not SapModel:
         etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
@@ -699,6 +734,8 @@ def get_story_stiffness_table(way='2800',SapModel=None, story_stiffness=None):
             story_stiffness = get_story_stiffness_2800_way(SapModel)
         elif way == 'modal':
             story_stiffness = get_story_stiffness_modal_way(SapModel)
+        elif way == 'earthquake':
+            story_stiffness = get_story_stiffness_earthquake_way(SapModel)
     stories = list(story_stiffness.keys())
     retval = []
     for i, story in enumerate(stories):
@@ -709,7 +746,10 @@ def get_story_stiffness_table(way='2800',SapModel=None, story_stiffness=None):
             stiffness.extend(['-', '-'])
         else:
             k1 = story_stiffness[stories[i - 1]]
-            stiffness.extend([kx / k1[0], ky/ k1[1]])
+            stiffness.extend([
+                kx / k1[0] if k1[0] != 0 else '-',
+                ky / k1[1] if k1[1] != 0 else '-',
+                ])
 
         if len(stories[:i]) >= 3:
             # k1 = story_stiffness[stories[i - 1]]
@@ -731,7 +771,7 @@ def get_story_stiffness_table(way='2800',SapModel=None, story_stiffness=None):
 if __name__ == '__main__':
     etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
     SapModel = etabs.SapModel
-    ss = get_story_stiffness_modal_way(SapModel)
+    ss = get_story_stiffness_earthquake_way(SapModel)
     print(ss)
     print('')
     

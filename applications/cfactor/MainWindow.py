@@ -79,6 +79,8 @@ class Ui(QMainWindow, main_window):
         self.action_get_story_stiffness_2800.triggered.connect(self.get_story_stiffness_2800_table)
         self.action_show_story_stiffness_modal.triggered.connect(self.show_story_stiffness_modal_table)
         self.action_get_story_stiffness_modal.triggered.connect(self.get_story_stiffness_modal_table)
+        self.action_show_story_stiffness_earthquake.triggered.connect(self.show_story_stiffness_earthquake_table)
+        self.action_get_story_stiffness_earthquake.triggered.connect(self.get_story_stiffness_earthquake_table)
         self.action_get_irregularity_of_mass.triggered.connect(self.get_irregularity_of_mass)
 
 
@@ -542,6 +544,12 @@ class Ui(QMainWindow, main_window):
 
     def show_story_stiffness_modal_table(self):
         self.show_story_stiffness_table(way='modal')
+    
+    def get_story_stiffness_earthquake_table(self):
+        self.get_story_stiffness_table(way='earthquake')
+
+    def show_story_stiffness_earthquake_table(self):
+        self.show_story_stiffness_table(way='earthquake')
     
     def get_irregularity_of_mass(self):
         if not self.is_etabs_running():

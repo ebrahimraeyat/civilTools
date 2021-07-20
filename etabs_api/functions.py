@@ -101,6 +101,46 @@ def get_load_patterns_in_XYdirection(SapModel):
         
     return names_x, names_y
 
+def get_EX_EY_load_pattern(SapModel):
+    '''
+    return earthquakes in x, y direction that did not ecnetricity
+    '''
+    select_all_load_patterns(SapModel)
+    TableKey = 'Load Pattern Definitions - Auto Seismic - User Coefficient'
+    [_, _, FieldsKeysIncluded, _, TableData, _] = read_table(TableKey, SapModel)
+    i_xdir = FieldsKeysIncluded.index('XDir')
+    i_xdir_plus = FieldsKeysIncluded.index('XDirPlusE')
+    i_xdir_minus = FieldsKeysIncluded.index('XDirMinusE')
+    i_ydir = FieldsKeysIncluded.index('YDir')
+    i_ydir_plus = FieldsKeysIncluded.index('YDirPlusE')
+    i_ydir_minus = FieldsKeysIncluded.index('YDirMinusE')
+    i_name = FieldsKeysIncluded.index('Name')
+    data = reshape_data(FieldsKeysIncluded, TableData)
+    name_x = None
+    name_y = None
+    drift_lp_names = get_drift_load_pattern_names(SapModel)
+    for earthquake in data:
+        name = earthquake[i_name]
+        if all((
+                not name_x,
+                not name in drift_lp_names,
+                earthquake[i_xdir] == 'Yes',
+                earthquake[i_xdir_minus] == 'No',
+                earthquake[i_xdir_plus] == 'No',
+            )):
+                name_x = name
+        if all((
+                not name_y,
+                not name in drift_lp_names,
+                earthquake[i_ydir] == 'Yes',
+                earthquake[i_ydir_minus] == 'No',
+                earthquake[i_ydir_plus] == 'No',
+            )):
+                name_y = name
+        if name_x and name_y:
+            break
+    return name_x, name_y
+
 def get_xy_seismic_load_patterns(SapModel):
     x_names, y_names = get_load_patterns_in_XYdirection(SapModel)
     drift_load_pattern_names = get_drift_load_pattern_names(SapModel)
