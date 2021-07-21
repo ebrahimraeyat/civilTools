@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="cfactor">
+    <file>../../images/calculate_center_of_rigidity.jpeg</file>
     <file>../../images/torsion.jpg</file>
     <file>../../images/spec.svg</file>
     <file>../../images/etabs.jpg</file>

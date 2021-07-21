@@ -56,13 +56,19 @@ class Ui(QMainWindow, main_window):
 
     def add_actions(self):
         self.toolbar.addAction(self.action_to_etabs)
-        self.toolbar.addAction(self.action_show_drift)
         self.toolbar.addAction(self.action_automatic_drift)
+        self.toolbar.addSeparator()
         self.toolbar.addSeparator()
         self.toolbar.addAction(self.action_open)
         self.toolbar.addAction(self.action_save)
         self.toolbar.addAction(self.action_save_spectrals)
         self.toolbar.addAction(self.action_word)
+        
+        self.control_toolbar.addAction(self.action_get_story_stiffness)
+        self.control_toolbar.addAction(self.action_get_irregularity_of_mass)
+        self.control_toolbar.addAction(self.action_show_drift)
+        self.control_toolbar.addAction(self.action_torsion_table)
+
 
         self.action_to_etabs.triggered.connect(self.export_to_etabs)
         self.action_show_drift.triggered.connect(self.show_drifts)
@@ -76,11 +82,9 @@ class Ui(QMainWindow, main_window):
         self.action_get_weakness.triggered.connect(self.get_weakness_ratio)
         self.action_show_weakness.triggered.connect(self.show_weakness_ratio)
         self.action_show_story_stiffness_2800.triggered.connect(self.show_story_stiffness_2800_table)
-        self.action_get_story_stiffness_2800.triggered.connect(self.get_story_stiffness_2800_table)
         self.action_show_story_stiffness_modal.triggered.connect(self.show_story_stiffness_modal_table)
-        self.action_get_story_stiffness_modal.triggered.connect(self.get_story_stiffness_modal_table)
         self.action_show_story_stiffness_earthquake.triggered.connect(self.show_story_stiffness_earthquake_table)
-        self.action_get_story_stiffness_earthquake.triggered.connect(self.get_story_stiffness_earthquake_table)
+        self.action_get_story_stiffness.triggered.connect(self.get_story_stiffness_table)
         self.action_get_irregularity_of_mass.triggered.connect(self.get_irregularity_of_mass)
 
 
@@ -491,10 +495,7 @@ class Ui(QMainWindow, main_window):
         table_model.show_results(data, headers, table_model.ColumnsRatioModel)
         table_model.show_results(data2, headers2, table_model.BeamsRebarsModel)
     
-    def get_story_stiffness_table(self, way='2800'):
-        '''
-        way can be '2800' or 'modal'
-        '''
+    def get_story_stiffness_table(self):
         allow, check = self.allowed_to_continue(
             'stiffness.bin',
             'https://gist.githubusercontent.com/ebrahimraeyat/e5635c17392c73540a46761a7247836e/raw',
@@ -505,6 +506,15 @@ class Ui(QMainWindow, main_window):
             return
         if not self.is_etabs_running():
             return
+        from py_widget import get_siffness_story_way as stiff
+        stiffness_win = stiff.ChooseStiffnessForm(self)
+        if stiffness_win.exec_():
+            if stiffness_win.radio_button_2800.isChecked():
+                way = '2800'
+            if stiffness_win.radio_button_modal.isChecked():
+                way = 'modal'
+            if stiffness_win.radio_button_earthquake.isChecked():
+                way = 'earthquake'
         from etabs_api import rho, table_model
         ret = rho.get_story_stiffness_table(way=way)
         if not ret:
@@ -533,21 +543,12 @@ class Ui(QMainWindow, main_window):
         data, headers = ret
         table_model.show_results(data, headers, table_model.StoryStiffnessModel)
 
-    def get_story_stiffness_2800_table(self):
-        self.get_story_stiffness_table(way='2800')
-
     def show_story_stiffness_2800_table(self):
         self.show_story_stiffness_table(way='2800')
     
-    def get_story_stiffness_modal_table(self):
-        self.get_story_stiffness_table(way='modal')
-
     def show_story_stiffness_modal_table(self):
         self.show_story_stiffness_table(way='modal')
     
-    def get_story_stiffness_earthquake_table(self):
-        self.get_story_stiffness_table(way='earthquake')
-
     def show_story_stiffness_earthquake_table(self):
         self.show_story_stiffness_table(way='earthquake')
     
