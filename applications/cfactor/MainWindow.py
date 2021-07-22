@@ -44,32 +44,14 @@ class Ui(QMainWindow, main_window):
         self.structure_model = StructureModel(self.final_building)
         self.structure_properties_table.setModel(self.structure_model)
         self.resizeColumns()
-        #self.__userH = 200
-        # self.setMaxAllowedHeight()
         self.create_connections()
         self.add_actions()
-        # self.create_actions()
         self.load_settings()
         self.load_config()
         self.calculate()
         self.setWindowTitle(f"CFactor v{__version__}")
 
     def add_actions(self):
-        self.toolbar.addAction(self.action_to_etabs)
-        self.toolbar.addAction(self.action_automatic_drift)
-        self.toolbar.addSeparator()
-        self.toolbar.addSeparator()
-        self.toolbar.addAction(self.action_open)
-        self.toolbar.addAction(self.action_save)
-        self.toolbar.addAction(self.action_save_spectrals)
-        self.toolbar.addAction(self.action_word)
-        
-        self.control_toolbar.addAction(self.action_get_story_stiffness)
-        self.control_toolbar.addAction(self.action_get_irregularity_of_mass)
-        self.control_toolbar.addAction(self.action_show_drift)
-        self.control_toolbar.addAction(self.action_torsion_table)
-
-
         self.action_to_etabs.triggered.connect(self.export_to_etabs)
         self.action_show_drift.triggered.connect(self.show_drifts)
         self.action_automatic_drift.triggered.connect(self.get_drift_automatically)
@@ -91,9 +73,6 @@ class Ui(QMainWindow, main_window):
     def create_connections(self):
         self.calculate_button.clicked.connect(self.calculate)
         self.x_treeWidget.itemActivated.connect(self.xactivate)
-        # self.y_treeWidget.itemActivated.connect(self.yactivate)
-        # self.connect(self.HSpinBox, SIGNAL(
-        # "editingFinished()"), self.userInputHeight)
         self.ostanBox.currentIndexChanged.connect(self.set_shahrs_of_current_ostan)
         self.shahrBox.currentIndexChanged.connect(self.setA)
 
@@ -106,7 +85,6 @@ class Ui(QMainWindow, main_window):
         self.ostanBox.addItems(ostans)
         self.set_shahrs_of_current_ostan()
         self.setA()
-        # self.tAnalaticalGroupBox.setChecked(True)
         #
         # curve widget
         self.curveBWidget = pl()
@@ -118,7 +96,6 @@ class Ui(QMainWindow, main_window):
 
         for i in range(5):
             self.soilPropertiesTable.setSpan(i, 0, 1, 2)
-        # self.x_treeWidget.setCurrentItem(0,0)
         iterator = QTreeWidgetItemIterator(self.x_treeWidget)
         i = 0
         while iterator.value():
@@ -142,8 +119,6 @@ class Ui(QMainWindow, main_window):
         qsettings = QSettings("civiltools", "cfactor")
         qsettings.setValue("geometry", self.saveGeometry())
         qsettings.setValue("saveState", self.saveState())
-        # qsettings.setValue( "maximized", self.isMaximized() )
-        # if not self.isMaximized() == True :
         qsettings.setValue("pos", self.pos())
         qsettings.setValue("size", self.size())
         qsettings.setValue("hsplitter", self.hsplitter.saveState())
@@ -211,9 +186,7 @@ class Ui(QMainWindow, main_window):
         if self.x_treeWidget.currentItem().parent():
             system = self.x_treeWidget.currentItem().parent().text(0)
             lateral = self.x_treeWidget.currentItem().text(0)
-            # self.y_treeWidget.setCurrentItem(self.y_treeWidget.topLevelItem(0), 0)
             self.y_treeWidget.scrollToItem(self.x_treeWidget.currentItem())
-            # print(self.y_treeWidget.indexFromItem(self.x_treeWidget.currentItem()))
             return (system, lateral)
         return None
 
@@ -254,41 +227,16 @@ class Ui(QMainWindow, main_window):
     def get_current_soil_type(self):
         return str(self.soilType.currentText())
 
-    # def setDEngheta(self):
-        #dEngheta = self.getDEngheta()
-        # if dEngheta:
-        #self.dEnghetaLineEdit.setText("%.1f Cm" % dEngheta)
-        # else:
-        #self.dEnghetaLineEdit.setText("مراجعه به بند ۳-۵-۶")
-
     def setInfillCheckBoxStatus(self, xSystem, ySystem):
         infill = xSystem.is_infill and ySystem.is_infill
-        # if self.tAnalaticalGroupBox.isChecked() or infill is None:
         if infill is None:
             self.infillCheckBox.setEnabled(False)
             self.infillCheckBox.setCheckState(False)
         else:
             self.infillCheckBox.setEnabled(True)
 
-    # def userInputHeight(self):
-    #     self.__userH = self.HSpinBox.value()
-
-    # def setMaxHeightAllowed(self, xSystem, ySystem):
-    #     xMaxAllowedHeight = xSystem.maxHeight
-    #     yMaxAllowedHeight = ySystem.maxHeight
-    #     if (xMaxAllowedHeight and yMaxAllowedHeight) is None:
-    #         maxAllowedHeight = 200
-    #     elif xMaxAllowedHeight is None:
-    #         maxAllowedHeight = yMaxAllowedHeight
-    #     elif yMaxAllowedHeight is None:
-    #         maxAllowedHeight = xMaxAllowedHeight
-    #     else:
-    #         maxAllowedHeight = min(xMaxAllowedHeight, yMaxAllowedHeight)
-    #     self.HSpinBox.setMaximum(maxAllowedHeight)
-
     def getTAnalatical(self):
         useTan = True
-        # useTan = self.tAnalaticalGroupBox.isChecked()
         xTan = self.xTAnalaticalSpinBox.value()
         yTan = self.yTAnalaticalSpinBox.value()
         return useTan, xTan, yTan
@@ -341,8 +289,6 @@ class Ui(QMainWindow, main_window):
         self.p.addLine(x=build.Tx, pen=penTx)
         self.p.addLine(x=build.Ty, pen=penTy)
         Tx, Ty = build.Tx, build.Ty
-        # THtml = '<div style="text-align: center"><span style="color: #FFF;">T<sub>{0}</sub> = '
-        # THtml += '{1:.2f} </span><br><span style="color: #FF0; font-size: 16pt;"></span></div>'
         THtml = 'T<sub>{0}</sub> = {1:.2f}'
         TxHtml, TyHtml = THtml.format('x', Tx), THtml.format('y', Ty)
         text = pg.TextItem(html=TxHtml, anchor=(0, 1.5), border='k', fill=(0, 0, 255, 100))
@@ -369,10 +315,6 @@ class Ui(QMainWindow, main_window):
         xSystem = StructureSystem(xSystemType, xLateralType, "X")
         ySystem = StructureSystem(ySystemType, yLateralType, "Y")
         self.setInfillCheckBoxStatus(xSystem, ySystem)
-        # self.setMaxHeightAllowed(xSystem, ySystem)
-        # if self.__userH < self.HSpinBox.maximum() and self.__userH > height:
-        # self.HSpinBox.setValue(self.__userH)
-        #height = self.getH()
         Tan = self.getTAnalatical()
         useTan = Tan[0]
         xTan = Tan[1]
@@ -619,17 +561,8 @@ class Ui(QMainWindow, main_window):
             return
         from etabs_api import functions, table_model
         drifts, headers = functions.calculate_drifts(self)
-        # SapModel = etabs.SapModel
-        # SapModel.Analyze.RunAnalysis()
-        # no_story = self.storySpinBox.value()
-        # cdx = self.final_building.x_system.cd
-        # cdy = self.final_building.y_system.cd
-        # data, headers = functions.get_drifts(no_story, cdx, cdy)
         table_model.show_results(drifts, headers, table_model.DriftModel)
-        # msg = 'Successfully obtained earthquake factores and written to etabs file.'
-        # QMessageBox.information(self, 'Done', msg)
         self.show_warning_about_number_of_use(check)
-        # return True
 
     def allowed_to_continue(self,
                             filename,
@@ -650,10 +583,6 @@ class Ui(QMainWindow, main_window):
             return True, check
         else:
             if text in ('INTERNET', 'SERIAL'):
-                # msg = "You must register to continue, but you are not connected to the Internet, please check your internet connection."
-                # QMessageBox.warning(None, 'Register!', str(msg))
-                # return False
-            # elif text == 'SERIAL':
                 serial_win = SerialForm(self)
                 serial_win.serial.setText(check.serial)
                 serial_win.exec_()
@@ -693,21 +622,6 @@ class Ui(QMainWindow, main_window):
     def exportBCurveToCsv(self):
         export_graph = export.ExportGraph(self, self.lastDirectory, self.p)
         export_graph.to_csv()
-        # from pyqtgraph.GraphicsScene import exportDialog
-        # exportDialog = exportDialog.ExportDialog(self.p.scene())
-        # exportDialog.show(self.p)
-
-    # def export_to_etabs(self):
-        # TODO
-        # results = self.final_building.results
-        # if results[0] is True:
-        # self.child_export_etabs_win = etabs.ExportToEtabs(self.final_building, self)
-        # if self.child_export_etabs_win.exec_():
-        #     title = 'Seccess'
-        #     text = 'Export File to {}'.format(self.child_export_etabs_win.output_path_line.text())
-        #     QMessageBox.information(self, title, text)
-        # else:
-        #     return
 
     def is_etabs_running(self):
         sys.path.insert(0, str(civiltools_path))

@@ -653,14 +653,12 @@ def get_story_stiffness_modal_way(SapModel):
         kx = wx ** 2 * sigma_x / d_phi_x
         ky = wy ** 2 * sigma_y / d_phi_y
         story_stiffness[stories[i]] = [kx, ky]
-    # save_to_json_in_edb_folder('story_stiffness_modal.json', story_stiffness, SapModel)
     return story_stiffness
 
 def get_story_stiffness_2800_way(SapModel):
     asli_file_path = Path(SapModel.GetModelFilename())
     if asli_file_path.suffix.lower() != '.edb':
         asli_file_path = asli_file_path.with_suffix(".EDB")
-    name = get_etabs_file_name_without_suffix(SapModel)
     dir_path = asli_file_path.parent.absolute()
     story_names = SapModel.Story.GetNameList()[1]
     center_of_rigidity = get_center_of_rigidity(SapModel)
@@ -681,8 +679,6 @@ def get_story_stiffness_2800_way(SapModel):
         disp_x, disp_y = get_point_xy_displacement(SapModel, point_name, lp_name)
         kx, ky = 1000 / abs(disp_x), 1000 / abs(disp_y)
         story_stiffness[story_name] = [kx, ky]
-    # json_file = Path(SapModel.GetModelFilepath()) / f'{name}_story_stiffness_2800.json'
-    # save_to_json(json_file, story_stiffness)
     SapModel.File.OpenFile(str(asli_file_path))
     return story_stiffness
 

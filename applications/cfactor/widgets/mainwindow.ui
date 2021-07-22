@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1518</width>
-    <height>812</height>
+    <height>850</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1079,8 +1079,14 @@ p, li { white-space: pre-wrap; }
       <addaction name="action_show_story_stiffness_2800"/>
       <addaction name="action_get_story_stiffness"/>
      </widget>
+     <widget class="QMenu" name="menuType_Here">
+      <property name="title">
+       <string>Type Here</string>
+      </property>
+     </widget>
      <addaction name="action_get_irregularity_of_mass"/>
      <addaction name="menuStiffness"/>
+     <addaction name="menuType_Here"/>
     </widget>
     <addaction name="action_to_etabs"/>
     <addaction name="menuDrift"/>
@@ -1124,6 +1130,10 @@ p, li { white-space: pre-wrap; }
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="action_open"/>
+   <addaction name="action_save"/>
+   <addaction name="action_word"/>
+   <addaction name="action_save_spectrals"/>
   </widget>
   <widget class="QToolBar" name="control_toolbar">
    <property name="windowTitle">
@@ -1144,6 +1154,12 @@ p, li { white-space: pre-wrap; }
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="action_story_forces"/>
+   <addaction name="action_get_weakness"/>
+   <addaction name="action_torsion_table"/>
+   <addaction name="action_show_drift"/>
+   <addaction name="action_get_irregularity_of_mass"/>
+   <addaction name="action_get_story_stiffness"/>
   </widget>
   <action name="action_to_etabs">
    <property name="icon">
@@ -1210,20 +1226,37 @@ p, li { white-space: pre-wrap; }
   <action name="action_torsion_table">
    <property name="icon">
     <iconset resource="../resource.qrc">
-     <normaloff>:/cfactor/images/torsion.jpg</normaloff>:/cfactor/images/torsion.jpg</iconset>
+     <normaloff>:/cfactor/images/torsion.svg</normaloff>:/cfactor/images/torsion.svg</iconset>
    </property>
    <property name="text">
     <string>Show Torsion</string>
    </property>
+   <property name="toolTip">
+    <string>نامنظمی پیچشی</string>
+   </property>
   </action>
   <action name="action_story_forces">
+   <property name="icon">
+    <iconset resource="../resource.qrc">
+     <normaloff>:/cfactor/images/shear1.svg</normaloff>:/cfactor/images/shear1.svg</iconset>
+   </property>
    <property name="text">
     <string>story forces</string>
    </property>
+   <property name="toolTip">
+    <string>برش طبقات</string>
+   </property>
   </action>
   <action name="action_get_weakness">
+   <property name="icon">
+    <iconset resource="../resource.qrc">
+     <normaloff>:/cfactor/images/weakness.svg</normaloff>:/cfactor/images/weakness.svg</iconset>
+   </property>
    <property name="text">
     <string>Get Weakness</string>
+   </property>
+   <property name="toolTip">
+    <string>نامنظمی طبقه ضعیف</string>
    </property>
   </action>
   <action name="actionfdfd">
@@ -1237,8 +1270,15 @@ p, li { white-space: pre-wrap; }
    </property>
   </action>
   <action name="action_get_irregularity_of_mass">
+   <property name="icon">
+    <iconset resource="../resource.qrc">
+     <normaloff>:/cfactor/images/mass.svg</normaloff>:/cfactor/images/mass.svg</iconset>
+   </property>
    <property name="text">
     <string>Mass</string>
+   </property>
+   <property name="toolTip">
+    <string>نامنظمی  جرمی</string>
    </property>
   </action>
   <action name="action_show_story_stiffness_2800">
@@ -1272,8 +1312,15 @@ p, li { white-space: pre-wrap; }
    </property>
   </action>
   <action name="action_get_story_stiffness">
+   <property name="icon">
+    <iconset resource="../resource.qrc">
+     <normaloff>:/cfactor/images/spring.jpeg</normaloff>:/cfactor/images/spring.jpeg</iconset>
+   </property>
    <property name="text">
     <string>Get Story Stiffness</string>
+   </property>
+   <property name="toolTip">
+    <string>نامنظمی سختی طبقات</string>
    </property>
   </action>
  </widget>
