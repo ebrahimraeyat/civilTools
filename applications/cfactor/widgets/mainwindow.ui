@@ -1079,14 +1079,8 @@ p, li { white-space: pre-wrap; }
       <addaction name="action_show_story_stiffness_2800"/>
       <addaction name="action_get_story_stiffness"/>
      </widget>
-     <widget class="QMenu" name="menuType_Here">
-      <property name="title">
-       <string>Type Here</string>
-      </property>
-     </widget>
      <addaction name="action_get_irregularity_of_mass"/>
      <addaction name="menuStiffness"/>
-     <addaction name="menuType_Here"/>
     </widget>
     <addaction name="action_to_etabs"/>
     <addaction name="menuDrift"/>
