@@ -1154,12 +1154,12 @@ p, li { white-space: pre-wrap; }
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="action_story_forces"/>
+   <addaction name="action_get_irregularity_of_mass"/>
+   <addaction name="action_get_story_stiffness"/>
    <addaction name="action_get_weakness"/>
    <addaction name="action_torsion_table"/>
    <addaction name="action_show_drift"/>
-   <addaction name="action_get_irregularity_of_mass"/>
-   <addaction name="action_get_story_stiffness"/>
+   <addaction name="action_story_forces"/>
   </widget>
   <action name="action_to_etabs">
    <property name="icon">
@@ -1177,6 +1177,9 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Show Drift</string>
+   </property>
+   <property name="toolTip">
+    <string>کنترل دریفت</string>
    </property>
   </action>
   <action name="action_automatic_drift">
@@ -1238,7 +1241,7 @@ p, li { white-space: pre-wrap; }
   <action name="action_story_forces">
    <property name="icon">
     <iconset resource="../resource.qrc">
-     <normaloff>:/cfactor/images/shear1.svg</normaloff>:/cfactor/images/shear1.svg</iconset>
+     <normaloff>:/cfactor/images/shear.svg</normaloff>:/cfactor/images/shear.svg</iconset>
    </property>
    <property name="text">
     <string>story forces</string>
@@ -1314,7 +1317,7 @@ p, li { white-space: pre-wrap; }
   <action name="action_get_story_stiffness">
    <property name="icon">
     <iconset resource="../resource.qrc">
-     <normaloff>:/cfactor/images/spring.jpeg</normaloff>:/cfactor/images/spring.jpeg</iconset>
+     <normaloff>:/cfactor/images/stiffness.svg</normaloff>:/cfactor/images/stiffness.svg</iconset>
    </property>
    <property name="text">
     <string>Get Story Stiffness</string>

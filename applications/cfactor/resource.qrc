@@ -1,7 +1,9 @@
 <RCC>
   <qresource prefix="cfactor">
-    <file>../../images/shear1.svg</file>
+    <file>../../images/stiffness.svg</file>
+    <file>../../images/torsion.svg</file>
     <file>../../images/Shear.svg</file>
+    <file>../../images/shear.svg</file>
     <file>../../images/torsion.svg</file>
     <file>../../images/weakness.svg</file>
     <file>../../images/mass.svg</file>
