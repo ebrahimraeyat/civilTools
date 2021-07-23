@@ -63,10 +63,8 @@ class Ui(QMainWindow, main_window):
         self.action_story_forces.triggered.connect(self.show_story_forces)
         self.action_get_weakness.triggered.connect(self.get_weakness_ratio)
         self.action_show_weakness.triggered.connect(self.show_weakness_ratio)
-        self.action_show_story_stiffness_2800.triggered.connect(self.show_story_stiffness_2800_table)
-        self.action_show_story_stiffness_modal.triggered.connect(self.show_story_stiffness_modal_table)
-        self.action_show_story_stiffness_earthquake.triggered.connect(self.show_story_stiffness_earthquake_table)
         self.action_get_story_stiffness.triggered.connect(self.get_story_stiffness_table)
+        self.action_show_story_stiffness.triggered.connect(self.show_story_stiffness_table)
         self.action_get_irregularity_of_mass.triggered.connect(self.get_irregularity_of_mass)
 
 
@@ -467,16 +465,39 @@ class Ui(QMainWindow, main_window):
         table_model.show_results(data, headers, table_model.StoryStiffnessModel)
         self.show_warning_about_number_of_use(check)
     
-    def show_story_stiffness_table(self, way='2800'):
+    def show_story_stiffness_table(self):
         if not self.is_etabs_running():
             return
+        from py_widget import show_siffness_story_way as stiff
+        stiffness_win = stiff.ChooseStiffnessForm(self)
+        from etabs_api import rho, table_model
         import comtypes.client
         etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
         SapModel = etabs.SapModel
-        from etabs_api import rho, table_model
         e_name = rho.get_etabs_file_name_without_suffix(SapModel)
-        name = f'{e_name}_story_stiffness_{way}_table.json'
-        json_file = Path(SapModel.GetModelFilepath()) / name
+        way_radio_button = {'2800': stiffness_win.radio_button_2800,
+                            'modal': stiffness_win.radio_button_modal,
+                            'earthquake': stiffness_win.radio_button_earthquake}
+        for w, rb in way_radio_button.items():
+            name = f'{e_name}_story_stiffness_{w}_table.json'
+            json_file = Path(SapModel.GetModelFilepath()) / name
+            if not json_file.exists():
+                rb.setChecked(False)
+                rb.setEnabled(False)
+        if stiffness_win.exec_():
+            if stiffness_win.radio_button_2800.isChecked():
+                way = '2800'
+            elif stiffness_win.radio_button_modal.isChecked():
+                way = 'modal'
+            elif stiffness_win.radio_button_earthquake.isChecked():
+                way = 'earthquake'
+            elif stiffness_win.radio_button_file.isChecked():
+                way = 'file'
+        if way != 'file':
+            name = f'{e_name}_story_stiffness_{way}_table.json'
+            json_file = Path(SapModel.GetModelFilepath()) / name
+        else:
+            json_file = stiffness_win.json_line_edit.text()
         ret = rho.load_from_json(json_file)
         if not ret:
             err = "Can not find the results!"
@@ -485,15 +506,6 @@ class Ui(QMainWindow, main_window):
         data, headers = ret
         table_model.show_results(data, headers, table_model.StoryStiffnessModel)
 
-    def show_story_stiffness_2800_table(self):
-        self.show_story_stiffness_table(way='2800')
-    
-    def show_story_stiffness_modal_table(self):
-        self.show_story_stiffness_table(way='modal')
-    
-    def show_story_stiffness_earthquake_table(self):
-        self.show_story_stiffness_table(way='earthquake')
-    
     def get_irregularity_of_mass(self):
         if not self.is_etabs_running():
             return

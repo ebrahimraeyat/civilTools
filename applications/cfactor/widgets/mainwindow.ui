@@ -1051,7 +1051,7 @@ p, li { white-space: pre-wrap; }
       <string>Rho Factor</string>
      </property>
      <property name="icon">
-      <iconset resource="../resource.qrc">
+      <iconset>
        <normaloff>:/cfactor/images/torsion.jpg</normaloff>:/cfactor/images/torsion.jpg</iconset>
      </property>
      <addaction name="action_torsion_table"/>
@@ -1074,10 +1074,8 @@ p, li { white-space: pre-wrap; }
       <property name="title">
        <string>Stiffness</string>
       </property>
-      <addaction name="action_show_story_stiffness_earthquake"/>
-      <addaction name="action_show_story_stiffness_modal"/>
-      <addaction name="action_show_story_stiffness_2800"/>
       <addaction name="action_get_story_stiffness"/>
+      <addaction name="action_show_story_stiffness"/>
      </widget>
      <addaction name="action_get_irregularity_of_mass"/>
      <addaction name="menuStiffness"/>
@@ -1154,6 +1152,9 @@ p, li { white-space: pre-wrap; }
    <addaction name="action_torsion_table"/>
    <addaction name="action_show_drift"/>
    <addaction name="action_story_forces"/>
+   <addaction name="separator"/>
+   <addaction name="action_show_story_stiffness"/>
+   <addaction name="action_show_weakness"/>
   </widget>
   <action name="action_to_etabs">
    <property name="icon">
@@ -1262,6 +1263,10 @@ p, li { white-space: pre-wrap; }
    </property>
   </action>
   <action name="action_show_weakness">
+   <property name="icon">
+    <iconset resource="../resource.qrc">
+     <normaloff>:/cfactor/images/show_weakness.svg</normaloff>:/cfactor/images/show_weakness.svg</iconset>
+   </property>
    <property name="text">
     <string>Show Weakness</string>
    </property>
@@ -1318,6 +1323,24 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="toolTip">
     <string>نامنظمی سختی طبقات</string>
+   </property>
+  </action>
+  <action name="action_show_story_stiffness">
+   <property name="icon">
+    <iconset resource="../resource.qrc">
+     <normaloff>:/cfactor/images/show_stiffness.svg</normaloff>:/cfactor/images/show_stiffness.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show Story Stiffness</string>
+   </property>
+  </action>
+  <action name="action_show_story_stiffness">
+   <property name="icon">
+    <iconset resource="../resource.qrc">
+     <normaloff>:/cfactor/images/show_stiffness.svg</normaloff>:/cfactor/images/show_stiffness.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show Story Stiffness</string>
    </property>
   </action>
  </widget>
