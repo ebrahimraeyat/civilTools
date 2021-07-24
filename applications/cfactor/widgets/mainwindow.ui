@@ -671,16 +671,16 @@
              </property>
              <property name="icon">
               <iconset resource="../resource.qrc">
-               <normaloff>:/cfactor/images/run.svg</normaloff>:/cfactor/images/run.svg</iconset>
+               <normaloff>:/cfactor/images/run.png</normaloff>:/cfactor/images/run.png</iconset>
              </property>
              <property name="iconSize">
               <size>
-               <width>90</width>
-               <height>90</height>
+               <width>100</width>
+               <height>100</height>
               </size>
              </property>
              <property name="shortcut">
-              <string>F5</string>
+              <string>Ctrl+S</string>
              </property>
              <property name="checkable">
               <bool>false</bool>
@@ -1122,6 +1122,7 @@ p, li { white-space: pre-wrap; }
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="action_to_etabs"/>
    <addaction name="action_open"/>
    <addaction name="action_save"/>
    <addaction name="action_word"/>
@@ -1151,6 +1152,7 @@ p, li { white-space: pre-wrap; }
    <addaction name="action_get_weakness"/>
    <addaction name="action_torsion_table"/>
    <addaction name="action_show_drift"/>
+   <addaction name="action_automatic_drift"/>
    <addaction name="action_story_forces"/>
    <addaction name="separator"/>
    <addaction name="action_show_story_stiffness"/>
@@ -1159,7 +1161,7 @@ p, li { white-space: pre-wrap; }
   <action name="action_to_etabs">
    <property name="icon">
     <iconset resource="../resource.qrc">
-     <normaloff>:/cfactor/images/etabs.jpg</normaloff>:/cfactor/images/etabs.jpg</iconset>
+     <normaloff>:/cfactor/images/etabs.png</normaloff>:/cfactor/images/etabs.png</iconset>
    </property>
    <property name="text">
     <string>Export to Etabs</string>
@@ -1181,6 +1183,10 @@ p, li { white-space: pre-wrap; }
    <property name="enabled">
     <bool>true</bool>
    </property>
+   <property name="icon">
+    <iconset resource="../resource.qrc">
+     <normaloff>:/cfactor/images/automatic_drift.svg</normaloff>:/cfactor/images/automatic_drift.svg</iconset>
+   </property>
    <property name="text">
     <string>Automatic Drift</string>
    </property>
@@ -1188,7 +1194,7 @@ p, li { white-space: pre-wrap; }
   <action name="action_open">
    <property name="icon">
     <iconset resource="../resource.qrc">
-     <normaloff>:/cfactor/images/load.png</normaloff>:/cfactor/images/load.png</iconset>
+     <normaloff>:/cfactor/images/open.png</normaloff>:/cfactor/images/open.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Open</string>
@@ -1215,7 +1221,7 @@ p, li { white-space: pre-wrap; }
   <action name="action_save_spectrals">
    <property name="icon">
     <iconset resource="../resource.qrc">
-     <normaloff>:/cfactor/images/spec.svg</normaloff>:/cfactor/images/spec.svg</iconset>
+     <normaloff>:/cfactor/images/spectral.svg</normaloff>:/cfactor/images/spectral.svg</iconset>
    </property>
    <property name="text">
     <string>Save Spectrals</string>

@@ -1,7 +1,17 @@
 <RCC>
   <qresource prefix="cfactor">
+    <file>../../images/run.png</file>
+    <file>../../images/save.png</file>
+    <file>../../images/run.png</file>
+    <file>../../images/word.png</file>
+    <file>../../images/open.png</file>
+    <file>../../images/spectral.svg</file>
+    <file>../../images/open.svg</file>
+    <file>../../images/save.svg</file>
+    <file>../../images/word.svg</file>
     <file>../../images/show_weakness.svg</file>
     <file>../../images/show_weakness.svg</file>
+    <file>../../images/automatic_drift.svg</file>
     <file>../../images/stiffness.svg</file>
     <file>../../images/show_stiffness.svg</file>
     <file>../../images/torsion.svg</file>
@@ -11,13 +21,9 @@
     <file>../../images/mass.svg</file>
     <file>../../images/calculate_center_of_rigidity.jpeg</file>
     <file>../../images/spec.svg</file>
-    <file>../../images/etabs.jpg</file>
     <file>../../images/drift.svg</file>
+    <file>../../images/etabs.png</file>
     <file>../../images/file_extension_png.png</file>
-    <file>../../images/load.png</file>
-    <file>../../images/run.svg</file>
-    <file>../../images/save.png</file>
-    <file>../../images/word.png</file>
     <file>../../images/xlsx.png</file>
   </qresource>
 </RCC>

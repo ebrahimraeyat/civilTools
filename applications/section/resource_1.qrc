@@ -1,7 +1,9 @@
 <RCC>
   <qresource prefix="section">
-    <file>../../images/etabs.jpg</file>
     <file alias="dist_cc.svg">../../images/dist_cc.svg</file>
+    <file>../../images/etabs.png</file>
+    <file>../../images/open.png</file>
+    <file>../../images/save.png</file>
     <file>../../images/multi_section.svg</file>
     <file>../../images/2UNP.svg</file>
     <file alias="dist.svg">../../images/dist.svg</file>

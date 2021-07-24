@@ -95,21 +95,6 @@ class Ui(QMainWindow, main_window):
         self.load_settings()
 
     def add_actions(self):
-        self.toolbar.addAction(self.action_ETABS)
-        self.toolbar.addAction(self.action_Xml)
-        self.toolbar.addAction(self.action_Autocad_scr)
-        self.toolbar.addAction(self.action_Excel)
-        self.toolbar.addAction(self.action_multi_section)
-        self.toolbar.addSeparator()
-        self.toolbar.addAction(self.action_Remove_Section)
-        self.toolbar.addAction(self.action_Delete)
-        self.toolbar.addSeparator()
-        self.toolbar.addAction(self.action_Open)
-        self.toolbar.addAction(self.action_Save)
-        self.toolbar.addSeparator()
-        self.toolbar.addAction(self.action_Shear)
-
-        # self.action_Xml.triggered.connect(self.saveToXml1)
         self.action_ETABS.triggered.connect(self.export_to_etabs)
         self.action_Xml.triggered.connect(self.save_to_xml)
         self.action_Autocad_scr.triggered.connect(self.save_to_autocad_script_format)
