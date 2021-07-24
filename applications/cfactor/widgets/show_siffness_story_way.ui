@@ -96,7 +96,7 @@
             <item>
              <widget class="QPushButton" name="browse_push_button">
               <property name="enabled">
-               <bool>false</bool>
+               <bool>true</bool>
               </property>
               <property name="text">
                <string>Browse</string>
