@@ -572,9 +572,22 @@ class Ui(QMainWindow, main_window):
         if not self.is_etabs_running():
             return
         from etabs_api import functions, table_model
-        drifts, headers = functions.calculate_drifts(self)
-        table_model.show_results(drifts, headers, table_model.DriftModel)
-        self.show_warning_about_number_of_use(check)
+        import comtypes.client
+        etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
+        SapModel = etabs.SapModel
+        stories = SapModel.Story.GetStories()[1]
+        from py_widget import top_bot_story as story
+        story_win = story.StoryForm(SapModel, stories)
+        if story_win.exec_():
+            no_of_stories = story_win.no_story_x_spinbox.value()
+            height = story_win.height_x_spinbox.value()
+            self.storySpinBox.setValue(no_of_stories)
+            self.HSpinBox.setValue(height)
+            drifts, headers = functions.calculate_drifts(self, no_of_stories, etabs)
+            table_model.show_results(drifts, headers, table_model.DriftModel)
+            self.show_warning_about_number_of_use(check)
+        else:
+            return
 
     def allowed_to_continue(self,
                             filename,

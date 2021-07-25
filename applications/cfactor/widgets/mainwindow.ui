@@ -1151,12 +1151,12 @@ p, li { white-space: pre-wrap; }
    <addaction name="action_get_story_stiffness"/>
    <addaction name="action_get_weakness"/>
    <addaction name="action_torsion_table"/>
-   <addaction name="action_show_drift"/>
    <addaction name="action_automatic_drift"/>
    <addaction name="action_story_forces"/>
    <addaction name="separator"/>
    <addaction name="action_show_story_stiffness"/>
    <addaction name="action_show_weakness"/>
+   <addaction name="action_show_drift"/>
   </widget>
   <action name="action_to_etabs">
    <property name="icon">

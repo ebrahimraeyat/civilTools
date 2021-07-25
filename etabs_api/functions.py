@@ -151,23 +151,26 @@ def get_top_bot_stories(SapModel):
     '''
     return bot_x, top_x, bot_y, top_y stories name"
     '''
-    x_names, y_names = get_load_patterns_in_XYdirection(SapModel)
-    TableKey = 'Load Pattern Definitions - Auto Seismic - User Coefficient'
-    [_, TableVersion, FieldsKeysIncluded, NumberRecords, TableData, _] = read_table(TableKey, SapModel)
-    data = reshape_data(FieldsKeysIncluded, TableData)
-    i_top_story = FieldsKeysIncluded.index('TopStory')
-    i_bot_story = FieldsKeysIncluded.index('BotStory')
-    i_name = FieldsKeysIncluded.index('Name')
-    for e in data:
-        if e[i_name] in x_names:
-            bot_story_x = e[i_bot_story]
-            top_story_x = e[i_top_story]
-            break
-    for e in data:
-        if e[i_name] in y_names:
-            bot_story_y = e[i_bot_story]
-            top_story_y = e[i_top_story]
-            break
+    # x_names, y_names = get_load_patterns_in_XYdirection(SapModel)
+    # TableKey = 'Load Pattern Definitions - Auto Seismic - User Coefficient'
+    # [_, _, FieldsKeysIncluded, _, TableData, _] = read_table(TableKey, SapModel)
+    # data = reshape_data(FieldsKeysIncluded, TableData)
+    # i_top_story = FieldsKeysIncluded.index('TopStory')
+    # i_bot_story = FieldsKeysIncluded.index('BotStory')
+    # i_name = FieldsKeysIncluded.index('Name')
+    # for e in data:
+    #     if e[i_name] in x_names:
+    #         bot_story_x = e[i_bot_story]
+    #         top_story_x = e[i_top_story]
+    #         break
+    # for e in data:
+    #     if e[i_name] in y_names:
+    #         bot_story_y = e[i_bot_story]
+    #         top_story_y = e[i_top_story]
+    #         break
+    stories = SapModel.Story.GetStories()[1]
+    bot_story_x = bot_story_y = stories[0]
+    top_story_x = top_story_y = stories[-1]
     return bot_story_x, top_story_x, bot_story_y, top_story_y
 
 def get_top_bot_levels(
@@ -178,6 +181,7 @@ def get_top_bot_levels(
                     top_story_y='',
                     auto_story=True,
                     ):
+    SapModel.setPresentUnits_2(5, 6, 2)
     if auto_story and not all([bot_story_x, top_story_x, bot_story_y, top_story_y]):
         bot_story_x, top_story_x, bot_story_y, top_story_y = get_top_bot_stories(SapModel)
     bot_level_x = SapModel.Story.GetElevation(bot_story_x)[0]    
@@ -200,14 +204,27 @@ def get_heights(
     hy = top_level_y - bot_level_y
     return hx, hy
 
-def get_no_of_stories(SapModel):
+def get_no_of_stories(
+                    SapModel,
+                    bot_level_x = None,
+                    top_level_x = None,
+                    bot_level_y = None,
+                    top_level_y = None,
+                    ):
     # bot_story_x, top_story_x, bot_story_y, top_story_y = get_top_bot_stories(SapModel)
-    bot_level_x, top_level_x, bot_level_y, top_level_y = get_top_bot_levels(SapModel)
+    if not bot_level_x:
+        bot_level_x, top_level_x, bot_level_y, top_level_y = get_top_bot_levels(SapModel)
     levels = SapModel.Story.GetStories()[2]
     no_of_x_story = len([i for i in levels if bot_level_x < i <= top_level_x])
     no_of_y_story = len([i for i in levels if bot_level_y < i <= top_level_y])
     return no_of_x_story, no_of_y_story
 
+def get_story_names(SapModel=None):
+    if not SapModel:
+        etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
+        SapModel = etabs.SapModel
+    return SapModel.Story.GetNameList()[1]
+    
 def select_all_load_patterns(SapModel):
     load_pattern_names = list(get_load_patterns(SapModel))
     # if not SapModel.GetModelIsLocked():
