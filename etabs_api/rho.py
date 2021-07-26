@@ -181,7 +181,7 @@ def get_columns_pmm_and_beams_rebars(SapModel, frame_names):
     if not SapModel.DesignConcrete.GetResultsAvailable():
         print('Start Design ...')
         SapModel.DesignConcrete.StartDesign()
-    SapModel.SetPresentUnits(units["kgf_cm_C"])
+    SapModel.SetPresentUnits_2(5, 5, 2)
     beams, columns = functions.get_beams_columns(SapModel)
     beams = set(frame_names).intersection(beams)
     columns = set(frame_names).intersection(columns)
@@ -245,74 +245,6 @@ def set_end_release_frame(SapModel, name):
     end_release.insert(0, name)
     er = SapModel.FrameObj.SetReleases(*end_release)
     return er
-
-def get_columns_pmm_weakness_structure(
-                SapModel,
-                name: str = '',
-                weakness_filename="weakness.EDB"
-                ):
-    if not name:
-        name = SapModel.SelectObj.GetSelected()[2][0]
-    asli_file_path = Path(SapModel.GetModelFilename())
-    if asli_file_path.suffix.lower() != '.edb':
-        asli_file_path = asli_file_path.with_suffix(".EDB")
-    dir_path = asli_file_path.parent.absolute()
-    weakness_file_path = dir_path / weakness_filename
-    print('get columns pmm')
-    columns_pmm = get_columns_pmm(SapModel)
-    print(f"Saving file as {weakness_filename}\n")
-    SapModel.File.Save(str(weakness_file_path))
-    print('multiply earthquake factor with 0.67')
-    multiply_seismic_loads(SapModel, .67)
-    set_end_release_frame(SapModel, name)
-    print('get columns pmm')
-    columns_pmm_weakness = get_columns_pmm(SapModel)
-    columns_pmm_main_and_weakness = []
-    for key, value in columns_pmm.items():
-        value2 = columns_pmm_weakness[key]
-        columns_pmm_main_and_weakness.append((key, value, value2))
-    SapModel.File.OpenFile(str(asli_file_path))
-    return columns_pmm_main_and_weakness
-
-def get_beams_rebars_weakness_structure(
-                SapModel,
-                name: str = '',
-                weakness_filename="weakness.EDB"
-                ):
-    if not name:
-        try:
-            name = SapModel.SelectObj.GetSelected()[2][0]
-        except IndexError:
-            return None
-    asli_file_path = Path(SapModel.GetModelFilename())
-    if asli_file_path.suffix.lower() != '.edb':
-        asli_file_path = asli_file_path.with_suffix(".EDB")
-    dir_path = asli_file_path.parent.absolute()
-    weakness_file_path = dir_path / weakness_filename
-    print('get beams rebars')
-    beams_rebars = get_beams_rebars(SapModel)
-    print(f"Saving file as {weakness_filename}\n")
-    SapModel.File.Save(str(weakness_file_path))
-    print('multiply earthquake factor with 0.67')
-    multiply_seismic_loads(SapModel, .67)
-    set_end_release_frame(SapModel, name)
-    print('get beams rebars')
-    beams_rebars_weakness = get_beams_rebars(SapModel)
-    beams_rebars_main_and_weakness = []
-    for key, d in beams_rebars.items():
-        d2 = beams_rebars_weakness[key]
-        beams_rebars_main_and_weakness.append((
-            key,
-            d['location'],
-            d['TopArea'],
-            d2['TopArea'],
-            d['BotArea'],
-            d2['BotArea'],
-            d['VRebar'],
-            d2['VRebar'],
-            ))
-    SapModel.File.OpenFile(str(asli_file_path))
-    return beams_rebars_main_and_weakness
 
 def combine_beams_columns_weakness_structure(
             SapModel,
@@ -767,7 +699,7 @@ def get_story_stiffness_table(way='2800',SapModel=None, story_stiffness=None):
 if __name__ == '__main__':
     etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
     SapModel = etabs.SapModel
-    ss = get_story_stiffness_earthquake_way(SapModel)
+    ss = get_beams_columns_weakness_structure(SapModel)
     print(ss)
     print('')
     
