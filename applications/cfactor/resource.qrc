@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="cfactor">
+    <file>../../images/show_aj.svg</file>
     <file>../../images/run.png</file>
     <file>../../images/save.png</file>
     <file>../../images/run.png</file>

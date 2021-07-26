@@ -1084,6 +1084,7 @@ p, li { white-space: pre-wrap; }
     <addaction name="menuDrift"/>
     <addaction name="menuTorsion"/>
     <addaction name="menuIrregularity"/>
+    <addaction name="action_show_aj"/>
    </widget>
    <widget class="QMenu" name="menuFile">
     <property name="title">
@@ -1157,6 +1158,7 @@ p, li { white-space: pre-wrap; }
    <addaction name="action_show_story_stiffness"/>
    <addaction name="action_show_weakness"/>
    <addaction name="action_show_drift"/>
+   <addaction name="action_show_aj"/>
   </widget>
   <action name="action_to_etabs">
    <property name="icon">
@@ -1347,6 +1349,15 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Show Story Stiffness</string>
+   </property>
+  </action>
+  <action name="action_show_aj">
+   <property name="icon">
+    <iconset resource="../resource.qrc">
+     <normaloff>:/cfactor/images/show_aj.svg</normaloff>:/cfactor/images/show_aj.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show Aj</string>
    </property>
   </action>
  </widget>

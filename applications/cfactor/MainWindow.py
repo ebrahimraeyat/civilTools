@@ -66,7 +66,7 @@ class Ui(QMainWindow, main_window):
         self.action_get_story_stiffness.triggered.connect(self.get_story_stiffness_table)
         self.action_show_story_stiffness.triggered.connect(self.show_story_stiffness_table)
         self.action_get_irregularity_of_mass.triggered.connect(self.get_irregularity_of_mass)
-
+        self.action_show_aj.triggered.connect(self.show_aj_table)
 
     def create_connections(self):
         self.calculate_button.clicked.connect(self.calculate)
@@ -394,6 +394,22 @@ class Ui(QMainWindow, main_window):
         from etabs_api import functions, table_model
         data, headers = functions.get_diaphragm_max_over_avg_drifts()
         table_model.show_results(data, headers, table_model.TorsionModel, functions.show_point)
+        self.show_warning_about_number_of_use(check)
+    
+    def show_aj_table(self):
+        allow, check = self.allowed_to_continue(
+            'torsion.bin',
+            'https://gist.githubusercontent.com/ebrahimraeyat/d1591790a52a62b3e66bb70f45738105/raw',
+            'cfactor',
+            n=2,
+            )
+        if not allow:
+            return
+        if not self.is_etabs_running():
+            return
+        from etabs_api import functions, table_model
+        data, headers = functions.get_magnification_coeff_aj()
+        table_model.show_results(data, headers, table_model.AjModel)
         self.show_warning_about_number_of_use(check)
     
     def get_weakness_ratio(self):

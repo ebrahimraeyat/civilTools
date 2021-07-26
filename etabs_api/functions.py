@@ -1,5 +1,6 @@
 from os.path import sameopenfile
 import os
+import sys
 import comtypes.client
 from pathlib import Path
 
@@ -679,7 +680,40 @@ def show_point(story, label, SapModel=None):
     SapModel.View.RefreshView()
     return True
     
-
+def get_magnification_coeff_aj(SapModel=None):
+    sys.path.insert(0, str(civiltools_path))
+    from etabs_api import geometry
+    if not SapModel:
+        etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
+        SapModel = etabs.SapModel
+    x_names, y_names = get_load_patterns_in_XYdirection(SapModel)
+    story_length = geometry.get_stories_length(SapModel)
+    data, headers = get_diaphragm_max_over_avg_drifts(SapModel)
+    i_ratio = headers.index('Ratio')
+    i_story = headers.index('Story')
+    i_case = headers.index('OutputCase')
+    for d in data:
+        ratio = float(d[i_ratio])
+        story_name = d[i_story]
+        loadcase = d[i_case]
+        aj = (ratio / 1.2) ** 2
+        if aj < 1:
+            aj = 1
+        elif aj > 3:
+            aj = 3
+        ecc_ratio = aj * .05
+        length = story_length[story_name]
+        if loadcase in x_names:
+            len = length[1]
+            dir_ = 'X'
+        elif loadcase in y_names:
+            len = length[0]
+            dir_ = 'Y'
+        ecc_len = ecc_ratio * len
+        d.extend([aj, str(ecc_ratio), len, ecc_len, dir_])
+    headers = headers + ('aj', 'Ecc. Ratio', 'Length (Cm)', 'Ecc. Length (Cm)', 'Dir')
+    return data, headers
+        
 class Build:
     def __init__(self):
         self.kx = 1
