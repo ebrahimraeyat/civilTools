@@ -180,6 +180,7 @@ def get_columns_pmm_and_beams_rebars(SapModel, frame_names):
     set_frame_obj_selected(SapModel, frame_names)
     if not SapModel.DesignConcrete.GetResultsAvailable():
         print('Start Design ...')
+        set_load_cases_to_analyze(SapModel)
         SapModel.DesignConcrete.StartDesign()
     SapModel.SetPresentUnits_2(5, 5, 2)
     beams, columns = functions.get_beams_columns(SapModel)
@@ -455,10 +456,10 @@ def add_points_in_center_of_rigidity_and_assign_diph(SapModel):
         story_point_in_center_of_rigidity[story] = point_name
     return story_point_in_center_of_rigidity
 
-def set_load_cases_to_analyze(SapModel, load_cases):
+def set_load_cases_to_analyze(SapModel, load_cases='All'):
     all_load_case = SapModel.Analyze.GetCaseStatus()[1]
     for lc in all_load_case:
-        if not lc in load_cases:
+        if not load_cases == 'All' and not lc in load_cases:
             SapModel.Analyze.SetRunCaseFlag(lc, False)
         else:
             SapModel.Analyze.SetRunCaseFlag(lc, True)
