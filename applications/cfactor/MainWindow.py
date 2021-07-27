@@ -573,7 +573,7 @@ class Ui(QMainWindow, main_window):
             self.storySpinBox.setValue(no_of_stories)
             self.HSpinBox.setValue(height)
             if create_t_file:
-                drifts, headers = functions.calculate_drifts(self, no_of_stories, etabs, loadcases)
+                drifts, headers = functions.calculate_drifts(self, no_of_stories, etabs, loadcases=loadcases)
             else:
                 cdx = self.final_building.x_system.cd
                 cdy = self.final_building.y_system.cd

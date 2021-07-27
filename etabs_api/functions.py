@@ -46,6 +46,14 @@ def close_etabs(ETABSObject):
     SapModel = None
     ETABSObject = None
 
+def set_load_cases_to_analyze(SapModel, load_cases='All'):
+    all_load_case = SapModel.Analyze.GetCaseStatus()[1]
+    for lc in all_load_case:
+        if not load_cases == 'All' and not lc in load_cases:
+            SapModel.Analyze.SetRunCaseFlag(lc, False)
+        else:
+            SapModel.Analyze.SetRunCaseFlag(lc, True)
+
 def get_load_patterns(SapModel):
     return SapModel.LoadPatterns.GetNameList(0, [])[1]
 
@@ -311,15 +319,7 @@ def get_drift_periods(
     t_file_path = dir_path / t_filename
     print(f"Saving file as {t_file_path}\n")
     SapModel.File.Save(str(t_file_path))
-    # print("Get beams and columns\n")
-    # beams, columns = get_beams_columns(SapModel)
     print("get frame property modifiers and change I values\n")
-    # TableKey = "Frame Assignments - Property Modifiers"
-    # [_, TableVersion, FieldsKeysIncluded, NumberRecords, TableData, _] = read_table(TableKey, SapModel)
-    # data = reshape_data(FieldsKeysIncluded, TableData)
-    # i_name = FieldsKeysIncluded.index("UniqueName")
-    # i_I2Mod = FieldsKeysIncluded.index("I2Mod")
-    # i_I3Mod = FieldsKeysIncluded.index("I3Mod")
     IMod_beam = 0.5
     IMod_col_wall = 1
     for label in SapModel.FrameObj.GetLabelNameList()[1]:
@@ -334,6 +334,8 @@ def get_drift_periods(
 
     # run model (this will create the analysis model)
     print("start running T file analysis")
+    modal_case = get_modal_loadcase_name(SapModel)
+    set_load_cases_to_analyze(SapModel, modal_case)
     SapModel.Analyze.RunAnalysis()
 
     TableKey = "Modal Participating Mass Ratios"
@@ -561,10 +563,14 @@ def calculate_drifts(
     if not no_story:
         no_story = widget.storySpinBox.value()
     get_drift_periods_calculate_cfactor_and_apply_to_edb(widget, etabs)
+    if loadcases:
+        set_load_cases_to_analyze(SapModel, loadcases)
     SapModel.Analyze.RunAnalysis()
+    if loadcases:
+        set_load_cases_to_analyze(SapModel)
     cdx = widget.final_building.x_system.cd
     cdy = widget.final_building.y_system.cd
-    drifts, headers = get_drifts(no_story, cdx, cdy, )
+    drifts, headers = get_drifts(no_story, cdx, cdy, etabs, loadcases)
     return drifts, headers
 
 def is_etabs_running():
