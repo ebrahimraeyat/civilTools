@@ -53,7 +53,6 @@ class Ui(QMainWindow, main_window):
 
     def add_actions(self):
         self.action_to_etabs.triggered.connect(self.export_to_etabs)
-        self.action_show_drift.triggered.connect(self.show_drifts)
         self.action_automatic_drift.triggered.connect(self.get_drift_automatically)
         self.action_open.triggered.connect(self.load)
         self.action_save.triggered.connect(self.save)
@@ -545,38 +544,6 @@ class Ui(QMainWindow, main_window):
         table_model.show_results(data, headers, table_model.StoryForcesModel)
         self.show_warning_about_number_of_use(check)
 
-    def show_drifts(self):
-        allow, check = self.allowed_to_continue(
-            'show_drifts.bin',
-            'https://gist.githubusercontent.com/ebrahimraeyat/7f10571fab2a08b7a17ab782778e53e1/raw',
-            'cfactor'
-            )
-        if not allow:
-            return
-        if not self.is_etabs_running():
-            return
-        from etabs_api import functions, table_model
-        no_story = self.storySpinBox.value()
-        cdx = self.final_building.x_system.cd
-        cdy = self.final_building.y_system.cd
-        data, headers = functions.get_drifts(no_story, cdx, cdy)
-        if data == 'not analyzed':
-            text = "Structure did not analyzed, Do you want to run analysis?"
-            title = "analysis"
-            ret = self.ok_to_continue(title, text)
-            if ret == QMessageBox.Yes:
-                import comtypes.client
-                etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
-                SapModel = etabs.SapModel
-                SapModel.Analyze.RunAnalysis()
-            return None
-        elif not data:
-            err = "Please select at least one load case in ETABS table"
-            QMessageBox.critical(self, "Error", str(err))
-            return None
-        table_model.show_results(data, headers, table_model.DriftModel)
-        self.show_warning_about_number_of_use(check)
-
     def get_drift_automatically(self):
         allow, check = self.allowed_to_continue(
             'show_drifts.bin',
@@ -592,14 +559,25 @@ class Ui(QMainWindow, main_window):
         etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
         SapModel = etabs.SapModel
         stories = SapModel.Story.GetStories()[1]
-        from py_widget import top_bot_story as story
-        story_win = story.StoryForm(SapModel, stories)
+        from py_widget import drift
+        story_win = drift.StoryForm(SapModel, stories)
         if story_win.exec_():
             no_of_stories = story_win.no_story_x_spinbox.value()
             height = story_win.height_x_spinbox.value()
+            create_t_file = story_win.create_t_file_box.isChecked()
+            x_items = story_win.x_loadcase_list.selectedItems()
+            y_items = story_win.y_loadcase_list.selectedItems()
+            loadcases = []
+            for item in (x_items + y_items):
+                loadcases.append(item.text())
             self.storySpinBox.setValue(no_of_stories)
             self.HSpinBox.setValue(height)
-            drifts, headers = functions.calculate_drifts(self, no_of_stories, etabs)
+            if create_t_file:
+                drifts, headers = functions.calculate_drifts(self, no_of_stories, etabs, loadcases)
+            else:
+                cdx = self.final_building.x_system.cd
+                cdy = self.final_building.y_system.cd
+                drifts, headers = functions.get_drifts(no_of_stories, cdx, cdy, etabs, loadcases)
             table_model.show_results(drifts, headers, table_model.DriftModel)
             self.show_warning_about_number_of_use(check)
         else:

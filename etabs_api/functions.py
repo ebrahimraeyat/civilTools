@@ -311,43 +311,34 @@ def get_drift_periods(
     t_file_path = dir_path / t_filename
     print(f"Saving file as {t_file_path}\n")
     SapModel.File.Save(str(t_file_path))
-    print("Get beams and columns\n")
-    beams, columns = get_beams_columns(SapModel)
+    # print("Get beams and columns\n")
+    # beams, columns = get_beams_columns(SapModel)
     print("get frame property modifiers and change I values\n")
-    TableKey = "Frame Assignments - Property Modifiers"
-    [_, TableVersion, FieldsKeysIncluded, NumberRecords, TableData, _] = read_table(TableKey, SapModel)
-    data = reshape_data(FieldsKeysIncluded, TableData)
-    i_name = FieldsKeysIncluded.index("UniqueName")
-    i_I2Mod = FieldsKeysIncluded.index("I2Mod")
-    i_I3Mod = FieldsKeysIncluded.index("I3Mod")
-    IMod_beam = "0.5"
-    IMod_col_wall = "1"
-    for frame_assign in data:
-        name = frame_assign[i_name]
-        if name in beams:
-            IMod = IMod_beam
-        elif name in columns:
-            IMod = IMod_col_wall
-        frame_assign[i_I2Mod] = IMod
-        frame_assign[i_I3Mod] = IMod
-
-    TableData1 = unique_data(data)
-    FieldsKeysIncluded = ('Story', 'Label', 'UniqueName', 'Area Modifier', 'As2 Modifier', 'As3 Modifier', 'J Modifier', 'I22 Modifier', 'I33 Modifier', 'Mass Modifier', 'Weight Modifier')
-    SapModel.DatabaseTables.SetTableForEditingArray(TableKey, TableVersion, FieldsKeysIncluded, NumberRecords, TableData1)
-    print("apply table\n")
-    log, ret = apply_table(SapModel)
-    print(f"number errors, ret = {log}, {ret}")
-    # print(log)
+    # TableKey = "Frame Assignments - Property Modifiers"
+    # [_, TableVersion, FieldsKeysIncluded, NumberRecords, TableData, _] = read_table(TableKey, SapModel)
+    # data = reshape_data(FieldsKeysIncluded, TableData)
+    # i_name = FieldsKeysIncluded.index("UniqueName")
+    # i_I2Mod = FieldsKeysIncluded.index("I2Mod")
+    # i_I3Mod = FieldsKeysIncluded.index("I3Mod")
+    IMod_beam = 0.5
+    IMod_col_wall = 1
+    for label in SapModel.FrameObj.GetLabelNameList()[1]:
+        if SapModel.FrameObj.GetDesignProcedure(label)[0] == 2:  # concrete
+            if SapModel.FrameObj.GetDesignOrientation(label)[0] == 1:   # Beam
+                IMod = IMod_beam
+            elif SapModel.FrameObj.GetDesignOrientation(label)[0] in (2, 5): # Column, other, but not brace and null
+                IMod = IMod_col_wall
+            modifiers = list(SapModel.FrameObj.GetModifiers(label)[0])
+            modifiers[4:6] = [IMod, IMod]
+            SapModel.FrameObj.SetModifiers(label, modifiers)
 
     # run model (this will create the analysis model)
     print("start running T file analysis")
     SapModel.Analyze.RunAnalysis()
 
     TableKey = "Modal Participating Mass Ratios"
-    [_, TableVersion, FieldsKeysIncluded, NumberRecords, TableData, _] = read_table(TableKey, SapModel)
+    [_, _, FieldsKeysIncluded, _, TableData, _] = read_table(TableKey, SapModel)
     SapModel.SetModelIsLocked(False)
-
-    data = reshape_data(FieldsKeysIncluded, TableData)
     ux_i = FieldsKeysIncluded.index("UX")
     uy_i = FieldsKeysIncluded.index("UY")
     period_i = FieldsKeysIncluded.index("Period")
@@ -372,7 +363,6 @@ def get_diaphragm_max_over_avg_drifts(
         SapModel = etabs.SapModel
     if not SapModel.GetModelIsLocked():
         return None
-    x_names, y_names = get_load_patterns_in_XYdirection(SapModel)
     if not loadcases:
         xy_names = get_xy_seismic_load_patterns(SapModel)
         all_load_case_names = get_load_cases(SapModel)
@@ -388,6 +378,7 @@ def get_diaphragm_max_over_avg_drifts(
     except ValueError:
         return None
     new_data = []
+    x_names, y_names = get_load_patterns_in_XYdirection(SapModel)
     for row in data:
         name = row[case_name_index]
         if row[item_index].endswith("X"):
@@ -399,7 +390,7 @@ def get_diaphragm_max_over_avg_drifts(
         new_data.append(row)
     return new_data, FieldsKeysIncluded
 
-def get_drifts(no_story, cdx, cdy, etabs=None):
+def get_drifts(no_story, cdx, cdy, etabs=None, loadcases=None):
     if not etabs:
         etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
     SapModel = etabs.SapModel
@@ -409,11 +400,12 @@ def get_drifts(no_story, cdx, cdy, etabs=None):
     # ret = SapModel.Analyze.RunAnalysis()
     # if ret != 0:
     #     raise RuntimeError
-    drift_load_pattern_names = get_drift_load_pattern_names(SapModel)
-    all_load_case_names = get_load_cases(SapModel)
-    names = [i for i in drift_load_pattern_names if i in all_load_case_names]
-    print(names)
-    select_load_cases(SapModel, names)
+    if not loadcases:
+        drift_load_pattern_names = get_drift_load_pattern_names(SapModel)
+        all_load_case_names = get_load_cases(SapModel)
+        loadcases = [i for i in drift_load_pattern_names if i in all_load_case_names]
+    print(loadcases)
+    select_load_cases(SapModel, loadcases)
     TableKey = 'Diaphragm Max Over Avg Drifts'
     [_, _, FieldsKeysIncluded, _, TableData, _] = read_table(TableKey, SapModel)
     data = reshape_data(FieldsKeysIncluded, TableData)
@@ -555,6 +547,7 @@ def calculate_drifts(
             etabs=None,
             auto_no_story=False,
             auto_height=False,
+            loadcases=None,
             ):
     if not etabs:
         etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
@@ -571,7 +564,7 @@ def calculate_drifts(
     SapModel.Analyze.RunAnalysis()
     cdx = widget.final_building.x_system.cd
     cdy = widget.final_building.y_system.cd
-    drifts, headers = get_drifts(no_story, cdx, cdy)
+    drifts, headers = get_drifts(no_story, cdx, cdy, )
     return drifts, headers
 
 def is_etabs_running():

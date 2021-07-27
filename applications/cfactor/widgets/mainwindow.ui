@@ -1059,13 +1059,6 @@ p, li { white-space: pre-wrap; }
      <addaction name="action_get_weakness"/>
      <addaction name="action_show_weakness"/>
     </widget>
-    <widget class="QMenu" name="menuDrift">
-     <property name="title">
-      <string>Drift</string>
-     </property>
-     <addaction name="action_show_drift"/>
-     <addaction name="action_automatic_drift"/>
-    </widget>
     <widget class="QMenu" name="menuIrregularity">
      <property name="title">
       <string>Irregularity</string>
@@ -1081,9 +1074,9 @@ p, li { white-space: pre-wrap; }
      <addaction name="menuStiffness"/>
     </widget>
     <addaction name="action_to_etabs"/>
-    <addaction name="menuDrift"/>
     <addaction name="menuTorsion"/>
     <addaction name="menuIrregularity"/>
+    <addaction name="action_automatic_drift"/>
     <addaction name="action_show_aj"/>
    </widget>
    <widget class="QMenu" name="menuFile">
@@ -1157,7 +1150,6 @@ p, li { white-space: pre-wrap; }
    <addaction name="separator"/>
    <addaction name="action_show_story_stiffness"/>
    <addaction name="action_show_weakness"/>
-   <addaction name="action_show_drift"/>
    <addaction name="action_show_aj"/>
   </widget>
   <action name="action_to_etabs">
@@ -1169,18 +1161,6 @@ p, li { white-space: pre-wrap; }
     <string>Export to Etabs</string>
    </property>
   </action>
-  <action name="action_show_drift">
-   <property name="icon">
-    <iconset resource="../resource.qrc">
-     <normaloff>:/cfactor/images/drift.svg</normaloff>:/cfactor/images/drift.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Show Drift</string>
-   </property>
-   <property name="toolTip">
-    <string>کنترل دریفت</string>
-   </property>
-  </action>
   <action name="action_automatic_drift">
    <property name="enabled">
     <bool>true</bool>
@@ -1190,7 +1170,7 @@ p, li { white-space: pre-wrap; }
      <normaloff>:/cfactor/images/automatic_drift.svg</normaloff>:/cfactor/images/automatic_drift.svg</iconset>
    </property>
    <property name="text">
-    <string>Automatic Drift</string>
+    <string>Drift</string>
    </property>
   </action>
   <action name="action_open">
