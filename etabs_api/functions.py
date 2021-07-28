@@ -236,15 +236,6 @@ def get_story_names(SapModel=None):
     
 def select_all_load_patterns(SapModel):
     load_pattern_names = list(get_load_patterns(SapModel))
-    # if not SapModel.GetModelIsLocked():
-    #     names = tuple(load_pattern_names)
-    #     for name in names:
-    #         if all((
-    #             '(' in name,
-    #             '/' in name,
-    #             ')' in name,
-    #         )):
-    #             load_pattern_names.remove(name)
     SapModel.DatabaseTables.SetLoadPatternsSelectedForDisplay(load_pattern_names)
 
 def is_auto_load_yes_in_seismic_load_patterns(TableData, FieldsKeysIncluded) -> bool:
@@ -364,12 +355,13 @@ def get_diaphragm_max_over_avg_drifts(
         etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
         SapModel = etabs.SapModel
     if not SapModel.GetModelIsLocked():
-        return None
+        SapModel.Analyze.RunAnalysis()
     if not loadcases:
         xy_names = get_xy_seismic_load_patterns(SapModel)
         all_load_case_names = get_load_cases(SapModel)
         loadcases = [i for i in xy_names if i in all_load_case_names]
     print(loadcases)
+    x_names, y_names = get_load_patterns_in_XYdirection(SapModel)
     select_load_cases(SapModel, loadcases)
     TableKey = 'Diaphragm Max Over Avg Drifts'
     [_, _, FieldsKeysIncluded, _, TableData, _] = read_table(TableKey, SapModel)
@@ -380,7 +372,6 @@ def get_diaphragm_max_over_avg_drifts(
     except ValueError:
         return None
     new_data = []
-    x_names, y_names = get_load_patterns_in_XYdirection(SapModel)
     for row in data:
         name = row[case_name_index]
         if row[item_index].endswith("X"):
@@ -397,11 +388,7 @@ def get_drifts(no_story, cdx, cdy, etabs=None, loadcases=None):
         etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
     SapModel = etabs.SapModel
     if not SapModel.GetModelIsLocked():
-        return 'not analyzed', None
-    # SapModel.SetModelIsLocked(False)
-    # ret = SapModel.Analyze.RunAnalysis()
-    # if ret != 0:
-    #     raise RuntimeError
+        SapModel.Analyze.RunAnalysis()
     if not loadcases:
         drift_load_pattern_names = get_drift_load_pattern_names(SapModel)
         all_load_case_names = get_load_cases(SapModel)
