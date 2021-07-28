@@ -400,6 +400,7 @@ class ResultWidget(result_base, result_window):
 
     def resize_columns(self):
         self.result_table_view.resizeColumnsToContents()
+        self.adjustSize()
         # width = 0
         # for col in range(len(self.model.df.columns)):
         #     width += self.result_table_view.columnWidth(col)

@@ -124,60 +124,11 @@ def get_base_react(SapModel=None):
     vy = base_react[5][1]
     return vx, vy
 
-def get_columns_pmm(SapModel, frame_names=None):
-    if not SapModel.GetModelIsLocked():
-        print('Run Alalysis ...')
-        SapModel.Analyze.RunAnalysis()
-    if frame_names:
-        for fname in frame_names:
-            SapModel.FrmeObj.SetSelected(fname, True)
-    if not SapModel.DesignConcrete.GetResultsAvailable():
-        print('Start Design ...')
-        SapModel.DesignConcrete.StartDesign()
-    _, columns = functions.get_beams_columns(SapModel)
-    columns_pmm = dict()
-    for col in columns:
-        if frame_names and not col in frame_names:
-            continue
-        pmm = max(SapModel.DesignConcrete.GetSummaryResultsColumn(col)[6])
-        columns_pmm[col] = round(pmm, 3)
-    return columns_pmm
-
-def get_beams_rebars(SapModel, frame_names=None):
-    SapModel.SetPresentUnits(units["kgf_cm_C"])
-    if not SapModel.GetModelIsLocked():
-        print('Run Alalysis ...')
-        SapModel.Analyze.RunAnalysis()
-    if frame_names:
-        for fname in frame_names:
-            SapModel.FrmeObj.SetSelected(fname, True)
-    if not SapModel.DesignConcrete.GetResultsAvailable():
-        print('Start Design ...')
-        SapModel.DesignConcrete.StartDesign()
-    beams, _ = functions.get_beams_columns(SapModel)
-    beams_rebars = []
-    for name in beams:
-        if frame_names and not name in frame_names:
-            continue
-        beam_rebars = SapModel.DesignConcrete.GetSummaryResultsBeam(name)
-        label, story, _ = SapModel.FrameObj.GetLabelFromName(name)
-        locations = beam_rebars[2]
-        top_area = beam_rebars[4]
-        bot_area = beam_rebars[6]
-        vrebar = beam_rebars[8]
-        for l, ta, ba, v in zip(locations, top_area, bot_area, vrebar):
-            beams_rebars.append((
-                story,
-                label,
-                l, ta, ba, v,
-                ))
-    return beams_rebars
-
 def get_columns_pmm_and_beams_rebars(SapModel, frame_names):
     if not SapModel.GetModelIsLocked():
         print('Run Alalysis ...')
         SapModel.Analyze.RunAnalysis()
-    set_frame_obj_selected(SapModel, frame_names)
+    # set_frame_obj_selected(SapModel, frame_names)
     if not SapModel.DesignConcrete.GetResultsAvailable():
         print('Start Design ...')
         set_load_cases_to_analyze(SapModel)
@@ -217,6 +168,8 @@ def multiply_seismic_loads(
     i_c = FieldsKeysIncluded.index('C')
     i_name = FieldsKeysIncluded.index("Name")
     for earthquake in data:
+        if not earthquake[i_c]:
+            continue
         name = earthquake[i_name]
         c = float(earthquake[i_c])
         cx = x * c
@@ -226,13 +179,7 @@ def multiply_seismic_loads(
         elif name in names_y:
             earthquake[i_c] = str(cy)
     TableData = functions.unique_data(data)
-    FieldsKeysIncluded1 = ['Name', 'Is Auto Load', 'X Dir?', 'X Dir Plus Ecc?', 'X Dir Minus Ecc?',
-                           'Y Dir?', 'Y Dir Plus Ecc?', 'Y Dir Minus Ecc?',
-                           'Ecc Ratio', 'Top Story', 'Bot Story',
-                           'C',
-                           'K']
-    SapModel.DatabaseTables.SetTableForEditingArray(TableKey, 0, FieldsKeysIncluded1, 0, TableData)
-    NumFatalErrors, ret = functions.apply_table(SapModel)
+    NumFatalErrors, ret = functions.write_seismic_user_coefficient(SapModel, TableKey, FieldsKeysIncluded, TableData)
     return NumFatalErrors, ret
 
 def set_end_release_frame(SapModel, name):

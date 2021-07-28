@@ -452,6 +452,8 @@ def apply_cfactor_to_tabledata(TableData, FieldsKeysIncluded, building, SapModel
     drift_load_pattern_names = get_drift_load_pattern_names(SapModel)
     i_name = FieldsKeysIncluded.index("Name")
     for earthquake in data:
+        if not earthquake[i_c]:
+            continue
         name = earthquake[i_name]
         if name in drift_load_pattern_names:
             if name in names_x:
@@ -497,6 +499,21 @@ def apply_section_props_to_tabledata(TableData, FieldsKeysIncluded, sections):
     table_data = unique_data(data)
     return table_data
 
+def write_seismic_user_coefficient(SapModel, TableKey, FieldsKeysIncluded, TableData):
+    FieldsKeysIncluded1 = ['Name', 'Is Auto Load', 'X Dir?', 'X Dir Plus Ecc?', 'X Dir Minus Ecc?',
+                           'Y Dir?', 'Y Dir Plus Ecc?', 'Y Dir Minus Ecc?',
+                           'Ecc Ratio', 'Top Story', 'Bot Story',
+                        ]   
+    if len(FieldsKeysIncluded) == len(FieldsKeysIncluded1) + 2:
+        FieldsKeysIncluded1.extend(['C', 'K'])
+    else:
+        FieldsKeysIncluded1.extend(['Ecc Overwrite Story', 'Ecc Overwrite Diaphragm',
+        'Ecc Overwrite Length', 'C', 'K'])
+    assert len(FieldsKeysIncluded) == len(FieldsKeysIncluded1)
+    SapModel.DatabaseTables.SetTableForEditingArray(TableKey, 0, FieldsKeysIncluded1, 0, TableData)
+    NumFatalErrors, ret = apply_table(SapModel)
+    return NumFatalErrors, ret
+
 def apply_cfactor_to_edb(
         building,
         ):
@@ -506,21 +523,12 @@ def apply_cfactor_to_edb(
     SapModel.SetModelIsLocked(False)
     select_all_load_patterns(SapModel)
     TableKey = 'Load Pattern Definitions - Auto Seismic - User Coefficient'
-    [_, TableVersion, FieldsKeysIncluded, NumberRecords, TableData, _] = read_table(TableKey, SapModel)
+    [_, _, FieldsKeysIncluded, _, TableData, _] = read_table(TableKey, SapModel)
     # if is_auto_load_yes_in_seismic_load_patterns(TableData, FieldsKeysIncluded):
     #     return 1
     TableData = apply_cfactor_to_tabledata(TableData, FieldsKeysIncluded, building, SapModel)
-    # ('Name', 'IsAuto', 'XDir', 'XDirPlusE', 'XDirMinusE', 'YDir', 'YDirPlusE', 'YDirMinusE', 'EccRatio',
-    # 'TopStory', 'BotStory', 'OverStory', 'OverDiaph', 'OverEcc', 'C', 'K', 'WeightUsed', 'BaseShear')
-    FieldsKeysIncluded1 = ['Name', 'Is Auto Load', 'X Dir?', 'X Dir Plus Ecc?', 'X Dir Minus Ecc?',
-                           'Y Dir?', 'Y Dir Plus Ecc?', 'Y Dir Minus Ecc?',
-                           'Ecc Ratio', 'Top Story', 'Bot Story',
-                           'C',
-                           'K']
-    SapModel.DatabaseTables.SetTableForEditingArray(TableKey, TableVersion, FieldsKeysIncluded1, NumberRecords, TableData)
-    NumFatalErrors, ret = apply_table(SapModel)
+    NumFatalErrors, ret = write_seismic_user_coefficient(SapModel, TableKey, FieldsKeysIncluded, TableData)
     print(f"NumFatalErrors, ret = {NumFatalErrors}, {ret}")
-    SapModel.File.Save()
     return NumFatalErrors
 
 def apply_cfactor_to_edb_and_analyze(building):
@@ -728,7 +736,7 @@ class Build:
 if __name__ == '__main__':
     etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
     SapModel = etabs.SapModel
-    get_top_bot_stories(SapModel)
+    apply_cfactor_to_edb()(SapModel)
     # TableKey = 'Frame Section Property Definitions - Summary'
     # [_, TableVersion, FieldsKeysIncluded, NumberRecords, TableData, _] = read_table(TableKey, SapModel)
     # get_load_patterns(SapModel)
