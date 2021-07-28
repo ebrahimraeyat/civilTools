@@ -14,6 +14,9 @@ civiltools_path = Path(__file__).parent.parent
 sys.path.insert(0, str(civiltools_path))
 result_window, result_base = uic.loadUiType(str(civiltools_path / 'widgets' / 'results.ui'))
 
+low = 'cyan'
+intermediate = 'yellow'
+high = 'red'
 
 def color_map_color(value, norm, cmap_name='rainbow'):
     cmap = cm.get_cmap(cmap_name)  # PiYG
@@ -72,9 +75,9 @@ class DriftModel(ResultsModel):
             elif role == Qt.BackgroundColorRole:
                 if col in (avg_i, max_i):
                     if float(value) > allow_drift:
-                        return QColor('red')
+                        return QColor(high)
                     else:
-                        return QColor('green')
+                        return QColor(low)
             elif role == Qt.TextAlignmentRole:
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
 
@@ -108,9 +111,9 @@ class TorsionModel(ResultsModel):
                 if value <= 1.2:
                     return QColor('cyan')
                 elif 1.2 < value < 1.4:
-                    return QColor('yellow')
+                    return QColor(intermediate)
                 elif value > 1.4:
-                    return QColor('red')
+                    return QColor(high)
             elif role == Qt.TextAlignmentRole:
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
 
@@ -187,9 +190,9 @@ class StoryForcesModel(ResultsModel):
                 fx_Percentage = float(self.df.iloc[row][i_vx])
                 fy_Percentage = float(self.df.iloc[row][i_vy])
                 if max(fx_Percentage, fy_Percentage) >= .35:
-                    return QColor('yellow')
+                    return QColor(intermediate)
                 else:
-                    return QColor('green')
+                    return QColor(low)
             elif role == Qt.TextAlignmentRole:
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
 
@@ -211,9 +214,9 @@ class ColumnsRatioModel(ResultsModel):
             elif role == Qt.BackgroundColorRole:
                 ratio = float(self.df.iloc[row]['Ratio'])
                 if ratio > 1:
-                    return QColor('red')
+                    return QColor(high)
                 else:
-                    return QColor('green')
+                    return QColor(low)
             elif role == Qt.TextAlignmentRole:
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
 
@@ -257,19 +260,19 @@ class BeamsRebarsModel(ResultsModel):
             elif role == Qt.BackgroundColorRole:
                 if col in (self.i_ta1, self.i_ta2):
                     if float(self.df.iloc[row][self.i_ta2]) > float(self.df.iloc[row][self.i_ta1]) * 1.02:
-                        return QColor('red')
+                        return QColor(high)
                     else:
-                        return QColor('green')
+                        return QColor(low)
                 if col in (self.i_ba1, self.i_ba2):
                     if float(self.df.iloc[row][self.i_ba2]) > float(self.df.iloc[row][self.i_ba1]) * 1.02:
-                        return QColor('red')
+                        return QColor(high)
                     else:
-                        return QColor('green')
+                        return QColor(low)
                 if col in (self.i_v1, self.i_v2):
                     if float(self.df.iloc[row][self.i_v2]) > float(self.df.iloc[row][self.i_v1]) * 1.02:
-                        return QColor('red')
+                        return QColor(high)
                     else:
-                        return QColor('green')
+                        return QColor(low)
             elif role == Qt.TextAlignmentRole:
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
 
@@ -295,9 +298,9 @@ class IrregularityOfMassModel(ResultsModel):
                 if col in (self.i_below, self.i_above):
                     if float(self.df.iloc[row][self.i_mass_x]) > \
                         float(self.df.iloc[row][col]):
-                        return QColor('red')
+                        return QColor(high)
                     else:
-                        return QColor('green')
+                        return QColor(low)
             elif role == Qt.TextAlignmentRole:
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
 
@@ -351,11 +354,11 @@ class StoryStiffnessModel(ResultsModel):
             return None
         k = float(k)
         if k < a:
-            return QColor('red')
+            return QColor(high)
         elif k < b:
-            return QColor('yellow')
+            return QColor(intermediate)
         else:
-            return QColor('green')
+            return QColor(low)
 
 
 class ResultWidget(result_base, result_window):
