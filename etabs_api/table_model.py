@@ -379,6 +379,7 @@ class ResultWidget(result_base, result_window):
         self.horizontalHeader = self.result_table_view.horizontalHeader()
         self.horizontalHeader.sectionClicked.connect(self.on_view_horizontalHeader_sectionClicked)
         self.push_button_to_excel.clicked.connect(self.export_to_excel)
+        self.resize_columns()
         if self.function:
             self.result_table_view.clicked.connect(self.row_clicked)
 
@@ -396,6 +397,14 @@ class ResultWidget(result_base, result_window):
             return
         with pd.ExcelWriter(filename) as writer:
                 self.model.df.to_excel(writer, sheet_name='drift_results')
+
+    def resize_columns(self):
+        self.result_table_view.resizeColumnsToContents()
+        # width = 0
+        # for col in range(len(self.model.df.columns)):
+        #     width += self.result_table_view.columnWidth(col)
+        # self.result_table_view.setFixedWidth(width)
+
 
     @QtCore.pyqtSlot(int)
     def on_view_horizontalHeader_sectionClicked(self, logicalIndex):

@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1229</width>
+    <width>802</width>
     <height>809</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Results</string>
@@ -79,7 +85,11 @@
     </layout>
    </item>
    <item>
-    <widget class="QTableView" name="result_table_view"/>
+    <widget class="QTableView" name="result_table_view">
+     <property name="sizeAdjustPolicy">
+      <enum>QAbstractScrollArea::AdjustToContents</enum>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
