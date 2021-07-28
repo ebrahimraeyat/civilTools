@@ -1,6 +1,8 @@
 import sys
 from pathlib import Path
 
+from PyQt5 import QtCore
+
 from PyQt5 import uic
 from PyQt5.QtCore import Qt
 
@@ -27,13 +29,19 @@ class StoryForm(story_base, story_window):
         drift_load_patterns = functions.get_drift_load_pattern_names(self.SapModel)
         self.x_loadcase_list.addItems(x_names)
         self.y_loadcase_list.addItems(y_names)
+        items = []
+        for lw in (self.x_loadcase_list, self.y_loadcase_list):
+            for i in range(lw.count()):
+                item = lw.item(i)
+                item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
+                item.setCheckState(Qt.Unchecked)
         for name in drift_load_patterns:
             if name in x_names:
                 matching_items = self.x_loadcase_list.findItems(name, Qt.MatchExactly)
             elif name in y_names:
                 matching_items = self.y_loadcase_list.findItems(name, Qt.MatchExactly)
             for item in matching_items:
-                item.setSelected(True)
+                item.setCheckState(Qt.Checked)
 
     def fill_top_bot_stories(self):
         for combo_box in (

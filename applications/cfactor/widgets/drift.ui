@@ -144,7 +144,7 @@
      <item row="5" column="1">
       <widget class="QListWidget" name="x_loadcase_list">
        <property name="selectionMode">
-        <enum>QAbstractItemView::ExtendedSelection</enum>
+        <enum>QAbstractItemView::NoSelection</enum>
        </property>
        <property name="sortingEnabled">
         <bool>true</bool>
@@ -154,7 +154,7 @@
      <item row="5" column="2">
       <widget class="QListWidget" name="y_loadcase_list">
        <property name="selectionMode">
-        <enum>QAbstractItemView::ExtendedSelection</enum>
+        <enum>QAbstractItemView::NoSelection</enum>
        </property>
        <property name="sortingEnabled">
         <bool>true</bool>

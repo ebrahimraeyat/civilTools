@@ -560,16 +560,17 @@ class Ui(QMainWindow, main_window):
         SapModel = etabs.SapModel
         stories = SapModel.Story.GetStories()[1]
         from py_widget import drift
-        story_win = drift.StoryForm(SapModel, stories)
-        if story_win.exec_():
-            no_of_stories = story_win.no_story_x_spinbox.value()
-            height = story_win.height_x_spinbox.value()
-            create_t_file = story_win.create_t_file_box.isChecked()
-            x_items = story_win.x_loadcase_list.selectedItems()
-            y_items = story_win.y_loadcase_list.selectedItems()
+        drift_win = drift.StoryForm(SapModel, stories)
+        if drift_win.exec_():
+            no_of_stories = drift_win.no_story_x_spinbox.value()
+            height = drift_win.height_x_spinbox.value()
+            create_t_file = drift_win.create_t_file_box.isChecked()
             loadcases = []
-            for item in (x_items + y_items):
-                loadcases.append(item.text())
+            for lw in (drift_win.x_loadcase_list, drift_win.y_loadcase_list):
+                for i in range(lw.count()):
+                    item = lw.item(i)
+                    if item.checkState() == Qt.Checked:
+                        loadcases.append(item.text())
             self.storySpinBox.setValue(no_of_stories)
             self.HSpinBox.setValue(height)
             if create_t_file:
