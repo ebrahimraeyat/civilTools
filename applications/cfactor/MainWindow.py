@@ -65,7 +65,7 @@ class Ui(QMainWindow, main_window):
         self.action_get_story_stiffness.triggered.connect(self.get_story_stiffness_table)
         self.action_show_story_stiffness.triggered.connect(self.show_story_stiffness_table)
         self.action_get_irregularity_of_mass.triggered.connect(self.get_irregularity_of_mass)
-        self.action_show_aj.triggered.connect(self.show_aj_table)
+        self.action_show_aj.triggered.connect(self.aj)
 
     def create_connections(self):
         self.calculate_button.clicked.connect(self.calculate)
@@ -391,7 +391,7 @@ class Ui(QMainWindow, main_window):
         if not self.is_etabs_running():
             return
         from etabs_api import functions, table_model
-        data, headers = functions.get_diaphragm_max_over_avg_drifts()
+        data, headers = functions.get_diaphragm_max_over_avg_drifts(only_ecc=True)
         table_model.show_results(data, headers, table_model.TorsionModel, functions.show_point)
         self.show_warning_about_number_of_use(check)
     
@@ -581,6 +581,52 @@ class Ui(QMainWindow, main_window):
                 drifts, headers = functions.get_drifts(no_of_stories, cdx, cdy, etabs, loadcases)
             table_model.show_results(drifts, headers, table_model.DriftModel)
             self.show_warning_about_number_of_use(check)
+        else:
+            return
+    
+    def aj(self):
+        allow, check = self.allowed_to_continue(
+            'export_to_etabs.bin',
+            'https://gist.githubusercontent.com/ebrahimraeyat/7f10571fab2a08b7a17ab782778e53e1/raw',
+            'cfactor'
+            )
+        if not allow:
+            return
+        if not self.is_etabs_running():
+            return
+        from etabs_api import functions, table_model
+        import comtypes.client
+        etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
+        SapModel = etabs.SapModel
+        from py_widget import aj_correction
+        aj_win = aj_correction.AjForm(SapModel)
+        if aj_win.exec_():
+            # no_of_stories = drift_win.no_story_x_spinbox.value()
+            # height = drift_win.height_x_spinbox.value()
+            # create_t_file = drift_win.create_t_file_box.isChecked()
+            # loadcases = []
+            # for lw in (drift_win.x_loadcase_list, drift_win.y_loadcase_list):
+            #     for i in range(lw.count()):
+            #         item = lw.item(i)
+            #         if item.checkState() == Qt.Checked:
+            #             loadcases.append(item.text())
+            # self.storySpinBox.setValue(no_of_stories)
+            # self.HSpinBox.setValue(height)
+            # if create_t_file:
+            #     drifts, headers = functions.calculate_drifts(self, no_of_stories, etabs, loadcases=loadcases)
+            # else:
+            #     cdx = self.final_building.x_system.cd
+            #     cdy = self.final_building.y_system.cd
+            #     drifts, headers = functions.get_drifts(no_of_stories, cdx, cdy, etabs, loadcases)
+            # table_model.show_results(drifts, headers, table_model.DriftModel)
+            # self.show_warning_about_number_of_use(check)
+            # print(aj_win.model.df)
+            import pandas as pd
+            # ds = pd.HDFStore('c:\\alaki\\aj_nazari.h5')
+            # ds['aj_nazari'] = aj_win.model.df
+            # ds.close()
+
+            return
         else:
             return
 

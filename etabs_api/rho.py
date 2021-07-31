@@ -362,20 +362,22 @@ def get_center_of_rigidity(SapModel):
     return story_rigidity
 
 
-def get_story_diaphragm(SapModel, story_name):
+def get_story_diaphragms(SapModel, story_name):
     '''
     Try to get Story diaphragm with point or area
     '''
+    diaphs = set()
     areas = SapModel.AreaObj.GetNameListOnStory(story_name)[1]
     for area in areas:
         diaph = SapModel.AreaObj.GetDiaphragm(area)[0]
         if diaph != 'None':
-            return diaph
+            diaphs.add(diaph)
     points = SapModel.PointObj.GetNameListOnStory(story_name)[1]
     for point in points:
         diaph = SapModel.PointObj.GetDiaphragm(point)[1]
         if diaph:
-            return diaph
+            diaphs.add(diaph)
+    return diaphs
 
 def disconnect_story_diaphragm(SapModel, story_name):
     areas = SapModel.AreaObj.GetNameListOnStory(story_name)[1]
@@ -398,7 +400,7 @@ def add_points_in_center_of_rigidity_and_assign_diph(SapModel):
     for story, (x, y) in story_rigidity.items():
         z = SapModel.story.GetElevation(story)[0]
         point_name = SapModel.PointObj.AddCartesian(float(x),float(y) , z)[0]  
-        diaph = get_story_diaphragm(SapModel, story)
+        diaph = get_story_diaphragms(SapModel, story).pop()
         SapModel.PointObj.SetDiaphragm(point_name, 3, diaph)
         story_point_in_center_of_rigidity[story] = point_name
     return story_point_in_center_of_rigidity
@@ -470,7 +472,7 @@ def add_load_case_in_center_of_rigidity(SapModel, story_name, x, y):
     SapModel.SetPresentUnits(7)
     z = SapModel.story.GetElevation(story_name)[0]
     point_name = SapModel.PointObj.AddCartesian(float(x),float(y) , z)[0]  
-    diaph = get_story_diaphragm(SapModel, story_name)
+    diaph = get_story_diaphragms(SapModel, story_name).pop()
     SapModel.PointObj.SetDiaphragm(point_name, 3, diaph)
     LTYPE_OTHER = 8
     lp_name = f'STIFFNESS_{story_name}'

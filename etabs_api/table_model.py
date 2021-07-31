@@ -118,52 +118,6 @@ class TorsionModel(ResultsModel):
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
 
 
-class AjModel(ResultsModel):
-    def __init__(self, data, headers):
-        super().__init__(data, headers)
-        self.df = self.df[[
-            'Story',
-            'OutputCase',
-            'Max Drift',
-            'Avg Drift',
-            'Label',
-            'Ratio',
-            'aj',
-            'Ecc. Ratio',
-            'Length (Cm)',
-            'Ecc. Length (Cm)',
-            'Dir',
-        ]]
-        self.headers = tuple(self.df.columns)
-        self.i_story = self.headers.index('Story')
-        self.story_colors = {}
-        stories = self.df['Story'].unique()
-        import random
-        for s in stories:
-            self.story_colors[s] = random.choices(range(256), k=3)
-
-    def data(self, index, role=Qt.DisplayRole):
-        row = index.row()
-        col = index.column()
-        i_aj = self.headers.index('aj')
-        i_ecc_ratio = self.headers.index('Ecc. Ratio')
-        i_len = self.headers.index('Length (Cm)')
-        i_ecc_len = self.headers.index('Ecc. Length (Cm)')
-        if index.isValid():
-            value = self.df.iloc[row][col]
-            if role == Qt.DisplayRole:
-                if col in (i_aj, i_ecc_ratio):
-                    return f'{float(value):.3f}'
-                elif col in (i_len, i_ecc_len):
-                    return f'{float(value):.0f}'
-                return str(value)
-            elif role == Qt.BackgroundColorRole:
-                story = self.df.iloc[row][self.i_story]
-                return QColor(*self.story_colors[story])
-            elif role == Qt.TextAlignmentRole:
-                return int(Qt.AlignCenter | Qt.AlignVCenter)
-
-
 class StoryForcesModel(ResultsModel):
     def __init__(self, data, headers):
         super(StoryForcesModel, self).__init__(data, headers)

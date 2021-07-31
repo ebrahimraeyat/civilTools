@@ -76,7 +76,7 @@ def get_drift_load_pattern_names(SapModel):
     '''
     return get_special_load_pattern_names(SapModel, 37)
 
-def get_load_patterns_in_XYdirection(SapModel):
+def get_load_patterns_in_XYdirection(SapModel, only_ecc=False):
     '''
     return list of load pattern names, x and y direction separately
     '''
@@ -95,6 +95,17 @@ def get_load_patterns_in_XYdirection(SapModel):
     names_y = set()
     for earthquake in data:
         name = earthquake[i_name]
+        if only_ecc:
+            if all((
+            earthquake[i_xdir] == 'Yes',
+            earthquake[i_xdir_minus] == 'No',
+            earthquake[i_xdir_plus] == 'No',
+            )) or all((
+            earthquake[i_ydir] == 'Yes',
+            earthquake[i_ydir_minus] == 'No',
+            earthquake[i_ydir_plus] == 'No',
+            )):
+                continue
         if any((
             earthquake[i_xdir] == 'Yes',
             earthquake[i_xdir_minus] == 'Yes',
@@ -150,8 +161,8 @@ def get_EX_EY_load_pattern(SapModel):
             break
     return name_x, name_y
 
-def get_xy_seismic_load_patterns(SapModel):
-    x_names, y_names = get_load_patterns_in_XYdirection(SapModel)
+def get_xy_seismic_load_patterns(SapModel, only_ecc=False):
+    x_names, y_names = get_load_patterns_in_XYdirection(SapModel, only_ecc)
     drift_load_pattern_names = get_drift_load_pattern_names(SapModel)
     xy_names = x_names.union(y_names).difference(drift_load_pattern_names)
     return xy_names
@@ -350,6 +361,7 @@ def get_drift_periods(
 def get_diaphragm_max_over_avg_drifts(
                 SapModel=None,
                 loadcases=[],
+                only_ecc=False,
                 ):
     if not SapModel:
         etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
@@ -357,7 +369,7 @@ def get_diaphragm_max_over_avg_drifts(
     if not SapModel.GetModelIsLocked():
         SapModel.Analyze.RunAnalysis()
     if not loadcases:
-        xy_names = get_xy_seismic_load_patterns(SapModel)
+        xy_names = get_xy_seismic_load_patterns(SapModel, only_ecc=True)
         all_load_case_names = get_load_cases(SapModel)
         loadcases = [i for i in xy_names if i in all_load_case_names]
     print(loadcases)
@@ -676,13 +688,13 @@ def show_point(story, label, SapModel=None):
     
 def get_magnification_coeff_aj(SapModel=None):
     sys.path.insert(0, str(civiltools_path))
-    from etabs_api import geometry
+    from etabs_api import geometry, rho
     if not SapModel:
         etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
         SapModel = etabs.SapModel
-    x_names, y_names = get_load_patterns_in_XYdirection(SapModel)
+    x_names, y_names = get_load_patterns_in_XYdirection(SapModel, only_ecc=True)
     story_length = geometry.get_stories_length(SapModel)
-    data, headers = get_diaphragm_max_over_avg_drifts(SapModel)
+    data, headers = get_diaphragm_max_over_avg_drifts(SapModel, only_ecc=True)
     i_ratio = headers.index('Ratio')
     i_story = headers.index('Story')
     i_case = headers.index('OutputCase')
@@ -704,10 +716,13 @@ def get_magnification_coeff_aj(SapModel=None):
             len = length[0]
             dir_ = 'Y'
         ecc_len = ecc_ratio * len
-        d.extend([aj, str(ecc_ratio), len, ecc_len, dir_])
-    headers = headers + ('aj', 'Ecc. Ratio', 'Length (Cm)', 'Ecc. Length (Cm)', 'Dir')
+        diaphs = rho.get_story_diaphragms(SapModel, story_name)
+        diaphs = ','.join(list(diaphs))
+        d.extend([aj, ecc_ratio, len, ecc_len, dir_, diaphs])
+    headers = headers + ('aj', 'Ecc. Ratio', 'Length (Cm)', 'Ecc. Length (Cm)', 'Dir', 'Diaph')
     return data, headers
-        
+
+
 class Build:
     def __init__(self):
         self.kx = 1
