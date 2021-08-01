@@ -513,6 +513,61 @@ def write_seismic_user_coefficient(SapModel, TableKey, FieldsKeysIncluded, Table
     NumFatalErrors, ret = apply_table(SapModel)
     return NumFatalErrors, ret
 
+def write_aj_user_coefficient(SapModel, TableKey, FieldsKeysIncluded, TableData, df):
+    if len(df) == 0: return
+    FieldsKeysIncluded1 = ['Name', 'Is Auto Load', 'X Dir?', 'X Dir Plus Ecc?', 'X Dir Minus Ecc?',
+                           'Y Dir?', 'Y Dir Plus Ecc?', 'Y Dir Minus Ecc?',
+                           'Ecc Ratio', 'Top Story', 'Bot Story', 'Ecc Overwrite Story',
+                           'Ecc Overwrite Diaphragm', 'Ecc Overwrite Length', 'C', 'K'
+                        ]
+    import pandas as pd
+    TableData = reshape_data(FieldsKeysIncluded, TableData)
+    df1 = pd.DataFrame.from_records(TableData, columns=FieldsKeysIncluded)
+    extra_fields = ('OverStory', 'OverDiaph', 'OverEcc')
+    if len(FieldsKeysIncluded) < len(FieldsKeysIncluded1):
+        i_ecc_ow_story = FieldsKeysIncluded1.index('Ecc Overwrite Story')
+        indexes = range(i_ecc_ow_story, i_ecc_ow_story + 3)
+        for i, header in zip(indexes, extra_fields):
+            df1.insert(i, header, None)
+    cases = df['OutputCase'].unique()
+    df1['C'] = df1['C'].astype(str)
+    df1 = df1.loc[df1['C'] != 'None']
+    for field in extra_fields:
+        df1[field] = None
+    additional_rows = []
+    import copy
+    for i, row in df1.iterrows():
+        # story = row['OverStory']
+        case = row['Name']
+        if case in cases:
+            ecc_length = df[
+                # (df['Story'] == story) & 
+                (df['OutputCase'] == case)]
+            for k, (j, row_aj) in enumerate(ecc_length.iterrows()):
+                story = row_aj['Story']
+                diaph = row_aj['Diaph']
+                length = row_aj['Ecc. Length (Cm)']
+                if k == 0:
+                    row['OverStory'] = story
+                    row['OverDiaph'] = diaph
+                    row['OverEcc'] = str(length)
+                else:
+                    new_row = copy.deepcopy(row)
+                    new_row[2:] = ''
+                    new_row['OverStory'] = story
+                    new_row['OverDiaph'] = diaph
+                    new_row['OverEcc'] = str(length)
+                    additional_rows.append(new_row)
+    # df1 = df1.append(pd.DataFrame.from_records(additional_rows, columns=FieldsKeysIncluded1))
+    for row in additional_rows:
+        df1 = df1.append(row)
+    TableData = []
+    for _, row in df1.iterrows():
+        TableData.extend(list(row))
+    SapModel.DatabaseTables.SetTableForEditingArray(TableKey, 0, FieldsKeysIncluded1, 0, TableData)
+    NumFatalErrors, ret = apply_table(SapModel)
+    return NumFatalErrors, ret
+
 def apply_cfactor_to_edb(
         building,
         ):
@@ -722,6 +777,17 @@ def get_magnification_coeff_aj(SapModel=None):
     headers = headers + ('aj', 'Ecc. Ratio', 'Length (Cm)', 'Ecc. Length (Cm)', 'Dir', 'Diaph')
     return data, headers
 
+def apply_aj_df(SapModel, df):
+    print("Applying cfactor to edb\n")
+    myETABSObject = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
+    SapModel = myETABSObject.SapModel
+    SapModel.SetModelIsLocked(False)
+    select_all_load_patterns(SapModel)
+    TableKey = 'Load Pattern Definitions - Auto Seismic - User Coefficient'
+    [_, _, FieldsKeysIncluded, _, TableData, _] = read_table(TableKey, SapModel)
+    NumFatalErrors, ret = write_aj_user_coefficient(SapModel, TableKey, FieldsKeysIncluded, TableData, df)
+    print(f"NumFatalErrors, ret = {NumFatalErrors}, {ret}")
+    return NumFatalErrors, ret
 
 class Build:
     def __init__(self):

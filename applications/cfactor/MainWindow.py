@@ -600,35 +600,14 @@ class Ui(QMainWindow, main_window):
         SapModel = etabs.SapModel
         from py_widget import aj_correction
         aj_win = aj_correction.AjForm(SapModel)
-        if aj_win.exec_():
-            # no_of_stories = drift_win.no_story_x_spinbox.value()
-            # height = drift_win.height_x_spinbox.value()
-            # create_t_file = drift_win.create_t_file_box.isChecked()
-            # loadcases = []
-            # for lw in (drift_win.x_loadcase_list, drift_win.y_loadcase_list):
-            #     for i in range(lw.count()):
-            #         item = lw.item(i)
-            #         if item.checkState() == Qt.Checked:
-            #             loadcases.append(item.text())
-            # self.storySpinBox.setValue(no_of_stories)
-            # self.HSpinBox.setValue(height)
-            # if create_t_file:
-            #     drifts, headers = functions.calculate_drifts(self, no_of_stories, etabs, loadcases=loadcases)
-            # else:
-            #     cdx = self.final_building.x_system.cd
-            #     cdy = self.final_building.y_system.cd
-            #     drifts, headers = functions.get_drifts(no_of_stories, cdx, cdy, etabs, loadcases)
-            # table_model.show_results(drifts, headers, table_model.DriftModel)
+        aj_win.exec_()
+            # num_err, ret = functions.apply_aj_df(SapModel, aj_win.aj_apply_model.df)
+            # print(num_err, ret)
+            # msg = "Successfully written to Etabs."
+            # QMessageBox.information(None, "done", msg)
             # self.show_warning_about_number_of_use(check)
-            # print(aj_win.model.df)
-            import pandas as pd
-            # ds = pd.HDFStore('c:\\alaki\\aj_nazari.h5')
-            # ds['aj_nazari'] = aj_win.model.df
-            # ds.close()
-
-            return
-        else:
-            return
+        # else:
+        #     return
 
     def allowed_to_continue(self,
                             filename,

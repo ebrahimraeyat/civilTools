@@ -3,9 +3,9 @@ from pathlib import Path
 
 import pandas as pd
 
-from PyQt5.QtCore import QAbstractTableModel, QModelIndex, Qt, QSize
-from PyQt5.QtWidgets import QDoubleSpinBox, QItemDelegate, QComboBox
-from PyQt5 import uic
+from PyQt5.QtCore import QAbstractTableModel, Qt
+from PyQt5.QtWidgets import QDoubleSpinBox, QItemDelegate, QComboBox, QMessageBox
+from PyQt5 import uic, QtGui
 from PyQt5.QtGui import QColor
 
 cfactor_path = Path(__file__).absolute().parent.parent
@@ -33,9 +33,10 @@ class AjForm(story_base, story_window):
         self.aj_table_view.setModel(self.aj_model)
         self.aj_table_view.setItemDelegate(AjDelegate(self))
         self.aj_table_view.resizeColumnsToContents()
+        self.aj_apply_model = AjApplyModel(self.aj_table_view.model().df)
         self.aj_apply_table_view.setModel(self.aj_apply_model)
-        self.aj_apply_table_view.setItemDelegate(AjDelegate(self))
-        self.aj_table_view.resizeColumnsToContents()
+        # self.aj_apply_table_view.setItemDelegate(AjDelegate(self))
+        self.aj_apply_table_view.resizeColumnsToContents()
         self.setWindowFlag(Qt.WindowMinimizeButtonHint, True)
         self.setWindowFlag(Qt.WindowMaximizeButtonHint, True)
         self.adjustSize()
@@ -44,8 +45,15 @@ class AjForm(story_base, story_window):
         self.create_connections()
 
     def create_connections(self):
-        self.model.dataChanged.connect(self.story_length_changed)
+        btn = self.buttonBox.button(QtGui.QDialogButtonBox.Apply)
+        btn.clicked.connect(self.apply_aj)
+        # self.model.dataChanged.connect(self.story_length_changed)
 
+    def apply_aj(self):
+        functions.apply_aj_df(self.SapModel, self.aj_apply_model.df)
+        msg = "Successfully written to Etabs."
+        QMessageBox.information(None, "done", msg)
+        
     def story_length_changed(self, index):
         row = index.row()
         col = index.column()
@@ -55,7 +63,7 @@ class AjForm(story_base, story_window):
             dir_ = 'Y'
         elif col == 2:
             dir_ = 'X'
-        story_dir = (self.aj_model.df['Story'] == story) & (self.aj_model.df['Dir'] == dir_)
+        story_dir = (self.aj_model.df['Story'] ==story) & (self.aj_model.df['Dir'] == dir_)
         self.aj_model.df.loc[story_dir, 'Length (Cm)'] = value
         self.aj_model.df.loc[story_dir, 'Ecc. Length (Cm)'] = \
                 self.aj_model.df[story_dir]['Ecc. Ratio'] * \
@@ -66,7 +74,13 @@ class AjForm(story_base, story_window):
             self.aj_model.dataChanged.emit(index, index)
             index = self.aj_model.createIndex(i, self.aj_model.i_ecc_len)
             self.aj_model.dataChanged.emit(index, index)
-        
+        stories = self.aj_apply_model.df['Story'] == story
+        indexes = stories.index[stories].tolist()
+        for i in indexes:
+            index = self.aj_apply_model.createIndex(i, 3)
+            df = self.aj_model.df
+            self.aj_apply_model.df.iat[i, 3] = df[(df['Story'] == story) & (df['Dir'] == dir_)]['Ecc. Length (Cm)'].max()
+            self.aj_apply_model.dataChanged.emit(index, index)
 
     def fill_xy_loadpattern_names(self):
         x_names, y_names = functions.get_load_patterns_in_XYdirection(
@@ -121,7 +135,7 @@ class AjModel(QAbstractTableModel):
         return self.df.shape[0]
 
     def columnCount(self, parent=None):
-        return self.df.shape[1] - 1
+        return self.df.shape[1]
 
     def data(self, index, role=Qt.DisplayRole):
         row = index.row()
@@ -162,6 +176,82 @@ class AjModel(QAbstractTableModel):
 
         return Qt.ItemFlags(
             QAbstractTableModel.flags(self, index) | Qt.ItemIsEditable)
+
+    def headerData(self, col, orientation, role):
+        if role != Qt.DisplayRole:
+            return
+        if orientation == Qt.Horizontal:
+            return self.headers[col]
+        return int(col + 1)
+
+
+class AjApplyModel(QAbstractTableModel):
+    def __init__(self, df):
+        QAbstractTableModel.__init__(self)
+        self.df = df.query('aj > 1').groupby(
+            ['OutputCase', 'Story', 'Diaph'], as_index=False)['Ecc. Length (Cm)'].max()
+        self.df = self.df.astype({'Ecc. Length (Cm)': int})
+        self.headers = tuple(self.df.columns)
+        self.i_story = self.headers.index('Story')
+        self.i_ecc_len = self.headers.index('Ecc. Length (Cm)')
+        self.i_diaph = self.headers.index('Diaph')
+        self.i_case = self.headers.index('OutputCase')
+        # self.create_diaphs()
+        self.story_colors = {}
+        cases = self.df['OutputCase'].unique()
+        import random
+        for c in cases:
+            self.story_colors[c] = random.choices(range(150, 256), k=3)
+
+    def create_diaphs(self):
+        self.diaphs = self.df['Diaph'].tolist()
+        diaphs = []
+        for _, row in self.df.iterrows():
+            diaph = row[self.i_diaph].split(',')[0]
+            diaphs.append(diaph)
+        self.df['Diaph'] = diaphs
+
+    def rowCount(self, parent=None):
+        return self.df.shape[0]
+
+    def columnCount(self, parent=None):
+        return self.df.shape[1]
+
+    def data(self, index, role=Qt.DisplayRole):
+        row = index.row()
+        col = index.column()
+        if index.isValid():
+            value = self.df.iloc[row][col]
+            if role == Qt.DisplayRole:
+                if col == self.i_ecc_len:
+                    return f'{value}'
+                return str(value)
+            elif role == Qt.BackgroundColorRole:
+                case = self.df.iloc[row][self.i_case]
+                return QColor(*self.story_colors[case])
+            elif role == Qt.TextAlignmentRole:
+                return int(Qt.AlignCenter | Qt.AlignVCenter)
+
+    def setData(self, index, value, role=Qt.EditRole):
+        if not index.isValid():
+            return False
+        col = index.column()
+        if role == Qt.EditRole and col == self.i_ecc_len:
+            row = index.row()
+            self.df.iat[row, col] = int(value)
+            self.dataChanged.emit(index, index)
+            return True
+        return False
+    
+    # def flags(self, index):
+    #     if not index.isValid():
+    #         return Qt.ItemIsEnabled
+    #     col = index.column()
+    #     if col != self.i_diaph:
+    #         return Qt.ItemIsEnabled
+
+    #     return Qt.ItemFlags(
+    #         QAbstractTableModel.flags(self, index) | Qt.ItemIsEditable)
 
     def headerData(self, col, orientation, role):
         if role != Qt.DisplayRole:

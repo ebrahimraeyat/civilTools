@@ -13,69 +13,96 @@
   <property name="windowTitle">
    <string>Aj Correction</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <layout class="QGridLayout" name="gridLayout_3">
-     <item row="1" column="0">
-      <widget class="QGroupBox" name="groupBox">
-       <property name="title">
-        <string>Load Patterns</string>
-       </property>
-       <property name="flat">
-        <bool>false</bool>
-       </property>
-       <layout class="QGridLayout" name="gridLayout">
-        <item row="0" column="1">
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>X</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QListWidget" name="x_load_pattern_list">
-          <property name="sortingEnabled">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="2">
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string>Y</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="2">
-         <widget class="QListWidget" name="y_load_pattern_list">
-          <property name="sortingEnabled">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QGroupBox" name="groupBox_2">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="title">
-        <string>Load Cases</string>
-       </property>
-       <property name="flat">
-        <bool>false</bool>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_2">
-        <item row="0" column="0">
+    <widget class="QSplitter" name="splitter_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <widget class="QWidget" name="">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QTableView" name="story_xy_length">
+         <property name="sizeAdjustPolicy">
+          <enum>QAbstractScrollArea::AdjustToContents</enum>
+         </property>
+         <property name="alternatingRowColors">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
+          <string>Load Patterns</string>
+         </property>
+         <property name="flat">
+          <bool>false</bool>
+         </property>
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="0" column="1">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>X</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QListWidget" name="x_load_pattern_list">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="sortingEnabled">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>Y</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QListWidget" name="y_load_pattern_list">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="sortingEnabled">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="title">
+          <string>Load Cases</string>
+         </property>
+         <property name="flat">
+          <bool>false</bool>
+         </property>
          <widget class="QLabel" name="label_3">
+          <property name="geometry">
+           <rect>
+            <x>8</x>
+            <y>34</y>
+            <width>16</width>
+            <height>18</height>
+           </rect>
+          </property>
           <property name="text">
            <string>X</string>
           </property>
@@ -83,9 +110,15 @@
            <set>Qt::AlignCenter</set>
           </property>
          </widget>
-        </item>
-        <item row="0" column="1">
          <widget class="QLabel" name="label_4">
+          <property name="geometry">
+           <rect>
+            <x>270</x>
+            <y>34</y>
+            <width>16</width>
+            <height>18</height>
+           </rect>
+          </property>
           <property name="text">
            <string>Y</string>
           </property>
@@ -93,49 +126,52 @@
            <set>Qt::AlignCenter</set>
           </property>
          </widget>
-        </item>
-        <item row="1" column="1">
          <widget class="QListWidget" name="y_loadcase_list">
+          <property name="geometry">
+           <rect>
+            <x>270</x>
+            <y>58</y>
+            <width>256</width>
+            <height>192</height>
+           </rect>
+          </property>
           <property name="sortingEnabled">
            <bool>true</bool>
           </property>
          </widget>
-        </item>
-        <item row="1" column="0">
          <widget class="QListWidget" name="x_loadcase_list">
+          <property name="geometry">
+           <rect>
+            <x>8</x>
+            <y>58</y>
+            <width>256</width>
+            <height>192</height>
+           </rect>
+          </property>
           <property name="sortingEnabled">
            <bool>true</bool>
           </property>
          </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QTableView" name="story_xy_length">
-       <property name="sizeAdjustPolicy">
-        <enum>QAbstractScrollArea::AdjustToContents</enum>
-       </property>
-       <property name="alternatingRowColors">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1" rowspan="2">
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
       <widget class="QTableView" name="aj_table_view">
        <property name="sizeAdjustPolicy">
         <enum>QAbstractScrollArea::AdjustToContents</enum>
        </property>
       </widget>
-     </item>
-     <item row="2" column="1">
       <widget class="QTableView" name="aj_apply_table_view">
        <property name="sizeAdjustPolicy">
         <enum>QAbstractScrollArea::AdjustToContents</enum>
        </property>
       </widget>
-     </item>
-    </layout>
+     </widget>
+    </widget>
    </item>
    <item>
     <widget class="QCheckBox" name="checkBox">
