@@ -645,8 +645,12 @@ class Ui(QMainWindow, main_window):
             check.add_using_feature()
             _, no_of_use = check.get_registered_numbers()
             n = check.n - no_of_use
-            if n > 0:
+            msg = ''
+            if n == 0:
+                msg = f"You can't use this feature any more times!\n please register the software."
+            elif n > 0:
                 msg = f"You can use this feature {n} more times!\n then you must register the software."
+            if msg:
                 QMessageBox.warning(None, 'Not registered!', str(msg))
             return
 

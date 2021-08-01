@@ -57,7 +57,7 @@ class CheckLegal:
             return True
         else:
             text = self.get_registered_numbers()
-            if text[0] == 1 or text[1] <= self.n:
+            if text[0] == 1 or text[1] < self.n:
                 return True
             else:
                 return False
