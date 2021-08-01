@@ -585,7 +585,7 @@ class Ui(QMainWindow, main_window):
             return
     
     def aj(self):
-        allow, check = self.allowed_to_continue(
+        allow, self.check = self.allowed_to_continue(
             'export_to_etabs.bin',
             'https://gist.githubusercontent.com/ebrahimraeyat/7f10571fab2a08b7a17ab782778e53e1/raw',
             'cfactor'
@@ -594,12 +594,12 @@ class Ui(QMainWindow, main_window):
             return
         if not self.is_etabs_running():
             return
-        from etabs_api import functions, table_model
+        # from etabs_api import functions, table_model
         import comtypes.client
         etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
         SapModel = etabs.SapModel
         from py_widget import aj_correction
-        aj_win = aj_correction.AjForm(SapModel)
+        aj_win = aj_correction.AjForm(SapModel, parent=self)
         aj_win.exec_()
             # num_err, ret = functions.apply_aj_df(SapModel, aj_win.aj_apply_model.df)
             # print(num_err, ret)
@@ -639,14 +639,16 @@ class Ui(QMainWindow, main_window):
         return False, check
 
     def show_warning_about_number_of_use(self, check):
-        if check.is_civiltools_registered or check.is_registered:
+        if check.is_civiltools_registered:
             return
-        check.add_using_feature()
-        _, no_of_use = check.get_registered_numbers()
-        n = check.n - no_of_use
-        if n > 0:
-            msg = f"You can use this feature {n} more times!\n then you must register the software."
-            QMessageBox.warning(None, 'Not registered!', str(msg))
+        elif check.is_registered:
+            check.add_using_feature()
+            _, no_of_use = check.get_registered_numbers()
+            n = check.n - no_of_use
+            if n > 0:
+                msg = f"You can use this feature {n} more times!\n then you must register the software."
+                QMessageBox.warning(None, 'Not registered!', str(msg))
+            return
 
     def save(self):
         export_result = export.Export(self, self.dirty, self.lastDirectory, None)

@@ -18,6 +18,7 @@ story_base, story_window = uic.loadUiType(cfactor_path / 'widgets' / 'aj_correct
 class AjForm(story_base, story_window):
     def __init__(self, SapModel, parent=None):
         super().__init__()
+        self.parent_widget=parent
         self.setupUi(self)
         self.SapModel = SapModel
         self.stories = SapModel.Story.GetStories()[1]
@@ -47,13 +48,15 @@ class AjForm(story_base, story_window):
     def create_connections(self):
         btn = self.buttonBox.button(QtGui.QDialogButtonBox.Apply)
         btn.clicked.connect(self.apply_aj)
+        
         # self.model.dataChanged.connect(self.story_length_changed)
 
     def apply_aj(self):
         functions.apply_aj_df(self.SapModel, self.aj_apply_model.df)
         msg = "Successfully written to Etabs."
         QMessageBox.information(None, "done", msg)
-        
+        self.parent_widget.show_warning_about_number_of_use(self.parent_widget.check)
+
     def story_length_changed(self, index):
         row = index.row()
         col = index.column()
