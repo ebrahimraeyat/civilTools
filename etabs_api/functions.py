@@ -2,7 +2,7 @@ import sys
 import comtypes.client
 from pathlib import Path
 
-# civiltools_path = Path(__file__).parent.parent
+civiltools_path = Path(__file__).parent.parent
 # sys.path.insert(0, str(civiltools_path))
 
 from .load_patterns import LoadPatterns
@@ -13,6 +13,8 @@ from .analyze import Analyze
 from .view import View
 from .database import DatabaseTables
 from .sections.sections import Sections
+
+__all__ = ['EtabsModel']
 
 
 class EtabsModel:
@@ -87,11 +89,11 @@ class EtabsModel:
         IMod_col_wall = 1
         for label in self.SapModel.FrameObj.GetLabelNameList()[1]:
             if self.SapModel.FrameObj.GetDesignProcedure(label)[0] == 2:  # concrete
-                if self.SapModel.FrameObj.GetDesignOrientation(label)[0] == 1:   # Beam
-                    IMod = IMod_beam
-                elif self.SapModel.FrameObj.GetDesignOrientation(label)[0] in (2, 5): # Column, other, but not brace and null
+                if self.SapModel.FrameObj.GetDesignOrientation(label)[0] == 1: # Column
                     IMod = IMod_col_wall
-                modifiers = list(self.FrameObj.GetModifiers(label)[0])
+                elif self.SapModel.FrameObj.GetDesignOrientation(label)[0] == 2:   # Beam
+                    IMod = IMod_beam
+                modifiers = list(self.SapModel.FrameObj.GetModifiers(label)[0])
                 modifiers[4:6] = [IMod, IMod]
                 self.SapModel.FrameObj.SetModifiers(label, modifiers)
 
@@ -102,7 +104,7 @@ class EtabsModel:
         self.SapModel.Analyze.RunAnalysis()
 
         TableKey = "Modal Participating Mass Ratios"
-        [_, _, FieldsKeysIncluded, _, TableData, _] = self.database.read_table(TableKey, self.SapModel)
+        [_, _, FieldsKeysIncluded, _, TableData, _] = self.database.read_table(TableKey)
         self.SapModel.SetModelIsLocked(False)
         ux_i = FieldsKeysIncluded.index("UX")
         uy_i = FieldsKeysIncluded.index("UY")
@@ -128,7 +130,7 @@ class EtabsModel:
             self.SapModel.Analyze.RunAnalysis()
         if not loadcases:
             xy_names = self.load_patterns.get_xy_seismic_load_patterns(only_ecc)
-            all_load_case_names = self.loa_cases.get_load_cases()
+            all_load_case_names = self.load_cases.get_load_cases()
             loadcases = [i for i in xy_names if i in all_load_case_names]
         print(loadcases)
         x_names, y_names = self.load_patterns.get_load_patterns_in_XYdirection()
@@ -161,9 +163,10 @@ class EtabsModel:
             all_load_case_names = self.load_cases.get_load_cases()
             loadcases = [i for i in drift_load_pattern_names if i in all_load_case_names]
         print(loadcases)
+        x_names, y_names = self.load_patterns.get_load_patterns_in_XYdirection()
         self.load_cases.select_load_cases(loadcases)
         TableKey = 'Diaphragm Max Over Avg Drifts'
-        [_, _, FieldsKeysIncluded, _, TableData, _] = self.database.read_table(TableKey, self.SapModel)
+        [_, _, FieldsKeysIncluded, _, TableData, _] = self.database.read_table(TableKey)
         data = self.database.reshape_data(FieldsKeysIncluded, TableData)
         try:
             item_index = FieldsKeysIncluded.index("Item")
@@ -175,7 +178,6 @@ class EtabsModel:
             limit = .025
         else:
             limit = .02
-        x_names, y_names = self.get_load_patterns_in_XYdirection()
         new_data = []
         for row in data:
             name = row[case_name_index]
@@ -196,14 +198,14 @@ class EtabsModel:
 
     def apply_cfactor_to_tabledata(self, TableData, FieldsKeysIncluded, building):
         data = self.database.reshape_data(FieldsKeysIncluded, TableData)
-        names_x, names_y = self.get_load_patterns_in_XYdirection()
+        names_x, names_y = self.load_patterns.get_load_patterns_in_XYdirection()
         i_c = FieldsKeysIncluded.index('C')
         i_k = FieldsKeysIncluded.index('K')
         cx, cy = str(building.results[1]), str(building.results[2])
         kx, ky = str(building.kx), str(building.ky)
         cx_drift, cy_drift = str(building.results_drift[1]), str(building.results_drift[2])
         kx_drift, ky_drift = str(building.kx_drift), str(building.ky_drift)
-        drift_load_pattern_names = self.get_drift_load_pattern_names()
+        drift_load_pattern_names = self.load_patterns.get_drift_load_pattern_names()
         i_name = FieldsKeysIncluded.index("Name")
         for earthquake in data:
             if not earthquake[i_c]:
@@ -222,7 +224,7 @@ class EtabsModel:
             elif name in names_y:
                 earthquake[i_c] = str(cy)
                 earthquake[i_k] = str(ky)
-        table_data = self.unique_data(data)
+        table_data = self.database.unique_data(data)
         return table_data
 
     def write_aj_user_coefficient(self, TableKey, FieldsKeysIncluded, TableData, df):
@@ -277,7 +279,7 @@ class EtabsModel:
         for _, row in df1.iterrows():
             TableData.extend(list(row))
         self.SapModel.DatabaseTables.SetTableForEditingArray(TableKey, 0, FieldsKeysIncluded1, 0, TableData)
-        NumFatalErrors, ret = self.apply_table()
+        NumFatalErrors, ret = self.database.apply_table()
         return NumFatalErrors, ret
 
     def apply_cfactor_to_edb(
@@ -286,12 +288,12 @@ class EtabsModel:
             ):
         print("Applying cfactor to edb\n")
         self.SapModel.SetModelIsLocked(False)
-        self.select_all_load_patterns()
+        self.load_patterns.select_all_load_patterns()
         TableKey = 'Load Pattern Definitions - Auto Seismic - User Coefficient'
-        [_, _, FieldsKeysIncluded, _, TableData, _] = self.database.read_table(TableKey, self.SapModel)
+        [_, _, FieldsKeysIncluded, _, TableData, _] = self.database.read_table(TableKey)
         # if is_auto_load_yes_in_seismic_load_patterns(TableData, FieldsKeysIncluded):
         #     return 1
-        TableData = self.apply_cfactor_to_tabledata(TableData, FieldsKeysIncluded, building, self.SapModel)
+        TableData = self.apply_cfactor_to_tabledata(TableData, FieldsKeysIncluded, building)
         NumFatalErrors, ret = self.database.write_seismic_user_coefficient(TableKey, FieldsKeysIncluded, TableData)
         print(f"NumFatalErrors, ret = {NumFatalErrors}, {ret}")
         return NumFatalErrors
@@ -305,7 +307,7 @@ class EtabsModel:
         widget.yTAnalaticalSpinBox.setValue(Ty)
         widget.calculate()
         num_errors = self.apply_cfactor_to_edb(widget.final_building)
-        return num_errors, etabs
+        return num_errors
 
     def calculate_drifts(
                 self,
@@ -325,10 +327,10 @@ class EtabsModel:
             no_story = widget.storySpinBox.value()
         self.get_drift_periods_calculate_cfactor_and_apply_to_edb(widget)
         if loadcases:
-            self.set_load_cases_to_analyze(loadcases)
+            self.analyze.set_load_cases_to_analyze(loadcases)
         self.SapModel.Analyze.RunAnalysis()
         if loadcases:
-            self.set_load_cases_to_analyze()
+            self.analyze.set_load_cases_to_analyze()
         cdx = widget.final_building.x_system.cd
         cdy = widget.final_building.y_system.cd
         drifts, headers = self.get_drifts(no_story, cdx, cdy, loadcases)
@@ -344,7 +346,7 @@ class EtabsModel:
     def get_magnification_coeff_aj(self):
         sys.path.insert(0, str(civiltools_path))
         from etabs_api import geometry, rho
-        x_names, y_names = self.get_load_patterns_in_XYdirection(only_ecc=True)
+        x_names, y_names = self.load_patterns.get_load_patterns_in_XYdirection(only_ecc=True)
         story_length = geometry.get_stories_length(self.SapModel)
         data, headers = self.get_diaphragm_max_over_avg_drifts(only_ecc=True)
         i_ratio = headers.index('Ratio')
@@ -377,7 +379,7 @@ class EtabsModel:
     def apply_aj_df(self, df):
         print("Applying cfactor to edb\n")
         self.SapModel.SetModelIsLocked(False)
-        self.select_all_load_patterns()
+        self.load_patterns.select_all_load_patterns()
         TableKey = 'Load Pattern Definitions - Auto Seismic - User Coefficient'
         [_, _, FieldsKeysIncluded, _, TableData, _] = self.database.read_table(TableKey, self.SapModel)
         NumFatalErrors, ret = self.write_aj_user_coefficient(TableKey, FieldsKeysIncluded, TableData, df)

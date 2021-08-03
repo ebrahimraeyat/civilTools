@@ -388,11 +388,12 @@ class Ui(QMainWindow, main_window):
             )
         if not allow:
             return
-        if not self.is_etabs_running():
-            return
         from etabs_api import functions, table_model
-        data, headers = functions.get_diaphragm_max_over_avg_drifts(only_ecc=True)
-        table_model.show_results(data, headers, table_model.TorsionModel, functions.show_point)
+        etabs_obj = functions.EtabsModel()
+        if not self.is_etabs_running(etabs_obj):
+            return
+        data, headers = etabs_obj.get_diaphragm_max_over_avg_drifts(only_ecc=True)
+        table_model.show_results(data, headers, table_model.TorsionModel, etabs_obj.view.show_point)
         self.show_warning_about_number_of_use(check)
     
     def show_aj_table(self):
@@ -552,15 +553,13 @@ class Ui(QMainWindow, main_window):
             )
         if not allow:
             return
-        if not self.is_etabs_running():
-            return
         from etabs_api import functions, table_model
-        import comtypes.client
-        etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
-        SapModel = etabs.SapModel
-        stories = SapModel.Story.GetStories()[1]
+        etabs_obj = functions.EtabsModel()
+        if not self.is_etabs_running(etabs_obj):
+            return
+        stories = etabs_obj.SapModel.Story.GetStories()[1]
         from py_widget import drift
-        drift_win = drift.StoryForm(SapModel, stories)
+        drift_win = drift.StoryForm(etabs_obj, stories)
         if drift_win.exec_():
             no_of_stories = drift_win.no_story_x_spinbox.value()
             height = drift_win.height_x_spinbox.value()
@@ -574,11 +573,11 @@ class Ui(QMainWindow, main_window):
             self.storySpinBox.setValue(no_of_stories)
             self.HSpinBox.setValue(height)
             if create_t_file:
-                drifts, headers = functions.calculate_drifts(self, no_of_stories, etabs, loadcases=loadcases)
+                drifts, headers = etabs_obj.calculate_drifts(self, no_of_stories, loadcases=loadcases)
             else:
                 cdx = self.final_building.x_system.cd
                 cdy = self.final_building.y_system.cd
-                drifts, headers = functions.get_drifts(no_of_stories, cdx, cdy, etabs, loadcases)
+                drifts, headers = etabs_obj.get_drifts(no_of_stories, cdx, cdy, loadcases)
             table_model.show_results(drifts, headers, table_model.DriftModel)
             self.show_warning_about_number_of_use(check)
         else:
@@ -674,11 +673,15 @@ class Ui(QMainWindow, main_window):
         export_graph = export.ExportGraph(self, self.lastDirectory, self.p)
         export_graph.to_csv()
 
-    def is_etabs_running(self):
-        sys.path.insert(0, str(civiltools_path))
-        from etabs_api import functions
-        etabs = functions.is_etabs_running()
-        if not etabs:
+    def is_etabs_running(self, etabs_obj=None):
+        if etabs_obj:
+            success = etabs_obj.success
+        else:
+            sys.path.insert(0, str(civiltools_path))
+            from etabs_api import functions
+            etabs_obj = functions.EtabsModel()
+            success = etabs_obj.success
+        if not success:
             QMessageBox.warning(self, 'ETABS', 'Please open etabs file!')
             return False
         return True

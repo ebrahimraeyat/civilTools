@@ -31,7 +31,7 @@ class Sections:
             r = self.SapModel.PropFrame.ImportProp(name, mat_name, str(filename), name)
             ret.add(r)
         return ret
-        
+            
     # def apply_section_props_to_tabledata(self, TableData, FieldsKeysIncluded, sections):
     #     data = self.etabs.database.reshape_data(FieldsKeysIncluded, TableData)
     #     i_shape = FieldsKeysIncluded.index('Shape')
