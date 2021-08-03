@@ -1,49 +1,14 @@
 class LoadPatterns:
     def __init__(
                 self,
-                SapModel,
+                SapModel=None,
+                etabs=None,
                 ):
-        self.SapModel = SapModel
-
-    @staticmethod
-    def reshape_data(FieldsKeysIncluded, table_data):
-        n = len(FieldsKeysIncluded)
-        data = [list(table_data[i:i+n]) for i in range(0, len(table_data), n)]
-        return data
-
-    @staticmethod
-    def unique_data(data):
-        table_data = []
-        for i in data:
-            table_data += i
-        return table_data
-
-    def apply_table(self):
-        FillImportLog = True
-        NumFatalErrors = 0
-        NumErrorMsgs = 0
-        NumWarnMsgs = 0
-        NumInfoMsgs = 0
-        ImportLog = ''
-        [NumFatalErrors, NumErrorMsgs, NumWarnMsgs, NumInfoMsgs, ImportLog,
-            ret] = self.SapModel.DatabaseTables.ApplyEditedTables(FillImportLog, NumFatalErrors,
-                                                            NumErrorMsgs, NumWarnMsgs, NumInfoMsgs, ImportLog)
-        return NumFatalErrors, ret
-
-    def read_table(self, table_key):
-        GroupName = table_key
-        FieldKeyList = []
-        TableVersion = 0
-        FieldsKeysIncluded = []
-        NumberRecords = 0
-        TableData = []
-        return self.SapModel.DatabaseTables.GetTableForDisplayArray(table_key, FieldKeyList, GroupName, TableVersion, FieldsKeysIncluded, NumberRecords, TableData)
-
-    def close_etabs(self):
-        self.SapModel.SetModelIsLocked(False)
-        self.etabs.ApplicationExit(False)
-        self.SapModel = None
-        self.etabs = None
+        if not SapModel:
+            self.etabs = etabs
+            self.SapModel = etabs.SapModel
+        else:
+            self.SapModel = SapModel
 
     def get_load_patterns(self):
         return self.SapModel.LoadPatterns.GetNameList(0, [])[1]
@@ -73,7 +38,7 @@ class LoadPatterns:
         '''
         self.select_all_load_patterns()
         TableKey = 'Load Pattern Definitions - Auto Seismic - User Coefficient'
-        [_, _, FieldsKeysIncluded, _, TableData, _] = self.read_table(TableKey)
+        [_, _, FieldsKeysIncluded, _, TableData, _] = self.etabs.database.read_table(TableKey)
         i_xdir = FieldsKeysIncluded.index('XDir')
         i_xdir_plus = FieldsKeysIncluded.index('XDirPlusE')
         i_xdir_minus = FieldsKeysIncluded.index('XDirMinusE')
@@ -81,7 +46,7 @@ class LoadPatterns:
         i_ydir_plus = FieldsKeysIncluded.index('YDirPlusE')
         i_ydir_minus = FieldsKeysIncluded.index('YDirMinusE')
         i_name = FieldsKeysIncluded.index('Name')
-        data = self.reshape_data(FieldsKeysIncluded, TableData)
+        data = self.etabs.database.reshape_data(FieldsKeysIncluded, TableData)
         names_x = set()
         names_y = set()
         for earthquake in data:
@@ -118,7 +83,7 @@ class LoadPatterns:
         '''
         self.select_all_load_patterns()
         TableKey = 'Load Pattern Definitions - Auto Seismic - User Coefficient'
-        [_, _, FieldsKeysIncluded, _, TableData, _] = self.read_table(TableKey)
+        [_, _, FieldsKeysIncluded, _, TableData, _] = self.etabs.database.read_table(TableKey)
         i_xdir = FieldsKeysIncluded.index('XDir')
         i_xdir_plus = FieldsKeysIncluded.index('XDirPlusE')
         i_xdir_minus = FieldsKeysIncluded.index('XDirMinusE')
@@ -126,7 +91,7 @@ class LoadPatterns:
         i_ydir_plus = FieldsKeysIncluded.index('YDirPlusE')
         i_ydir_minus = FieldsKeysIncluded.index('YDirMinusE')
         i_name = FieldsKeysIncluded.index('Name')
-        data = self.reshape_data(FieldsKeysIncluded, TableData)
+        data = self.etabs.database.reshape_data(FieldsKeysIncluded, TableData)
         name_x = None
         name_y = None
         drift_lp_names = self.get_drift_load_pattern_names()
