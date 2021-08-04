@@ -405,10 +405,11 @@ class Ui(QMainWindow, main_window):
             )
         if not allow:
             return
-        if not self.is_etabs_running():
-            return
         from etabs_api import functions, table_model
-        data, headers = functions.get_magnification_coeff_aj()
+        etabs_obj = functions.EtabsModel()
+        if not self.is_etabs_running(etabs_obj):
+            return
+        data, headers = etabs_obj.get_magnification_coeff_aj()
         table_model.show_results(data, headers, table_model.AjModel)
         self.show_warning_about_number_of_use(check)
     

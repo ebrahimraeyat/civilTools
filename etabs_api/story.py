@@ -68,3 +68,35 @@ class Story:
 
     def get_story_names(self):
         return self.SapModel.Story.GetNameList()[1]
+
+    def get_story_boundbox(self, story_name) -> tuple:
+        self.SapModel.SetPresentUnits_2(5, 5, 2)
+        points = self.SapModel.PointObj.GetNameListOnStory(story_name)[1]
+        xs = []
+        ys = []
+        for p in points:
+            x, y, _, _ =  self.SapModel.PointObj.GetCoordCartesian(p)
+            xs.append(x)
+            ys.append(y)
+        x_max = max(xs)
+        x_min = min(xs)
+        y_max = max(ys)
+        y_min = min(ys)
+        return x_min, y_min, x_max, y_max
+
+    def get_stories_boundbox(self) -> dict:
+        stories = self.SapModel.Story.GetNameList()[1]
+        stories_bb = {}
+        for story in stories:
+            bb = self.get_story_boundbox(story)
+            stories_bb[story] = bb
+        return stories_bb
+
+    def get_stories_length(self):
+        story_bb = self.get_stories_boundbox()
+        stories_length = {}
+        for story, bb in story_bb.items():
+            len_x = bb[2] - bb[0]
+            len_y = bb[3] - bb[1]
+            stories_length[story] = (len_x, len_y)
+        return stories_length
