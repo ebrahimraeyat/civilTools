@@ -523,10 +523,11 @@ class Ui(QMainWindow, main_window):
         table_model.show_results(data, headers, table_model.StoryStiffnessModel)
 
     def get_irregularity_of_mass(self):
-        if not self.is_etabs_running():
+        from etabs_api import functions, table_model
+        etabs_obj = functions.EtabsModel()
+        if not self.is_etabs_running(etabs_obj):
             return
-        from etabs_api import rho, table_model
-        data, headers = rho.get_irregularity_of_mass()
+        data, headers = etabs_obj.get_irregularity_of_mass()
         table_model.show_results(data, headers, table_model.IrregularityOfMassModel)
 
     def show_story_forces(self):

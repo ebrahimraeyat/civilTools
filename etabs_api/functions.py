@@ -386,6 +386,22 @@ class EtabsModel:
         print(f"NumFatalErrors, ret = {NumFatalErrors}, {ret}")
         return NumFatalErrors, ret
 
+    def get_irregularity_of_mass(self, story_mass=None):
+        if not story_mass:
+            story_mass = self.database.get_story_mass()
+        for i, sm in enumerate(story_mass):
+            m_neg1 = float(story_mass[i - 1][1]) * 1.5
+            m = float(sm[1])
+            if i != len(story_mass) - 1:
+                m_plus1 = float(story_mass[i + 1][1]) * 1.5
+            else:
+                m_plus1 = m
+            if i == 0:
+                m_neg1 = m
+            sm.extend([m_neg1, m_plus1])
+        fields = ('Story', 'Mass X', '1.5 * Below', '1.5 * Above')
+        return story_mass, fields
+
 class Build:
     def __init__(self):
         self.kx = 1

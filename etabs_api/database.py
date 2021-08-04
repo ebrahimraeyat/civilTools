@@ -61,3 +61,21 @@ class DatabaseTables:
         self.SapModel.DatabaseTables.SetTableForEditingArray(TableKey, 0, FieldsKeysIncluded1, 0, TableData)
         NumFatalErrors, ret = self.apply_table()
         return NumFatalErrors, ret
+
+    def get_story_mass(self):
+        self.SapModel.SetPresentUnits_2(5, 6, 2)
+        if not self.SapModel.GetModelIsLocked():
+            self.SapModel.Analysis.RunAnalyze()
+        TableKey = 'Centers Of Mass And Rigidity'
+        [_, _, FieldsKeysIncluded, _, TableData, _] = self.read_table(TableKey)
+        data = self.reshape_data(FieldsKeysIncluded, TableData)
+        i_mass_x = FieldsKeysIncluded.index('MassX')
+        # i_mass_y = FieldsKeysIncluded.index('MassY')
+        i_story = FieldsKeysIncluded.index('Story')
+        story_mass = []
+        for row in data[::-1]:
+            story = row[i_story]
+            massx = row[i_mass_x]
+            # massy = data[i_mass_y]
+            story_mass.append([story, massx])
+        return story_mass
