@@ -11,25 +11,24 @@ from PyQt5.QtGui import QColor
 cfactor_path = Path(__file__).absolute().parent.parent
 civiltools_path = cfactor_path.parent.parent
 sys.path.insert(0, civiltools_path)
-from etabs_api import functions, geometry
 
 story_base, story_window = uic.loadUiType(cfactor_path / 'widgets' / 'aj_correction.ui')
 
 class AjForm(story_base, story_window):
-    def __init__(self, SapModel, parent=None):
+    def __init__(self, etabs_model, parent=None):
         super().__init__()
         self.parent_widget=parent
+        self.etabs = etabs_model
         self.setupUi(self)
-        self.SapModel = SapModel
-        self.stories = SapModel.Story.GetStories()[1]
+        self.stories = self.etabs.SapModel.Story.GetStories()[1]
         self.fill_xy_loadpattern_names()
-        story_length = geometry.get_stories_length(SapModel)
+        story_length = self.etabs.story.get_stories_length()
         self.data = [[key, value[0], value[1]] for key, value in story_length.items()]
         self.headers = ('story', 'x (Cm)', 'y (Cm)')
         self.model = StoryLengthModel(self.data, self.headers)
         self.story_xy_length.setModel(self.model)
         self.story_xy_length.setItemDelegate(StoryLengthDelegate(self))
-        data, headers = functions.get_magnification_coeff_aj(SapModel)
+        data, headers = self.etabs.get_magnification_coeff_aj()
         self.aj_model = AjModel(data, headers)
         self.aj_table_view.setModel(self.aj_model)
         self.aj_table_view.setItemDelegate(AjDelegate(self))
@@ -52,7 +51,7 @@ class AjForm(story_base, story_window):
         # self.model.dataChanged.connect(self.story_length_changed)
 
     def apply_aj(self):
-        functions.apply_aj_df(self.SapModel, self.aj_apply_model.df)
+        self.etabs.apply_aj_df(self.aj_apply_model.df)
         msg = "Successfully written to Etabs."
         QMessageBox.information(None, "done", msg)
         self.parent_widget.show_warning_about_number_of_use(self.parent_widget.check)
@@ -86,8 +85,8 @@ class AjForm(story_base, story_window):
             self.aj_apply_model.dataChanged.emit(index, index)
 
     def fill_xy_loadpattern_names(self):
-        x_names, y_names = functions.get_load_patterns_in_XYdirection(
-                self.SapModel, only_ecc=True)
+        x_names, y_names = self.etabs.load_patterns.get_load_patterns_in_XYdirection(
+                only_ecc=True)
         self.x_load_pattern_list.addItems(x_names)
         self.y_load_pattern_list.addItems(y_names)
         for lw in (self.x_load_pattern_list, self.y_load_pattern_list):

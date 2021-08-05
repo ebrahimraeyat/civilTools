@@ -59,11 +59,12 @@ class Story:
                         bot_level_y = None,
                         top_level_y = None,
                         ):
-        if not bot_level_x:
+        self.SapModel.setPresentUnits_2(5, 6, 2)
+        if bot_level_x is None:
             bot_level_x, top_level_x, bot_level_y, top_level_y = self.get_top_bot_levels()
         levels = self.SapModel.Story.GetStories()[2]
-        no_of_x_story = len([i for i in levels if bot_level_x < i <= top_level_x])
-        no_of_y_story = len([i for i in levels if bot_level_y < i <= top_level_y])
+        no_of_x_story = len([i for i in levels if bot_level_x * 1.01 < i <= top_level_x * 1.01])
+        no_of_y_story = len([i for i in levels if bot_level_y * 1.01 < i <= top_level_y * 1.01])
         return no_of_x_story, no_of_y_story
 
     def get_story_names(self):
@@ -100,3 +101,54 @@ class Story:
             len_y = bb[3] - bb[1]
             stories_length[story] = (len_x, len_y)
         return stories_length
+
+    def get_story_diaphragms(self, story_name):
+        '''
+        Try to get Story diaphragm with point or area
+        '''
+        diaphs = set()
+        areas = self.SapModel.AreaObj.GetNameListOnStory(story_name)[1]
+        for area in areas:
+            diaph = self.SapModel.AreaObj.GetDiaphragm(area)[0]
+            if diaph != 'None':
+                diaphs.add(diaph)
+        points = self.SapModel.PointObj.GetNameListOnStory(story_name)[1]
+        for point in points:
+            diaph = self.SapModel.PointObj.GetDiaphragm(point)[1]
+            if diaph:
+                diaphs.add(diaph)
+        return diaphs
+
+    # def disconnect_story_diaphragm(self, story_name):
+    #     areas = self.SapModel.AreaObj.GetNameListOnStory(story_name)[1]
+    #     for area in areas:
+    #         self.SapModel.AreaObj.SetDiaphragm(area, 'None')
+    #     points = self.SapModel.PointObj.GetNameListOnStory(story_name)[1]
+    #     for point in points:
+    #         self.SapModel.PointObj.SetDiaphragm(point, 1)
+
+    # def assign_diaph_to_story_points(self, story_name, diaph):
+    #     points = self.SapModel.PointObj.GetNameListOnStory(story_name)[1]
+    #     for point in points:
+    #         self.SapModel.PointObj.SetDiaphragm(point, 3, diaph)
+
+    def add_points_in_center_of_rigidity_and_assign_diph(self):
+        story_rigidity = self.etabs.database.get_center_of_rigidity()
+        self.SapModel.SetModelIsLocked(False)
+        story_point_in_center_of_rigidity = {}
+        for story, (x, y) in story_rigidity.items():
+            z = self.SapModel.story.GetElevation(story)[0]
+            point_name = self.SapModel.PointObj.AddCartesian(float(x),float(y) , z)[0]  
+            diaph = self.get_story_diaphragms(story).pop()
+            self.SapModel.PointObj.SetDiaphragm(point_name, 3, diaph)
+            story_point_in_center_of_rigidity[story] = point_name
+        return story_point_in_center_of_rigidity
+
+    def fix_below_stories(self, story_name):
+        stories_name = self.SapModel.Story.GetNameList()[1]
+        story_level = self.SapModel.Story.GetElevation(story_name)[0]
+        for name in stories_name:
+            level = self.SapModel.Story.GetElevation(name)[0]
+            if level < story_level:
+                points = self.SapModel.PointObj.GetNameListOnStory(name)[1]
+                self.etabs.points.set_point_restraint(points)

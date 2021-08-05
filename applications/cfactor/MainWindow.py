@@ -420,12 +420,11 @@ class Ui(QMainWindow, main_window):
             'cfactor',
             n=2,
             )
-        if not allow:
+        from etabs_api import functions, table_model
+        etabs_obj = functions.EtabsModel()
+        if not self.is_etabs_running(etabs_obj):
             return
-        if not self.is_etabs_running():
-            return
-        from etabs_api import rho, table_model
-        ret = rho.get_beams_columns_weakness_structure()
+        ret = etabs_obj.frame_obj.get_beams_columns_weakness_structure()
         if not ret:
             err = "Please select one beam in ETABS model!"
             QMessageBox.critical(self, "Error", str(err))
@@ -461,7 +460,9 @@ class Ui(QMainWindow, main_window):
             )
         if not allow:
             return
-        if not self.is_etabs_running():
+        from etabs_api import functions, table_model
+        etabs_obj = functions.EtabsModel()
+        if not self.is_etabs_running(etabs_obj):
             return
         from py_widget import get_siffness_story_way as stiff
         stiffness_win = stiff.ChooseStiffnessForm(self)
@@ -472,8 +473,7 @@ class Ui(QMainWindow, main_window):
                 way = 'modal'
             if stiffness_win.radio_button_earthquake.isChecked():
                 way = 'earthquake'
-        from etabs_api import rho, table_model
-        ret = rho.get_story_stiffness_table(way=way)
+        ret = etabs_obj.get_story_stiffness_table(way)
         if not ret:
             err = "Please Activate Calculate Diaphragm Center of Rigidity in ETABS!"
             QMessageBox.critical(self, "Error", str(err))
@@ -483,21 +483,20 @@ class Ui(QMainWindow, main_window):
         self.show_warning_about_number_of_use(check)
     
     def show_story_stiffness_table(self):
-        if not self.is_etabs_running():
+        sys.path.insert(0, str(civiltools_path))
+        from etabs_api import functions, table_model
+        etabs_obj = functions.EtabsModel()
+        if not self.is_etabs_running(etabs_obj):
             return
         from py_widget import show_siffness_story_way as stiff
         stiffness_win = stiff.ChooseStiffnessForm(self)
-        from etabs_api import rho, table_model
-        import comtypes.client
-        etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
-        SapModel = etabs.SapModel
-        e_name = rho.get_etabs_file_name_without_suffix(SapModel)
+        e_name = etabs_obj.get_file_name_without_suffix()
         way_radio_button = {'2800': stiffness_win.radio_button_2800,
                             'modal': stiffness_win.radio_button_modal,
                             'earthquake': stiffness_win.radio_button_earthquake}
         for w, rb in way_radio_button.items():
             name = f'{e_name}_story_stiffness_{w}_table.json'
-            json_file = Path(SapModel.GetModelFilepath()) / name
+            json_file = Path(etabs_obj.SapModel.GetModelFilepath()) / name
             if not json_file.exists():
                 rb.setChecked(False)
                 rb.setEnabled(False)
@@ -512,10 +511,10 @@ class Ui(QMainWindow, main_window):
                 way = 'file'
         if way != 'file':
             name = f'{e_name}_story_stiffness_{way}_table.json'
-            json_file = Path(SapModel.GetModelFilepath()) / name
+            json_file = Path(etabs_obj.SapModel.GetModelFilepath()) / name
         else:
             json_file = stiffness_win.json_line_edit.text()
-        ret = rho.load_from_json(json_file)
+        ret = etabs_obj.load_from_json(json_file)
         if not ret:
             err = "Can not find the results!"
             QMessageBox.critical(self, "Error", str(err))
@@ -524,6 +523,7 @@ class Ui(QMainWindow, main_window):
         table_model.show_results(data, headers, table_model.StoryStiffnessModel)
 
     def get_irregularity_of_mass(self):
+        sys.path.insert(0, str(civiltools_path))
         from etabs_api import functions, table_model
         etabs_obj = functions.EtabsModel()
         if not self.is_etabs_running(etabs_obj):
@@ -540,10 +540,11 @@ class Ui(QMainWindow, main_window):
             )
         if not allow:
             return
-        if not self.is_etabs_running():
+        from etabs_api import functions, table_model
+        etabs_obj = functions.EtabsModel()
+        if not self.is_etabs_running(etabs_obj):
             return
-        from etabs_api import rho, table_model
-        data, headers = rho.get_story_forces_with_percentages()
+        data, headers = etabs_obj.get_story_forces_with_percentages()
         table_model.show_results(data, headers, table_model.StoryForcesModel)
         self.show_warning_about_number_of_use(check)
 
@@ -593,14 +594,12 @@ class Ui(QMainWindow, main_window):
             )
         if not allow:
             return
-        if not self.is_etabs_running():
+        from etabs_api import functions, table_model
+        etabs_obj = functions.EtabsModel()
+        if not self.is_etabs_running(etabs_obj):
             return
-        # from etabs_api import functions, table_model
-        import comtypes.client
-        etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
-        SapModel = etabs.SapModel
         from py_widget import aj_correction
-        aj_win = aj_correction.AjForm(SapModel, parent=self)
+        aj_win = aj_correction.AjForm(etabs_obj, parent=self)
         aj_win.exec_()
             # num_err, ret = functions.apply_aj_df(SapModel, aj_win.aj_apply_model.df)
             # print(num_err, ret)

@@ -17,6 +17,7 @@ class Analyze:
         all_load_case = self.SapModel.Analyze.GetCaseStatus()[1]
         for lc in all_load_case:
             if not load_cases == 'All' and not lc in load_cases:
-                self.SapModel.Analyze.SetRunCaseFlag(lc, False)
+                if lc in all_load_case:
+                    self.SapModel.Analyze.SetRunCaseFlag(lc, False)
             else:
                 self.SapModel.Analyze.SetRunCaseFlag(lc, True) 

@@ -1,3 +1,4 @@
+from os import stat
 import sys
 import comtypes.client
 from pathlib import Path
@@ -13,6 +14,8 @@ from .analyze import Analyze
 from .view import View
 from .database import DatabaseTables
 from .sections.sections import Sections
+from .results import Results
+from .points import Points
 
 __all__ = ['EtabsModel']
 
@@ -53,18 +56,74 @@ class EtabsModel:
         self.SapModel = self.etabs.SapModel
         self.load_patterns = LoadPatterns(None, self)
         self.load_cases = LoadCases(self.SapModel, None)
-        self.story = Story(self.SapModel, None)
-        self.frame_obj = FrameObj(self.SapModel, None)
+        self.story = Story(None, self)
+        self.frame_obj = FrameObj(self)
         self.analyze = Analyze(self.SapModel, None)
         self.view = View(self.SapModel, None)
-        self.database = DatabaseTables(self.SapModel, None)
+        self.database = DatabaseTables(None, self)
         self.sections = Sections(self.SapModel, None)
+        self.results = Results(None, self)
+        self.points = Points(None, self)
     
     def close_etabs(self):
         self.SapModel.SetModelIsLocked(False)
         self.etabs.ApplicationExit(False)
         self.SapModel = None
         self.etabs = None
+
+    def run_analysis(self, open_lock=False):
+        if self.SapModel.GetModelIsLocked():
+            if open_lock:
+                self.SapModel.SetModelIsLocked(False)
+                self.SapModel.analyze.RunAnalysis()
+        else:
+            self.SapModel.analyze.RunAnalysis()
+
+    def get_file_name_without_suffix(self):
+        f = Path(self.SapModel.GetModelFilename())
+        name = f.name.replace(f.suffix, '')
+        return name
+
+    @staticmethod
+    def get_from_list_table(
+            list_table: list,
+            columns: list,
+            values: list,
+            ) -> filter:
+        from operator import itemgetter
+        itemget = itemgetter(*columns)
+        assert len(columns) == len(values)
+        if len(columns) == 1:
+            result = filter(lambda x: itemget(x) == values[0], list_table)
+        else:
+            result = filter(lambda x: itemget(x) == values, list_table)
+        return result
+
+    def save_as(self, name):
+        if not name.lower().endswith('.edb'):
+            name += '.EDB'
+        asli_file_path = Path(self.SapModel.GetModelFilename())
+        asli_file_path = asli_file_path.with_suffix('.EDB')
+        new_file_path = asli_file_path.with_name(name)
+        self.SapModel.File.Save(str(new_file_path))
+        return asli_file_path, new_file_path
+
+    @staticmethod
+    def save_to_json(json_file, data):
+        import json
+        with open(json_file, 'w') as f:
+            json.dump(data, f)
+
+    @staticmethod
+    def load_from_json(json_file):
+        import json
+        with open(json_file, 'r') as f:
+            data = json.load(f)
+        return data
+
+    def save_to_json_in_edb_folder(self, json_name, data):
+        json_file = Path(self.SapModel.GetModelFilepath()) / json_name
+        self.save_to_json(json_file, data)
 
     def get_drift_periods(
                 self,
@@ -158,7 +217,7 @@ class EtabsModel:
     def get_drifts(self, no_story, cdx, cdy, loadcases=None):
         if not self.SapModel.GetModelIsLocked():
             self.SapModel.Analyze.RunAnalysis()
-        if not loadcases:
+        if loadcases is None:
             drift_load_pattern_names = self.load_patterns.get_drift_load_pattern_names()
             all_load_case_names = self.load_cases.get_load_cases()
             loadcases = [i for i in drift_load_pattern_names if i in all_load_case_names]
@@ -227,61 +286,6 @@ class EtabsModel:
         table_data = self.database.unique_data(data)
         return table_data
 
-    def write_aj_user_coefficient(self, TableKey, FieldsKeysIncluded, TableData, df):
-        if len(df) == 0: return
-        FieldsKeysIncluded1 = ['Name', 'Is Auto Load', 'X Dir?', 'X Dir Plus Ecc?', 'X Dir Minus Ecc?',
-                            'Y Dir?', 'Y Dir Plus Ecc?', 'Y Dir Minus Ecc?',
-                            'Ecc Ratio', 'Top Story', 'Bot Story', 'Ecc Overwrite Story',
-                            'Ecc Overwrite Diaphragm', 'Ecc Overwrite Length', 'C', 'K'
-                            ]
-        import pandas as pd
-        TableData = self.database.reshape_data(FieldsKeysIncluded, TableData)
-        df1 = pd.DataFrame.from_records(TableData, columns=FieldsKeysIncluded)
-        extra_fields = ('OverStory', 'OverDiaph', 'OverEcc')
-        if len(FieldsKeysIncluded) < len(FieldsKeysIncluded1):
-            i_ecc_ow_story = FieldsKeysIncluded1.index('Ecc Overwrite Story')
-            indexes = range(i_ecc_ow_story, i_ecc_ow_story + 3)
-            for i, header in zip(indexes, extra_fields):
-                df1.insert(i, header, None)
-        cases = df['OutputCase'].unique()
-        df1['C'] = df1['C'].astype(str)
-        df1 = df1.loc[df1['C'] != 'None']
-        for field in extra_fields:
-            df1[field] = None
-        additional_rows = []
-        import copy
-        for i, row in df1.iterrows():
-            # story = row['OverStory']
-            case = row['Name']
-            if case in cases:
-                ecc_length = df[
-                    # (df['Story'] == story) & 
-                    (df['OutputCase'] == case)]
-                for k, (_, row_aj) in enumerate(ecc_length.iterrows()):
-                    story = row_aj['Story']
-                    diaph = row_aj['Diaph']
-                    length = row_aj['Ecc. Length (Cm)']
-                    if k == 0:
-                        row['OverStory'] = story
-                        row['OverDiaph'] = diaph
-                        row['OverEcc'] = str(length)
-                    else:
-                        new_row = copy.deepcopy(row)
-                        new_row[2:] = ''
-                        new_row['OverStory'] = story
-                        new_row['OverDiaph'] = diaph
-                        new_row['OverEcc'] = str(length)
-                        additional_rows.append(new_row)
-        # df1 = df1.append(pd.DataFrame.from_records(additional_rows, columns=FieldsKeysIncluded1))
-        for row in additional_rows:
-            df1 = df1.append(row)
-        TableData = []
-        for _, row in df1.iterrows():
-            TableData.extend(list(row))
-        self.SapModel.DatabaseTables.SetTableForEditingArray(TableKey, 0, FieldsKeysIncluded1, 0, TableData)
-        NumFatalErrors, ret = self.database.apply_table()
-        return NumFatalErrors, ret
-
     def apply_cfactor_to_edb(
             self,
             building,
@@ -326,11 +330,11 @@ class EtabsModel:
         if not no_story:
             no_story = widget.storySpinBox.value()
         self.get_drift_periods_calculate_cfactor_and_apply_to_edb(widget)
-        if loadcases:
-            self.analyze.set_load_cases_to_analyze(loadcases)
+        # if loadcases is not None:
+        #     self.analyze.set_load_cases_to_analyze(loadcases)
         self.SapModel.Analyze.RunAnalysis()
-        if loadcases:
-            self.analyze.set_load_cases_to_analyze()
+        # if loadcases is not None:
+        #     self.analyze.set_load_cases_to_analyze()
         cdx = widget.final_building.x_system.cd
         cdy = widget.final_building.y_system.cd
         drifts, headers = self.get_drifts(no_story, cdx, cdy, loadcases)
@@ -345,9 +349,8 @@ class EtabsModel:
 
     def get_magnification_coeff_aj(self):
         sys.path.insert(0, str(civiltools_path))
-        from etabs_api import geometry, rho
         x_names, y_names = self.load_patterns.get_load_patterns_in_XYdirection(only_ecc=True)
-        story_length = geometry.get_stories_length(self.SapModel)
+        story_length = self.story.get_stories_length()
         data, headers = self.get_diaphragm_max_over_avg_drifts(only_ecc=True)
         i_ratio = headers.index('Ratio')
         i_story = headers.index('Story')
@@ -370,7 +373,7 @@ class EtabsModel:
                 len = length[0]
                 dir_ = 'Y'
             ecc_len = ecc_ratio * len
-            diaphs = rho.get_story_diaphragms(self.SapModel, story_name)
+            diaphs = self.story.get_story_diaphragms(story_name)
             diaphs = ','.join(list(diaphs))
             d.extend([aj, ecc_ratio, len, ecc_len, dir_, diaphs])
         headers = headers + ('aj', 'Ecc. Ratio', 'Length (Cm)', 'Ecc. Length (Cm)', 'Dir', 'Diaph')
@@ -381,8 +384,8 @@ class EtabsModel:
         self.SapModel.SetModelIsLocked(False)
         self.load_patterns.select_all_load_patterns()
         TableKey = 'Load Pattern Definitions - Auto Seismic - User Coefficient'
-        [_, _, FieldsKeysIncluded, _, TableData, _] = self.database.read_table(TableKey, self.SapModel)
-        NumFatalErrors, ret = self.write_aj_user_coefficient(TableKey, FieldsKeysIncluded, TableData, df)
+        [_, _, FieldsKeysIncluded, _, TableData, _] = self.database.read_table(TableKey)
+        NumFatalErrors, ret = self.database.write_aj_user_coefficient(TableKey, FieldsKeysIncluded, TableData, df)
         print(f"NumFatalErrors, ret = {NumFatalErrors}, {ret}")
         return NumFatalErrors, ret
 
@@ -401,6 +404,171 @@ class EtabsModel:
             sm.extend([m_neg1, m_plus1])
         fields = ('Story', 'Mass X', '1.5 * Below', '1.5 * Above')
         return story_mass, fields
+
+    def add_load_case_in_center_of_rigidity(self, story_name, x, y):
+        self.SapModel.SetPresentUnits(7)
+        z = self.SapModel.story.GetElevation(story_name)[0]
+        point_name = self.SapModel.PointObj.AddCartesian(float(x),float(y) , z)[0]  
+        diaph = self.story.get_story_diaphragms(story_name).pop()
+        self.SapModel.PointObj.SetDiaphragm(point_name, 3, diaph)
+        LTYPE_OTHER = 8
+        lp_name = f'STIFFNESS_{story_name}'
+        self.SapModel.LoadPatterns.Add(lp_name, LTYPE_OTHER, 0, True)
+        load = 1000
+        PointLoadValue = [load,load,0,0,0,0]
+        self.SapModel.PointObj.SetLoadForce(point_name, lp_name, PointLoadValue)
+        self.analyze.set_load_cases_to_analyze(lp_name)
+        return point_name, lp_name
+
+    def get_story_stiffness_modal_way(self):
+        story_mass = self.database.get_story_mass()[::-1]
+        story_mass = {key: value for key, value in story_mass}
+        stories = list(story_mass.keys())
+        dx, dy, wx, wy = self.database.get_stories_displacement_in_xy_modes()
+        story_stiffness = {}
+        n = len(story_mass)
+        for i, (phi_x, phi_y) in enumerate(zip(dx.values(), dy.values())):
+            if i == n - 1:
+                phi_neg_x = 0
+                phi_neg_y = 0
+            else:
+                story_neg = stories[i + 1]
+                phi_neg_x = dx[story_neg]
+                phi_neg_y = dy[story_neg]
+            d_phi_x = phi_x - phi_neg_x
+            d_phi_y = phi_y - phi_neg_y
+            sigma_x = 0
+            sigma_y = 0
+            for j in range(0, i + 1):
+                story_j = stories[j]
+                m_j = float(story_mass[story_j])
+                phi_j_x = dx[story_j]
+                phi_j_y = dy[story_j]
+                sigma_x += m_j * phi_j_x
+                sigma_y += m_j * phi_j_y
+            kx = wx ** 2 * sigma_x / d_phi_x
+            ky = wy ** 2 * sigma_y / d_phi_y
+            story_stiffness[stories[i]] = [kx, ky]
+        return story_stiffness
+
+    def get_story_stiffness_2800_way(self):
+        asli_file_path = Path(self.SapModel.GetModelFilename())
+        if asli_file_path.suffix.lower() != '.edb':
+            asli_file_path = asli_file_path.with_suffix(".EDB")
+        dir_path = asli_file_path.parent.absolute()
+        story_names = self.SapModel.Story.GetNameList()[1]
+        center_of_rigidity = self.database.get_center_of_rigidity()
+        story_stiffness = {}
+        import shutil
+        for story_name in story_names:
+            story_file_path = dir_path / f'STIFFNESS_{story_name}.EDB'
+            print(f"Saving file as {story_file_path}\n")
+            shutil.copy(asli_file_path, story_file_path)
+            print(f"Opening file {story_file_path}\n")
+            self.SapModel.File.OpenFile(str(story_file_path))
+            x, y = center_of_rigidity[story_name]
+            point_name, lp_name = self.add_load_case_in_center_of_rigidity(
+                    story_name, x, y)
+            self.story.fix_below_stories(story_name)
+            self.SapModel.View.RefreshView()
+            self.SapModel.Analyze.RunAnalysis()
+            disp_x, disp_y = self.results.get_point_xy_displacement(point_name, lp_name)
+            kx, ky = 1000 / abs(disp_x), 1000 / abs(disp_y)
+            story_stiffness[story_name] = [kx, ky]
+        self.SapModel.File.OpenFile(str(asli_file_path))
+        return story_stiffness
+
+    def get_story_stiffness_earthquake_way(
+                self,
+                loadcases: list=None,
+                ):
+        if not loadcases:
+            loadcases = self.load_patterns.get_EX_EY_load_pattern()
+        assert len(loadcases) == 2
+        EX, EY = loadcases
+        if not self.SapModel.GetModelIsLocked():
+            return None
+        self.SapModel.SetPresentUnits_2(5, 6, 2)
+        self.load_cases.select_load_cases(loadcases)
+        TableKey = 'Story Stiffness'
+        [_, _, FieldsKeysIncluded, _, TableData, _] = self.database.read_table(TableKey)
+        i_story = FieldsKeysIncluded.index('Story')
+        i_case = FieldsKeysIncluded.index('OutputCase')
+        i_stiff_x = FieldsKeysIncluded.index('StiffX')
+        i_stiff_y = FieldsKeysIncluded.index('StiffY')
+        data = self.database.reshape_data(FieldsKeysIncluded, TableData)
+        columns = (i_case,)
+        values_x = (EX,)
+        values_y = (EY,)
+        result_x = self.get_from_list_table(data, columns, values_x)
+        result_y = self.get_from_list_table(data, columns, values_y)
+        story_stiffness = {}
+        for x, y in zip(list(result_x), list(result_y)):
+            story = x[i_story]
+            stiff_x = float(x[i_stiff_x])
+            stiff_y = float(y[i_stiff_y])
+            story_stiffness[story] = [stiff_x, stiff_y]
+        return story_stiffness
+
+    def get_story_stiffness_table(self, way='2800', story_stiffness=None):
+        '''
+        way can be '2800', 'modal' , 'earthquake'
+        '''
+        name = self.get_file_name_without_suffix()
+        if not story_stiffness:
+            if way == '2800':
+                story_stiffness = self.get_story_stiffness_2800_way()
+            elif way == 'modal':
+                story_stiffness = self.get_story_stiffness_modal_way()
+            elif way == 'earthquake':
+                story_stiffness = self.get_story_stiffness_earthquake_way()
+        stories = list(story_stiffness.keys())
+        retval = []
+        for i, story in enumerate(stories):
+            stiffness = story_stiffness[story]
+            kx = stiffness[0]
+            ky = stiffness[1]
+            if i == 0:
+                stiffness.extend(['-', '-'])
+            else:
+                k1 = story_stiffness[stories[i - 1]]
+                stiffness.extend([
+                    kx / k1[0] if k1[0] != 0 else '-',
+                    ky / k1[1] if k1[1] != 0 else '-',
+                    ])
+
+            if len(stories[:i]) >= 3:
+                k2 = story_stiffness[stories[i - 2]]
+                k3 = story_stiffness[stories[i - 3]]
+                ave_kx = (k1[0] + k2[0] + k3[0]) / 3
+                ave_ky = (k1[1] + k2[1] + k3[1]) / 3
+                stiffness.extend([kx / ave_kx, ky / ave_ky])
+            else:
+                stiffness.extend(['-', '-'])
+            retval.append((story, *stiffness))
+        fields = ('Story', 'Kx', 'Ky', 'Kx / kx+1', 'Ky / ky+1', 'Kx / kx_3ave', 'Ky / ky_3ave')
+        json_file = f'{name}_story_stiffness_{way}_table.json'
+        self.save_to_json_in_edb_folder(json_file, (retval, fields))
+        return retval, fields
+
+    def get_story_forces_with_percentages(
+                self,
+                loadcases: list=None,
+                ):
+        vx, vy = self.results.get_base_react()
+        story_forces, _ , fields = self.database.get_story_forces(loadcases)
+        new_data = []
+        i_vx = fields.index('VX')
+        i_vy = fields.index('VY')
+        for story_force in story_forces:
+            fx = float(story_force[i_vx])
+            fy = float(story_force[i_vy])
+            story_force.extend([f'{fx/vx:.3f}', f'{fy/vy:.3f}'])
+            new_data.append(story_force)
+        fields = list(fields)
+        fields.extend(['Vx %', 'Vy %'])
+        return new_data, fields
+
 
 class Build:
     def __init__(self):

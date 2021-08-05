@@ -27,6 +27,9 @@ class StoryForm(story_base, story_window):
     def fill_xy_loadcase_names(self):
         x_names, y_names = self.etabs.load_patterns.get_load_patterns_in_XYdirection()
         drift_load_patterns = self.etabs.load_patterns.get_drift_load_pattern_names()
+        all_load_case = self.etabs.SapModel.Analyze.GetCaseStatus()[1]
+        x_names = set(x_names).intersection(set(all_load_case))
+        y_names = set(y_names).intersection(set(all_load_case))
         self.x_loadcase_list.addItems(x_names)
         self.y_loadcase_list.addItems(y_names)
         items = []

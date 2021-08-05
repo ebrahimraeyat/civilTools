@@ -117,6 +117,21 @@ class LoadPatterns:
                 break
         return name_x, name_y
 
+    def get_ex_ey_earthquake_name(self):
+        x_names, y_names = self.get_load_patterns_in_XYdirection()
+        x_names = sorted(x_names)
+        y_names = sorted(y_names)
+        drift_load_patterns = self.get_drift_load_pattern_names()
+        for name in x_names:
+            if name not in drift_load_patterns:
+                x_name = name
+                break
+        for name in y_names:
+            if name not in drift_load_patterns:
+                y_name = name
+                break
+        return x_name, y_name
+
     def get_xy_seismic_load_patterns(self, only_ecc=False):
         x_names, y_names = self.get_load_patterns_in_XYdirection(only_ecc)
         drift_load_pattern_names = self.get_drift_load_pattern_names()

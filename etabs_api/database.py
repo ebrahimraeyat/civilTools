@@ -1,3 +1,11 @@
+from pathlib import Path
+import sys
+
+civil_path = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(civil_path))
+
+from etabs_api import rho
+
 
 __all__ = ['DatabaseTables']
 
@@ -65,7 +73,7 @@ class DatabaseTables:
     def get_story_mass(self):
         self.SapModel.SetPresentUnits_2(5, 6, 2)
         if not self.SapModel.GetModelIsLocked():
-            self.SapModel.Analysis.RunAnalyze()
+            self.SapModel.Analyze.RunAnalysis()
         TableKey = 'Centers Of Mass And Rigidity'
         [_, _, FieldsKeysIncluded, _, TableData, _] = self.read_table(TableKey)
         data = self.reshape_data(FieldsKeysIncluded, TableData)
@@ -79,3 +87,160 @@ class DatabaseTables:
             # massy = data[i_mass_y]
             story_mass.append([story, massx])
         return story_mass
+
+    def write_aj_user_coefficient(self, TableKey, FieldsKeysIncluded, TableData, df):
+        if len(df) == 0: return
+        FieldsKeysIncluded1 = ['Name', 'Is Auto Load', 'X Dir?', 'X Dir Plus Ecc?', 'X Dir Minus Ecc?',
+                            'Y Dir?', 'Y Dir Plus Ecc?', 'Y Dir Minus Ecc?',
+                            'Ecc Ratio', 'Top Story', 'Bot Story', 'Ecc Overwrite Story',
+                            'Ecc Overwrite Diaphragm', 'Ecc Overwrite Length', 'C', 'K'
+                            ]
+        import pandas as pd
+        TableData = self.reshape_data(FieldsKeysIncluded, TableData)
+        df1 = pd.DataFrame.from_records(TableData, columns=FieldsKeysIncluded)
+        extra_fields = ('OverStory', 'OverDiaph', 'OverEcc')
+        if len(FieldsKeysIncluded) < len(FieldsKeysIncluded1):
+            i_ecc_ow_story = FieldsKeysIncluded1.index('Ecc Overwrite Story')
+            indexes = range(i_ecc_ow_story, i_ecc_ow_story + 3)
+            for i, header in zip(indexes, extra_fields):
+                df1.insert(i, header, None)
+        cases = df['OutputCase'].unique()
+        df1['C'] = df1['C'].astype(str)
+        df1 = df1.loc[df1['C'] != 'None']
+        for field in extra_fields:
+            df1[field] = None
+        additional_rows = []
+        import copy
+        for i, row in df1.iterrows():
+            case = row['Name']
+            if case in cases:
+                ecc_length = df[
+                    (df['OutputCase'] == case)]
+                for k, (_, row_aj) in enumerate(ecc_length.iterrows()):
+                    story = row_aj['Story']
+                    diaph = row_aj['Diaph']
+                    length = row_aj['Ecc. Length (Cm)']
+                    if k == 0:
+                        row['OverStory'] = story
+                        row['OverDiaph'] = diaph
+                        row['OverEcc'] = str(length)
+                    else:
+                        new_row = copy.deepcopy(row)
+                        new_row[2:] = ''
+                        new_row['OverStory'] = story
+                        new_row['OverDiaph'] = diaph
+                        new_row['OverEcc'] = str(length)
+                        additional_rows.append(new_row)
+        # df1 = df1.append(pd.DataFrame.from_records(additional_rows, columns=FieldsKeysIncluded1))
+        for row in additional_rows:
+            df1 = df1.append(row)
+        TableData = []
+        for _, row in df1.iterrows():
+            TableData.extend(list(row))
+        self.etabs.SapModel.DatabaseTables.SetTableForEditingArray(TableKey, 0, FieldsKeysIncluded1, 0, TableData)
+        NumFatalErrors, ret = self.apply_table()
+        return NumFatalErrors, ret
+
+    def get_center_of_rigidity(self):
+        if not self.SapModel.GetModelIsLocked():
+            self.SapModel.Analyze.RunAnalysis()
+        self.SapModel.SetPresentUnits_2(5,6,2)
+        TableKey = 'Centers Of Mass And Rigidity'
+        [_, _, FieldsKeysIncluded, _, TableData, _] = self.read_table(TableKey)
+        data = self.reshape_data(FieldsKeysIncluded, TableData)
+        i_xcr = FieldsKeysIncluded.index('XCR')
+        i_ycr = FieldsKeysIncluded.index('YCR')
+        i_story = FieldsKeysIncluded.index('Story')
+        story_rigidity = {}
+        for row in data:
+            story = row[i_story]
+            x = row[i_xcr]
+            y = row[i_ycr]
+            story_rigidity[story] = (x, y)
+        return story_rigidity
+
+    def get_stories_displacement_in_xy_modes(self):
+        f1, _ = self.etabs.save_as('modal_stiffness.EDB')
+        story_point = self.etabs.story.add_points_in_center_of_rigidity_and_assign_diph()
+        modal = self.etabs.load_cases.get_modal_loadcase_name()
+        self.etabs.analyze.set_load_cases_to_analyze(modal)
+        self.SapModel.Analyze.RunAnalysis()
+        wx, wy, ix, iy = self.etabs.results.get_xy_frequency()
+        TableKey = 'Joint Displacements'
+        [_, _, FieldsKeysIncluded, _, TableData, _] = self.read_table(TableKey)
+        data = self.reshape_data(FieldsKeysIncluded, TableData)
+        i_story = FieldsKeysIncluded.index('Story')
+        i_name = FieldsKeysIncluded.index('UniqueName')
+        i_case = FieldsKeysIncluded.index('OutputCase')
+        i_steptype = FieldsKeysIncluded.index('StepType')
+        i_stepnumber = FieldsKeysIncluded.index('StepNumber')
+        i_ux = FieldsKeysIncluded.index('Ux')
+        i_uy = FieldsKeysIncluded.index('Uy')
+        columns = (i_story, i_name, i_case, i_steptype, i_stepnumber)
+        x_results = {}
+        for story, point in story_point.items():
+            values = (story, point, modal, 'Mode', str(ix))
+            result = self.etabs.get_from_list_table(data, columns, values)
+            result = list(result)
+            assert len(result) == 1
+            ux = float(result[0][i_ux])
+            x_results[story] = ux
+        y_results = {}
+        for story, point in story_point.items():
+            values = (story, point, modal, 'Mode', str(iy))
+            result = self.etabs.get_from_list_table(data, columns, values)
+            result = list(result)
+            assert len(result) == 1
+            uy = float(result[0][i_uy])
+            y_results[story] = uy
+        self.SapModel.File.OpenFile(str(f1))
+        return x_results, y_results, wx, wy
+
+    def multiply_seismic_loads(
+            self,
+            x: float,
+            y=None,
+            ):
+        if not y:
+            y = x
+        self.SapModel.SetModelIsLocked(False)
+        self.etabs.load_patterns.select_all_load_patterns()
+        TableKey = 'Load Pattern Definitions - Auto Seismic - User Coefficient'
+        [_, _, FieldsKeysIncluded, _, TableData, _] = self.read_table(TableKey)
+        data = self.reshape_data(FieldsKeysIncluded, TableData)
+        names_x, names_y = self.etabs.load_patterns.get_load_patterns_in_XYdirection()
+        i_c = FieldsKeysIncluded.index('C')
+        i_name = FieldsKeysIncluded.index("Name")
+        for earthquake in data:
+            if not earthquake[i_c]:
+                continue
+            name = earthquake[i_name]
+            c = float(earthquake[i_c])
+            cx = x * c
+            cy = y * c
+            if name in names_x:
+                earthquake[i_c] = str(cx)
+            elif name in names_y:
+                earthquake[i_c] = str(cy)
+        TableData = self.unique_data(data)
+        NumFatalErrors, ret = self.write_seismic_user_coefficient(TableKey, FieldsKeysIncluded, TableData)
+        return NumFatalErrors, ret
+
+    def get_story_forces(
+                    self,
+                    loadcases: list=None,
+                    ):
+        if not loadcases:
+            loadcases = self.etabs.load_patterns.get_ex_ey_earthquake_name()
+        assert len(loadcases) == 2
+        self.SapModel.SetPresentUnits_2(5, 6, 2)
+        self.etabs.load_cases.select_load_cases(loadcases)
+        TableKey = 'Story Forces'
+        [_, _, FieldsKeysIncluded, _, TableData, _] = self.read_table(TableKey)
+        i_loc = FieldsKeysIncluded.index('Location')
+        data = self.reshape_data(FieldsKeysIncluded, TableData)
+        columns = (i_loc,)
+        values = ('Bottom',)
+        result = self.etabs.get_from_list_table(data, columns, values)
+        story_forces = list(result)
+        return story_forces, loadcases, FieldsKeysIncluded
