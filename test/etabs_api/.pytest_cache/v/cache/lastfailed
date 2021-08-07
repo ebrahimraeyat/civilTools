@@ -1,0 +1,13 @@
+{
+  "test_database.py::test_get_irregularity_of_mass": true,
+  "test_frame_obj.py::test_get_beams_columns_weakness_structure": true,
+  "test_functions.py::test_add_points_in_center_of_rigidity_and_assign_diph": true,
+  "test_functions.py::test_apply_cfactor_to_edb": true,
+  "test_functions.py::test_get_story_stiffness_modal_way": true,
+  "test_functions.py::test_write_aj": true,
+  "test_rho.py": true,
+  "test_rho.py::test_get_beams_rebars_weakness_structure": true,
+  "test_rho.py::test_get_diaphragm_max_over_avg_drifts": true,
+  "test_rho.py::test_get_story_mass": true,
+  "test_story.py::test_disconnect_story_diaphragm": true
+}
