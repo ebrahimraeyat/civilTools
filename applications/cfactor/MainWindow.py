@@ -675,7 +675,7 @@ class Ui(QMainWindow, main_window):
         export_graph.to_csv()
 
     def is_etabs_running(self, etabs=None):
-        if etabs in None:
+        if etabs is None:
             sys.path.insert(0, str(civiltools_path))
             from etabs_api import etabs_obj
             etabs = etabs_obj.EtabsModel()
