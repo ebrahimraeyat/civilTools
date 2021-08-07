@@ -35,6 +35,8 @@ class DatabaseTables:
         return table_data
 
     def apply_table(self):
+        if self.SapModel.GetModelIsLocked():
+            self.SapModel.SetModelIsLocked(False)
         FillImportLog = True
         NumFatalErrors = 0
         NumErrorMsgs = 0

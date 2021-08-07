@@ -42,6 +42,7 @@ class Results:
         self.SapModel.SetPresentUnits_2(5, 6, 2)
         self.etabs.run_analysis()
         loadcases = self.etabs.load_patterns.get_ex_ey_earthquake_name()
+        self.SapModel.Results.Setup.DeselectAllCasesAndCombosForOutput()
         self.SapModel.Results.Setup.SetCaseSelectedForOutput(loadcases[0])
         self.SapModel.Results.Setup.SetCaseSelectedForOutput(loadcases[1])
         base_react = self.SapModel.Results.BaseReact()
