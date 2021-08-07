@@ -145,7 +145,6 @@ class FrameObj:
         columns_pmm_weakness, beams_rebars_weakness = self.get_columns_pmm_and_beams_rebars(story_frames)
         columns_pmm_main_and_weakness, col_fields, \
             beams_rebars_main_and_weakness, beam_fields = self.combine_beams_columns_weakness_structure(
-                self,
                 columns_pmm,
                 beams_rebars,
                 columns_pmm_weakness,
