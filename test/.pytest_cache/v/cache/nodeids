@@ -1,0 +1,8 @@
+[
+  "etabs_api/test_functions.py::test_get_beams_columns",
+  "etabs_api/test_functions.py::test_get_drift_load_pattern_names",
+  "etabs_api/test_functions.py::test_get_load_cases",
+  "etabs_api/test_functions.py::test_get_load_patterns",
+  "etabs_api/test_functions.py::test_get_load_patterns_in_XYdirection",
+  "etabs_api/test_functions.py::test_get_special_load_pattern_names"
+]
