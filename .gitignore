@@ -166,6 +166,8 @@ ENV/
 *.fdb_latexmk
 
 # test
+test/etabs_api/**
+!test/etabs_api/*
 !test/etabs_api/*.EDB
 !test/etabs_api/*.py
 
