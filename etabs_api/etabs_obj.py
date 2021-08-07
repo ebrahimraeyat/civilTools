@@ -482,12 +482,11 @@ class EtabsModel:
                 self,
                 loadcases: list=None,
                 ):
-        if not loadcases:
+        if loadcases is None:
             loadcases = self.load_patterns.get_EX_EY_load_pattern()
         assert len(loadcases) == 2
         EX, EY = loadcases
-        if not self.SapModel.GetModelIsLocked():
-            return None
+        self.run_analysis()
         self.SapModel.SetPresentUnits_2(5, 6, 2)
         self.load_cases.select_load_cases(loadcases)
         TableKey = 'Story Stiffness'

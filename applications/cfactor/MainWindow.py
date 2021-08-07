@@ -435,18 +435,17 @@ class Ui(QMainWindow, main_window):
         self.show_warning_about_number_of_use(check)
     
     def show_weakness_ratio(self):
-        if not self.is_etabs_running():
+        sys.path.insert(0, str(civiltools_path))
+        from etabs_api import etabs_obj, table_model
+        etabs = etabs_obj.EtabsModel()
+        if not self.is_etabs_running(etabs):
             return
-        import comtypes.client
-        etabs = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
-        SapModel = etabs.SapModel
-        json_file = Path(SapModel.GetModelFilepath()) / 'columns_pmm_beams_rebars.json'
-        from etabs_api import rho, table_model
-        ret = rho.load_from_json(json_file)
-        if not ret:
-            err = "Please select one beam in ETABS model!"
+        json_file = Path(etabs.SapModel.GetModelFilepath()) / 'columns_pmm_beams_rebars.json'
+        if not json_file.exists():
+            err = "Please first get weakness ration, then show it!"
             QMessageBox.critical(self, "Error", str(err))
             return None
+        ret = etabs.load_from_json(json_file)
         data, headers, data2, headers2 = ret
         table_model.show_results(data, headers, table_model.ColumnsRatioModel)
         table_model.show_results(data2, headers2, table_model.BeamsRebarsModel)
