@@ -75,8 +75,10 @@ class EtabsModel:
         if self.SapModel.GetModelIsLocked():
             if open_lock:
                 self.SapModel.SetModelIsLocked(False)
+                print('Run Alalysis ...')
                 self.SapModel.analyze.RunAnalysis()
         else:
+            print('Run Alalysis ...')
             self.SapModel.analyze.RunAnalysis()
 
     def get_file_name_without_suffix(self):
@@ -185,8 +187,7 @@ class EtabsModel:
                     loadcases=[],
                     only_ecc=False,
                     ):
-        if not self.SapModel.GetModelIsLocked():
-            self.SapModel.Analyze.RunAnalysis()
+        self.run_analysis()
         if not loadcases:
             xy_names = self.load_patterns.get_xy_seismic_load_patterns(only_ecc)
             all_load_case_names = self.load_cases.get_load_cases()
@@ -215,8 +216,7 @@ class EtabsModel:
         return new_data, FieldsKeysIncluded
 
     def get_drifts(self, no_story, cdx, cdy, loadcases=None):
-        if not self.SapModel.GetModelIsLocked():
-            self.SapModel.Analyze.RunAnalysis()
+        self.run_analysis()
         if loadcases is None:
             drift_load_pattern_names = self.load_patterns.get_drift_load_pattern_names()
             all_load_case_names = self.load_cases.get_load_cases()

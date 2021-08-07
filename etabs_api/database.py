@@ -74,8 +74,7 @@ class DatabaseTables:
 
     def get_story_mass(self):
         self.SapModel.SetPresentUnits_2(5, 6, 2)
-        if not self.SapModel.GetModelIsLocked():
-            self.SapModel.Analyze.RunAnalysis()
+        self.etabs.run_analysis()
         TableKey = 'Centers Of Mass And Rigidity'
         [_, _, FieldsKeysIncluded, _, TableData, _] = self.read_table(TableKey)
         data = self.reshape_data(FieldsKeysIncluded, TableData)
@@ -144,8 +143,7 @@ class DatabaseTables:
         return NumFatalErrors, ret
 
     def get_center_of_rigidity(self):
-        if not self.SapModel.GetModelIsLocked():
-            self.SapModel.Analyze.RunAnalysis()
+        self.etabs.run_analysis()
         self.SapModel.SetPresentUnits_2(5,6,2)
         TableKey = 'Centers Of Mass And Rigidity'
         [_, _, FieldsKeysIncluded, _, TableData, _] = self.read_table(TableKey)
