@@ -5,12 +5,12 @@ import sys
 
 civil_path = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(civil_path))
-from etabs_api import functions
+from etabs_api import etabs_obj
 
 @pytest.fixture
 def shayesteh(edb="shayesteh.EDB"):
     try:
-        etabs = functions.EtabsModel()
+        etabs = etabs_obj.EtabsModel()
         if etabs.success:
             filepath = Path(etabs.SapModel.GetModelFilename())
             if 'test.' in filepath.name:
@@ -29,7 +29,7 @@ def shayesteh(edb="shayesteh.EDB"):
         dir_path = asli_file_path.parent.absolute()
         test_file_path = dir_path / "test.EDB"
         SapModel.File.Save(str(test_file_path))
-        etabs = functions.EtabsModel()
+        etabs = etabs_obj.EtabsModel()
         return etabs
 
 @pytest.mark.getmethod
@@ -39,7 +39,7 @@ def test_get_beams_columns(shayesteh):
     assert len(columns) == 48
 
 def test_get_beams_columns_weakness_structure(shayesteh):
-    cols_pmm, col_fields, beams_rebars, beam_fields = shayesteh.frame_obj.get_beams_columns_weakness_structure()
+    cols_pmm, col_fields, beams_rebars, beam_fields = shayesteh.frame_obj.get_beams_columns_weakness_structure('115')
     assert len(col_fields) == 5
     assert len(beam_fields) == 9
     assert len(cols_pmm) == 11

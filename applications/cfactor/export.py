@@ -56,8 +56,8 @@ class Export:
     def to_etabs(self):
         civiltools_path = Path(__file__).parent.parent.parent
         sys.path.insert(0, str(civiltools_path))
-        from etabs_api import functions
-        ret = functions.apply_cfactor_to_edb(self.building)
+        from etabs_api import etabs_obj
+        ret = etabs_obj.apply_cfactor_to_edb(self.building)
         return ret
 
 class ExportGraph:

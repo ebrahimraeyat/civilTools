@@ -542,8 +542,8 @@ class Ui(QMainWindow, main_window):
         if not allow:
             return
         sys.path.insert(0, str(civiltools_path))
-        from etabs_api import functions
-        functions.import_sections_to_etabs(self.model1.sections)
+        from etabs_api import etabs_obj
+        etabs_obj.import_sections_to_etabs(self.model1.sections)
         msg = "Successfully written to Etabs."
         QMessageBox.information(None, "done", msg)
         self.show_warning_about_number_of_use(check)       

@@ -9,14 +9,14 @@ import sys
 civil_path = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(civil_path))
 
-from etabs_api import functions
+from etabs_api import etabs_obj
 
 Tx_drift, Ty_drift = 1.085, 1.085
 
 @pytest.fixture
 def shayesteh(edb="shayesteh.EDB"):
     try:
-        etabs = functions.EtabsModel()
+        etabs = etabs_obj.EtabsModel()
         if etabs.success:
             filepath = Path(etabs.SapModel.GetModelFilename())
             if 'test.' in filepath.name:
@@ -35,7 +35,7 @@ def shayesteh(edb="shayesteh.EDB"):
         dir_path = asli_file_path.parent.absolute()
         test_file_path = dir_path / "test.EDB"
         SapModel.File.Save(str(test_file_path))
-        etabs = functions.EtabsModel()
+        etabs = etabs_obj.EtabsModel()
         return etabs
 
 @pytest.fixture
@@ -136,7 +136,7 @@ def test_get_drifts(shayesteh):
 
 def test_calculate_drifts(shayesteh, mocker):
     mocker.patch(
-        'etabs_api.functions.EtabsModel.get_drift_periods_calculate_cfactor_and_apply_to_edb',
+        'etabs_api.etabs_obj.EtabsModel.get_drift_periods_calculate_cfactor_and_apply_to_edb',
         return_value = 0
     )
     no_story = 4
@@ -154,26 +154,26 @@ def test_get_irregularity_of_mass(shayesteh):
 
 @pytest.mark.slow
 def test_get_story_stiffness_modal_way(shayesteh, mocker):
-    dx = dy = {
-                'STORY5' : 5,
-                'STORY4' : 4,
-                'STORY3' : 3,
-                'STORY2' : 2,
-                'STORY1' : 1,
-            }
-    wx = wy = 1
-    mocker.patch(
-        'etabs_api.functions.EtabsModel.DataBaseTables.get_stories_displacement_in_xy_modes',
-        return_value = (dx, dy, wx, wy))
-    mocker.patch(
-        'etabs_api.functions.EtabsModel.get_story_stiffness_modal_way.get_story_mass',
-        return_value = (
-            ('STORY1', '1'),
-            ('STORY2', '1'),
-            ('STORY3', '1'),
-            ('STORY4', '1'),
-            ('STORY5', '1'),
-            ))
+    # dx = dy = {
+    #             'STORY5' : 5,
+    #             'STORY4' : 4,
+    #             'STORY3' : 3,
+    #             'STORY2' : 2,
+    #             'STORY1' : 1,
+    #         }
+    # wx = wy = 1
+    # mocker.patch(
+    #     'etabs_api.database.DataBaseTables.get_stories_displacement_in_xy_modes',
+    #     return_value = (dx, dy, wx, wy))
+    # mocker.patch(
+    #     'etabs_api.etabs_obj.EtabsModel.get_story_stiffness_modal_way',
+    #     return_value = (
+    #         ('STORY1', '1'),
+    #         ('STORY2', '1'),
+    #         ('STORY3', '1'),
+    #         ('STORY4', '1'),
+    #         ('STORY5', '1'),
+    #         ))
     story_stiffness = shayesteh.get_story_stiffness_modal_way()
     assert len(story_stiffness) == 5
     assert story_stiffness == {
@@ -186,7 +186,7 @@ def test_get_story_stiffness_modal_way(shayesteh, mocker):
 
 if __name__ == '__main__':
     import pandas as pd
-    etabs = functions.EtabsModel()
+    etabs = etabs_obj.EtabsModel()
     etabs.test_write_aj()
 
 

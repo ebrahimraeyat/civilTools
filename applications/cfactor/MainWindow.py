@@ -388,12 +388,12 @@ class Ui(QMainWindow, main_window):
             )
         if not allow:
             return
-        from etabs_api import functions, table_model
-        etabs_obj = functions.EtabsModel()
-        if not self.is_etabs_running(etabs_obj):
+        from etabs_api import etabs_obj, table_model
+        etabs = etabs_obj.EtabsModel()
+        if not self.is_etabs_running(etabs):
             return
-        data, headers = etabs_obj.get_diaphragm_max_over_avg_drifts(only_ecc=True)
-        table_model.show_results(data, headers, table_model.TorsionModel, etabs_obj.view.show_point)
+        data, headers = etabs.get_diaphragm_max_over_avg_drifts(only_ecc=True)
+        table_model.show_results(data, headers, table_model.TorsionModel, etabs.view.show_point)
         self.show_warning_about_number_of_use(check)
     
     def show_aj_table(self):
@@ -405,11 +405,11 @@ class Ui(QMainWindow, main_window):
             )
         if not allow:
             return
-        from etabs_api import functions, table_model
-        etabs_obj = functions.EtabsModel()
-        if not self.is_etabs_running(etabs_obj):
+        from etabs_api import etabs_obj, table_model
+        etabs = etabs_obj.EtabsModel()
+        if not self.is_etabs_running(etabs):
             return
-        data, headers = etabs_obj.get_magnification_coeff_aj()
+        data, headers = etabs.get_magnification_coeff_aj()
         table_model.show_results(data, headers, table_model.AjModel)
         self.show_warning_about_number_of_use(check)
     
@@ -420,11 +420,11 @@ class Ui(QMainWindow, main_window):
             'cfactor',
             n=2,
             )
-        from etabs_api import functions, table_model
-        etabs_obj = functions.EtabsModel()
-        if not self.is_etabs_running(etabs_obj):
+        from etabs_api import etabs_obj, table_model
+        etabs = etabs_obj.EtabsModel()
+        if not self.is_etabs_running(etabs):
             return
-        ret = etabs_obj.frame_obj.get_beams_columns_weakness_structure()
+        ret = etabs.frame_obj.get_beams_columns_weakness_structure()
         if not ret:
             err = "Please select one beam in ETABS model!"
             QMessageBox.critical(self, "Error", str(err))
@@ -460,9 +460,9 @@ class Ui(QMainWindow, main_window):
             )
         if not allow:
             return
-        from etabs_api import functions, table_model
-        etabs_obj = functions.EtabsModel()
-        if not self.is_etabs_running(etabs_obj):
+        from etabs_api import etabs_obj, table_model
+        etabs = etabs_obj.EtabsModel()
+        if not self.is_etabs_running(etabs):
             return
         from py_widget import get_siffness_story_way as stiff
         stiffness_win = stiff.ChooseStiffnessForm(self)
@@ -473,7 +473,7 @@ class Ui(QMainWindow, main_window):
                 way = 'modal'
             if stiffness_win.radio_button_earthquake.isChecked():
                 way = 'earthquake'
-        ret = etabs_obj.get_story_stiffness_table(way)
+        ret = etabs.get_story_stiffness_table(way)
         if not ret:
             err = "Please Activate Calculate Diaphragm Center of Rigidity in ETABS!"
             QMessageBox.critical(self, "Error", str(err))
@@ -484,19 +484,19 @@ class Ui(QMainWindow, main_window):
     
     def show_story_stiffness_table(self):
         sys.path.insert(0, str(civiltools_path))
-        from etabs_api import functions, table_model
-        etabs_obj = functions.EtabsModel()
-        if not self.is_etabs_running(etabs_obj):
+        from etabs_api import etabs_obj, table_model
+        etabs = etabs_obj.EtabsModel()
+        if not self.is_etabs_running(etabs):
             return
         from py_widget import show_siffness_story_way as stiff
         stiffness_win = stiff.ChooseStiffnessForm(self)
-        e_name = etabs_obj.get_file_name_without_suffix()
+        e_name = etabs.get_file_name_without_suffix()
         way_radio_button = {'2800': stiffness_win.radio_button_2800,
                             'modal': stiffness_win.radio_button_modal,
                             'earthquake': stiffness_win.radio_button_earthquake}
         for w, rb in way_radio_button.items():
             name = f'{e_name}_story_stiffness_{w}_table.json'
-            json_file = Path(etabs_obj.SapModel.GetModelFilepath()) / name
+            json_file = Path(etabs.SapModel.GetModelFilepath()) / name
             if not json_file.exists():
                 rb.setChecked(False)
                 rb.setEnabled(False)
@@ -511,10 +511,10 @@ class Ui(QMainWindow, main_window):
                 way = 'file'
         if way != 'file':
             name = f'{e_name}_story_stiffness_{way}_table.json'
-            json_file = Path(etabs_obj.SapModel.GetModelFilepath()) / name
+            json_file = Path(etabs.SapModel.GetModelFilepath()) / name
         else:
             json_file = stiffness_win.json_line_edit.text()
-        ret = etabs_obj.load_from_json(json_file)
+        ret = etabs.load_from_json(json_file)
         if not ret:
             err = "Can not find the results!"
             QMessageBox.critical(self, "Error", str(err))
@@ -524,11 +524,11 @@ class Ui(QMainWindow, main_window):
 
     def get_irregularity_of_mass(self):
         sys.path.insert(0, str(civiltools_path))
-        from etabs_api import functions, table_model
-        etabs_obj = functions.EtabsModel()
-        if not self.is_etabs_running(etabs_obj):
+        from etabs_api import etabs_obj, table_model
+        etabs = etabs_obj.EtabsModel()
+        if not self.is_etabs_running(etabs):
             return
-        data, headers = etabs_obj.get_irregularity_of_mass()
+        data, headers = etabs.get_irregularity_of_mass()
         table_model.show_results(data, headers, table_model.IrregularityOfMassModel)
 
     def show_story_forces(self):
@@ -540,11 +540,11 @@ class Ui(QMainWindow, main_window):
             )
         if not allow:
             return
-        from etabs_api import functions, table_model
-        etabs_obj = functions.EtabsModel()
-        if not self.is_etabs_running(etabs_obj):
+        from etabs_api import etabs_obj, table_model
+        etabs = etabs_obj.EtabsModel()
+        if not self.is_etabs_running(etabs):
             return
-        data, headers = etabs_obj.get_story_forces_with_percentages()
+        data, headers = etabs.get_story_forces_with_percentages()
         table_model.show_results(data, headers, table_model.StoryForcesModel)
         self.show_warning_about_number_of_use(check)
 
@@ -556,13 +556,13 @@ class Ui(QMainWindow, main_window):
             )
         if not allow:
             return
-        from etabs_api import functions, table_model
-        etabs_obj = functions.EtabsModel()
-        if not self.is_etabs_running(etabs_obj):
+        from etabs_api import etabs_obj, table_model
+        etabs = etabs_obj.EtabsModel()
+        if not self.is_etabs_running(etabs):
             return
-        stories = etabs_obj.SapModel.Story.GetStories()[1]
+        stories = etabs.SapModel.Story.GetStories()[1]
         from py_widget import drift
-        drift_win = drift.StoryForm(etabs_obj, stories)
+        drift_win = drift.StoryForm(etabs, stories)
         if drift_win.exec_():
             no_of_stories = drift_win.no_story_x_spinbox.value()
             height = drift_win.height_x_spinbox.value()
@@ -576,11 +576,11 @@ class Ui(QMainWindow, main_window):
             self.storySpinBox.setValue(no_of_stories)
             self.HSpinBox.setValue(height)
             if create_t_file:
-                drifts, headers = etabs_obj.calculate_drifts(self, no_of_stories, loadcases=loadcases)
+                drifts, headers = etabs.calculate_drifts(self, no_of_stories, loadcases=loadcases)
             else:
                 cdx = self.final_building.x_system.cd
                 cdy = self.final_building.y_system.cd
-                drifts, headers = etabs_obj.get_drifts(no_of_stories, cdx, cdy, loadcases)
+                drifts, headers = etabs.get_drifts(no_of_stories, cdx, cdy, loadcases)
             table_model.show_results(drifts, headers, table_model.DriftModel)
             self.show_warning_about_number_of_use(check)
         else:
@@ -594,12 +594,12 @@ class Ui(QMainWindow, main_window):
             )
         if not allow:
             return
-        from etabs_api import functions, table_model
-        etabs_obj = functions.EtabsModel()
-        if not self.is_etabs_running(etabs_obj):
+        from etabs_api import etabs_obj
+        etabs = etabs_obj.EtabsModel()
+        if not self.is_etabs_running(etabs):
             return
         from py_widget import aj_correction
-        aj_win = aj_correction.AjForm(etabs_obj, parent=self)
+        aj_win = aj_correction.AjForm(etabs, parent=self)
         aj_win.exec_()
             # num_err, ret = functions.apply_aj_df(SapModel, aj_win.aj_apply_model.df)
             # print(num_err, ret)
@@ -674,14 +674,12 @@ class Ui(QMainWindow, main_window):
         export_graph = export.ExportGraph(self, self.lastDirectory, self.p)
         export_graph.to_csv()
 
-    def is_etabs_running(self, etabs_obj=None):
-        if etabs_obj:
-            success = etabs_obj.success
-        else:
+    def is_etabs_running(self, etabs=None):
+        if etabs in None:
             sys.path.insert(0, str(civiltools_path))
-            from etabs_api import functions
-            etabs_obj = functions.EtabsModel()
-            success = etabs_obj.success
+            from etabs_api import etabs_obj
+            etabs = etabs_obj.EtabsModel()
+        success = etabs.success
         if not success:
             QMessageBox.warning(self, 'ETABS', 'Please open etabs file!')
             return False

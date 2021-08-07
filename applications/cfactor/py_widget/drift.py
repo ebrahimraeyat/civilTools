@@ -9,7 +9,7 @@ from PyQt5.QtCore import Qt
 cfactor_path = Path(__file__).absolute().parent.parent
 # civiltools_path = cfactor_path.parent.parent
 # sys.path.insert(0, civiltools_path)
-# from etabs_api import functions
+# from etabs_api import etabs_obj
 
 story_base, story_window = uic.loadUiType(cfactor_path / 'widgets' / 'drift.ui')
 

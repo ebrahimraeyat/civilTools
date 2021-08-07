@@ -4,5 +4,10 @@
   "etabs_api/test_functions.py::test_get_load_cases",
   "etabs_api/test_functions.py::test_get_load_patterns",
   "etabs_api/test_functions.py::test_get_load_patterns_in_XYdirection",
-  "etabs_api/test_functions.py::test_get_special_load_pattern_names"
+  "etabs_api/test_functions.py::test_get_special_load_pattern_names",
+  "functions/test_check_legal.py::test_add_using_feature",
+  "functions/test_check_legal.py::test_allowed_to_continue",
+  "functions/test_check_legal.py::test_initiate",
+  "functions/test_check_legal.py::test_is_registered",
+  "functions/test_check_legal.py::test_register"
 ]
