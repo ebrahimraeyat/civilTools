@@ -11,8 +11,7 @@ class Results:
             self.SapModel = SapModel
 
     def get_xy_period(self):
-        if not self.SapModel.GetModelIsLocked():
-            self.SapModel.analyze.RunAnalysis()
+        self.etabs.run_analysis()
         modal_name = self.etabs.load_cases.get_modal_loadcase_name()
         self.SapModel.Results.Setup.DeselectAllCasesAndCombosForOutput()
         self.SapModel.Results.Setup.SetCaseSelectedForOutput(modal_name)

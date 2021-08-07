@@ -4,18 +4,18 @@ import comtypes.client
 from pathlib import Path
 
 civiltools_path = Path(__file__).parent.parent
-# sys.path.insert(0, str(civiltools_path))
+sys.path.insert(0, str(civiltools_path))
 
-from .load_patterns import LoadPatterns
-from .load_cases import LoadCases
-from .story import Story
-from .frame_obj import FrameObj
-from .analyze import Analyze
-from .view import View
-from .database import DatabaseTables
-from .sections.sections import Sections
-from .results import Results
-from .points import Points
+from etabs_api.load_patterns import LoadPatterns
+from etabs_api.load_cases import LoadCases
+from etabs_api.story import Story
+from etabs_api.frame_obj import FrameObj
+from etabs_api.analyze import Analyze
+from etabs_api.view import View
+from etabs_api.database import DatabaseTables
+from etabs_api.sections.sections import Sections
+from etabs_api.results import Results
+from etabs_api.points import Points
 
 __all__ = ['EtabsModel']
 
@@ -348,7 +348,7 @@ class EtabsModel:
             return False
 
     def get_magnification_coeff_aj(self):
-        sys.path.insert(0, str(civiltools_path))
+        # sys.path.insert(0, str(civiltools_path))
         x_names, y_names = self.load_patterns.get_load_patterns_in_XYdirection(only_ecc=True)
         story_length = self.story.get_stories_length()
         data, headers = self.get_diaphragm_max_over_avg_drifts(only_ecc=True)

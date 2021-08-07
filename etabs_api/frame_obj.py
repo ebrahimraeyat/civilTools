@@ -43,13 +43,11 @@ class FrameObj:
 
     def get_columns_pmm_and_beams_rebars(self, frame_names):
         self.SapModel.SelectObj.ClearSelection()
-        if not self.SapModel.GetModelIsLocked():
-            print('Run Alalysis ...')
-            self.SapModel.Analyze.RunAnalysis()
+        self.etabs.analyze.set_load_cases_to_analyze()
+        self.etabs.run_analysis()
         # set_frame_obj_selected(SapModel, frame_names)
         if not self.SapModel.DesignConcrete.GetResultsAvailable():
             print('Start Design ...')
-            self.etabs.analyze.set_load_cases_to_analyze()
             self.SapModel.DesignConcrete.StartDesign()
         self.SapModel.SetPresentUnits_2(5, 5, 2)
         beams, columns = self.get_beams_columns()
