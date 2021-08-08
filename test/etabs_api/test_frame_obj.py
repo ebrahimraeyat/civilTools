@@ -44,3 +44,13 @@ def test_get_beams_columns_weakness_structure(shayesteh):
     assert len(beam_fields) == 9
     assert len(cols_pmm) == 11
     assert len(beams_rebars) == 217
+
+@pytest.mark.modify
+def test_set_constant_j(shayesteh):
+    shayesteh.frame_obj.set_constant_j(.15)
+    js = set()
+    beams, _ = shayesteh.frame_obj.get_beams_columns(2)
+    for name in beams:
+        j = shayesteh.SapModel.FrameObj.GetModifiers(name)[0][3]
+        js.add(j)
+    assert js == {.15}

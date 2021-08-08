@@ -163,3 +163,19 @@ class FrameObj:
         for fname in frame_objects:
             self.SapModel.FrameObj.SetSelected(fname, True)
         self.SapModel.View.RefreshView()
+
+    def set_constant_j(self,
+                j : float = 1,
+                beam_names: list = None,
+                ):
+        assert j <= 1
+        if beam_names is None:
+            beam_names, _ = self.get_beams_columns(2)
+        self.SapModel.SetModelIsLocked(False)
+        for name in beam_names:
+            modifiers = list(self.SapModel.FrameObj.GetModifiers(name)[0])
+            modifiers[3] = j
+            self.SapModel.FrameObj.SetModifiers(name, modifiers)
+
+    
+        
