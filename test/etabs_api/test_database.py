@@ -76,3 +76,19 @@ def test_write_aj_user_coefficient(shayesteh):
     assert NumFatalErrors == ret == 0
     ret = shayesteh.SapModel.Analyze.RunAnalysis()
     assert ret == 0
+
+def test_get_beams_forces(shayesteh):
+    df = shayesteh.database.get_beams_forces()
+    assert len(df) == 66650
+    df = shayesteh.database.get_beams_forces(beams = ['114', '115'])
+    assert len(df) == 1612
+    df = shayesteh.database.get_beams_forces(
+        beams = ['114', '115'],
+        cols = ['Story', 'Beam', 'UniqueName', 'T'])
+    assert len(df) == 1612
+    assert len(df.columns) == 4
+
+def test_get_beams_torsion(shayesteh):
+    df = shayesteh.database.get_beams_torsion()
+    assert len(df) == 92
+    assert len(df.columns) == 4

@@ -184,6 +184,12 @@ def test_get_story_stiffness_modal_way(shayesteh, mocker):
                             'STORY1': [15, 15],
                             }
 
+def test_set_current_unit(shayesteh):
+    shayesteh.set_current_unit('kgf', 'm')
+    assert shayesteh.SapModel.GetPresentUnits_2()[:-1] == [5, 6, 2]
+    assert shayesteh.SapModel.GetPresentUnits() == 8
+
+
 if __name__ == '__main__':
     import pandas as pd
     etabs = etabs_obj.EtabsModel()

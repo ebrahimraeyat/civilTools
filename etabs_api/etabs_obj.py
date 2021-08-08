@@ -21,6 +21,9 @@ __all__ = ['EtabsModel']
 
 
 class EtabsModel:
+    force_units = dict(N=3, kN=4, kgf=5, tonf=6)
+    length_units = dict(mm=4, cm=5, m=6)
+
     def __init__(
                 self,
                 attach_to_instance: bool = True,
@@ -80,6 +83,11 @@ class EtabsModel:
         else:
             print('Run Alalysis ...')
             self.SapModel.analyze.RunAnalysis()
+
+    def set_current_unit(self, force, length):
+        force_enum = EtabsModel.force_units[force]
+        len_enum = EtabsModel.length_units[length]
+        self.SapModel.SetPresentUnits_2(force_enum, len_enum, 2)
 
     def get_file_name_without_suffix(self):
         f = Path(self.SapModel.GetModelFilename())

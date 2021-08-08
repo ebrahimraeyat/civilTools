@@ -1,10 +1,10 @@
 from pathlib import Path
 import sys
 
+import pandas as pd
+
 civil_path = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(civil_path))
-
-from etabs_api import rho
 
 
 __all__ = ['DatabaseTables']
@@ -26,6 +26,20 @@ class DatabaseTables:
         n = len(FieldsKeysIncluded)
         data = [list(table_data[i:i+n]) for i in range(0, len(table_data), n)]
         return data
+    
+    @staticmethod
+    def reshape_data_to_df(
+                FieldsKeysIncluded,
+                table_data,
+                cols:list=None,
+                ) -> 'pandas.DataFrame':
+        n = len(FieldsKeysIncluded)
+        data = [list(table_data[i:i+n]) for i in range(0, len(table_data), n)]
+        df = pd.DataFrame(data, columns=FieldsKeysIncluded)
+        if cols is not None:
+            df = df[cols]
+        return df
+   
 
     @staticmethod
     def unique_data(data):
@@ -244,3 +258,36 @@ class DatabaseTables:
         result = self.etabs.get_from_list_table(data, columns, values)
         story_forces = list(result)
         return story_forces, loadcases, FieldsKeysIncluded
+
+    def get_beams_forces(self,
+                        load_combinations : list = None,
+                        beams : list = None,
+                        cols : list = None,
+                        ) -> 'pandas.DataFrame':
+        '''
+        cols : columns in dataframe that we want to get
+        '''
+        self.etabs.run_analysis()
+        if load_combinations is None:
+            load_combinations = self.SapModel.RespCombo.GetNameList()[1]
+        self.SapModel.DatabaseTables.SetLoadCombinationsSelectedForDisplay(load_combinations)
+        TableKey = 'Element Forces - Beams'
+        [_, _, FieldsKeysIncluded, _, TableData, _] = self.read_table(TableKey)
+        df = self.reshape_data_to_df(FieldsKeysIncluded, TableData, cols)
+        if beams is not None:
+            df = df[df['UniqueName'].isin(beams)]
+        return df
+
+    def get_beams_torsion(self,
+                        load_combinations : list = None,
+                        beams : list = None,
+                        cols : list = None,
+                        ) -> 'pandas.DataFrame':
+        if cols is None:
+            cols = ['Story', 'Beam', 'UniqueName', 'T']
+        self.etabs.set_current_unit('kgf', 'm')
+        df = self.get_beams_forces(load_combinations, beams, cols)
+        df['T'] = pd.to_numeric(df['T'])
+        df = df.loc[df.groupby('UniqueName')['T'].idxmax()]
+        return df
+                    
