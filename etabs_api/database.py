@@ -270,6 +270,7 @@ class DatabaseTables:
         self.etabs.run_analysis()
         if load_combinations is None:
             load_combinations = self.SapModel.RespCombo.GetNameList()[1]
+        self.SapModel.DatabaseTables.SetLoadCasesSelectedForDisplay('')
         self.SapModel.DatabaseTables.SetLoadCombinationsSelectedForDisplay(load_combinations)
         TableKey = 'Element Forces - Beams'
         [_, _, FieldsKeysIncluded, _, TableData, _] = self.read_table(TableKey)
@@ -287,7 +288,18 @@ class DatabaseTables:
             cols = ['Story', 'Beam', 'UniqueName', 'T']
         self.etabs.set_current_unit('kgf', 'm')
         df = self.get_beams_forces(load_combinations, beams, cols)
-        df['T'] = pd.to_numeric(df['T'])
+        df['T'] = pd.to_numeric(df['T']).abs()
         df = df.loc[df.groupby('UniqueName')['T'].idxmax()]
         return df
-                    
+
+if __name__ == '__main__':
+    import comtypes.client
+    from pathlib import Path
+    current_path = Path(__file__).parent
+    import sys
+    sys.path.insert(0, str(current_path))
+    from etabs_obj import EtabsModel
+    etabs = EtabsModel()
+    SapModel = etabs.SapModel
+    df = etabs.database.get_beams_torsion(beams=['115'])
+    print('Wow')

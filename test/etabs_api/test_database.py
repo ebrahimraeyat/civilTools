@@ -92,3 +92,9 @@ def test_get_beams_torsion(shayesteh):
     df = shayesteh.database.get_beams_torsion()
     assert len(df) == 92
     assert len(df.columns) == 4
+
+def test_get_beams_torsion_2(shayesteh):
+    df = shayesteh.database.get_beams_torsion(beams=['115'])
+    assert len(df) == 1
+    assert len(df.columns) == 4
+    assert df.iat[0, 3] == 3926.72
