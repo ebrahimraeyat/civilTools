@@ -179,6 +179,7 @@ class FrameObj:
 
     def get_t_crack(self,
                     beams_sections = None,
+                    beams_names = None,
                     unit : tuple = ('N', 'mm'),
                     phi : float = 0.75,
                     ) -> dict:
@@ -186,9 +187,10 @@ class FrameObj:
         self.etabs.run_analysis()
         self.etabs.set_current_unit(*unit)
         if beams_sections is None:
-            beams, _ = self.get_beams_columns()
-            beams_sections = (self.SapModel.FrameObj.GetSection(name)[0] for name in beams)
-            beams_sections = set(beams_sections)
+            if beams_names is None:
+                beams_names, _ = self.get_beams_columns()
+            beams_sections = (self.SapModel.FrameObj.GetSection(name)[0] for name in beams_names)
+        beams_sections = set(beams_sections)
         sec_t = {}
         for sec_name in beams_sections:
             _, mat, h, b, *args = self.SapModel.PropFrame.GetRectangle(sec_name)
@@ -198,7 +200,8 @@ class FrameObj:
             t_crack = phi * .33 * math.sqrt(fc) * A ** 2 / p 
             sec_t[sec_name] = t_crack
         return sec_t
-        
+
+    
 
 if __name__ == '__main__':
     import comtypes.client

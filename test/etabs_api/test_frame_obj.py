@@ -60,3 +60,6 @@ def test_get_t_crack(shayesteh):
     beams_sections = ('B35X50', )
     sec_t_crack = shayesteh.frame_obj.get_t_crack(beams_sections)
     assert pytest.approx(sec_t_crack, abs=.1) == {'B35X50': 22293198.5}
+    beams_names = ('115',)
+    sec_t_crack = shayesteh.frame_obj.get_t_crack(beams_names=beams_names)
+    assert pytest.approx(sec_t_crack, abs=.1) == {'B35X50': 22293198.5}
