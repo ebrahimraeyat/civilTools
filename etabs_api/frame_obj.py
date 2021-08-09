@@ -177,5 +177,44 @@ class FrameObj:
             modifiers[3] = j
             self.SapModel.FrameObj.SetModifiers(name, modifiers)
 
+    def get_t_crack(self,
+                    beams_sections = None,
+                    unit : tuple = ('N', 'mm'),
+                    phi : float = 0.75,
+                    ) -> dict:
+        import math
+        self.etabs.run_analysis()
+        self.etabs.set_current_unit(*unit)
+        if beams_sections is None:
+            beams, _ = self.get_beams_columns()
+            beams_sections = (self.SapModel.FrameObj.GetSection(name)[0] for name in beams)
+            beams_sections = set(beams_sections)
+        sec_t = {}
+        for sec_name in beams_sections:
+            _, mat, h, b, *args = self.SapModel.PropFrame.GetRectangle(sec_name)
+            fc = self.SapModel.PropMaterial.GetOConcrete(mat)[0]
+            A = b * h
+            p = 2 * (b + h)
+            t_crack = phi * .33 * math.sqrt(fc) * A ** 2 / p 
+            sec_t[sec_name] = t_crack
+        return sec_t
+        
+
+if __name__ == '__main__':
+    import comtypes.client
+    from pathlib import Path
+    current_path = Path(__file__).parent
+    import sys
+    sys.path.insert(0, str(current_path))
+    from etabs_obj import EtabsModel
+    etabs = EtabsModel()
+    SapModel = etabs.SapModel
+    beams_sections = (etabs.SapModel.FrameObj.GetSection('115')[0], )
+    dic = etabs.frame_obj.get_t_crack(beams_sections)
+    print('Wow')
+
+
+
+
     
         

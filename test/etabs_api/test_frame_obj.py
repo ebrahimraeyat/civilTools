@@ -54,3 +54,9 @@ def test_set_constant_j(shayesteh):
         j = shayesteh.SapModel.FrameObj.GetModifiers(name)[0][3]
         js.add(j)
     assert js == {.15}
+
+@pytest.mark.getmethod
+def test_get_t_crack(shayesteh):
+    beams_sections = ('B35X50', )
+    sec_t_crack = shayesteh.frame_obj.get_t_crack(beams_sections)
+    assert pytest.approx(sec_t_crack, abs=.1) == {'B35X50': 22293198.5}
