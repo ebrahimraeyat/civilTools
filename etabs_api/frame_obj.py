@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Iterable, Union
 
 
 class FrameObj:
@@ -176,20 +177,26 @@ class FrameObj:
             modifiers = list(self.SapModel.FrameObj.GetModifiers(name)[0])
             modifiers[3] = j
             self.SapModel.FrameObj.SetModifiers(name, modifiers)
-
+    
+    def apply_torsion_stiffness_coefficient(self,
+                beams_coeff : dict,
+                ):
+        self.SapModel.SetModelIsLocked(False)
+        for name, ratio in beams_coeff.items():
+            modifiers = list(self.SapModel.FrameObj.GetModifiers(name)[0])
+            modifiers[3] = ratio
+            self.SapModel.FrameObj.SetModifiers(name, modifiers)
+        
     def get_t_crack(self,
-                    beams_sections = None,
                     beams_names = None,
-                    unit : tuple = ('N', 'mm'),
                     phi : float = 0.75,
                     ) -> dict:
         import math
         self.etabs.run_analysis()
-        self.etabs.set_current_unit(*unit)
-        if beams_sections is None:
-            if beams_names is None:
-                beams_names, _ = self.get_beams_columns()
-            beams_sections = (self.SapModel.FrameObj.GetSection(name)[0] for name in beams_names)
+        self.etabs.set_current_unit('N', 'mm')
+        if beams_names is None:
+            beams_names, _ = self.get_beams_columns()
+        beams_sections = (self.SapModel.FrameObj.GetSection(name)[0] for name in beams_names)
         beams_sections = set(beams_sections)
         sec_t = {}
         for sec_name in beams_sections:
@@ -198,10 +205,74 @@ class FrameObj:
             A = b * h
             p = 2 * (b + h)
             t_crack = phi * .33 * math.sqrt(fc) * A ** 2 / p 
-            sec_t[sec_name] = t_crack
+            sec_t[sec_name] = t_crack / 1000000 / 9.81
         return sec_t
 
+    def get_beams_sections(self,
+            beams_names : Iterable[str] = None,
+            ) -> dict:
+        if beams_names is None:
+            beams_names, _  = self.get_beams_columns()
+        beams_sections = {name : self.SapModel.FrameObj.GetSection(name)[0] for name in beams_names}
+        return beams_sections
     
+    def get_beams_torsion_prop_modifiers(self,
+            beams_names : Iterable[str] = None,
+            ) -> dict:
+        if beams_names is None:
+            beams_names, _  = self.get_beams_columns()
+        beams_j = {}
+        for name in beams_names:
+            modifiers = list(self.SapModel.FrameObj.GetModifiers(name)[0])
+            beams_j[name] = modifiers[3]
+        return beams_j
+
+    def correct_torsion_stiffness_factor(self,
+                load_combinations : Iterable[str] = None,
+                beams_names : Iterable[str] = None,
+                phi : float = 0.75,
+                num_iteration : int = 5,
+                tolerance : float = .1,
+                j_max_value = 1.0,
+                j_min_value = 0.01,
+                initial_j : Union[float, None] = None,
+                ):
+        import numpy as np
+        if beams_names is None:
+            beams_names, _  = self.get_beams_columns()
+        if initial_j is not None:
+            self.set_constant_j(initial_j, beams_names)
+        section_t_crack = self.get_t_crack(beams_names, phi=phi)
+        beams_sections = self.get_beams_sections(beams_names)
+        beams_j = self.get_beams_torsion_prop_modifiers(beams_names)
+        df = self.etabs.database.get_beams_torsion(load_combinations, beams_names)
+        df['section'] = df['UniqueName'].map(beams_sections)
+        df['j'] = df['UniqueName'].map(beams_j)
+        df['phi_Tcr'] = df['section'].map(section_t_crack)
+        low = 1 - tolerance
+        for i in range(num_iteration):
+            df['ratio'] = df['phi_Tcr'] / df['T']
+            df['ratio'].replace([np.inf, -np.inf], 1, inplace=True)
+            df['ratio'].fillna(1, inplace=True)
+            df['ratio'] = df['ratio'].clip(j_min_value, j_max_value)
+            # df[f'Ratio_{i + 1}'] = df['ratio']
+            if df['ratio'].between(low, 1.01).all():
+                break
+            else:
+                df['ratio'] = df['ratio'] * df['j']
+                df['j'] = df['ratio']
+                j_dict = dict(zip(df['UniqueName'], df['j']))
+                self.apply_torsion_stiffness_coefficient(j_dict)
+                self.etabs.run_analysis()
+                cols=['UniqueName', 'T']
+                torsion_dict = self.etabs.database.get_beams_torsion(load_combinations, beams_names, cols)
+                # df[f'Tu_{i + 1}'] = torsion_df['T']
+                df['T'] = df['UniqueName'].map(torsion_dict)
+        df.drop(columns=['ratio'], inplace=True)
+        df = df[['Story', 'Beam', 'UniqueName', 'section', 'phi_Tcr', 'T', 'j']]
+        return df
+
+
 
 if __name__ == '__main__':
     import comtypes.client
@@ -212,8 +283,9 @@ if __name__ == '__main__':
     from etabs_obj import EtabsModel
     etabs = EtabsModel()
     SapModel = etabs.SapModel
-    beams_sections = (etabs.SapModel.FrameObj.GetSection('115')[0], )
-    dic = etabs.frame_obj.get_t_crack(beams_sections)
+    beams_names = ('115', '120')
+    df = etabs.frame_obj.correct_torsion_stiffness_factor(tolerance=.1, num_iteration=3, initial_j=1)
+    df.to_excel('c:\\alaki\\beam_torsion.xlsx')
     print('Wow')
 
 

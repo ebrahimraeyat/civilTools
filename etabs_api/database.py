@@ -283,13 +283,15 @@ class DatabaseTables:
                         load_combinations : list = None,
                         beams : list = None,
                         cols : list = None,
-                        ) -> 'pandas.DataFrame':
+                        ) -> pd.DataFrame:
         if cols is None:
             cols = ['Story', 'Beam', 'UniqueName', 'T']
-        self.etabs.set_current_unit('kgf', 'm')
+        self.etabs.set_current_unit('tonf', 'm')
         df = self.get_beams_forces(load_combinations, beams, cols)
         df['T'] = pd.to_numeric(df['T']).abs()
         df = df.loc[df.groupby('UniqueName')['T'].idxmax()]
+        if len(cols) == 2:
+            return dict(zip(df[cols[0]], df[cols[1]]))
         return df
 
 if __name__ == '__main__':

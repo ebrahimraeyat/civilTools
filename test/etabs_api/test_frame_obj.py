@@ -56,10 +56,21 @@ def test_set_constant_j(shayesteh):
     assert js == {.15}
 
 @pytest.mark.getmethod
+def test_get_beams_sections(shayesteh):
+    beams_names = ('115',)
+    beams_sections = shayesteh.frame_obj.get_beams_sections(beams_names)
+    assert beams_sections == {'115': 'B35X50'}
+
+@pytest.mark.getmethod
 def test_get_t_crack(shayesteh):
-    beams_sections = ('B35X50', )
-    sec_t_crack = shayesteh.frame_obj.get_t_crack(beams_sections)
-    assert pytest.approx(sec_t_crack, abs=.1) == {'B35X50': 22293198.5}
     beams_names = ('115',)
     sec_t_crack = shayesteh.frame_obj.get_t_crack(beams_names=beams_names)
-    assert pytest.approx(sec_t_crack, abs=.1) == {'B35X50': 22293198.5}
+    assert pytest.approx(sec_t_crack, abs=.01) == {'B35X50': 2.272}
+
+@pytest.mark.getmethod
+def test_get_beams_torsion_prop_modifiers(shayesteh):
+    beams_names = ('115', '120')
+    beams_j = shayesteh.frame_obj.get_beams_torsion_prop_modifiers(beams_names)
+    assert len(beams_j) == 2
+    assert pytest.approx(beams_j['115'], abs=.01) == .35
+    assert pytest.approx(beams_j['120'], abs=.01) == 1.0

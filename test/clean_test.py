@@ -8,6 +8,7 @@ for f in test_folder.rglob('*'):
     if f.suffix not in  ('.py', ''):
         if f.name in (
             'shayesteh.EDB',
+            'test.EDB',
             'pytest.ini',
             
         ):

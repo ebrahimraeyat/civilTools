@@ -97,4 +97,11 @@ def test_get_beams_torsion_2(shayesteh):
     df = shayesteh.database.get_beams_torsion(beams=['115'])
     assert len(df) == 1
     assert len(df.columns) == 4
-    assert df.iat[0, 3] == 3926.72
+    assert pytest.approx(df.iat[0, 3], abs=.01) == 3.926
+
+def test_get_beams_torsion_dict(shayesteh):
+    cols=['UniqueName', 'T']
+    df = shayesteh.database.get_beams_torsion(beams=['115'], cols=cols)
+    assert len(df) == 1
+    assert type(df) == dict
+    assert pytest.approx(df['115'], abs=.01) == 3.926
