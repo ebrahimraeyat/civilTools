@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>297</width>
-    <height>342</height>
+    <width>276</width>
+    <height>440</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -28,36 +28,30 @@
        </item>
       </widget>
      </item>
-     <item row="6" column="0">
-      <widget class="QCheckBox" name="initial_checkbox">
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_4">
        <property name="text">
-        <string>Set Initial j</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
+        <string>Tolerance</string>
        </property>
       </widget>
      </item>
-     <item row="6" column="1">
-      <widget class="QDoubleSpinBox" name="initial_spinbox">
-       <property name="minimum">
-        <double>0.010000000000000</double>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>No. Iteration</string>
        </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QDoubleSpinBox" name="phi_spinbox">
        <property name="maximum">
         <double>1.000000000000000</double>
        </property>
        <property name="singleStep">
-        <double>0.010000000000000</double>
+        <double>0.050000000000000</double>
        </property>
        <property name="value">
-        <double>1.000000000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Load Combinations</string>
+        <double>0.750000000000000</double>
        </property>
       </widget>
      </item>
@@ -68,37 +62,20 @@
        </property>
       </widget>
      </item>
+     <item row="6" column="0">
+      <widget class="QCheckBox" name="initial_checkbox">
+       <property name="text">
+        <string>Set Initial j</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
      <item row="4" column="0">
       <widget class="QLabel" name="label_5">
        <property name="text">
-        <string>min. allow j</string>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="0">
-      <widget class="QCheckBox" name="selected_beams">
-       <property name="text">
-        <string>Selected Beams</string>
-       </property>
-       <property name="checked">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QSpinBox" name="iteration_spinbox">
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="value">
-        <number>3</number>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>No. Iteration</string>
+        <string>Min. allow j</string>
        </property>
       </widget>
      </item>
@@ -115,33 +92,6 @@
        </property>
        <property name="value">
         <double>0.050000000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="label_4">
-       <property name="text">
-        <string>Tolerance</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>phi</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
-      <widget class="QDoubleSpinBox" name="phi_spinbox">
-       <property name="maximum">
-        <double>1.000000000000000</double>
-       </property>
-       <property name="singleStep">
-        <double>0.050000000000000</double>
-       </property>
-       <property name="value">
-        <double>0.750000000000000</double>
        </property>
       </widget>
      </item>
@@ -177,7 +127,80 @@
        </property>
       </widget>
      </item>
+     <item row="6" column="1">
+      <widget class="QDoubleSpinBox" name="initial_spinbox">
+       <property name="minimum">
+        <double>0.010000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.010000000000000</double>
+       </property>
+       <property name="value">
+        <double>1.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>phi</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QSpinBox" name="iteration_spinbox">
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="value">
+        <number>3</number>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Load Combinations</string>
+       </property>
+      </widget>
+     </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Beams to Modify</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QRadioButton" name="all_beams">
+        <property name="text">
+         <string>All Beams</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="selected_beams">
+        <property name="text">
+         <string>Selected Beams</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="exclude_selected_beams">
+        <property name="text">
+         <string>Exclude Selected Beams</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
@@ -199,7 +222,6 @@
   <tabstop>maxj_spinbox</tabstop>
   <tabstop>initial_spinbox</tabstop>
   <tabstop>initial_checkbox</tabstop>
-  <tabstop>selected_beams</tabstop>
   <tabstop>load_combination_box</tabstop>
  </tabstops>
  <resources/>

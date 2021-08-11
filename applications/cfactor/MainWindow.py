@@ -627,12 +627,17 @@ class Ui(QMainWindow, main_window):
         j_win = beam_j.BeamJForm()
         if j_win.exec_():
             load_combinations = None
+            # all_beams = j_win.all_beams.isChecked()
             selected_beams = j_win.selected_beams.isChecked()
+            exclude_selected_beams = j_win.exclude_selected_beams.isChecked()
             beams_names = None
-            if selected_beams:
-                beams, _  = self.get_beams_columns()
-                names = etabs.SapModel.SelectObj.GetSelected()[2][0]
-                beams_names = set(names).intersection(set(beams))
+            if (selected_beams or exclude_selected_beams):
+                beams, _  = etabs.frame_obj.get_beams_columns()
+                names = etabs.SapModel.SelectObj.GetSelected()[2]
+                if selected_beams:
+                    beams_names = set(names).intersection(beams)
+                elif exclude_selected_beams:
+                    beams_names = set(beams).difference(names)
             phi = j_win.phi_spinbox.value()
             num_iteration = j_win.iteration_spinbox.value()
             tolerance = j_win.tolerance_spinbox.value()

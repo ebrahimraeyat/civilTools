@@ -192,7 +192,7 @@ class FrameObj:
                     phi : float = 0.75,
                     ) -> dict:
         import math
-        self.etabs.run_analysis()
+        # self.etabs.run_analysis()
         self.etabs.set_current_unit('N', 'mm')
         if beams_names is None:
             beams_names, _ = self.get_beams_columns()

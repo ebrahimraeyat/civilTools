@@ -37,10 +37,10 @@ class EtabsModel:
             except (OSError, comtypes.COMError):
                 print("No running instance of the program found or failed to attach.")
                 self.success = False
-                sys.exit(-1)
+                # sys.exit(-1)
         else:
             self.success = False
-            sys.exit(-1)
+            # sys.exit(-1)
             # helper = comtypes.client.CreateObject('ETABSv1.Helper')
             # helper = helper.QueryInterface(comtypes.gen.ETABSv1.cHelper)
             # if etabs_path:
@@ -56,17 +56,18 @@ class EtabsModel:
             #         print("Cannot start a new instance of the program.")
             #         sys.exit(-1)
             # self.etabs.ApplicationStart()
-        self.SapModel = self.etabs.SapModel
-        self.load_patterns = LoadPatterns(None, self)
-        self.load_cases = LoadCases(self.SapModel, None)
-        self.story = Story(None, self)
-        self.frame_obj = FrameObj(self)
-        self.analyze = Analyze(self.SapModel, None)
-        self.view = View(self.SapModel, None)
-        self.database = DatabaseTables(None, self)
-        self.sections = Sections(self.SapModel, None)
-        self.results = Results(None, self)
-        self.points = Points(None, self)
+        if self.success:
+            self.SapModel = self.etabs.SapModel
+            self.load_patterns = LoadPatterns(None, self)
+            self.load_cases = LoadCases(self.SapModel, None)
+            self.story = Story(None, self)
+            self.frame_obj = FrameObj(self)
+            self.analyze = Analyze(self.SapModel, None)
+            self.view = View(self.SapModel, None)
+            self.database = DatabaseTables(None, self)
+            self.sections = Sections(self.SapModel, None)
+            self.results = Results(None, self)
+            self.points = Points(None, self)
     
     def close_etabs(self):
         self.SapModel.SetModelIsLocked(False)
