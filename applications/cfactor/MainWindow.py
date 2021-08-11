@@ -3,6 +3,8 @@ from os.path import dirname
 import sys
 import os
 from pathlib import Path
+
+from comtypes.typeinfo import ELEMDESC
 abs_path = os.path.dirname(__file__)
 sys.path.insert(0, abs_path)
 civiltools_path = Path(__file__).absolute().parent.parent.parent
@@ -66,6 +68,7 @@ class Ui(QMainWindow, main_window):
         self.action_show_story_stiffness.triggered.connect(self.show_story_stiffness_table)
         self.action_get_irregularity_of_mass.triggered.connect(self.get_irregularity_of_mass)
         self.action_show_aj.triggered.connect(self.aj)
+        self.action_correct_beams_j.triggered.connect(self.correct_torsion_stiffness_factor)
 
     def create_connections(self):
         self.calculate_button.clicked.connect(self.calculate)
@@ -607,6 +610,52 @@ class Ui(QMainWindow, main_window):
             # self.show_warning_about_number_of_use(check)
         # else:
         #     return
+
+    def correct_torsion_stiffness_factor(self):
+        allow, check = self.allowed_to_continue(
+            'correct_j.bin',
+            'https://gist.githubusercontent.com/ebrahimraeyat/98b4863d25f0779dce2347d73a99212b/raw',
+            'cfactor',
+            )
+        if not allow:
+            return
+        from etabs_api import etabs_obj, table_model
+        etabs = etabs_obj.EtabsModel()
+        if not self.is_etabs_running(etabs):
+            return
+        from py_widget import beam_j
+        j_win = beam_j.BeamJForm()
+        if j_win.exec_():
+            load_combinations = None
+            selected_beams = j_win.selected_beams.isChecked()
+            beams_names = None
+            if selected_beams:
+                beams, _  = self.get_beams_columns()
+                names = etabs.SapModel.SelectObj.GetSelected()[2][0]
+                beams_names = set(names).intersection(set(beams))
+            phi = j_win.phi_spinbox.value()
+            num_iteration = j_win.iteration_spinbox.value()
+            tolerance = j_win.tolerance_spinbox.value()
+            j_max_value = j_win.maxj_spinbox.value()
+            j_min_value = j_win.minj_spinbox.value()
+            initial_j = j_win.initial_checkbox.isChecked()
+            if initial_j:
+                initial_j = j_win.initial_spinbox.value()
+            else:
+                initial_j = None
+            df = etabs.frame_obj.correct_torsion_stiffness_factor(
+                load_combinations,
+                beams_names,
+                phi,
+                num_iteration,
+                tolerance,
+                j_max_value,
+                j_min_value,
+                initial_j,
+                )
+            table_model.show_results(df, None, table_model.BeamsJModel, etabs.view.show_frame)
+            self.show_warning_about_number_of_use(check)
+
 
     def allowed_to_continue(self,
                             filename,

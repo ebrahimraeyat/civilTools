@@ -1078,6 +1078,7 @@ p, li { white-space: pre-wrap; }
     <addaction name="menuIrregularity"/>
     <addaction name="action_automatic_drift"/>
     <addaction name="action_show_aj"/>
+    <addaction name="action_correct_beams_j"/>
    </widget>
    <widget class="QMenu" name="menuFile">
     <property name="title">
@@ -1151,6 +1152,7 @@ p, li { white-space: pre-wrap; }
    <addaction name="action_show_story_stiffness"/>
    <addaction name="action_show_weakness"/>
    <addaction name="action_show_aj"/>
+   <addaction name="action_correct_beams_j"/>
   </widget>
   <action name="action_to_etabs">
    <property name="icon">
@@ -1338,6 +1340,11 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Show Aj</string>
+   </property>
+  </action>
+  <action name="action_correct_beams_j">
+   <property name="text">
+    <string>correct beams j</string>
    </property>
   </action>
  </widget>

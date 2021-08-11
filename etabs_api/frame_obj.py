@@ -248,6 +248,7 @@ class FrameObj:
         df = self.etabs.database.get_beams_torsion(load_combinations, beams_names)
         df['section'] = df['UniqueName'].map(beams_sections)
         df['j'] = df['UniqueName'].map(beams_j)
+        df['init_j'] = df['j']
         df['phi_Tcr'] = df['section'].map(section_t_crack)
         low = 1 - tolerance
         for i in range(num_iteration):
@@ -269,7 +270,7 @@ class FrameObj:
                 # df[f'Tu_{i + 1}'] = torsion_df['T']
                 df['T'] = df['UniqueName'].map(torsion_dict)
         df.drop(columns=['ratio'], inplace=True)
-        df = df[['Story', 'Beam', 'UniqueName', 'section', 'phi_Tcr', 'T', 'j']]
+        df = df[['Story', 'Beam', 'UniqueName', 'section', 'phi_Tcr', 'T', 'j', 'init_j']]
         return df
 
 

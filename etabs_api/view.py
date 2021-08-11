@@ -23,3 +23,12 @@ class View:
         self.SapModel.PointObj.SetSelected(name, True)
         self.SapModel.View.RefreshView()
         return True
+    
+    def show_frame(
+            self,
+            name : str,
+            ):
+        self.SapModel.SelectObj.ClearSelection()
+        self.SapModel.FrameObj.SetSelected(name, True)
+        self.SapModel.View.RefreshView()
+        return True

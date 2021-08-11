@@ -36,3 +36,9 @@ def shayesteh(edb="shayesteh.EDB"):
 def test_show_point(shayesteh):
     shayesteh.view.show_point('STORY4', '23')
     assert shayesteh.SapModel.PointObj.GetSelected('166')[0]
+
+
+@pytest.mark.getmethod
+def test_show_frame(shayesteh):
+    shayesteh.view.show_frame('115')
+    assert shayesteh.SapModel.FrameObj.GetSelected('115')[0]

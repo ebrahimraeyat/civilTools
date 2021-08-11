@@ -314,6 +314,37 @@ class StoryStiffnessModel(ResultsModel):
         else:
             return QColor(low)
 
+class BeamsJModel(ResultsModel):
+    def __init__(self, data, headers):
+        super(BeamsJModel, self).__init__(data, headers)
+        self.headers = tuple(self.df.columns)
+        self.col_function = (2,)
+
+    def data(self, index, role=Qt.DisplayRole):
+        row = index.row()
+        col = index.column()
+        self.i_T = self.headers.index('T')
+        self.i_Tcr = self.headers.index('phi_Tcr')
+        self.i_j = self.headers.index('j')
+        self.i_init_j = self.headers.index('init_j')
+        if index.isValid():
+            value = self.df.iloc[row][col]
+            if role == Qt.DisplayRole:
+                if col in (self.i_T, self.i_j, self.i_Tcr, self.i_init_j):
+                    return f'{value:.2f}'
+                return str(value)
+            elif role == Qt.BackgroundColorRole:
+                j = self.df.iloc[row][self.i_j]
+                j_init = self.df.iloc[row][self.i_init_j]
+                # if col == i_ratio:
+                    # value = float(value)
+                if j == j_init:
+                    return QColor(low)
+                else:
+                    return QColor(intermediate)
+            elif role == Qt.TextAlignmentRole:
+                return int(Qt.AlignCenter | Qt.AlignVCenter)
+
 
 class ResultWidget(result_base, result_window):
     # main widget for user interface
