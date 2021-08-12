@@ -255,12 +255,12 @@ class FrameObj:
             df['ratio'] = df['phi_Tcr'] / df['T']
             df['ratio'].replace([np.inf, -np.inf], 1, inplace=True)
             df['ratio'].fillna(1, inplace=True)
+            df['ratio'] = df['ratio'] * df['j']
             df['ratio'] = df['ratio'].clip(j_min_value, j_max_value)
             # df[f'Ratio_{i + 1}'] = df['ratio']
             if df['ratio'].between(low, 1.01).all():
                 break
             else:
-                df['ratio'] = df['ratio'] * df['j']
                 df['j'] = df['ratio']
                 j_dict = dict(zip(df['UniqueName'], df['j']))
                 self.apply_torsion_stiffness_coefficient(j_dict)
