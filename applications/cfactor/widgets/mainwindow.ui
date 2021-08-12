@@ -1343,6 +1343,10 @@ p, li { white-space: pre-wrap; }
    </property>
   </action>
   <action name="action_correct_beams_j">
+   <property name="icon">
+    <iconset resource="../resource.qrc">
+     <normaloff>:/cfactor/images/beam_j_torsion.svg</normaloff>:/cfactor/images/beam_j_torsion.svg</iconset>
+   </property>
    <property name="text">
     <string>correct beams j</string>
    </property>
