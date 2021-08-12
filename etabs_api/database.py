@@ -269,7 +269,7 @@ class DatabaseTables:
         '''
         self.etabs.run_analysis()
         if load_combinations is None:
-            load_combinations = self.SapModel.RespCombo.GetNameList()[1]
+            load_combinations = self.get_concrete_frame_design_load_combinations()
         self.SapModel.DatabaseTables.SetLoadCasesSelectedForDisplay('')
         self.SapModel.DatabaseTables.SetLoadCombinationsSelectedForDisplay(load_combinations)
         TableKey = 'Element Forces - Beams'
@@ -294,6 +294,11 @@ class DatabaseTables:
             return dict(zip(df[cols[0]], df[cols[1]]))
         return df
 
+    def get_concrete_frame_design_load_combinations(self):
+        TableKey = 'Concrete Frame Design Load Combination Data'
+        [_, _, _, _, TableData, _] = self.read_table(TableKey)
+        return [i for i in TableData[1::2]]
+
 if __name__ == '__main__':
     import comtypes.client
     from pathlib import Path
@@ -303,5 +308,5 @@ if __name__ == '__main__':
     from etabs_obj import EtabsModel
     etabs = EtabsModel()
     SapModel = etabs.SapModel
-    df = etabs.database.get_beams_torsion(beams=['115'])
+    df = etabs.database.get_concrete_frame_design_load_combinations()
     print('Wow')

@@ -79,13 +79,13 @@ def test_write_aj_user_coefficient(shayesteh):
 
 def test_get_beams_forces(shayesteh):
     df = shayesteh.database.get_beams_forces()
-    assert len(df) == 66650
+    assert len(df) == 37625
     df = shayesteh.database.get_beams_forces(beams = ['114', '115'])
-    assert len(df) == 1612
+    assert len(df) == 910
     df = shayesteh.database.get_beams_forces(
         beams = ['114', '115'],
         cols = ['Story', 'Beam', 'UniqueName', 'T'])
-    assert len(df) == 1612
+    assert len(df) == 910
     assert len(df.columns) == 4
 
 def test_get_beams_torsion(shayesteh):
@@ -104,4 +104,10 @@ def test_get_beams_torsion_dict(shayesteh):
     df = shayesteh.database.get_beams_torsion(beams=['115'], cols=cols)
     assert len(df) == 1
     assert type(df) == dict
-    assert pytest.approx(df['115'], abs=.01) == 3.926
+
+@pytest.mark.getmethod
+def test_get_concrete_frame_design_load_combinations(shayesteh):
+    combos = shayesteh.database.get_concrete_frame_design_load_combinations()
+    assert len(combos) == 35
+    combinations = [f'COMB{i}' for i in range(1, 36)]
+    assert combos == combinations
