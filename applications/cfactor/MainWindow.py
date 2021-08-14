@@ -369,10 +369,11 @@ class Ui(QMainWindow, main_window):
             )
         if not allow:
             return
-        if not self.is_etabs_running():
+        from etabs_api import etabs_obj
+        etabs = etabs_obj.EtabsModel()
+        if not self.is_etabs_running(etabs):
             return
-        export_result = export.Export(self, self.dirty, self.lastDirectory, self.final_building)
-        ret = export_result.to_etabs()
+        ret = etabs.apply_cfactor_to_edb(self.final_building)
         if ret == 1:
             msg = "Data can not be written to your Etabs file,\n If you want to correct this problem, try Run analysis."
             title = "Remove Error?"

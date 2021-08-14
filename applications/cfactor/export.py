@@ -53,12 +53,6 @@ class Export:
         self.lastDirectory = getLastSaveDirectory(filename)
         config.save(self.widget, filename)
 
-    def to_etabs(self):
-        civiltools_path = Path(__file__).parent.parent.parent
-        sys.path.insert(0, str(civiltools_path))
-        from etabs_api import etabs_obj
-        ret = etabs_obj.apply_cfactor_to_edb(self.building)
-        return ret
 
 class ExportGraph:
     def __init__(self, widget, lastDirectory, p):
