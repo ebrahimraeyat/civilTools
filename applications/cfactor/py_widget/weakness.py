@@ -19,7 +19,10 @@ class WeaknessForm(weakness_base, weakness_window):
 
     def fill_selected_beams(self):
         self.beams_list.clear()
-        selected = self.etabs.SapModel.SelectObj.GetSelected()
+        try:
+            selected = self.etabs.SapModel.SelectObj.GetSelected()
+        except IndexError:
+            return
         types = selected[1]
         names = selected[2]
         beams = []

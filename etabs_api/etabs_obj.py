@@ -1,7 +1,7 @@
-from os import stat
 import sys
 import comtypes.client
 from pathlib import Path
+from typing import Tuple
 
 civiltools_path = Path(__file__).parent.parent
 sys.path.insert(0, str(civiltools_path))
@@ -104,6 +104,28 @@ class EtabsModel:
         f = Path(self.SapModel.GetModelFilename())
         name = f.name.replace(f.suffix, '')
         return name
+    
+    def get_filename(self) -> Path:
+        return Path(self.SapModel.GetModelFilename())
+    
+    def get_filepath(self) -> Path:
+        return Path(self.SapModel.GetModelFilename()).parent
+        
+    def save_as(self, name):
+        if not name.lower().endswith('.edb'):
+            name += '.EDB'
+        asli_file_path = Path(self.SapModel.GetModelFilename())
+        asli_file_path = asli_file_path.with_suffix('.EDB')
+        new_file_path = asli_file_path.with_name(name)
+        self.SapModel.File.Save(str(new_file_path))
+        return asli_file_path, new_file_path
+    
+    def export(self, suffix='.e2k') -> Tuple[Path, Path]:
+        asli_file_path = Path(self.SapModel.GetModelFilename())
+        asli_file_path = asli_file_path.with_suffix('.EDB')
+        new_file_path = asli_file_path.with_suffix(suffix)
+        self.SapModel.File.Save(str(new_file_path))
+        return asli_file_path, new_file_path
 
     @staticmethod
     def get_from_list_table(
@@ -119,15 +141,6 @@ class EtabsModel:
         else:
             result = filter(lambda x: itemget(x) == values, list_table)
         return result
-
-    def save_as(self, name):
-        if not name.lower().endswith('.edb'):
-            name += '.EDB'
-        asli_file_path = Path(self.SapModel.GetModelFilename())
-        asli_file_path = asli_file_path.with_suffix('.EDB')
-        new_file_path = asli_file_path.with_name(name)
-        self.SapModel.File.Save(str(new_file_path))
-        return asli_file_path, new_file_path
 
     @staticmethod
     def save_to_json(json_file, data):
