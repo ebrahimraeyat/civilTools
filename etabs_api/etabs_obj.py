@@ -492,12 +492,13 @@ class EtabsModel:
         if asli_file_path.suffix.lower() != '.edb':
             asli_file_path = asli_file_path.with_suffix(".EDB")
         dir_path = asli_file_path.parent.absolute()
-        story_names = self.SapModel.Story.GetNameList()[1]
         center_of_rigidity = self.database.get_center_of_rigidity()
+        story_names = center_of_rigidity.keys()
         story_stiffness = {}
+        name = self.get_file_name_without_suffix()
         import shutil
         for story_name in story_names:
-            story_file_path = dir_path / f'STIFFNESS_{story_name}.EDB'
+            story_file_path = dir_path / f'{name}_STIFFNESS_{story_name}.EDB'
             print(f"Saving file as {story_file_path}\n")
             shutil.copy(asli_file_path, story_file_path)
             print(f"Opening file {story_file_path}\n")
