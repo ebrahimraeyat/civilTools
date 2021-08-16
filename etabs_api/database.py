@@ -212,12 +212,13 @@ class DatabaseTables:
 
     def multiply_seismic_loads(
             self,
-            x: float,
+            x: float = .67,
             y=None,
             ):
         if not y:
             y = x
         self.SapModel.SetModelIsLocked(False)
+        self.etabs.lock_and_unlock_model()
         self.etabs.load_patterns.select_all_load_patterns()
         TableKey = 'Load Pattern Definitions - Auto Seismic - User Coefficient'
         [_, _, FieldsKeysIncluded, _, TableData, _] = self.read_table(TableKey)
@@ -308,5 +309,5 @@ if __name__ == '__main__':
     from etabs_obj import EtabsModel
     etabs = EtabsModel()
     SapModel = etabs.SapModel
-    df = etabs.database.get_concrete_frame_design_load_combinations()
+    ret = etabs.database.multiply_seismic_loads()
     print('Wow')

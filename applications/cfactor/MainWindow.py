@@ -424,19 +424,30 @@ class Ui(QMainWindow, main_window):
             'cfactor',
             n=2,
             )
+        if not allow:
+            return
         from etabs_api import etabs_obj, table_model
         etabs = etabs_obj.EtabsModel()
         if not self.is_etabs_running(etabs):
             return
-        ret = etabs.frame_obj.get_beams_columns_weakness_structure()
-        if not ret:
-            err = "Please select one beam in ETABS model!"
-            QMessageBox.critical(self, "Error", str(err))
-            return None
-        data, headers, data2, headers2 = ret
-        table_model.show_results(data, headers, table_model.ColumnsRatioModel)
-        table_model.show_results(data2, headers2, table_model.BeamsRebarsModel)
-        self.show_warning_about_number_of_use(check)
+        from py_widget import weakness
+        weakness_win = weakness.WeaknessForm(etabs)
+        if weakness_win.exec_():
+            use_weakness_file = weakness_win.file_groupbox.isChecked()
+            if use_weakness_file:
+                weakness_filepath = Path(weakness_win.weakness_file.text())
+                if weakness_filepath.exists():
+                    ret = etabs.frame_obj.get_beams_columns_weakness_structure(weakness_filename=weakness_filepath)
+            else:
+                ret = etabs.frame_obj.get_beams_columns_weakness_structure()
+            if not ret:
+                err = "Please select one beam in ETABS model!"
+                QMessageBox.critical(self, "Error", str(err))
+                return None
+            data, headers, data2, headers2 = ret
+            table_model.show_results(data, headers, table_model.ColumnsRatioModel)
+            table_model.show_results(data2, headers2, table_model.BeamsRebarsModel)
+            self.show_warning_about_number_of_use(check)
     
     def show_weakness_ratio(self):
         sys.path.insert(0, str(civiltools_path))

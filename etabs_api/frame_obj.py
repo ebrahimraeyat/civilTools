@@ -46,7 +46,7 @@ class FrameObj:
         self.SapModel.SelectObj.ClearSelection()
         self.etabs.analyze.set_load_cases_to_analyze()
         self.etabs.run_analysis()
-        # set_frame_obj_selected(SapModel, frame_names)
+        self.set_frame_obj_selected(frame_names)
         if not self.SapModel.DesignConcrete.GetResultsAvailable():
             print('Start Design ...')
             self.SapModel.DesignConcrete.StartDesign()
@@ -120,7 +120,7 @@ class FrameObj:
     def get_beams_columns_weakness_structure(
                     self,
                     name: str = '',
-                    weakness_filename="weakness.EDB"
+                    weakness_filename : Union[str, Path] = "weakness.EDB"
                     ):
         if not name:
             try:
@@ -132,16 +132,22 @@ class FrameObj:
         story_frames.remove(name)
         print('get columns pmm and beams rebars')
         columns_pmm, beams_rebars = self.get_columns_pmm_and_beams_rebars(story_frames)
-        print(f"Saving file as {weakness_filename}\n")
+        self.etabs.unlock_model()
+        self.etabs.lock_and_unlock_model()
         asli_file_path = Path(self.SapModel.GetModelFilename())
-        if asli_file_path.suffix.lower() != '.edb':
-            asli_file_path = asli_file_path.with_suffix(".EDB")
-        dir_path = asli_file_path.parent.absolute()
-        weakness_file_path = dir_path / weakness_filename
-        self.SapModel.File.Save(str(weakness_file_path))
-        print('multiply earthquake factor with 0.67')
-        self.etabs.database.multiply_seismic_loads(.67)
-        self.set_end_release_frame(name)
+        if isinstance(weakness_filename, Path) and weakness_filename.exists():
+            self.SapModel.File.OpenFile(str(weakness_filename))
+        else:
+            print(f"Saving file as {weakness_filename}\n")
+            if asli_file_path.suffix.lower() != '.edb':
+                asli_file_path = asli_file_path.with_suffix(".EDB")
+            dir_path = asli_file_path.parent.absolute()
+            weakness_file_path = dir_path / weakness_filename
+            self.SapModel.File.Save(str(weakness_file_path))
+            self.etabs.lock_and_unlock_model()
+            print('multiply earthquake factor with 0.67')
+            self.etabs.database.multiply_seismic_loads(.67)
+            self.set_end_release_frame(name)
         print('get columns pmm and beams rebars')
         columns_pmm_weakness, beams_rebars_weakness = self.get_columns_pmm_and_beams_rebars(story_frames)
         columns_pmm_main_and_weakness, col_fields, \

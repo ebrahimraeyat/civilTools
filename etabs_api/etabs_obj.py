@@ -82,8 +82,8 @@ class EtabsModel:
         self.SapModel.SetModelIsLocked(False)
 
     def lock_and_unlock_model(self):
-        self.lock_model()
-        self.unlock_model()
+        self.SapModel.SetModelIsLocked(True)
+        self.SapModel.SetModelIsLocked(False)
 
     def run_analysis(self, open_lock=False):
         if self.SapModel.GetModelIsLocked():
