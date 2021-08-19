@@ -632,4 +632,3 @@ if __name__ == '__main__':
     # TableKey = 'Load Pattern Definitions - Auto Seismic - User Coefficient'
     # [_, _, FieldsKeysIncluded, _, TableData, _] = self.database.read_table(TableKey, self.SapModel)
     # is_auto_load_yes_in_seismic_load_patterns(TableData, FieldsKeysIncluded)
-    get_drifts(4, 4, 4)

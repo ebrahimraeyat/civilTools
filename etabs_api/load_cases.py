@@ -22,9 +22,26 @@ class LoadCases:
         self.SapModel.DatabaseTables.SetLoadCombinationsSelectedForDisplay('')
         self.SapModel.DatabaseTables.SetLoadCasesSelectedForDisplay(names)
 
+    def get_loadcase_withtype(self, n) -> list:
+        '''
+        return load cases that match load case type number:
+        1 : LinearStatic
+        2 : NonlinearStatic
+        3 : Modal
+        4 : ResponseSpectrum
+        '''
+        load_cases = self.get_load_cases()
+        ret = []
+        for lc in load_cases:
+            if self.SapModel.LoadCases.GetTypeOAPI(lc)[0] == n:
+                ret.append(lc)
+        return ret
+
     def get_modal_loadcase_name(self):
         load_cases = self.get_load_cases()
         for lc in load_cases:
             if self.SapModel.LoadCases.GetTypeOAPI(lc)[0] == 3:
                 return lc
-        return None 
+        return None
+
+    

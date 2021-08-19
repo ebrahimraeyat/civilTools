@@ -41,3 +41,8 @@ def test_get_load_cases(shayesteh):
 def test_get_modal_loadcase_name(shayesteh):
     name = shayesteh.load_cases.get_modal_loadcase_name()
     assert name == 'Modal'
+
+@pytest.mark.getmethod
+def test_get_loadcase_withtype(shayesteh):
+    name = shayesteh.load_cases.get_loadcase_withtype(4)
+    assert name == ['SX', 'SY', 'SPX', 'SPY']
