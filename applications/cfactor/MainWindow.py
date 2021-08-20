@@ -419,8 +419,8 @@ class Ui(QMainWindow, main_window):
     
     def get_weakness_ratio(self):
         allow, check = self.allowed_to_continue(
-            'torsion.bin',
-            'https://gist.githubusercontent.com/ebrahimraeyat/d1591790a52a62b3e66bb70f45738105/raw',
+            'weakness.bin',
+            'https://gist.githubusercontent.com/ebrahimraeyat/3c8c1d0229dc76ec23982af1173aa46a/raw',
             'cfactor',
             n=2,
             )
