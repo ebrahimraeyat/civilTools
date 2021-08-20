@@ -239,12 +239,12 @@ class DatabaseTables:
                 earthquake[i_c] = str(cy)
         TableData = self.unique_data(data)
         NumFatalErrors, ret = self.write_seismic_user_coefficient(TableKey, FieldsKeysIncluded, TableData)
-        edb_filename, e2k_filename = self.etabs.export('.$et')
-        self.SapModel.File.OpenFile(str(e2k_filename))
-        solver_options = self.SapModel.Analyze.GetSolverOption_2()
-        solver_options[1] = 1
-        self.SapModel.Analyze.SetSolverOption_2(*solver_options[:-1])
-        self.SapModel.File.Save(str(edb_filename))
+        # edb_filename, e2k_filename = self.etabs.export('.$et')
+        # self.SapModel.File.OpenFile(str(e2k_filename))
+        # solver_options = self.SapModel.Analyze.GetSolverOption_2()
+        # solver_options[1] = 1
+        # self.SapModel.Analyze.SetSolverOption_2(*solver_options[:-1])
+        # self.SapModel.File.Save(str(edb_filename))
         return NumFatalErrors, ret
 
     def get_story_forces(
