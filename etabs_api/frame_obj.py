@@ -279,10 +279,44 @@ class FrameObj:
         df = df[['Story', 'Beam', 'UniqueName', 'section', 'phi_Tcr', 'T', 'j', 'init_j']]
         return df
 
+    def offset_frame(self, 
+                distance : float,
+                neg : bool =False,
+                name : Union[str, bool] = None,
+                ):
+        if name is None:
+            try:
+                name = self.SapModel.SelectObj.GetSelected()[2][0]
+            except IndexError:
+                print('You must select at least one beam')
+                return
+        p1_name, p2_name, _ = self.SapModel.FrameObj.GetPoints(name)
+        x1, y1, z1 = self.SapModel.PointObj.GetCoordCartesian(p1_name)[:3]
+        x2, y2 = self.SapModel.PointObj.GetCoordCartesian(p2_name)[:2]
+        if x2 == x1:
+            dy = 0
+            dx = distance
+        else:
+            import math
+            m = (y2 - y1) / (x2 - x1)
+            dy = distance / math.sqrt(1 + m ** 2)
+            dx = m * dy
+        if neg:
+            dx *= -1
+            dy *= -1
+        x1_offset = x1 - dx
+        x2_offset = x2 - dx
+        y1_offset = y1 + dy
+        y2_offset = y2 + dy
+        line = self.SapModel.FrameObj.AddByCoord(x1_offset, y1_offset, z1, x2_offset, y2_offset, z1)[0]
+        return line
+
+        
+
+
 
 
 if __name__ == '__main__':
-    import comtypes.client
     from pathlib import Path
     current_path = Path(__file__).parent
     import sys
@@ -290,9 +324,8 @@ if __name__ == '__main__':
     from etabs_obj import EtabsModel
     etabs = EtabsModel()
     SapModel = etabs.SapModel
-    beams_names = ('115', '120')
-    df = etabs.frame_obj.correct_torsion_stiffness_factor(tolerance=.1, num_iteration=3, initial_j=1)
-    df.to_excel('c:\\alaki\\beam_torsion.xlsx')
+    df = etabs.frame_obj.offset_frame(.80)
+    print(df)
     print('Wow')
 
 

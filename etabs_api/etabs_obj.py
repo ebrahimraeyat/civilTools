@@ -58,10 +58,10 @@ class EtabsModel:
             # self.etabs.ApplicationStart()
         if self.success:
             self.SapModel = self.etabs.SapModel
-            solver_options = self.SapModel.Analyze.GetSolverOption_2()
-            solver_options[1] = 1
-            self.SapModel.Analyze.SetSolverOption_2(*solver_options[:-1])
-            self.SapModel.File.Save()
+            # solver_options = self.SapModel.Analyze.GetSolverOption_2()
+            # solver_options[1] = 1
+            # self.SapModel.Analyze.SetSolverOption_2(*solver_options[:-1])
+            # self.SapModel.File.Save()
             self.load_patterns = LoadPatterns(None, self)
             self.load_cases = LoadCases(self.SapModel, None)
             self.story = Story(None, self)
