@@ -1036,7 +1036,7 @@ p, li { white-space: pre-wrap; }
      <x>0</x>
      <y>0</y>
      <width>1518</width>
-     <height>30</height>
+     <height>26</height>
     </rect>
    </property>
    <property name="layoutDirection">
@@ -1073,12 +1073,19 @@ p, li { white-space: pre-wrap; }
      <addaction name="action_get_irregularity_of_mass"/>
      <addaction name="menuStiffness"/>
     </widget>
+    <widget class="QMenu" name="menuEdit">
+     <property name="title">
+      <string>Edit</string>
+     </property>
+     <addaction name="action_offset_beam"/>
+    </widget>
     <addaction name="action_to_etabs"/>
     <addaction name="menuTorsion"/>
     <addaction name="menuIrregularity"/>
     <addaction name="action_automatic_drift"/>
     <addaction name="action_show_aj"/>
     <addaction name="action_correct_beams_j"/>
+    <addaction name="menuEdit"/>
    </widget>
    <widget class="QMenu" name="menuFile">
     <property name="title">
@@ -1349,6 +1356,11 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>correct beams j</string>
+   </property>
+  </action>
+  <action name="action_offset_beam">
+   <property name="text">
+    <string>Offset Beam</string>
    </property>
   </action>
  </widget>

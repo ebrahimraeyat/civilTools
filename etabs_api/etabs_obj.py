@@ -103,6 +103,18 @@ class EtabsModel:
         force_enum = EtabsModel.force_units[force]
         len_enum = EtabsModel.length_units[length]
         self.SapModel.SetPresentUnits_2(force_enum, len_enum, 2)
+    
+    def get_current_unit(self):
+        force_enum, len_enum, *argv = self.SapModel.GetPresentUnits_2()
+        for key, value in EtabsModel.force_units.items():
+            if force_enum == value:
+                force = key
+                break
+        for key, value in EtabsModel.length_units.items():
+            if len_enum == value:
+                length = key
+                break
+        return force, length
 
     def get_file_name_without_suffix(self):
         f = Path(self.SapModel.GetModelFilename())

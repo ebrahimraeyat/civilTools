@@ -69,6 +69,7 @@ class Ui(QMainWindow, main_window):
         self.action_get_irregularity_of_mass.triggered.connect(self.get_irregularity_of_mass)
         self.action_show_aj.triggered.connect(self.aj)
         self.action_correct_beams_j.triggered.connect(self.correct_torsion_stiffness_factor)
+        self.action_offset_beam.triggered.connect(self.offset_beam)
 
     def create_connections(self):
         self.calculate_button.clicked.connect(self.calculate)
@@ -673,6 +674,15 @@ class Ui(QMainWindow, main_window):
             table_model.show_results(df, None, table_model.BeamsJModel, etabs.view.show_frame)
             self.show_warning_about_number_of_use(check)
 
+    def offset_beam(self):
+        sys.path.insert(0, str(civiltools_path))
+        from etabs_api import etabs_obj
+        etabs = etabs_obj.EtabsModel()
+        if not self.is_etabs_running(etabs):
+            return
+        from py_widget import offset
+        offset_win = offset.OffsetForm(etabs)
+        offset_win.exec_()
 
     def allowed_to_continue(self,
                             filename,

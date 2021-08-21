@@ -309,6 +309,7 @@ class FrameObj:
         y1_offset = y1 + dy
         y2_offset = y2 + dy
         line = self.SapModel.FrameObj.AddByCoord(x1_offset, y1_offset, z1, x2_offset, y2_offset, z1)[0]
+        self.SapModel.View.RefreshView()
         return line
 
         
