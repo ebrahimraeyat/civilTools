@@ -1,6 +1,7 @@
 <RCC>
   <qresource prefix="cfactor">
     <file>../../images/offset.svg</file>
+    <file>../../images/clear.png</file>
     <file>../../images/connect.svg</file>
     <file>../../images/beam_j_torsion.svg</file>
     <file>../../images/show_aj.svg</file>

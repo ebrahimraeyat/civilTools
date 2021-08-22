@@ -1087,6 +1087,7 @@ p, li { white-space: pre-wrap; }
     <addaction name="action_show_aj"/>
     <addaction name="action_correct_beams_j"/>
     <addaction name="menuEdit"/>
+    <addaction name="action_remove_backups"/>
    </widget>
    <widget class="QMenu" name="menuFile">
     <property name="title">
@@ -1130,6 +1131,7 @@ p, li { white-space: pre-wrap; }
    <addaction name="action_save"/>
    <addaction name="action_word"/>
    <addaction name="action_save_spectrals"/>
+   <addaction name="action_remove_backups"/>
   </widget>
   <widget class="QToolBar" name="control_toolbar">
    <property name="windowTitle">
@@ -1375,6 +1377,15 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Connect Two Beams</string>
+   </property>
+  </action>
+  <action name="action_remove_backups">
+   <property name="icon">
+    <iconset resource="../resource.qrc">
+     <normaloff>:/cfactor/images/clear.png</normaloff>:/cfactor/images/clear.png</iconset>
+   </property>
+   <property name="text">
+    <string>Remove Backups</string>
    </property>
   </action>
  </widget>

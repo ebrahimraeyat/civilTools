@@ -2,6 +2,8 @@ import sys
 import comtypes.client
 from pathlib import Path
 from typing import Tuple
+import shutil
+import time
 
 civiltools_path = Path(__file__).parent.parent
 sys.path.insert(0, str(civiltools_path))
@@ -27,6 +29,7 @@ class EtabsModel:
     def __init__(
                 self,
                 attach_to_instance: bool = True,
+                bakcup : bool = True,
                 # model_path: Path = '',
                 # etabs_path: Path = '',
                 ):
@@ -58,6 +61,7 @@ class EtabsModel:
             # self.etabs.ApplicationStart()
         if self.success:
             self.SapModel = self.etabs.SapModel
+            self.backup_model()
             # solver_options = self.SapModel.Analyze.GetSolverOption_2()
             # solver_options[1] = 1
             # self.SapModel.Analyze.SetSolverOption_2(*solver_options[:-1])
@@ -78,6 +82,32 @@ class EtabsModel:
         self.etabs.ApplicationExit(False)
         self.SapModel = None
         self.etabs = None
+
+    def backup_model(self, name=None):
+        max_num = 0
+        if not name:
+            filename = self.get_file_name_without_suffix()
+            file_path = self.get_filepath()
+            for edb in file_path.glob(f'BACKUP_{filename}*.EDB'):
+                num = edb.name.rstrip('.EDB').lstrip(f'BACKUP_{filename}')
+                try:
+                    num = int(num)
+                    max_num = max(max_num, num)
+                except:
+                    continue
+            name = f'BACKUP_{filename}_{max_num + 1}.EDB'
+        if not name.lower().endswith('.edb'):
+            name += '.EDB'
+        asli_file_path = self.get_filename()
+        asli_file_path = asli_file_path.with_suffix('.EDB')
+        new_file_path = asli_file_path.with_name(name)
+        shutil.copy(asli_file_path, new_file_path)
+
+    def remove_backups(self):
+        file_path = self.get_filepath()
+        for edb in file_path.glob(f'BACKUP_*.EDB'):
+            edb.unlink()
+        return None
 
     def lock_model(self):
         self.SapModel.SetModelIsLocked(True)
@@ -508,7 +538,6 @@ class EtabsModel:
         story_names = center_of_rigidity.keys()
         story_stiffness = {}
         name = self.get_file_name_without_suffix()
-        import shutil
         for story_name in story_names:
             story_file_path = dir_path / f'{name}_STIFFNESS_{story_name}.EDB'
             print(f"Saving file as {story_file_path}\n")
