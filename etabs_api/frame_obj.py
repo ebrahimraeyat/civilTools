@@ -282,39 +282,87 @@ class FrameObj:
     def offset_frame(self, 
                 distance : float,
                 neg : bool =False,
-                name : Union[str, bool] = None,
-                ):
-        if name is None:
+                names : Union[list, bool] = None,
+                ) -> list:
+        if names is None:
             try:
-                name = self.SapModel.SelectObj.GetSelected()[2][0]
+                names = self.SapModel.SelectObj.GetSelected()[2]
             except IndexError:
                 print('You must select at least one beam')
                 return
-        p1_name, p2_name, _ = self.SapModel.FrameObj.GetPoints(name)
-        x1, y1, z1 = self.SapModel.PointObj.GetCoordCartesian(p1_name)[:3]
-        x2, y2 = self.SapModel.PointObj.GetCoordCartesian(p2_name)[:2]
-        if x2 == x1:
-            dy = 0
-            dx = distance
-        else:
-            import math
-            m = (y2 - y1) / (x2 - x1)
-            dy = distance / math.sqrt(1 + m ** 2)
-            dx = m * dy
-        if neg:
-            dx *= -1
-            dy *= -1
-        x1_offset = x1 - dx
-        x2_offset = x2 - dx
-        y1_offset = y1 + dy
-        y2_offset = y2 + dy
-        line = self.SapModel.FrameObj.AddByCoord(x1_offset, y1_offset, z1, x2_offset, y2_offset, z1)[0]
+        lines = []
+        for name in names:
+            p1_name, p2_name, _ = self.SapModel.FrameObj.GetPoints(name)
+            x1, y1, z1 = self.SapModel.PointObj.GetCoordCartesian(p1_name)[:3]
+            x2, y2 = self.SapModel.PointObj.GetCoordCartesian(p2_name)[:2]
+            if x2 == x1:
+                dy = 0
+                dx = distance
+            else:
+                import math
+                m = (y2 - y1) / (x2 - x1)
+                dy = distance / math.sqrt(1 + m ** 2)
+                dx = m * dy
+            if neg:
+                dx *= -1
+                dy *= -1
+            x1_offset = x1 - dx
+            x2_offset = x2 - dx
+            y1_offset = y1 + dy
+            y2_offset = y2 + dy
+            line = self.SapModel.FrameObj.AddByCoord(x1_offset, y1_offset, z1, x2_offset, y2_offset, z1)[0]
+            lines.append(line)
         self.SapModel.View.RefreshView()
-        return line
+        return lines
 
-        
-
-
+    def connect_two_line(self,
+                names : Union[list, bool] = None,
+                points : Union[list, bool] = None,
+                ) -> None:
+        if not names:
+            try:
+                names = self.SapModel.SelectObj.GetSelected()[2]
+            except IndexError:
+                print('You must select at least two beam')
+                return
+        b1, b2 = names[:2]
+        p1_name, p2_name, _ = self.SapModel.FrameObj.GetPoints(b1)
+        x1, y1 = self.SapModel.PointObj.GetCoordCartesian(p1_name)[:2]
+        x2, y2 = self.SapModel.PointObj.GetCoordCartesian(p2_name)[:2]
+        p3_name, p4_name, _ = self.SapModel.FrameObj.GetPoints(b2)
+        x3, y3 = self.SapModel.PointObj.GetCoordCartesian(p3_name)[:2]
+        x4, y4 = self.SapModel.PointObj.GetCoordCartesian(p4_name)[:2]
+        D = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)
+        if D == 0:
+            print('Two lines are parallel!')
+            return None
+        xp = ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) / D
+        yp = ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) / D
+        # move points to xp, yp
+        if points is None:
+            points = []
+            d1 = self.etabs.points.get_distance_between_two_points_in_XY(p1_name, (xp, yp))
+            d2 = self.etabs.points.get_distance_between_two_points_in_XY(p2_name, (xp, yp))
+            d3 = self.etabs.points.get_distance_between_two_points_in_XY(p3_name, (xp, yp))
+            d4 = self.etabs.points.get_distance_between_two_points_in_XY(p4_name, (xp, yp))
+            if d1 < d2:
+                points.append(p1_name)
+            else:
+                points.append(p2_name)
+            if d3 < d4:
+                points.append(p3_name)
+            else:
+                points.append(p4_name)
+        for point in points:
+            assert point in (p1_name, p2_name, p3_name, p4_name)
+            x, y = self.SapModel.PointObj.GetCoordCartesian(point)[:2]
+            dx = xp - x
+            dy = yp - y
+            self.SapModel.SelectObj.ClearSelection()
+            self.SapModel.PointObj.SetSelected(point, True)
+            self.SapModel.EditGeneral.Move(dx, dy, 0)
+        self.SapModel.View.RefreshView()
+        return None
 
 
 if __name__ == '__main__':
@@ -325,7 +373,7 @@ if __name__ == '__main__':
     from etabs_obj import EtabsModel
     etabs = EtabsModel()
     SapModel = etabs.SapModel
-    df = etabs.frame_obj.offset_frame(.80)
+    df = etabs.frame_obj.connect_two_line()
     print(df)
     print('Wow')
 
