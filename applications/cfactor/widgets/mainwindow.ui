@@ -1078,6 +1078,7 @@ p, li { white-space: pre-wrap; }
       <string>Edit</string>
      </property>
      <addaction name="action_offset_beam"/>
+     <addaction name="action_connect_beam"/>
     </widget>
     <addaction name="action_to_etabs"/>
     <addaction name="menuTorsion"/>
@@ -1359,8 +1360,21 @@ p, li { white-space: pre-wrap; }
    </property>
   </action>
   <action name="action_offset_beam">
+   <property name="icon">
+    <iconset resource="../resource.qrc">
+     <normaloff>:/cfactor/images/offset.svg</normaloff>:/cfactor/images/offset.svg</iconset>
+   </property>
    <property name="text">
-    <string>Offset Beam</string>
+    <string>Offset Beams</string>
+   </property>
+  </action>
+  <action name="action_connect_beam">
+   <property name="icon">
+    <iconset resource="../resource.qrc">
+     <normaloff>:/cfactor/images/connect.svg</normaloff>:/cfactor/images/connect.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Connect Two Beams</string>
    </property>
   </action>
  </widget>

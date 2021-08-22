@@ -315,7 +315,7 @@ class FrameObj:
         self.SapModel.View.RefreshView()
         return lines
 
-    def connect_two_line(self,
+    def connect_two_beams(self,
                 names : Union[list, bool] = None,
                 points : Union[list, bool] = None,
                 ) -> None:
@@ -373,7 +373,7 @@ if __name__ == '__main__':
     from etabs_obj import EtabsModel
     etabs = EtabsModel()
     SapModel = etabs.SapModel
-    df = etabs.frame_obj.connect_two_line()
+    df = etabs.frame_obj.connect_two_beams()
     print(df)
     print('Wow')
 
