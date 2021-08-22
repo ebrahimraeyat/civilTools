@@ -312,6 +312,7 @@ class FrameObj:
             y2_offset = y2 + dy
             line = self.SapModel.FrameObj.AddByCoord(x1_offset, y1_offset, z1, x2_offset, y2_offset, z1)[0]
             lines.append(line)
+        self.SapModel.SelectObj.ClearSelection()
         self.SapModel.View.RefreshView()
         return lines
 
@@ -361,6 +362,7 @@ class FrameObj:
             self.SapModel.SelectObj.ClearSelection()
             self.SapModel.PointObj.SetSelected(point, True)
             self.SapModel.EditGeneral.Move(dx, dy, 0)
+        self.SapModel.SelectObj.ClearSelection()
         self.SapModel.View.RefreshView()
         return None
 

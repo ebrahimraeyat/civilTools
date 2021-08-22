@@ -29,6 +29,7 @@ class ConnectForm(connect_base, connect_window):
         p2 = self.point_list2.currentItem().text()
         self.SapModel.PointObj.SetSelected(p1, True)
         self.SapModel.PointObj.SetSelected(p2, True)
+        self.SapModel.View.RefreshView()
 
     def fill_points(self):
         try:
