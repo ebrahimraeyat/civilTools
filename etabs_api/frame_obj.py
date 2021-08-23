@@ -75,6 +75,7 @@ class FrameObj:
                 beams_rebars,
                 columns_pmm_weakness,
                 beams_rebars_weakness,
+                dir_ : str = 'x',
                 ):
         columns_pmm_main_and_weakness = []
         for key, value in columns_pmm.items():
@@ -110,7 +111,7 @@ class FrameObj:
                 'Bot Area1', 'Bot Area2',
                 'VRebar1', 'VRebar2',
                 )
-        json_name = 'columns_pmm_beams_rebars.json'
+        json_name = f'columns_pmm_beams_rebars_{dir_}.json'
         data = (columns_pmm_main_and_weakness, col_fields,
             beams_rebars_main_and_weakness, beam_fields)
         self.etabs.save_to_json_in_edb_folder(json_name, data)
@@ -120,7 +121,8 @@ class FrameObj:
     def get_beams_columns_weakness_structure(
                     self,
                     name: str = '',
-                    weakness_filename : Union[str, Path] = "weakness.EDB"
+                    weakness_filename : Union[str, Path] = "weakness.EDB",
+                    dir_ : str = 'x',
                     ):
         if not name:
             try:
@@ -155,7 +157,8 @@ class FrameObj:
                 columns_pmm,
                 beams_rebars,
                 columns_pmm_weakness,
-                beams_rebars_weakness, 
+                beams_rebars_weakness,
+                dir_, 
             )
         self.SapModel.File.OpenFile(str(asli_file_path))
         return (columns_pmm_main_and_weakness, col_fields,

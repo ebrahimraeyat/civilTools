@@ -6,54 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>471</width>
-    <height>372</height>
+    <width>617</width>
+    <height>178</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Investigate Weakness</string>
+   <string>Show Weakness Tables</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Selected Beam</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="refresh_button">
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../resource.qrc">
-         <normaloff>:/cfactor/images/torsion.svg</normaloff>:/cfactor/images/torsion.svg</iconset>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="QListWidget" name="beams_list"/>
-   </item>
-   <item>
-    <widget class="QFrame" name="frame">
+    <widget class="QFrame" name="dir_frame">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
      <property name="frameShape">
       <enum>QFrame::Box</enum>
      </property>
@@ -116,7 +81,7 @@
       <item row="0" column="0">
        <widget class="QLabel" name="label_4">
         <property name="text">
-         <string>Weakness File</string>
+         <string>Result File</string>
         </property>
        </widget>
       </item>
@@ -128,7 +93,7 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QLineEdit" name="weakness_file"/>
+       <widget class="QLineEdit" name="json_file"/>
       </item>
      </layout>
     </widget>

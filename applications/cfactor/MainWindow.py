@@ -434,22 +434,8 @@ class Ui(QMainWindow, main_window):
         if not self.is_etabs_running(etabs):
             return
         from py_widget import weakness
-        weakness_win = weakness.WeaknessForm(etabs)
+        weakness_win = weakness.WeaknessForm(etabs, table_model)
         if weakness_win.exec_():
-            use_weakness_file = weakness_win.file_groupbox.isChecked()
-            if use_weakness_file:
-                weakness_filepath = Path(weakness_win.weakness_file.text())
-                if weakness_filepath.exists():
-                    ret = etabs.frame_obj.get_beams_columns_weakness_structure(weakness_filename=weakness_filepath)
-            else:
-                ret = etabs.frame_obj.get_beams_columns_weakness_structure()
-            if not ret:
-                err = "Please select one beam in ETABS model!"
-                QMessageBox.critical(self, "Error", str(err))
-                return None
-            data, headers, data2, headers2 = ret
-            table_model.show_results(data, headers, table_model.ColumnsRatioModel)
-            table_model.show_results(data2, headers2, table_model.BeamsRebarsModel)
             self.show_warning_about_number_of_use(check)
     
     def show_weakness_ratio(self):
@@ -458,15 +444,9 @@ class Ui(QMainWindow, main_window):
         etabs = etabs_obj.EtabsModel()
         if not self.is_etabs_running(etabs):
             return
-        json_file = Path(etabs.SapModel.GetModelFilepath()) / 'columns_pmm_beams_rebars.json'
-        if not json_file.exists():
-            err = "Please first get weakness ration, then show it!"
-            QMessageBox.critical(self, "Error", str(err))
-            return None
-        ret = etabs.load_from_json(json_file)
-        data, headers, data2, headers2 = ret
-        table_model.show_results(data, headers, table_model.ColumnsRatioModel)
-        table_model.show_results(data2, headers2, table_model.BeamsRebarsModel)
+        from py_widget import show_weakness
+        weakness_win = show_weakness.WeaknessForm(etabs, table_model)
+        weakness_win.exec_()
     
     def get_story_stiffness_table(self):
         allow, check = self.allowed_to_continue(
