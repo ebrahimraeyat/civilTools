@@ -395,6 +395,7 @@ class EtabsModel:
                 self,
                 widget,
                 no_story=None,
+                auto_no_story=False,
                 auto_height=False,
                 loadcases=None,
                 ):
