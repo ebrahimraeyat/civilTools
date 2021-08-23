@@ -21,6 +21,10 @@ class ExportToXml(xml_base, export_xml_window):
         self.setupUi(self)
         self.sections = sections
         self.xml_button.clicked.connect(self.select_file)
+        for lw in (self.use_as_list, self.ductility_list):
+            for i in range(lw.count()):
+                item = lw.item(i)
+                item.setSelected(True)
 
     def accept(self):
         filename = self.xml_path_line.text()
