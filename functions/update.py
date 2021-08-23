@@ -25,7 +25,7 @@ class GitUpdate:
         msg = ''
         try:
             msg = g.pull('origin', self.branch, env={'GIT_SSL_NO_VERIFY': '1'})
-            if not 'allready' in msg.lower():
+            if not 'already' in msg.lower():
                 msg = 'update done successfully.'
         except:
             import shutil
