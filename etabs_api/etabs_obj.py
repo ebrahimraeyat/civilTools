@@ -395,7 +395,6 @@ class EtabsModel:
                 self,
                 widget,
                 no_story=None,
-                auto_no_story=False,
                 auto_height=False,
                 loadcases=None,
                 ):
@@ -445,15 +444,15 @@ class EtabsModel:
             ecc_ratio = aj * .05
             length = story_length[story_name]
             if loadcase in x_names:
-                len = length[1]
+                len_ = length[1]
                 dir_ = 'X'
             elif loadcase in y_names:
-                len = length[0]
+                len_ = length[0]
                 dir_ = 'Y'
-            ecc_len = ecc_ratio * len
+            ecc_len = ecc_ratio * len_
             diaphs = self.story.get_story_diaphragms(story_name)
             diaphs = ','.join(list(diaphs))
-            d.extend([aj, ecc_ratio, len, ecc_len, dir_, diaphs])
+            d.extend([aj, ecc_ratio, len_, ecc_len, dir_, diaphs])
         headers = headers + ('aj', 'Ecc. Ratio', 'Length (Cm)', 'Ecc. Length (Cm)', 'Dir', 'Diaph')
         return data, headers
 
