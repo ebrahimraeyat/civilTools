@@ -16,7 +16,7 @@ Tx_drift, Ty_drift = 1.085, 1.085
 @pytest.fixture
 def shayesteh(edb="shayesteh.EDB"):
     try:
-        etabs = etabs_obj.EtabsModel()
+        etabs = etabs_obj.EtabsModel(backup=False)
         if etabs.success:
             filepath = Path(etabs.SapModel.GetModelFilename())
             if 'test.' in filepath.name:
@@ -35,7 +35,7 @@ def shayesteh(edb="shayesteh.EDB"):
         dir_path = asli_file_path.parent.absolute()
         test_file_path = dir_path / "test.EDB"
         SapModel.File.Save(str(test_file_path))
-        etabs = etabs_obj.EtabsModel()
+        etabs = etabs_obj.EtabsModel(backup=False)
         return etabs
 
 @pytest.fixture
@@ -192,7 +192,7 @@ def test_set_current_unit(shayesteh):
 
 if __name__ == '__main__':
     import pandas as pd
-    etabs = etabs_obj.EtabsModel()
+    etabs = etabs_obj.EtabsModel(backup=False)
     etabs.test_write_aj()
 
 

@@ -1,3 +1,6 @@
+from typing import Tuple, Union
+
+
 class LoadCases:
     def __init__(
                 self,
@@ -43,5 +46,27 @@ class LoadCases:
             if self.SapModel.LoadCases.GetTypeOAPI(lc)[0] == 3:
                 return lc
         return None
+
+    def multiply_response_spectrum_scale_factor(self,
+            name : str,
+            scale : float,
+            scale_min : Union[float, bool] = 1.0,
+            all : bool = False,
+            ):
+        self.etabs.unlock_model()
+        if scale_min is not None:
+            scale = max(scale, scale_min)
+        ret = self.SapModel.LoadCases.ResponseSpectrum.GetLoads(name)
+        if all:
+            scales = (i * scale for i in ret[3])
+            scales = tuple(scales)
+        else:
+            scales = (ret[3][0] * scale,) + tuple(ret[3][1:])
+        ret[3] = scales
+        self.SapModel.LoadCases.ResponseSpectrum.SetLoads(name, *ret[:-1])
+        return None
+        
+        
+        
 
     

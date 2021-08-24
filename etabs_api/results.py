@@ -51,6 +51,7 @@ class Results:
             loadcases = self.etabs.load_patterns.get_ex_ey_earthquake_name()
         if directions is None:
             directions = ['x', 'y']
+        assert len(loadcases) == len(directions)
         self.SapModel.Results.Setup.DeselectAllCasesAndCombosForOutput()
         for lc in loadcases:
             self.SapModel.Results.Setup.SetCaseSelectedForOutput(lc)

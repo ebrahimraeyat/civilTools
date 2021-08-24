@@ -29,7 +29,7 @@ class EtabsModel:
     def __init__(
                 self,
                 attach_to_instance: bool = True,
-                bakcup : bool = True,
+                backup : bool = True,
                 # model_path: Path = '',
                 # etabs_path: Path = '',
                 ):
@@ -61,13 +61,14 @@ class EtabsModel:
             # self.etabs.ApplicationStart()
         if self.success:
             self.SapModel = self.etabs.SapModel
-            self.backup_model()
+            if backup:
+                self.backup_model()
             # solver_options = self.SapModel.Analyze.GetSolverOption_2()
             # solver_options[1] = 1
             # self.SapModel.Analyze.SetSolverOption_2(*solver_options[:-1])
             # self.SapModel.File.Save()
             self.load_patterns = LoadPatterns(None, self)
-            self.load_cases = LoadCases(self.SapModel, None)
+            self.load_cases = LoadCases(None, self)
             self.story = Story(None, self)
             self.frame_obj = FrameObj(self)
             self.analyze = Analyze(self.SapModel, None)
@@ -658,8 +659,8 @@ class Build:
 
                 
 if __name__ == '__main__':
-    etabs = EtabsModel()
-    SapModel = etabs.SapMoel
+    etabs = EtabsModel(backup=False)
+    SapModel = etabs.SapModel
     etabs.apply_cfactor_to_edb()
     # TableKey = 'Frame Section Property Definitions - Summary'
     # [_, TableVersion, FieldsKeysIncluded, NumberRecords, TableData, _] = self.database.read_table(TableKey, self.SapModel)

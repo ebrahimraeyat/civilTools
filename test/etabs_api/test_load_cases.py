@@ -10,7 +10,7 @@ from etabs_api import etabs_obj
 @pytest.fixture
 def shayesteh(edb="shayesteh.EDB"):
     try:
-        etabs = etabs_obj.EtabsModel()
+        etabs = etabs_obj.EtabsModel(backup=False)
         if etabs.success:
             filepath = Path(etabs.SapModel.GetModelFilename())
             if 'test.' in filepath.name:
@@ -29,7 +29,7 @@ def shayesteh(edb="shayesteh.EDB"):
         dir_path = asli_file_path.parent.absolute()
         test_file_path = dir_path / "test.EDB"
         SapModel.File.Save(str(test_file_path))
-        etabs = etabs_obj.EtabsModel()
+        etabs = etabs_obj.EtabsModel(backup=False)
         return etabs
 
 @pytest.mark.getmethod
@@ -46,3 +46,11 @@ def test_get_modal_loadcase_name(shayesteh):
 def test_get_loadcase_withtype(shayesteh):
     name = shayesteh.load_cases.get_loadcase_withtype(4)
     assert name == ['SX', 'SY', 'SPX', 'SPY']
+
+@pytest.mark.getmethod
+def test_multiply_response_spectrum_scale_factor(shayesteh):
+    shayesteh.load_cases.multiply_response_spectrum_scale_factor('SX', 2)
+    ret = shayesteh.SapModel.LoadCases.ResponseSpectrum.GetLoads('SX')[3]
+    assert ret == (3.5198 * 2,)
+    shayesteh.load_cases.multiply_response_spectrum_scale_factor('SX', .5, scale_min=None)
+
