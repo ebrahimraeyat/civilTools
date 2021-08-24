@@ -659,6 +659,7 @@ class Build:
                 
 if __name__ == '__main__':
     etabs = EtabsModel()
+    SapModel = etabs.SapMoel
     etabs.apply_cfactor_to_edb()
     # TableKey = 'Frame Section Property Definitions - Summary'
     # [_, TableVersion, FieldsKeysIncluded, NumberRecords, TableData, _] = self.database.read_table(TableKey, self.SapModel)

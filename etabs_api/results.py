@@ -1,3 +1,6 @@
+from typing import Union
+
+
 class Results:
     def __init__(
                 self,
@@ -37,14 +40,29 @@ class Results:
         y = results[7][0]
         return x, y
 
-    def get_base_react(self):
+    def get_base_react(self,
+            loadcases: Union[list, bool] = None,
+            directions: Union[list, bool] = None,
+            absolute : bool = False,
+            ) -> list:
         self.SapModel.SetPresentUnits_2(5, 6, 2)
         self.etabs.run_analysis()
-        loadcases = self.etabs.load_patterns.get_ex_ey_earthquake_name()
+        if loadcases is None:
+            loadcases = self.etabs.load_patterns.get_ex_ey_earthquake_name()
+        if directions is None:
+            directions = ['x', 'y']
         self.SapModel.Results.Setup.DeselectAllCasesAndCombosForOutput()
-        self.SapModel.Results.Setup.SetCaseSelectedForOutput(loadcases[0])
-        self.SapModel.Results.Setup.SetCaseSelectedForOutput(loadcases[1])
+        for lc in loadcases:
+            self.SapModel.Results.Setup.SetCaseSelectedForOutput(lc)
         base_react = self.SapModel.Results.BaseReact()
-        vx = base_react[4][0]
-        vy = base_react[5][1]
-        return vx, vy
+        load_cases = base_react[1]
+        vxs = base_react[4]
+        vys = base_react[5]
+        V = []
+        for lc, dir_ in zip(loadcases, directions):
+            i = load_cases.index(lc)
+            if dir_ == 'x':
+                V.append(abs(vxs[i]) if absolute else vxs[i])
+            elif dir_ == 'y':
+                V.append(abs(vys[i]) if absolute else vys[i])
+        return V
