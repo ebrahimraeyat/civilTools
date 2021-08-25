@@ -647,6 +647,57 @@ class EtabsModel:
         fields.extend(['Vx %', 'Vy %'])
         return new_data, fields
 
+    def scale_response_spectrums(self,
+        ex_name : str,
+        ey_name : str,
+        x_specs : list,
+        y_specs : list,
+        x_scale_factor : float = 0.9, # 0.85, 0.9, 1
+        y_scale_factor : float = 0.9, # 0.85, 0.9, 1
+        num_iteration : int = 3,
+        tolerance : float = .05,
+        ):
+        for i in range(num_iteration):
+            self.analyze.set_load_cases_to_analyze([ex_name, ey_name] + x_specs + y_specs)
+            vex, vey = self.results.get_base_react(
+                    loadcases=[ex_name, ey_name],
+                    directions=['x', 'y'],
+                    absolute=True,
+                    )
+            vsx = self.results.get_base_react(
+                    loadcases=x_specs,
+                    directions=['x'] * len(x_specs),
+                    absolute=True,
+                    )
+            vsy = self.results.get_base_react(
+                    loadcases=y_specs,
+                    directions=['y'] * len(y_specs),
+                    absolute=True,
+                    )
+            x_scales = []
+            y_scales = []
+            for v in vsx:
+                scale = x_scale_factor * vex / v
+                x_scales.append(scale)
+            for v in vsy:
+                scale = y_scale_factor * vey / v
+                y_scales.append(scale)
+            print(x_scales, y_scales)
+            max_scale = max(x_scales + y_scales)
+            min_scale = min(x_scales + y_scales)
+            if (max_scale < 1 + tolerance) and (min_scale > 1 - tolerance):
+                self.unlock_model()
+                self.analyze.set_load_cases_to_analyze()
+                break
+            else:
+                for spec, scale in zip(x_specs, x_scales):
+                    self.load_cases.multiply_response_spectrum_scale_factor(spec, scale)
+                for spec, scale in zip(y_specs, y_scales):
+                    self.load_cases.multiply_response_spectrum_scale_factor(spec, scale)
+        self.unlock_model()
+        self.analyze.set_load_cases_to_analyze()
+        
+
 
 class Build:
     def __init__(self):
@@ -661,7 +712,7 @@ class Build:
 if __name__ == '__main__':
     etabs = EtabsModel(backup=False)
     SapModel = etabs.SapModel
-    etabs.apply_cfactor_to_edb()
+    etabs.scale_response_spectrums('EX', 'EY', 'SX', 'SY', ('SX', 'SPX'), ('SY', 'SPY'), num_iteration=5)
     # TableKey = 'Frame Section Property Definitions - Summary'
     # [_, TableVersion, FieldsKeysIncluded, NumberRecords, TableData, _] = self.database.read_table(TableKey, self.SapModel)
     # get_load_patterns()

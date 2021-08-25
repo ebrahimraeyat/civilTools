@@ -1086,6 +1086,9 @@ p, li { white-space: pre-wrap; }
     <addaction name="action_automatic_drift"/>
     <addaction name="action_show_aj"/>
     <addaction name="action_correct_beams_j"/>
+    <addaction name="separator"/>
+    <addaction name="action_scale_response_spec"/>
+    <addaction name="separator"/>
     <addaction name="menuEdit"/>
     <addaction name="action_remove_backups"/>
    </widget>
@@ -1158,11 +1161,13 @@ p, li { white-space: pre-wrap; }
    <addaction name="action_torsion_table"/>
    <addaction name="action_automatic_drift"/>
    <addaction name="action_story_forces"/>
+   <addaction name="action_correct_beams_j"/>
    <addaction name="separator"/>
    <addaction name="action_show_story_stiffness"/>
    <addaction name="action_show_weakness"/>
    <addaction name="action_show_aj"/>
-   <addaction name="action_correct_beams_j"/>
+   <addaction name="separator"/>
+   <addaction name="action_scale_response_spec"/>
   </widget>
   <action name="action_to_etabs">
    <property name="icon">
@@ -1386,6 +1391,18 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Remove Backups</string>
+   </property>
+  </action>
+  <action name="action_scale_response_spec">
+   <property name="icon">
+    <iconset resource="../resource.qrc">
+     <normaloff>:/cfactor/images/balance.svg</normaloff>:/cfactor/images/balance.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Scale Response Spec.</string>
+   </property>
+   <property name="toolTip">
+    <string>Scale Response Spectrum</string>
    </property>
   </action>
  </widget>

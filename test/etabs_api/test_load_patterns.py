@@ -76,6 +76,12 @@ def test_get_xy_seismic_load_patterns(shayesteh):
     names = shayesteh.load_patterns.get_xy_seismic_load_patterns()
     assert len(names) == 6
 
+@pytest.mark.getmethod
+def test_get_xy_spectral_load_patterns_with_angle(shayesteh):
+    x_names, y_names = shayesteh.load_patterns.get_xy_spectral_load_patterns_with_angle(angle=0)
+    assert x_names == ['SPX', 'SX']
+    assert y_names == ['SPY', 'SY']
+
 @pytest.mark.selectmethod
 def test_select_all_load_patterns(shayesteh):
     shayesteh.load_patterns.select_all_load_patterns()

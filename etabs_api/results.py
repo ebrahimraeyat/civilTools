@@ -45,13 +45,13 @@ class Results:
             directions: Union[list, bool] = None,
             absolute : bool = False,
             ) -> list:
-        self.SapModel.SetPresentUnits_2(5, 6, 2)
-        self.etabs.run_analysis()
+        # self.SapModel.SetPresentUnits_2(5, 6, 2)
         if loadcases is None:
             loadcases = self.etabs.load_patterns.get_ex_ey_earthquake_name()
         if directions is None:
             directions = ['x', 'y']
         assert len(loadcases) == len(directions)
+        self.etabs.run_analysis()
         self.SapModel.Results.Setup.DeselectAllCasesAndCombosForOutput()
         for lc in loadcases:
             self.SapModel.Results.Setup.SetCaseSelectedForOutput(lc)

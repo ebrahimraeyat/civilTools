@@ -117,10 +117,33 @@ class LoadPatterns:
                 break
         return name_x, name_y
 
+    def get_xy_spectral_load_patterns_with_angle(self, angle : int = 0):
+        '''
+        return Response spectrum loadcase
+        '''
+        TableKey = 'Load Case Definitions - Response Spectrum'
+        [_, _, FieldsKeysIncluded, _, TableData, _] = self.etabs.database.read_table(TableKey)
+        data = self.etabs.database.reshape_data(FieldsKeysIncluded, TableData)
+        i_name = FieldsKeysIncluded.index('Name')
+        names = set([i[i_name] for i in data])
+        x_names = []
+        y_names = []
+        for name in names:
+            ret = self.SapModel.LoadCases.ResponseSpectrum.GetLoads(name)
+            if ret[0] == 1 and ret[5][0] == angle:
+                direction = ret[1][0]
+                if direction == 'U1':
+                    x_names.append(name)
+                elif direction == 'U2':
+                    y_names.append(name)
+        return x_names, y_names
+
     def get_ex_ey_earthquake_name(self):
         x_names, y_names = self.get_load_patterns_in_XYdirection()
         x_names = sorted(x_names)
         y_names = sorted(y_names)
+        x_name = None
+        y_name = None
         drift_load_patterns = self.get_drift_load_pattern_names()
         for name in x_names:
             if name not in drift_load_patterns:
@@ -141,3 +164,14 @@ class LoadPatterns:
     def select_all_load_patterns(self):
         load_pattern_names = list(self.get_load_patterns())
         self.SapModel.DatabaseTables.SetLoadPatternsSelectedForDisplay(load_pattern_names) 
+
+if __name__ == '__main__':
+    from pathlib import Path
+    current_path = Path(__file__).parent
+    import sys
+    sys.path.insert(0, str(current_path))
+    from etabs_obj import EtabsModel
+    etabs = EtabsModel(backup=False)
+    SapModel = etabs.SapModel
+    ret = etabs.load_patterns.get_xy_spectral_load_patterns_with_angle()
+    print('Wow')

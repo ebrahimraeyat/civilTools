@@ -72,6 +72,7 @@ class Ui(QMainWindow, main_window):
         self.action_offset_beam.triggered.connect(self.offset_beam)
         self.action_connect_beam.triggered.connect(self.connect_beam)
         self.action_remove_backups.triggered.connect(self.clear_backups)
+        self.action_scale_response_spec.triggered.connect(self.scale_response_spectrums)
 
     def create_connections(self):
         self.calculate_button.clicked.connect(self.calculate)
@@ -655,6 +656,16 @@ class Ui(QMainWindow, main_window):
                 )
             table_model.show_results(df, None, table_model.BeamsJModel, etabs.view.show_frame)
             self.show_warning_about_number_of_use(check)
+
+    def scale_response_spectrums(self):
+        sys.path.insert(0, str(civiltools_path))
+        from etabs_api import etabs_obj
+        etabs = etabs_obj.EtabsModel()
+        if not self.is_etabs_running(etabs):
+            return
+        from py_widget import response_spectrum as rs
+        rs_win = rs.ResponseSpectrumForm(etabs)
+        rs_win.exec_()
 
     def offset_beam(self):
         sys.path.insert(0, str(civiltools_path))
