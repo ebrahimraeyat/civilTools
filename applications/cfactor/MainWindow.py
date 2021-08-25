@@ -658,7 +658,14 @@ class Ui(QMainWindow, main_window):
             self.show_warning_about_number_of_use(check)
 
     def scale_response_spectrums(self):
-        sys.path.insert(0, str(civiltools_path))
+        allow, check = self.allowed_to_continue(
+            'response_spectrum.bin',
+            'https://gist.githubusercontent.com/ebrahimraeyat/2370d564be6b4ba2508f8314a3358970/raw',
+            'cfactor',
+            n=2,
+            )
+        if not allow:
+            return
         from etabs_api import etabs_obj
         etabs = etabs_obj.EtabsModel()
         if not self.is_etabs_running(etabs):
@@ -666,6 +673,7 @@ class Ui(QMainWindow, main_window):
         from py_widget import response_spectrum as rs
         rs_win = rs.ResponseSpectrumForm(etabs)
         rs_win.exec_()
+        self.show_warning_about_number_of_use(check)
 
     def offset_beam(self):
         sys.path.insert(0, str(civiltools_path))
