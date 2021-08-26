@@ -1169,6 +1169,19 @@ p, li { white-space: pre-wrap; }
    <addaction name="separator"/>
    <addaction name="action_scale_response_spec"/>
   </widget>
+  <widget class="QToolBar" name="edit_toolbar">
+   <property name="windowTitle">
+    <string>Edit</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="action_offset_beam"/>
+   <addaction name="action_connect_beam"/>
+  </widget>
   <action name="action_to_etabs">
    <property name="icon">
     <iconset resource="../resource.qrc">
