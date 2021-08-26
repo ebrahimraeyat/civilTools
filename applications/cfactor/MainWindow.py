@@ -698,10 +698,12 @@ class Ui(QMainWindow, main_window):
     def clear_backups(self):
         sys.path.insert(0, str(civiltools_path))
         from etabs_api import etabs_obj
-        etabs = etabs_obj.EtabsModel()
+        etabs = etabs_obj.EtabsModel(backup=False)
         if not self.is_etabs_running(etabs):
             return
-        etabs.remove_backups()
+        from py_widget import delete_backups as db
+        db_win = db.ListForm(etabs)
+        db_win.exec_()
 
     def allowed_to_continue(self,
                             filename,
