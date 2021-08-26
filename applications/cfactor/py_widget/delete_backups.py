@@ -11,6 +11,11 @@ class ListForm(delete_base, delete_window):
         self.setupUi(self)
         self.etabs = etabs_model
         self.fill_list()
+        self.create_connections()
+
+    def create_connections(self):
+        self.select_all.clicked.connect(self.set_list_items_selected)
+        self.deselect_all.clicked.connect(self.set_list_items_selected)
 
     def accept(self):
         items = self.list.selectedItems()
@@ -31,6 +36,11 @@ class ListForm(delete_base, delete_window):
         
 
     def set_list_items_selected(self, select=True):
+        button = self.sender()
+        if button.objectName() == 'select_all':
+            select = True
+        elif button.objectName() == 'deselect_all':
+            select = False
         for i in range(self.list.count()):
             item = self.list.item(i)
             item.setSelected(select)
