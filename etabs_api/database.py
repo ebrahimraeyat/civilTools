@@ -152,7 +152,7 @@ class DatabaseTables:
         TableData = []
         for _, row in df1.iterrows():
             TableData.extend(list(row))
-        self.etabs.SapModel.DatabaseTables.SetTableForEditingArray(TableKey, 0, FieldsKeysIncluded1, 0, TableData)
+        self.SapModel.DatabaseTables.SetTableForEditingArray(TableKey, 0, FieldsKeysIncluded1, 0, TableData)
         NumFatalErrors, ret = self.apply_table()
         return NumFatalErrors, ret
 
@@ -306,6 +306,23 @@ class DatabaseTables:
         [_, _, _, _, TableData, _] = self.read_table(TableKey)
         return [i for i in TableData[1::2]]
 
+    def create_section_cuts(self,
+            group : str,
+            prefix : str = 'SEC',
+            angles : list = range(0, 180, 15),
+            ):
+        fields = ('Name', 'DefinedBy', 'Group', 'ResultType', 'ResultLoc', 'RotAboutZ', 'RotAboutY', 'RotAboutX')
+        data = []
+        for angle in angles:
+            name = f'{prefix}{angle}'
+            data.append(
+            (name, 'Group', group, 'Analysis', 'Default', f'{angle}', '0', '0')
+            )
+        data = self.unique_data(data)
+        table = 'Section Cut Definitions'
+        self.SapModel.DatabaseTables.SetTableForEditingArray(table, 0, fields, 0, data)
+        self.apply_table()
+
 if __name__ == '__main__':
     from pathlib import Path
     current_path = Path(__file__).parent
@@ -314,5 +331,5 @@ if __name__ == '__main__':
     from etabs_obj import EtabsModel
     etabs = EtabsModel()
     SapModel = etabs.SapModel
-    ret = etabs.database.multiply_seismic_loads()
+    ret = etabs.database.create_section_cuts('Group1')
     print('Wow')
