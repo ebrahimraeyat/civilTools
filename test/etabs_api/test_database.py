@@ -111,3 +111,10 @@ def test_get_concrete_frame_design_load_combinations(shayesteh):
     assert len(combos) == 35
     combinations = [f'COMB{i}' for i in range(1, 36)]
     assert combos == combinations
+
+@pytest.mark.getmethod
+def test_get_section_cuts_base_shears(shayesteh):
+    df = shayesteh.database.get_section_cuts_base_shear(specs=['D'], section_cuts=['SCut1'])
+    assert len(df) == 1
+    df = shayesteh.database.get_section_cuts_base_shear(specs=['D', 'DCon11'], section_cuts=['SCut1'])
+    assert len(df) == 3

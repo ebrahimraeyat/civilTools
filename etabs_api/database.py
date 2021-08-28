@@ -39,7 +39,18 @@ class DatabaseTables:
         if cols is not None:
             df = df[cols]
         return df
-   
+
+    def read(self,
+                table_key : str,
+                to_dataframe : bool = False,
+                cols : list = None,
+                ):
+        _, _, fields, _, data, _ = self.read_table(table_key)
+        if to_dataframe:
+            data = self.reshape_data_to_df(fields, data, cols)
+        else:
+            data = self.reshape_data(fields, data)
+        return data
 
     @staticmethod
     def unique_data(data):
@@ -323,6 +334,22 @@ class DatabaseTables:
         self.SapModel.DatabaseTables.SetTableForEditingArray(table, 0, fields, 0, data)
         self.apply_table()
 
+    def get_section_cuts_base_shear(self,
+            specs : list = None,
+            section_cuts: list = None,
+            ):
+            # assert len(specs) == len(section_cuts)
+            table = 'Section Cut Forces - Analysis'
+            columns = ['SectionCut', 'OutputCase', 'F1', 'F2']
+            self.etabs.run_analysis()
+            df = self.read(table, to_dataframe=True, cols=columns)
+            df = df[
+                    (df['OutputCase'].isin(specs)) &
+                    (df['SectionCut'].isin(section_cuts))
+                    ]
+            return df
+
+
 if __name__ == '__main__':
     from pathlib import Path
     current_path = Path(__file__).parent
@@ -331,5 +358,5 @@ if __name__ == '__main__':
     from etabs_obj import EtabsModel
     etabs = EtabsModel()
     SapModel = etabs.SapModel
-    ret = etabs.database.create_section_cuts('Group1')
+    ret = etabs.database.get_section_cuts_base_shear(specs=['D'], section_cuts=['SCut1'])
     print('Wow')
