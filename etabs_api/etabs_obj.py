@@ -86,11 +86,11 @@ class EtabsModel:
 
     def backup_model(self, name=None):
         max_num = 0
-        if not name:
+        if name is None:
             filename = self.get_file_name_without_suffix()
             file_path = self.get_filepath()
             for edb in file_path.glob(f'BACKUP_{filename}*.EDB'):
-                num = edb.name.rstrip('.EDB').lstrip(f'BACKUP_{filename}')
+                num = edb.name.rstrip('.EDB')[len('BACKUP_') + len(filename) + 1:]
                 try:
                     num = int(num)
                     max_num = max(max_num, num)
