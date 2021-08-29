@@ -73,6 +73,7 @@ class Ui(QMainWindow, main_window):
         self.action_connect_beam.triggered.connect(self.connect_beam)
         self.action_remove_backups.triggered.connect(self.clear_backups)
         self.action_scale_response_spec.triggered.connect(self.scale_response_spectrums)
+        self.action_create_section_cuts.triggered.connect(self.create_section_cuts)
 
     def create_connections(self):
         self.calculate_button.clicked.connect(self.calculate)
@@ -694,6 +695,16 @@ class Ui(QMainWindow, main_window):
         from py_widget import connect
         connect_win = connect.ConnectForm(etabs)
         connect_win.exec_()
+    
+    def create_section_cuts(self):
+        sys.path.insert(0, str(civiltools_path))
+        from etabs_api import etabs_obj
+        etabs = etabs_obj.EtabsModel()
+        if not self.is_etabs_running(etabs):
+            return
+        from py_widget.define import create_section_cuts
+        win = create_section_cuts.SectionCutForm(etabs)
+        win.exec_()
 
     def clear_backups(self):
         sys.path.insert(0, str(civiltools_path))

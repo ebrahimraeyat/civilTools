@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="cfactor">
+    <file>../../images/cut.svg</file>
     <file>../../images/offset.svg</file>
     <file>../../images/balance.svg</file>
     <file>../../images/clear.png</file>
