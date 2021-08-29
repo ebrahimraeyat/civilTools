@@ -54,3 +54,8 @@ def test_multiply_response_spectrum_scale_factor(shayesteh):
     assert ret == (3.5198 * 2,)
     shayesteh.load_cases.multiply_response_spectrum_scale_factor('SX', .5, scale_min=None)
 
+@pytest.mark.getmethod
+def test_get_spectral_with_angles(shayesteh):
+    ret = shayesteh.load_cases.get_spectral_with_angles((0, 10, 15, 20, 30))
+    assert ret == {15: 'SPEC15', 30: 'SPEC30', 0: 'SX'}
+

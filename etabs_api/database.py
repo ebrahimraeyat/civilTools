@@ -46,6 +46,8 @@ class DatabaseTables:
                 cols : list = None,
                 ):
         _, _, fields, _, data, _ = self.read_table(table_key)
+        if fields[0] is None:
+            return None
         if to_dataframe:
             data = self.reshape_data_to_df(fields, data, cols)
         else:

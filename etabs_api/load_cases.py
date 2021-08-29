@@ -1,17 +1,15 @@
-from typing import Tuple, Union
+from typing import Iterable, Tuple, Union
+
+from numpy import int16
 
 
 class LoadCases:
     def __init__(
                 self,
-                SapModel=None,
                 etabs=None,
                 ):
-        if not SapModel:
-            self.etabs = etabs
-            self.SapModel = etabs.SapModel
-        else:
-            self.SapModel = SapModel
+        self.etabs = etabs
+        self.SapModel = etabs.SapModel
 
     def get_load_cases(self):
         load_case_names = self.SapModel.LoadCases.GetNameList(0, [])[1]
@@ -65,6 +63,24 @@ class LoadCases:
         ret[3] = scales
         self.SapModel.LoadCases.ResponseSpectrum.SetLoads(name, *ret[:-1])
         return None
+
+    def get_spectral_with_angles(self, angles : Iterable) -> dict:
+        '''
+        return angles and Response spectrum loadcase
+        {0: spec}
+        '''
+        table = 'Load Case Definitions - Response Spectrum'
+        df = self.etabs.database.read(table, to_dataframe=True, cols=['Name', 'Angle'])
+        df['Angle'] = df['Angle'].astype(int16)
+        df.drop_duplicates(['Name'], keep=False, inplace=True)
+        df = df[df['Angle'].isin(angles)]
+        df.drop_duplicates(['Angle'], keep=False, inplace=True)
+        angles_specs = dict()
+        for _, row in df.iterrows():
+            angle = row['Angle']
+            name = row['Name']
+            angles_specs[int(angle)] = name
+        return angles_specs
         
         
         

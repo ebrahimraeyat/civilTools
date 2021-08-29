@@ -69,7 +69,7 @@ class EtabsModel:
             # self.SapModel.Analyze.SetSolverOption_2(*solver_options[:-1])
             # self.SapModel.File.Save()
             self.load_patterns = LoadPatterns(None, self)
-            self.load_cases = LoadCases(None, self)
+            self.load_cases = LoadCases(self)
             self.story = Story(None, self)
             self.frame_obj = FrameObj(self)
             self.analyze = Analyze(self.SapModel, None)
