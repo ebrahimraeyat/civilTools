@@ -338,7 +338,6 @@ class DatabaseTables:
             specs : list = None,
             section_cuts: list = None,
             ):
-            # assert len(specs) == len(section_cuts)
             table = 'Section Cut Forces - Analysis'
             columns = ['SectionCut', 'OutputCase', 'F1', 'F2']
             self.etabs.run_analysis()
