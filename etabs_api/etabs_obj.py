@@ -18,6 +18,7 @@ from etabs_api.database import DatabaseTables
 from etabs_api.sections.sections import Sections
 from etabs_api.results import Results
 from etabs_api.points import Points
+from etabs_api.group import Group
 
 __all__ = ['EtabsModel']
 
@@ -77,6 +78,7 @@ class EtabsModel:
             self.sections = Sections(self.SapModel, None)
             self.results = Results(None, self)
             self.points = Points(None, self)
+            self.group = Group(self)
     
     def close_etabs(self):
         self.SapModel.SetModelIsLocked(False)
