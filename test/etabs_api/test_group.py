@@ -37,3 +37,12 @@ def test_names(shayesteh):
     names = shayesteh.group.names()
     assert len(names) == 1
     assert names == ('All',)
+
+@pytest.mark.setmethod
+def test_add(shayesteh):
+    ret = shayesteh.group.add('sec')
+    assert ret
+    names = shayesteh.group.names()
+    assert 'sec' in names
+    ret = shayesteh.group.add('sec')
+    assert not ret

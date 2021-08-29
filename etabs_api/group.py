@@ -11,3 +11,10 @@ class Group:
 
     def names(self):
         return self.SapModel.GroupDef.GetNameList()[1]
+
+    def add(self, name):
+        names = self.names()
+        if not name in names:
+            self.SapModel.GroupDef.SetGroup(name)
+            return True
+        return False

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>342</width>
+    <width>344</width>
     <height>281</height>
    </rect>
   </property>
@@ -19,7 +19,11 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="2">
-    <widget class="QComboBox" name="group"/>
+    <widget class="QComboBox" name="group">
+     <property name="editable">
+      <bool>true</bool>
+     </property>
+    </widget>
    </item>
    <item row="2" column="0" colspan="2">
     <widget class="QLabel" name="label_3">

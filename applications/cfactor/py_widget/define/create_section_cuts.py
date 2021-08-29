@@ -18,6 +18,7 @@ class SectionCutForm(section_cut_base, section_cut_window):
     def fill_groups(self):
         groups = self.etabs.group.names()
         self.group.addItems(groups)
+        self.group.setCurrentIndex(self.group.count() - 1)
 
     def create_connections(self):
         self.prefix_name.editingFinished.connect(self.check_prefix)
@@ -28,6 +29,9 @@ class SectionCutForm(section_cut_base, section_cut_window):
 
     def accept(self):
         group = self.group.currentText()
+        groups = self.etabs.group.names()
+        if not group in groups:
+            self.etabs.group.add(group)
         prefix_name = self.prefix_name.text()
         angles_inc = self.angles_inc.value()
         angles = range(0, 180, angles_inc)
