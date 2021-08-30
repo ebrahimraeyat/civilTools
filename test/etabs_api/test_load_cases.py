@@ -59,3 +59,8 @@ def test_get_spectral_with_angles(shayesteh):
     ret = shayesteh.load_cases.get_spectral_with_angles((0, 10, 15, 20, 30))
     assert ret == {15: 'SPEC15', 30: 'SPEC30', 0: 'SX'}
 
+@pytest.mark.setmethod
+def test_reset_scales_for_response_spectrums(shayesteh):
+    ret = shayesteh.load_cases.reset_scales_for_response_spectrums()
+    assert ret == {15: 'SPEC15', 30: 'SPEC30', 0: 'SX'}
+

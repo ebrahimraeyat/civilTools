@@ -12,7 +12,7 @@ class ResponseSpectrumForm(rs_base, rs_window):
         super(ResponseSpectrumForm, self).__init__()
         self.setupUi(self)
         self.etabs = etabs_model
-        self.fill_fields()
+        self.fill_100_30_fields()
         self.select_spect_loadcases()
 
     def accept(self):
@@ -24,6 +24,8 @@ class ResponseSpectrumForm(rs_base, rs_window):
         y_scale_factor = self.y_scalefactor.value()
         num_iteration = self.iteration.value()
         tolerance = self.tolerance.value()
+        reset = self.reset.isChecked()
+        analyze = self.analyze.isChecked()
         self.etabs.scale_response_spectrums(
             ex_name,
             ey_name,
@@ -33,9 +35,11 @@ class ResponseSpectrumForm(rs_base, rs_window):
             y_scale_factor,
             num_iteration,
             tolerance,
+            reset,
+            analyze,
         )
         super(ResponseSpectrumForm, self).accept()
-        msg = "Scale Response Spectrum Loadcases Done."
+        msg = "Done Response Spectrum Analysis."
         QMessageBox.information(None, 'Successful', str(msg))
 
     def select_spect_loadcases(self):
@@ -44,7 +48,7 @@ class ResponseSpectrumForm(rs_base, rs_window):
                 item = lw.item(i)
                 item.setSelected(True)
 
-    def fill_fields(self):
+    def fill_100_30_fields(self):
         ex_name, ey_name = self.etabs.load_patterns.get_EX_EY_load_pattern()
         x_names, y_names = self.etabs.load_patterns.get_load_patterns_in_XYdirection()
         self.static_x.addItems(x_names)

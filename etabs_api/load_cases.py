@@ -87,6 +87,22 @@ class LoadCases:
             name = row['Name']
             angles_specs[int(angle)] = name
         return angles_specs
+
+    def reset_scales_for_response_spectrums(self,
+                    scale : float = 1,
+                    loadcases : Union[list, bool] = None,
+                    length_unit : str = 'mm',  # 'cm', 'm'
+                    ) -> None:
+        self.etabs.unlock_model()
+        self.etabs.set_current_unit('N', length_unit)
+        if loadcases is None:
+            loadcases = self.get_loadcase_withtype(4)
+        for name in loadcases:
+            ret = self.SapModel.LoadCases.ResponseSpectrum.GetLoads(name)
+            scales = (scale,) + tuple(ret[3][1:])
+            ret[3] = scales
+            self.SapModel.LoadCases.ResponseSpectrum.SetLoads(name, *ret[:-1])
+        return None
         
         
         

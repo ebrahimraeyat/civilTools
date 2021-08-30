@@ -658,7 +658,11 @@ class EtabsModel:
         y_scale_factor : float = 0.9, # 0.85, 0.9, 1
         num_iteration : int = 3,
         tolerance : float = .05,
+        reset_scale : bool = True,
+        analyze : bool = True,
         ):
+        if reset_scale:
+            self.load_cases.reset_scales_for_response_spectrums(loadcases=x_specs+y_specs)
         for i in range(num_iteration):
             self.analyze.set_load_cases_to_analyze([ex_name, ey_name] + x_specs + y_specs)
             vex, vey = self.results.get_base_react(
@@ -688,8 +692,6 @@ class EtabsModel:
             max_scale = max(x_scales + y_scales)
             min_scale = min(x_scales + y_scales)
             if (max_scale < 1 + tolerance) and (min_scale > 1 - tolerance):
-                self.unlock_model()
-                self.analyze.set_load_cases_to_analyze()
                 break
             else:
                 for spec, scale in zip(x_specs, x_scales):
@@ -698,6 +700,8 @@ class EtabsModel:
                     self.load_cases.multiply_response_spectrum_scale_factor(spec, scale)
         self.unlock_model()
         self.analyze.set_load_cases_to_analyze()
+        if analyze:
+            self.run_analysis()
 
     def angles_response_spectrums_analysis(self,
         ex_name : str,
@@ -707,7 +711,11 @@ class EtabsModel:
         scale_factor : float = 0.9, # 0.85, 0.9, 1
         num_iteration : int = 3,
         tolerance : float = .02,
+        reset_scale : bool = True,
+        analyze : bool = True,
         ):
+        if reset_scale:
+            self.load_cases.reset_scales_for_response_spectrums(loadcases=specs)
         for i in range(num_iteration):
             loadcases = (ex_name, ey_name) + specs
             self.analyze.set_load_cases_to_analyze(loadcases)
@@ -736,14 +744,14 @@ class EtabsModel:
             max_scale = max(scales)
             min_scale = min(scales)
             if (max_scale < 1 + tolerance) and (min_scale > 1 - tolerance):
-                self.unlock_model()
-                self.analyze.set_load_cases_to_analyze()
                 break
             else:
                 for spec, scale in spec_scales.items():
                     self.load_cases.multiply_response_spectrum_scale_factor(spec, scale)
         self.unlock_model()
         self.analyze.set_load_cases_to_analyze()
+        if analyze:
+            self.run_analysis()
             
 class Build:
     def __init__(self):
