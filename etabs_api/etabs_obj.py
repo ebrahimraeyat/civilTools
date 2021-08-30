@@ -713,8 +713,7 @@ class EtabsModel:
             self.analyze.set_load_cases_to_analyze(loadcases)
             df = self.database.get_section_cuts_base_shear(loadcases, section_cuts)
             df.drop_duplicates(['SectionCut', 'OutputCase'], keep='last', inplace=True)
-            df1 = self.database.get_section_cuts(cols=['Name', 'RotAboutZ'])
-            re_dict = df1.set_index('Name').to_dict()['RotAboutZ']
+            re_dict = self.database.get_section_cuts_angle()
             df['angle'] = df['SectionCut'].replace(re_dict)
             angles = df['angle'].unique()
             re_dict = self.load_cases.get_spectral_with_angles(angles, specs)

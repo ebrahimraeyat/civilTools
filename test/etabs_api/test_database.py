@@ -118,3 +118,8 @@ def test_get_section_cuts_base_shears(shayesteh):
     assert len(df) == 1
     df = shayesteh.database.get_section_cuts_base_shear(specs=['D', 'DCon11'], section_cuts=['SCut1'])
     assert len(df) == 3
+
+@pytest.mark.getmethod
+def test_get_section_cuts_angle(shayesteh):
+    d = shayesteh.database.get_section_cuts_angle()
+    assert len(d) == 13

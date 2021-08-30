@@ -342,6 +342,11 @@ class DatabaseTables:
         df['RotAboutZ'] = df['RotAboutZ'].astype(int)
         return df
 
+    def get_section_cuts_angle(self):
+        df1 = self.get_section_cuts(cols=['Name', 'RotAboutZ'])
+        re_dict = df1.set_index('Name').to_dict()['RotAboutZ']
+        return re_dict
+
     def get_section_cuts_base_shear(self,
             loadcases : list = None,
             section_cuts: list = None,
