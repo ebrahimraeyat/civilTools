@@ -3,7 +3,7 @@ import comtypes.client
 from pathlib import Path
 from typing import Tuple
 import shutil
-import time
+import math
 
 civiltools_path = Path(__file__).parent.parent
 sys.path.insert(0, str(civiltools_path))
@@ -698,9 +698,54 @@ class EtabsModel:
                     self.load_cases.multiply_response_spectrum_scale_factor(spec, scale)
         self.unlock_model()
         self.analyze.set_load_cases_to_analyze()
-        
 
-
+    def angles_response_spectrums_analysis(self,
+        ex_name : str,
+        ey_name : str,
+        specs : list = None,
+        section_cuts : list = None,
+        scale_factor : float = 0.9, # 0.85, 0.9, 1
+        num_iteration : int = 3,
+        tolerance : float = .02,
+        ):
+        for i in range(num_iteration):
+            loadcases = (ex_name, ey_name) + specs
+            self.analyze.set_load_cases_to_analyze(loadcases)
+            df = self.database.get_section_cuts_base_shear(loadcases, section_cuts)
+            df.drop_duplicates(['SectionCut', 'OutputCase'], keep='last', inplace=True)
+            df1 = self.database.get_section_cuts(cols=['Name', 'RotAboutZ'])
+            re_dict = df1.set_index('Name').to_dict()['RotAboutZ']
+            df['angle'] = df['SectionCut'].replace(re_dict)
+            angles = df['angle'].unique()
+            re_dict = self.load_cases.get_spectral_with_angles(angles, specs)
+            df['angle_spec'] = df['angle'].replace(re_dict)
+            spec_sec_angle = df[df['OutputCase'] == df['angle_spec']]
+            scales = []
+            spec_scales = {}
+            for i, row in spec_sec_angle.iterrows():
+                spec = row['OutputCase']
+                section_cut = row['SectionCut']
+                angle = row['angle']
+                df_angle_section = df[(df['SectionCut'] == section_cut) & (df['angle'] == angle)][['F1', 'OutputCase']]
+                f_ex = abs(float(df_angle_section[df['OutputCase'] == ex_name]['F1']))
+                f_ey = abs(float(df_angle_section[df['OutputCase'] == ey_name]['F1']))
+                f_spec = abs(float(df_angle_section[df['OutputCase'] == spec]['F1']))
+                scale = scale_factor * math.sqrt(f_ex ** 2 + f_ey ** 2) / f_spec
+                spec_scales[spec] = scale
+                scales.append(scale)
+            print(scales)
+            max_scale = max(scales)
+            min_scale = min(scales)
+            if (max_scale < 1 + tolerance) and (min_scale > 1 - tolerance):
+                self.unlock_model()
+                self.analyze.set_load_cases_to_analyze()
+                break
+            else:
+                for spec, scale in spec_scales.items():
+                    self.load_cases.multiply_response_spectrum_scale_factor(spec, scale)
+        self.unlock_model()
+        self.analyze.set_load_cases_to_analyze()
+            
 class Build:
     def __init__(self):
         self.kx = 1
@@ -714,7 +759,8 @@ class Build:
 if __name__ == '__main__':
     etabs = EtabsModel(backup=False)
     SapModel = etabs.SapModel
-    etabs.scale_response_spectrums('EX', 'EY', 'SX', 'SY', ('SX', 'SPX'), ('SY', 'SPY'), num_iteration=5)
+    etabs.angles_response_spectrums_analysis('EX', 'EY', ('SPEC0', 'SPEC15', 'SPEC30', 'SPEC45', 'SPEC60', 'SPEC75', 'SPEC90', 'SPEC105', 'SPEC120', 'SPEC135', 'SPEC150', 'SPEC165', 'SPEC180'), 
+            section_cuts=('SEC0', 'SEC15', 'SEC30', 'SEC45', 'SEC60', 'SEC75', 'SEC90', 'SEC105', 'SEC120', 'SEC135', 'SEC150', 'SEC165', 'SEC180'), num_iteration=5)
     # TableKey = 'Frame Section Property Definitions - Summary'
     # [_, TableVersion, FieldsKeysIncluded, NumberRecords, TableData, _] = self.database.read_table(TableKey, self.SapModel)
     # get_load_patterns()

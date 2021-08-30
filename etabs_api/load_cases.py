@@ -64,16 +64,22 @@ class LoadCases:
         self.SapModel.LoadCases.ResponseSpectrum.SetLoads(name, *ret[:-1])
         return None
 
-    def get_spectral_with_angles(self, angles : Iterable) -> dict:
+    def get_spectral_with_angles(self,
+                angles : Iterable,
+                specs : Iterable = None,
+                ) -> dict:
         '''
         return angles and Response spectrum loadcase
         {0: spec}
         '''
         table = 'Load Case Definitions - Response Spectrum'
         df = self.etabs.database.read(table, to_dataframe=True, cols=['Name', 'Angle'])
+        df.dropna(inplace=True)
         df['Angle'] = df['Angle'].astype(int16)
         df.drop_duplicates(['Name'], keep=False, inplace=True)
         df = df[df['Angle'].isin(angles)]
+        if specs is not None:
+            df = df[df['Name'].isin(specs)]
         df.drop_duplicates(['Angle'], keep=False, inplace=True)
         angles_specs = dict()
         for _, row in df.iterrows():

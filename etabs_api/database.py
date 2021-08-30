@@ -336,16 +336,23 @@ class DatabaseTables:
         self.SapModel.DatabaseTables.SetTableForEditingArray(table, 0, fields, 0, data)
         self.apply_table()
 
+    def get_section_cuts(self, cols=['Name', 'Group', 'RotAboutZ']):
+        table = 'Section Cut Definitions'
+        df = self.read(table, to_dataframe=True, cols=cols)
+        df['RotAboutZ'] = df['RotAboutZ'].astype(int)
+        return df
+
     def get_section_cuts_base_shear(self,
-            specs : list = None,
+            loadcases : list = None,
             section_cuts: list = None,
             ):
+            self.etabs.run_analysis()
             table = 'Section Cut Forces - Analysis'
             columns = ['SectionCut', 'OutputCase', 'F1', 'F2']
-            self.etabs.run_analysis()
+            self.etabs.load_cases.select_load_cases(loadcases)
             df = self.read(table, to_dataframe=True, cols=columns)
             df = df[
-                    (df['OutputCase'].isin(specs)) &
+                    (df['OutputCase'].isin(loadcases)) &
                     (df['SectionCut'].isin(section_cuts))
                     ]
             return df
