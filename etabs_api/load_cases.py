@@ -80,7 +80,7 @@ class LoadCases:
         df = df[df['Angle'].isin(angles)]
         if specs is not None:
             df = df[df['Name'].isin(specs)]
-        df.drop_duplicates(['Angle'], keep=False, inplace=True)
+        # df.drop_duplicates(['Angle'], keep='first', inplace=True)
         angles_specs = dict()
         for _, row in df.iterrows():
             angle = row['Angle']

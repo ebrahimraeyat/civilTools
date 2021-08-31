@@ -716,8 +716,8 @@ class EtabsModel:
         ):
         if reset_scale:
             self.load_cases.reset_scales_for_response_spectrums(loadcases=specs)
+        loadcases = [ex_name, ey_name] + specs
         for i in range(num_iteration):
-            loadcases = (ex_name, ey_name) + specs
             self.analyze.set_load_cases_to_analyze(loadcases)
             df = self.database.get_section_cuts_base_shear(loadcases, section_cuts)
             df.drop_duplicates(['SectionCut', 'OutputCase'], keep='last', inplace=True)
