@@ -15,15 +15,22 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QGroupBox" name="combination">
+    <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>100-30</string>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
+      <string/>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0">
+       <widget class="QRadioButton" name="combination">
+        <property name="text">
+         <string>100-30</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
        <widget class="QLabel" name="label_3">
         <property name="layoutDirection">
          <enum>Qt::LeftToRight</enum>
@@ -36,7 +43,7 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
+      <item row="1" column="1" colspan="2">
        <widget class="QLabel" name="label_4">
         <property name="layoutDirection">
          <enum>Qt::LeftToRight</enum>
@@ -49,7 +56,7 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
+      <item row="2" column="0">
        <widget class="QListWidget" name="x_loadcase_list">
         <property name="selectionMode">
          <enum>QAbstractItemView::MultiSelection</enum>
@@ -59,7 +66,7 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
+      <item row="2" column="1" colspan="2">
        <widget class="QListWidget" name="y_loadcase_list">
         <property name="selectionMode">
          <enum>QAbstractItemView::MultiSelection</enum>
@@ -69,25 +76,27 @@
         </property>
        </widget>
       </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="angular">
-     <property name="enabled">
-      <bool>true</bool>
-     </property>
-     <property name="title">
-      <string>Angular</string>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
-     </property>
-     <property name="checked">
-      <bool>false</bool>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="1">
+      <item row="3" column="0">
+       <widget class="QRadioButton" name="angular">
+        <property name="text">
+         <string>Angular</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0" colspan="2">
+       <widget class="QLabel" name="label_5">
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="text">
+         <string>Response Spectrum Loadcases</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="2">
        <widget class="QLabel" name="label_10">
         <property name="layoutDirection">
          <enum>Qt::LeftToRight</enum>
@@ -100,8 +109,11 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
+      <item row="5" column="0" colspan="2">
        <widget class="QListWidget" name="angular_specs">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="selectionMode">
          <enum>QAbstractItemView::MultiSelection</enum>
         </property>
@@ -110,26 +122,16 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
+      <item row="5" column="2">
        <widget class="QListWidget" name="section_cuts">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="selectionMode">
          <enum>QAbstractItemView::MultiSelection</enum>
         </property>
         <property name="sortingEnabled">
          <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_5">
-        <property name="layoutDirection">
-         <enum>Qt::LeftToRight</enum>
-        </property>
-        <property name="text">
-         <string>Response Spectrum Loadcases</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>

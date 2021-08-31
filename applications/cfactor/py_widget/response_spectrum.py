@@ -16,11 +16,25 @@ class ResponseSpectrumForm(rs_base, rs_window):
         self.fill_angular_fields()
         self.select_spect_loadcases()
         self.select_angular_list()
-        # self.create_connections()
+        self.create_connections()
 
     def create_connections(self):
-        self.combination.toggled.connect(self.reset_widget)
-        self.angular.toggled.connect(self.reset_widget)
+        self.combination.clicked.connect(self.reset_widget)
+        self.angular.clicked.connect(self.reset_widget)
+
+    def reset_widget(self):
+        if self.combination.isChecked():
+            self.angular_specs.setEnabled(False)
+            self.section_cuts.setEnabled(False)
+            self.x_loadcase_list.setEnabled(True)
+            self.y_loadcase_list.setEnabled(True)
+            self.y_scalefactor.setEnabled(True)
+        elif self.angular.isChecked():
+            self.angular_specs.setEnabled(True)
+            self.section_cuts.setEnabled(True)
+            self.x_loadcase_list.setEnabled(False)
+            self.y_loadcase_list.setEnabled(False)
+            self.y_scalefactor.setEnabled(False)
 
     def accept(self):
         ex_name = self.static_x.currentText()
