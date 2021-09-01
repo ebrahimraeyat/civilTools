@@ -1081,6 +1081,7 @@ p, li { white-space: pre-wrap; }
      <addaction name="action_connect_beam"/>
     </widget>
     <addaction name="action_to_etabs"/>
+    <addaction name="action_create_period_file"/>
     <addaction name="menuTorsion"/>
     <addaction name="menuIrregularity"/>
     <addaction name="action_automatic_drift"/>
@@ -1167,6 +1168,7 @@ p, li { white-space: pre-wrap; }
    <addaction name="action_get_weakness"/>
    <addaction name="action_torsion_table"/>
    <addaction name="action_automatic_drift"/>
+   <addaction name="action_create_period_file"/>
    <addaction name="action_story_forces"/>
    <addaction name="action_correct_beams_j"/>
    <addaction name="separator"/>
@@ -1437,7 +1439,7 @@ p, li { white-space: pre-wrap; }
      <normaloff>:/cfactor/images/balance.svg</normaloff>:/cfactor/images/balance.svg</iconset>
    </property>
    <property name="text">
-    <string>Scale Response Spec.</string>
+    <string>Response Spec. Analyze</string>
    </property>
    <property name="toolTip">
     <string>Scale Response Spectrum</string>
@@ -1450,6 +1452,15 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Section Cuts</string>
+   </property>
+  </action>
+  <action name="action_create_period_file">
+   <property name="icon">
+    <iconset resource="../resource.qrc">
+     <normaloff>:/cfactor/images/time.svg</normaloff>:/cfactor/images/time.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Create Period File</string>
    </property>
   </action>
  </widget>

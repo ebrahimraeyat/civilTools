@@ -74,6 +74,7 @@ class Ui(QMainWindow, main_window):
         self.action_remove_backups.triggered.connect(self.clear_backups)
         self.action_scale_response_spec.triggered.connect(self.scale_response_spectrums)
         self.action_create_section_cuts.triggered.connect(self.create_section_cuts)
+        self.action_create_period_file.triggered.connect(self.create_period_file)
 
     def create_connections(self):
         self.calculate_button.clicked.connect(self.calculate)
@@ -705,6 +706,17 @@ class Ui(QMainWindow, main_window):
         from py_widget.define import create_section_cuts
         win = create_section_cuts.SectionCutForm(etabs)
         win.exec_()
+
+    def create_period_file(self):
+        sys.path.insert(0, str(civiltools_path))
+        from etabs_api import etabs_obj
+        etabs = etabs_obj.EtabsModel(backup=False)
+        if not self.is_etabs_running(etabs):
+            return
+        tx, ty, _ = etabs.get_drift_periods()
+        self.xTAnalaticalSpinBox.setValue(tx)
+        self.yTAnalaticalSpinBox.setValue(ty)
+        self.calculate()
 
     def clear_backups(self):
         sys.path.insert(0, str(civiltools_path))
