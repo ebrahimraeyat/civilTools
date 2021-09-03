@@ -74,3 +74,53 @@ def test_get_beams_torsion_prop_modifiers(shayesteh):
     assert len(beams_j) == 2
     assert pytest.approx(beams_j['115'], abs=.01) == .35
     assert pytest.approx(beams_j['120'], abs=.01) == 1.0
+
+@pytest.mark.getmethod
+def test_get_above_frames(shayesteh):
+    beams = shayesteh.frame_obj.get_above_frames('115')
+    assert len(beams) == 5
+    assert set(beams) == set(['253', '207', '161', '291', '115'])
+    beams = shayesteh.frame_obj.get_above_frames('115', stories=['STORY1', 'STORY2'])
+    assert len(beams) == 2
+    assert set(beams) == set(['253', '115'])
+    shayesteh.view.show_frame('115')
+    beams = shayesteh.frame_obj.get_above_frames()
+    assert len(beams) == 5
+    assert set(beams) == set(['253', '207', '161', '291', '115'])
+
+@pytest.mark.getmethod
+def test_get_height_of_beam(shayesteh):
+    h = shayesteh.frame_obj.get_height_of_beam('115')
+    assert h == .5
+
+@pytest.mark.getmethod
+def test_get_heigth_from_top_of_beam_to_buttom_of_above_beam(shayesteh):
+    h = shayesteh.frame_obj.get_heigth_from_top_of_beam_to_buttom_of_above_beam('115')
+    assert h == 3.02
+
+@pytest.mark.getmethod
+def test_is_beam(shayesteh):
+    ret = shayesteh.frame_obj.is_beam('115')
+    assert ret
+
+@pytest.mark.getmethod
+def test_is_column(shayesteh):
+    ret = shayesteh.frame_obj.is_column('103')
+    assert ret
+
+@pytest.mark.setmethod
+def test_assign_gravity_load(shayesteh):
+    ret = shayesteh.frame_obj.assign_gravity_load('115', 'DEAD', 1000, 1000)
+    assert ret == None
+
+@pytest.mark.setmethod
+def test_assign_gravity_load_from_wall(shayesteh):
+    ret = shayesteh.frame_obj.assign_gravity_load_from_wall('115', 'DEAD', 220)
+    assert ret == None
+
+@pytest.mark.setmethod
+def test_assign_gravity_load_to_selfs_and_above_beams(shayesteh):
+    ret = shayesteh.frame_obj.assign_gravity_load_to_selfs_and_above_beams('DEAD', 220)
+    assert ret == None
+
+
