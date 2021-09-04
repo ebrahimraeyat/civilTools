@@ -483,7 +483,7 @@ class FrameObj:
             ):
         if height is None:
             if height_from_below:
-                height = self.get_heigth_from_top_of_below_story_to_below_of_beam(name, none_beam_h)
+                height = self.get_heigth_from_top_of_below_story_to_below_of_beam(name, none_beam_h) * .5
             else:
                 height = self.get_heigth_from_top_of_beam_to_buttom_of_above_beam(name, none_beam_h, parapet)
         if height == 0: 

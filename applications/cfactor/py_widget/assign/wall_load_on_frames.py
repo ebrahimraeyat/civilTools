@@ -32,18 +32,11 @@ class WallLoadForm(wall_load_base, wall_load_window):
         self.override_height.clicked.connect(self.reset_widget)
         self.relative.clicked.connect(self.set_dists_range)
         self.buttonBox.clicked.connect(self.handleButtonClick)
-        self.height_from_below.clicked.connect(self.set_opening_ratio)
 
     def handleButtonClick(self, button):
         sb = self.buttonBox.standardButton(button)
         if sb == QtGui.QDialogButtonBox.Apply:
             self.accept()
-
-    def set_opening_ratio(self):
-        if self.height_from_below.isChecked():
-            self.opening_ratio.setValue(.5)
-        else:
-            self.opening_ratio.setValue(0)
 
     def set_dists_range(self):
         if self.relative.isChecked():

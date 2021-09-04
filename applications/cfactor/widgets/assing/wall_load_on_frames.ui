@@ -29,6 +29,16 @@
          </property>
         </widget>
        </item>
+       <item row="7" column="0" colspan="2">
+        <widget class="QListWidget" name="stories">
+         <property name="selectionMode">
+          <enum>QAbstractItemView::MultiSelection</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QComboBox" name="loadpat"/>
+       </item>
        <item row="1" column="1">
         <widget class="QSpinBox" name="mass">
          <property name="suffix">
@@ -48,9 +58,6 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
-        <widget class="QComboBox" name="loadpat"/>
-       </item>
        <item row="0" column="0">
         <widget class="QLabel" name="label">
          <property name="text">
@@ -58,29 +65,33 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="0" colspan="2">
-        <widget class="QListWidget" name="stories">
-         <property name="selectionMode">
-          <enum>QAbstractItemView::MultiSelection</enum>
+       <item row="8" column="0">
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>Load Type</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="0" colspan="2">
+       <item row="8" column="1">
+        <widget class="QComboBox" name="load_type">
+         <item>
+          <property name="text">
+           <string>Force</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Moment</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="4" column="0" colspan="2">
         <widget class="QGroupBox" name="groupBox">
          <property name="title">
           <string>Wall Height</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
-          <item row="4" column="0">
-           <widget class="QRadioButton" name="override_height">
-            <property name="text">
-             <string>Override</string>
-            </property>
-            <property name="checked">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
           <item row="4" column="1">
            <widget class="QDoubleSpinBox" name="height">
             <property name="prefix">
@@ -103,10 +114,49 @@
             </property>
            </widget>
           </item>
+          <item row="4" column="0">
+           <widget class="QRadioButton" name="override_height">
+            <property name="text">
+             <string>Override</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
           <item row="1" column="0">
            <widget class="QLabel" name="label_6">
             <property name="text">
              <string>None Beam Height</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_8">
+            <property name="text">
+             <string>Parapet Wall Height</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QDoubleSpinBox" name="parapet_wall_height">
+            <property name="prefix">
+             <string/>
+            </property>
+            <property name="suffix">
+             <string> m</string>
+            </property>
+            <property name="minimum">
+             <double>0.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>5.000000000000000</double>
+            </property>
+            <property name="singleStep">
+             <double>0.100000000000000</double>
+            </property>
+            <property name="value">
+             <double>1.100000000000000</double>
             </property>
            </widget>
           </item>
@@ -142,70 +192,10 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_8">
-            <property name="text">
-             <string>Parapet Wall Height</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QDoubleSpinBox" name="parapet_wall_height">
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="suffix">
-             <string> m</string>
-            </property>
-            <property name="minimum">
-             <double>0.000000000000000</double>
-            </property>
-            <property name="maximum">
-             <double>5.000000000000000</double>
-            </property>
-            <property name="singleStep">
-             <double>0.100000000000000</double>
-            </property>
-            <property name="value">
-             <double>1.100000000000000</double>
-            </property>
-           </widget>
-          </item>
          </layout>
         </widget>
        </item>
-       <item row="6" column="0">
-        <widget class="QLabel" name="label_5">
-         <property name="text">
-          <string>Load Type</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="1">
-        <widget class="QComboBox" name="load_type">
-         <item>
-          <property name="text">
-           <string>Force</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Moment</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item row="8" column="0" colspan="2">
-        <widget class="QCheckBox" name="height_from_below">
-         <property name="text">
-          <string>Get Height From Below Story</string>
-         </property>
-         <property name="checked">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="0" colspan="2">
+       <item row="9" column="0" colspan="2">
         <widget class="QCheckBox" name="replace">
          <property name="text">
           <string>Replace</string>
@@ -215,20 +205,30 @@
          </property>
         </widget>
        </item>
-       <item row="9" column="0">
-        <widget class="QLabel" name="label_9">
+       <item row="10" column="0" colspan="2">
+        <widget class="QCheckBox" name="height_from_below">
          <property name="text">
-          <string>Opening Ratio</string>
+          <string>Get Height From Below Story</string>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
          </property>
         </widget>
        </item>
-       <item row="9" column="1">
+       <item row="3" column="1">
         <widget class="QDoubleSpinBox" name="opening_ratio">
          <property name="maximum">
           <double>1.000000000000000</double>
          </property>
          <property name="singleStep">
           <double>0.100000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_9">
+         <property name="text">
+          <string>Opening Ratio</string>
          </property>
         </widget>
        </item>
