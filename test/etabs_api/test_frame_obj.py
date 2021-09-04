@@ -14,6 +14,7 @@ def shayesteh(edb="shayesteh.EDB"):
         if etabs.success:
             filepath = Path(etabs.SapModel.GetModelFilename())
             if 'test.' in filepath.name:
+                etabs.set_current_unit('kgf', 'm')
                 return etabs
             else:
                 raise NameError
@@ -30,6 +31,7 @@ def shayesteh(edb="shayesteh.EDB"):
         test_file_path = dir_path / "test.EDB"
         SapModel.File.Save(str(test_file_path))
         etabs = etabs_obj.EtabsModel(backup=False)
+        etabs.set_current_unit('kgf', 'm')
         return etabs
 
 @pytest.mark.getmethod
@@ -82,7 +84,9 @@ def test_get_above_frames(shayesteh):
     assert set(beams) == set(['253', '207', '161', '291', '115'])
     beams = shayesteh.frame_obj.get_above_frames('115', stories=['STORY1', 'STORY2'])
     assert len(beams) == 2
-    assert set(beams) == set(['253', '115'])
+    beams = shayesteh.frame_obj.get_above_frames('115', stories=['STORY2'])
+    assert len(beams) == 1
+    assert set(beams) == set(['253'])
     shayesteh.view.show_frame('115')
     beams = shayesteh.frame_obj.get_above_frames()
     assert len(beams) == 5
@@ -97,6 +101,11 @@ def test_get_height_of_beam(shayesteh):
 def test_get_heigth_from_top_of_beam_to_buttom_of_above_beam(shayesteh):
     h = shayesteh.frame_obj.get_heigth_from_top_of_beam_to_buttom_of_above_beam('115')
     assert h == 3.02
+
+@pytest.mark.getmethod
+def test_get_heigth_from_top_of_below_story_to_below_of_beam(shayesteh):
+    h = shayesteh.frame_obj.get_heigth_from_top_of_below_story_to_below_of_beam('115')
+    assert h == 4.72
 
 @pytest.mark.getmethod
 def test_is_beam(shayesteh):

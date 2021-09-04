@@ -390,8 +390,6 @@ class FrameObj:
             bname = self.SapModel.FrameObj.GetNameFromLabel(lable, story)[0]
             if bname is not None:
                 names.append(bname)
-        if not name in names:
-            names.insert(0, name)
         return names
 
     def get_height_of_beam(self, name, none_beam_h=0):
@@ -403,6 +401,41 @@ class FrameObj:
             return none_beam_h
         h = self.SapModel.PropFrame.GetRectangle(sec_name)[2]
         return h
+
+    def get_heigth_from_top_of_beam_to_buttom_of_above_beam(self,
+                name,
+                none_beam_h : float = 0,
+                default : float = 0):
+        '''
+        none_beam_h: if the section of beam is None, it gives this value as height of beam
+        default : if there is no beam above the beam name, it returns the default value
+        '''
+        lable, story, _ = self.SapModel.FrameObj.GetLabelFromName(name)
+        stories = self.SapModel.Story.GetNameList()[1]
+        i_story = stories.index(story)
+        if i_story == 0:
+            return default
+        above_story = stories[i_story - 1]
+        above_beam = self.SapModel.FrameObj.GetNameFromLabel(lable, above_story)[0]
+        if above_beam == None:
+            return default
+        above_beam_h = self.get_height_of_beam(above_beam, none_beam_h)
+        story_h = self.SapModel.Story.GetHeight(above_story)[0]
+        height = story_h - above_beam_h
+        return height
+
+    def get_heigth_from_top_of_below_story_to_below_of_beam(self,
+                name,
+                none_beam_h : float = 0,
+                ):
+        '''
+        none_beam_h: if the section of beam is None, it gives this value as height of beam
+        '''
+        story = self.SapModel.FrameObj.GetLabelFromName(name)[1]
+        beam_h = self.get_height_of_beam(name, none_beam_h)
+        story_h = self.SapModel.Story.GetHeight(story)[0]
+        height = story_h - beam_h
+        return height
 
     def assign_gravity_load(self,
             name: str,
@@ -432,28 +465,6 @@ class FrameObj:
             )
         return None
 
-    def get_heigth_from_top_of_beam_to_buttom_of_above_beam(self,
-                name,
-                none_beam_h : float = 0,
-                default : float = 0):
-        '''
-        none_beam_h: if the section of beam is None, it gives this value as height of beam
-        default : if there is no beam above the beam name, it returns the default value
-        '''
-        lable, story, _ = self.SapModel.FrameObj.GetLabelFromName(name)
-        stories = self.SapModel.Story.GetNameList()[1]
-        i_story = stories.index(story)
-        if i_story == 0:
-            return default
-        above_story = stories[i_story - 1]
-        above_beam = self.SapModel.FrameObj.GetNameFromLabel(lable, above_story)[0]
-        if above_beam == None:
-            return default
-        above_beam_h = self.get_height_of_beam(above_beam, none_beam_h)
-        story_h = self.SapModel.Story.GetHeight(above_story)[0]
-        height = story_h - above_beam_h
-        return height
-        
     def assign_gravity_load_from_wall(self,
             name: str,
             loadpat : str,
@@ -466,12 +477,18 @@ class FrameObj:
             item_type : int = 0, # 0: object, 2: selected_obj
             height : Union[float, bool] = None,
             none_beam_h : float = 0,
+            parapet : float = 0,
+            height_from_below : bool = False,
+            opening_ratio : float = 0,
             ):
         if height is None:
-            height = self.get_heigth_from_top_of_beam_to_buttom_of_above_beam(name, none_beam_h)
-        if height == 0:
+            if height_from_below:
+                height = self.get_heigth_from_top_of_below_story_to_below_of_beam(name, none_beam_h)
+            else:
+                height = self.get_heigth_from_top_of_beam_to_buttom_of_above_beam(name, none_beam_h, parapet)
+        if height == 0: 
             return
-        value = math.ceil(mass_per_area * height)
+        value = math.ceil(mass_per_area * height * (1 - opening_ratio))
         self.assign_gravity_load(name, loadpat, value, value, dist1, dist2, load_type, relative, replace, item_type)
         return None
             
@@ -488,6 +505,9 @@ class FrameObj:
             item_type : int = 0, # 0: object, 2: selected_obj
             height : Union[float, bool] = None,
             none_beam_h : float = 0,
+            parapet : float = 0,
+            height_from_below : bool = False,
+            opening_ratio : float = 0,
         ):
         self.etabs.unlock_model()
         self.etabs.set_current_unit('kgf', 'm')
@@ -504,7 +524,9 @@ class FrameObj:
             for beam_name in beam_names:
                 self.assign_gravity_load_from_wall(beam_name, loadpat,
                     mass_per_area, dist1, dist2, load_type, relative,
-                    replace, item_type, height, none_beam_h)
+                    replace, item_type, height, none_beam_h, parapet,
+                    height_from_below, opening_ratio)
+        self.SapModel.View.RefreshView()
         return None
 
 
@@ -516,7 +538,7 @@ if __name__ == '__main__':
     from etabs_obj import EtabsModel
     etabs = EtabsModel()
     SapModel = etabs.SapModel
-    df = etabs.frame_obj.assign_gravity_load_to_selfs_and_above_beams('DEAD', 220, none_beam_h=.15)
+    df = etabs.frame_obj.get_heigth_from_top_of_below_story_to_below_of_beam('115')
     print(df)
     print('Wow')
 

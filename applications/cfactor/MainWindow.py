@@ -75,6 +75,7 @@ class Ui(QMainWindow, main_window):
         self.action_scale_response_spec.triggered.connect(self.scale_response_spectrums)
         self.action_create_section_cuts.triggered.connect(self.create_section_cuts)
         self.action_create_period_file.triggered.connect(self.create_period_file)
+        self.action_wall_loads.triggered.connect(self.wall_load_on_frames)
 
     def create_connections(self):
         self.calculate_button.clicked.connect(self.calculate)
@@ -675,6 +676,24 @@ class Ui(QMainWindow, main_window):
         from py_widget import response_spectrum as rs
         rs_win = rs.ResponseSpectrumForm(etabs)
         rs_win.exec_()
+        self.show_warning_about_number_of_use(check)
+    
+    def wall_load_on_frames(self):
+        allow, check = self.allowed_to_continue(
+            'wall_load.bin',
+            'https://gist.githubusercontent.com/ebrahimraeyat/ff63d2d84e77947103e9ca2db6a03f68/raw',
+            'cfactor',
+            n=2,
+            )
+        if not allow:
+            return
+        from etabs_api import etabs_obj
+        etabs = etabs_obj.EtabsModel()
+        if not self.is_etabs_running(etabs):
+            return
+        from py_widget.assign import wall_load_on_frames as wl
+        win = wl.WallLoadForm(etabs)
+        win.exec_()
         self.show_warning_about_number_of_use(check)
 
     def offset_beam(self):

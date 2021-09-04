@@ -1108,9 +1108,16 @@ p, li { white-space: pre-wrap; }
     </property>
     <addaction name="action_create_section_cuts"/>
    </widget>
+   <widget class="QMenu" name="menu_Assing">
+    <property name="title">
+     <string>&amp;Assing</string>
+    </property>
+    <addaction name="action_wall_loads"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuETABS"/>
    <addaction name="menuDefine"/>
+   <addaction name="menu_Assing"/>
   </widget>
   <widget class="QToolBar" name="toolbar">
    <property name="sizePolicy">
@@ -1208,6 +1215,21 @@ p, li { white-space: pre-wrap; }
     <bool>false</bool>
    </attribute>
    <addaction name="action_create_section_cuts"/>
+  </widget>
+  <widget class="QToolBar" name="assign_toolbar">
+   <property name="windowTitle">
+    <string>Assign</string>
+   </property>
+   <property name="layoutDirection">
+    <enum>Qt::LeftToRight</enum>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="action_wall_loads"/>
   </widget>
   <action name="action_to_etabs">
    <property name="icon">
@@ -1461,6 +1483,15 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Create Period File</string>
+   </property>
+  </action>
+  <action name="action_wall_loads">
+   <property name="icon">
+    <iconset resource="../resource.qrc">
+     <normaloff>:/cfactor/images/wall.svg</normaloff>:/cfactor/images/wall.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Wall Loads</string>
    </property>
   </action>
  </widget>
