@@ -271,13 +271,16 @@ class FrameObj:
             df['ratio'] = df['phi_Tcr'] / df['T']
             df['ratio'].replace([np.inf, -np.inf], 1, inplace=True)
             df['ratio'].fillna(1, inplace=True)
-            df['ratio'] = df['ratio'] * df['j']
-            df['ratio'] = df['ratio'].clip(j_min_value, j_max_value)
-            mask = (df['T'] / df['phi_Tcr'] > low)
-            if df.loc[mask, 'ratio'].between(low, 1.01).all():
+            mask = (df['ratio'] > low)
+            if mask.all():
                 break
             else:
-                df['j'] = df['ratio']
+                df['j'] = df['ratio'] * df['j']
+                df['j'] = df['j'].clip(j_min_value, j_max_value)
+                mask = (df['T'] / df['phi_Tcr'] < low)
+                if mask.any():
+                    df['ratio'] = df['ratio'].clip(j_min_value, j_max_value)
+                    df.loc[mask, 'j'] = df.loc[mask, 'ratio']
                 j_dict = dict(zip(df['UniqueName'], df['j']))
                 self.apply_torsion_stiffness_coefficient(j_dict)
                 self.etabs.run_analysis()
@@ -286,11 +289,6 @@ class FrameObj:
                 df['T'] = df['UniqueName'].map(torsion_dict)
         df.drop(columns=['ratio'], inplace=True)
         df = df[['Story', 'Beam', 'UniqueName', 'section', 'phi_Tcr', 'T', 'j', 'init_j']]
-        mask = (df['T'] / df['phi_Tcr'] < low)
-        col = 'j'
-        df.loc[mask, col] = 1
-        j_dict = dict(zip(df['UniqueName'], df['j']))
-        self.apply_torsion_stiffness_coefficient(j_dict)
         return df
 
     def offset_frame(self, 
