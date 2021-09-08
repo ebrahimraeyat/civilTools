@@ -64,3 +64,26 @@ def test_reset_scales_for_response_spectrums(shayesteh):
     ret = shayesteh.load_cases.reset_scales_for_response_spectrums()
     assert ret == {15: 'SPEC15', 30: 'SPEC30', 0: 'SX'}
 
+@pytest.mark.getmethod
+def test_get_response_spectrum_loadcase_name(shayesteh):
+    ret = shayesteh.load_cases.get_response_spectrum_loadcase_name()
+    assert ret == ['SX', 'SY', 'SPX', 'SPY']
+
+@pytest.mark.getmethod
+def test_get_response_spectrum_loadcase_with_dir_angle(shayesteh):
+    ret = shayesteh.load_cases.get_response_spectrum_loadcase_with_dir_angle('U1', 0)
+    assert ret == 'SX'
+    ret = shayesteh.load_cases.get_response_spectrum_loadcase_with_dir_angle('U2', 0)
+    assert ret == 'SY'
+
+@pytest.mark.getmethod
+def test_get_response_spectrum_xy_loadcase_name(shayesteh):
+    ret = shayesteh.load_cases.get_response_spectrum_xy_loadcase_name()
+    assert ret == ('SX', 'SY')
+
+@pytest.mark.getmethod
+def test_get_response_spectrum_xy_loadcases_names(shayesteh):
+    x_names, y_names = shayesteh.load_cases.get_response_spectrum_xy_loadcases_names()
+    assert set(x_names) == set(['SX', 'SPX'])
+    assert set(y_names) == set(['SY', 'SPY'])
+

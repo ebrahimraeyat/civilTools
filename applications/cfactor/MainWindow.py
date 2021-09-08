@@ -623,41 +623,8 @@ class Ui(QMainWindow, main_window):
         if not self.is_etabs_running(etabs):
             return
         from py_widget import beam_j
-        j_win = beam_j.BeamJForm()
+        j_win = beam_j.BeamJForm(etabs, table_model)
         if j_win.exec_():
-            load_combinations = None
-            # all_beams = j_win.all_beams.isChecked()
-            selected_beams = j_win.selected_beams.isChecked()
-            exclude_selected_beams = j_win.exclude_selected_beams.isChecked()
-            beams_names = None
-            if (selected_beams or exclude_selected_beams):
-                beams, _  = etabs.frame_obj.get_beams_columns()
-                names = etabs.SapModel.SelectObj.GetSelected()[2]
-                if selected_beams:
-                    beams_names = set(names).intersection(beams)
-                elif exclude_selected_beams:
-                    beams_names = set(beams).difference(names)
-            phi = j_win.phi_spinbox.value()
-            num_iteration = j_win.iteration_spinbox.value()
-            tolerance = j_win.tolerance_spinbox.value()
-            j_max_value = j_win.maxj_spinbox.value()
-            j_min_value = j_win.minj_spinbox.value()
-            initial_j = j_win.initial_checkbox.isChecked()
-            if initial_j:
-                initial_j = j_win.initial_spinbox.value()
-            else:
-                initial_j = None
-            df = etabs.frame_obj.correct_torsion_stiffness_factor(
-                load_combinations,
-                beams_names,
-                phi,
-                num_iteration,
-                tolerance,
-                j_max_value,
-                j_min_value,
-                initial_j,
-                )
-            table_model.show_results(df, None, table_model.BeamsJModel, etabs.view.show_frame)
             self.show_warning_about_number_of_use(check)
 
     def scale_response_spectrums(self):

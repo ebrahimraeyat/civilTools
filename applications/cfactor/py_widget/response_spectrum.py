@@ -13,14 +13,13 @@ class ResponseSpectrumForm(rs_base, rs_window):
         self.setupUi(self)
         self.etabs = etabs_model
         self.fill_100_30_fields()
-        self.fill_angular_fields()
         self.select_spect_loadcases()
-        self.select_angular_list()
         self.create_connections()
 
     def create_connections(self):
         self.combination.clicked.connect(self.reset_widget)
         self.angular.clicked.connect(self.reset_widget)
+        self.angular.clicked.connect(self.fill_angular_fields)
 
     def reset_widget(self):
         if self.combination.isChecked():
@@ -79,13 +78,13 @@ class ResponseSpectrumForm(rs_base, rs_window):
         QMessageBox.information(None, 'Successful', str(msg))
 
     def select_spect_loadcases(self):
-        for lw in (self.x_loadcase_list, self.section_cuts):
+        for lw in (self.x_loadcase_list, self.y_loadcase_list):
             for i in range(lw.count()):
                 item = lw.item(i)
                 item.setSelected(True)
     
     def select_angular_list(self):
-        for lw in (self.angular_specs, self.y_loadcase_list):
+        for lw in (self.angular_specs, self.section_cuts):
             for i in range(lw.count()):
                 item = lw.item(i)
                 item.setSelected(True)
@@ -99,7 +98,7 @@ class ResponseSpectrumForm(rs_base, rs_window):
             self.static_x.setCurrentText(ex_name)
         if ey_name is not None:
             self.static_y.setCurrentText(ey_name)
-        x_specs, y_specs = self.etabs.load_patterns.get_xy_spectral_load_patterns_with_angle()
+        x_specs, y_specs = self.etabs.load_cases.get_response_spectrum_xy_loadcases_names()
         self.x_loadcase_list.addItems(x_specs)
         self.y_loadcase_list.addItems(y_specs)
 
@@ -111,3 +110,4 @@ class ResponseSpectrumForm(rs_base, rs_window):
         specs = list(angles_spectral.values())
         self.angular_specs.addItems(specs)
         self.section_cuts.addItems(section_cuts)
+        self.select_angular_list()

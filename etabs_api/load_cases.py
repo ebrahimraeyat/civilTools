@@ -44,6 +44,50 @@ class LoadCases:
             if self.SapModel.LoadCases.GetTypeOAPI(lc)[0] == 3:
                 return lc
         return None
+    
+    def get_response_spectrum_loadcase_name(self):
+        load_cases = self.get_load_cases()
+        names = []
+        for lc in load_cases:
+            if self.SapModel.LoadCases.GetTypeOAPI(lc)[0] == 4:
+                names.append(lc)
+        return names
+    
+    def get_response_spectrum_loadcase_with_dir_angle(self, direction, angle):
+        specs = self.get_response_spectrum_loadcase_name()
+        for name in specs:
+            n, dirs, _, _, _, angles, _ = self.SapModel.LoadCases.ResponseSpectrum.GetLoads(name)
+            if n == 1 and dirs[0] == direction and float(angles[0]) == angle:
+                return name
+        return None
+
+    def get_response_spectrum_xy_loadcase_name(self):
+        sx = self.get_response_spectrum_loadcase_with_dir_angle('U1', 0)
+        if sx is None:
+            sx = self.get_response_spectrum_loadcase_with_dir_angle('U2', 90)
+        sy = self.get_response_spectrum_loadcase_with_dir_angle('U2', 0)
+        if sy is None:
+            sy = self.get_response_spectrum_loadcase_with_dir_angle('U1', 90)
+        return sx, sy
+    
+    def get_response_spectrum_xy_loadcases_names(self):
+        x_names = []
+        y_names = []
+        specs = self.get_response_spectrum_loadcase_name()
+        for name in specs:
+            n, dirs, _, _, _, angles, _ = self.SapModel.LoadCases.ResponseSpectrum.GetLoads(name)
+            if n == 1:
+                if dirs[0] == 'U1':
+                    if float(angles[0]) == 0:
+                        x_names.append(name)
+                    elif float(angles[0]) == 90:
+                        y_names.append(name)
+                elif dirs[0] == 'U2':
+                    if float(angles[0]) == 90:
+                        x_names.append(name)
+                    elif float(angles[0]) == 0:
+                        y_names.append(name)
+        return x_names, y_names
 
     def multiply_response_spectrum_scale_factor(self,
             name : str,
