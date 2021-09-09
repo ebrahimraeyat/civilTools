@@ -183,7 +183,7 @@
               <item>
                <widget class="QPushButton" name="dynamic_apply">
                 <property name="enabled">
-                 <bool>true</bool>
+                 <bool>false</bool>
                 </property>
                 <property name="text">
                  <string>Apply</string>
