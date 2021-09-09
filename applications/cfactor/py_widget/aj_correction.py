@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from PyQt5.QtCore import QAbstractTableModel, Qt
+from PyQt5.QtCore import QAbstractTableModel, Qt, QSettings
 from PyQt5.QtWidgets import QDoubleSpinBox, QItemDelegate, QComboBox, QMessageBox
 from PyQt5 import uic, QtGui
 from PyQt5.QtGui import QColor
@@ -42,6 +42,7 @@ class AjForm(story_base, story_window):
         self.setWindowFlag(Qt.WindowMinimizeButtonHint, True)
         self.setWindowFlag(Qt.WindowMaximizeButtonHint, True)
         self.adjustSize()
+        self.load_settings()
 
         # self.fill_xy_loadcase_names()
         self.create_connections()
@@ -108,6 +109,22 @@ class AjForm(story_base, story_window):
                 item = lw.item(i)
                 item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
                 item.setCheckState(Qt.Checked)
+
+    def closeEvent(self, event):
+        qsettings = QSettings("civiltools", 'aj_correction')
+        qsettings.setValue("geometry", self.saveGeometry())
+        qsettings.setValue("pos", self.pos())
+        qsettings.setValue("size", self.size())
+        qsettings.setValue("hsplitter", self.hsplitter.saveState())
+        qsettings.setValue("vsplitter", self.vsplitter.saveState())
+
+    def load_settings(self):
+        qsettings = QSettings("civiltools", 'aj_correction')
+        self.restoreGeometry(qsettings.value("geometry", self.saveGeometry()))
+        self.move(qsettings.value("pos", self.pos()))
+        self.resize(qsettings.value("size", self.size()))
+        self.hsplitter.restoreState(qsettings.value("hsplitter", self.hsplitter.saveState()))
+        self.vsplitter.restoreState(qsettings.value("vsplitter", self.vsplitter.saveState()))
 
 class AjApplyModel(QAbstractTableModel):
     def __init__(self, df):
