@@ -116,13 +116,13 @@ def test_apply_cfactor_to_edb(shayesteh):
 
 @pytest.mark.getmethod
 def test_get_diaphragm_max_over_avg_drifts(shayesteh):
-    table, _ = shayesteh.get_diaphragm_max_over_avg_drifts()
-    assert len(table) == 30
+    table = shayesteh.get_diaphragm_max_over_avg_drifts()
+    assert len(table) == 20
 
 @pytest.mark.getmethod
 def test_get_magnification_coeff_aj(shayesteh):
-    data, fields = shayesteh.get_magnification_coeff_aj()
-    assert len(data) == 20
+    df = shayesteh.get_magnification_coeff_aj()
+    assert len(df) == 20
 
 def test_get_story_forces_with_percentages(shayesteh):
     forces, _ = shayesteh.get_story_forces_with_percentages()

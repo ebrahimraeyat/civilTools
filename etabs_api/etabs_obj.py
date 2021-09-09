@@ -274,35 +274,28 @@ class EtabsModel:
     def get_diaphragm_max_over_avg_drifts(
                     self,
                     loadcases=[],
-                    only_ecc=False,
+                    only_ecc=True,
                     ):
         self.run_analysis()
         if not loadcases:
             xy_names = self.load_patterns.get_xy_seismic_load_patterns(only_ecc)
             all_load_case_names = self.load_cases.get_load_cases()
-            loadcases = [i for i in xy_names if i in all_load_case_names]
-        print(loadcases)
+            loadcases = set(xy_names).intersection(all_load_case_names)
         x_names, y_names = self.load_patterns.get_load_patterns_in_XYdirection()
         self.load_cases.select_load_cases(loadcases)
-        TableKey = 'Diaphragm Max Over Avg Drifts'
-        [_, _, FieldsKeysIncluded, _, TableData, _] = self.database.read_table(TableKey)
-        data = self.database.reshape_data(FieldsKeysIncluded, TableData)
-        try:
-            item_index = FieldsKeysIncluded.index("Item")
-            case_name_index = FieldsKeysIncluded.index("OutputCase")
-        except ValueError:
-            return None
-        new_data = []
-        for row in data:
-            name = row[case_name_index]
-            if row[item_index].endswith("X"):
-                if not name in x_names:
-                    continue
-            elif row[item_index].endswith("Y"):
-                if not name in y_names:
-                    continue
-            new_data.append(row)
-        return new_data, FieldsKeysIncluded
+        table_key = 'Diaphragm Max Over Avg Drifts'
+        cols = ['Story', 'OutputCase', 'Max Drift', 'Avg Drift', 'Label', 'Ratio', 'Item']
+        df = self.database.read(table_key, to_dataframe=True, cols=cols)
+        if len(df) == 0:
+            return
+        df['Dir'] = df['Item'].str[-1]
+        df.drop(columns=['Item'], inplace=True)
+        mask = (
+                (df['Dir'] == 'X') & (df['OutputCase'].isin(x_names))) ^ (
+                (df['Dir'] == 'Y') & (df['OutputCase'].isin(y_names)))
+        df = df.loc[mask]
+        df = df.astype({'Max Drift': float, 'Avg Drift': float, 'Ratio': float})
+        return df
 
     def get_drifts(self, no_story, cdx, cdy, loadcases=None):
         self.run_analysis()
@@ -437,36 +430,23 @@ class EtabsModel:
             return False
 
     def get_magnification_coeff_aj(self):
-        # sys.path.insert(0, str(civiltools_path))
-        x_names, y_names = self.load_patterns.get_load_patterns_in_XYdirection(only_ecc=True)
         story_length = self.story.get_stories_length()
-        data, headers = self.get_diaphragm_max_over_avg_drifts(only_ecc=True)
-        i_ratio = headers.index('Ratio')
-        i_story = headers.index('Story')
-        i_case = headers.index('OutputCase')
-        for d in data:
-            ratio = float(d[i_ratio])
-            story_name = d[i_story]
-            loadcase = d[i_case]
-            aj = (ratio / 1.2) ** 2
-            if aj < 1:
-                aj = 1
-            elif aj > 3:
-                aj = 3
-            ecc_ratio = aj * .05
-            length = story_length[story_name]
-            if loadcase in x_names:
-                len_ = length[1]
-                dir_ = 'X'
-            elif loadcase in y_names:
-                len_ = length[0]
-                dir_ = 'Y'
-            ecc_len = ecc_ratio * len_
-            diaphs = self.story.get_story_diaphragms(story_name)
-            diaphs = ','.join(list(diaphs))
-            d.extend([aj, ecc_ratio, len_, ecc_len, dir_, diaphs])
-        headers = headers + ('aj', 'Ecc. Ratio', 'Length (Cm)', 'Ecc. Length (Cm)', 'Dir', 'Diaph')
-        return data, headers
+        df = self.get_diaphragm_max_over_avg_drifts()
+        df['aj'] = (df['Ratio'] / 1.2) ** 2
+        df['aj'].clip(1,3, inplace=True)
+        df['Ecc. Ratio'] = df['aj'] * .05
+        x_story_length = {key: value[0] for key, value in story_length.items()}
+        y_story_length = {key: value[1] for key, value in story_length.items()}
+        df['Length (Cm)'] = df['Story'].map(y_story_length)
+        mask = df['Dir'] == 'Y'
+        df['Length (Cm)'].loc[mask] = df.loc[mask]['Story'].map(x_story_length)
+        df['Ecc. Length (Cm)'] = df['Ecc. Ratio'] * df['Length (Cm)']
+        story_names = df['Story'].unique()
+        story_diaphs = self.story.get_stories_diaphragms(story_names)
+        df['Diaph'] = df['Story'].map(story_diaphs)
+        df['Diaph'] = df['Diaph'].str.join(',')
+        # diaphs = ','.join(list(diaphs))
+        return df
 
     def apply_aj_df(self, df):
         print("Applying cfactor to edb\n")
@@ -774,6 +754,8 @@ class Build:
 if __name__ == '__main__':
     etabs = EtabsModel(backup=False)
     SapModel = etabs.SapModel
+    df = etabs.get_magnification_coeff_aj()
+    # df = etabs.get_diaphragm_max_over_avg_drifts()
     etabs.angles_response_spectrums_analysis('EX', 'EY', ('SPEC0', 'SPEC15', 'SPEC30', 'SPEC45', 'SPEC60', 'SPEC75', 'SPEC90', 'SPEC105', 'SPEC120', 'SPEC135', 'SPEC150', 'SPEC165', 'SPEC180'), 
             section_cuts=('SEC0', 'SEC15', 'SEC30', 'SEC45', 'SEC60', 'SEC75', 'SEC90', 'SEC105', 'SEC120', 'SEC135', 'SEC150', 'SEC165', 'SEC180'), num_iteration=5)
     # TableKey = 'Frame Section Property Definitions - Summary'

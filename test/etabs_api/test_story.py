@@ -97,3 +97,14 @@ def test_get_story_diaphragms(shayesteh):
 def test_add_points_in_center_of_rigidity_and_assign_diph(shayesteh):
     story_point_in_center_of_rigidity = shayesteh.story.add_points_in_center_of_rigidity_and_assign_diph()
     assert len(story_point_in_center_of_rigidity) == 5
+
+@pytest.mark.getmethod
+def test_get_stories_diaphragms(shayesteh):
+    story_diaphs = shayesteh.story.get_stories_diaphragms()
+    assert story_diaphs == {
+        'STORY5': ['D1'],
+        'STORY4': ['D1'],
+        'STORY3': ['D1'],
+        'STORY2': ['D1'],
+        'STORY1': ['D1'],
+    }

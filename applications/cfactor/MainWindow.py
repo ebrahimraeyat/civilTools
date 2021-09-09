@@ -403,7 +403,8 @@ class Ui(QMainWindow, main_window):
         etabs = etabs_obj.EtabsModel()
         if not self.is_etabs_running(etabs):
             return
-        data, headers = etabs.get_diaphragm_max_over_avg_drifts(only_ecc=True)
+        df = etabs.get_diaphragm_max_over_avg_drifts(only_ecc=True)
+        data, headers = df.values, list(df.columns)
         table_model.show_results(data, headers, table_model.TorsionModel, etabs.view.show_point)
         self.show_warning_about_number_of_use(check)
     
@@ -420,7 +421,8 @@ class Ui(QMainWindow, main_window):
         etabs = etabs_obj.EtabsModel()
         if not self.is_etabs_running(etabs):
             return
-        data, headers = etabs.get_magnification_coeff_aj()
+        df = etabs.get_magnification_coeff_aj()
+        data, headers = df.values, list(df.columns)
         table_model.show_results(data, headers, table_model.AjModel)
         self.show_warning_about_number_of_use(check)
     

@@ -22,21 +22,22 @@ class AjForm(story_base, story_window):
         self.setupUi(self)
         self.stories = self.etabs.SapModel.Story.GetStories()[1]
         self.fill_xy_loadpattern_names()
+        self.fill_xy_loadcase_names()
         story_length = self.etabs.story.get_stories_length()
         self.data = [[key, value[0], value[1]] for key, value in story_length.items()]
         self.headers = ('story', 'x (Cm)', 'y (Cm)')
         self.model = StoryLengthModel(self.data, self.headers)
         self.story_xy_length.setModel(self.model)
         self.story_xy_length.setItemDelegate(StoryLengthDelegate(self))
-        data, headers = self.etabs.get_magnification_coeff_aj()
-        self.aj_model = AjModel(data, headers)
+        df = self.etabs.get_magnification_coeff_aj()
+        self.aj_model = AjModel(df)
         self.aj_table_view.setModel(self.aj_model)
         self.aj_table_view.setItemDelegate(AjDelegate(self))
         self.aj_table_view.resizeColumnsToContents()
         self.aj_apply_model = AjApplyModel(self.aj_table_view.model().df)
-        self.aj_apply_table_view.setModel(self.aj_apply_model)
-        # self.aj_apply_table_view.setItemDelegate(AjDelegate(self))
-        self.aj_apply_table_view.resizeColumnsToContents()
+        self.aj_apply_static_view.setModel(self.aj_apply_model)
+        # self.aj_apply_static_view.setItemDelegate(AjDelegate(self))
+        self.aj_apply_static_view.resizeColumnsToContents()
         self.setWindowFlag(Qt.WindowMinimizeButtonHint, True)
         self.setWindowFlag(Qt.WindowMaximizeButtonHint, True)
         self.adjustSize()
@@ -45,12 +46,11 @@ class AjForm(story_base, story_window):
         self.create_connections()
 
     def create_connections(self):
-        btn = self.buttonBox.button(QtGui.QDialogButtonBox.Apply)
-        btn.clicked.connect(self.apply_aj)
+        self.static_apply.clicked.connect(self.apply_static_aj)
         
         # self.model.dataChanged.connect(self.story_length_changed)
 
-    def apply_aj(self):
+    def apply_static_aj(self):
         self.etabs.apply_aj_df(self.aj_apply_model.df)
         msg = "Successfully written to Etabs."
         QMessageBox.information(None, "done", msg)
@@ -95,11 +95,24 @@ class AjForm(story_base, story_window):
                 item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
                 item.setCheckState(Qt.Checked)
 
+    def fill_xy_loadcase_names(self):
+        x_names, y_names = self.etabs.load_cases.get_response_spectrum_xy_loadcases_names()
+        self.x_loadcase_list.addItems(x_names)
+        self.y_loadcase_list.addItems(y_names)
+        all_specs = self.etabs.load_cases.get_response_spectrum_loadcase_name()
+        angular_names = set(all_specs).difference(x_names + y_names)
+        self.angular_loadcase_list.addItems(angular_names)
+        for lw in (self.x_loadcase_list, self.y_loadcase_list, self.angular_loadcase_list):
+            for i in range(lw.count()):
+                item = lw.item(i)
+                item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
+                item.setCheckState(Qt.Checked)
+
 
 class AjModel(QAbstractTableModel):
-    def __init__(self, data, headers):
+    def __init__(self, df):
         QAbstractTableModel.__init__(self)
-        self.df = pd.DataFrame(data, columns=headers)
+        self.df = df
         self.df = self.df[[
             'Story',
             'OutputCase',
@@ -118,20 +131,20 @@ class AjModel(QAbstractTableModel):
         self.i_len = self.headers.index('Length (Cm)')
         self.i_ecc_len = self.headers.index('Ecc. Length (Cm)')
         self.i_diaph = self.headers.index('Diaph')
-        self.create_diaphs()
+        # self.create_diaphs()
         self.story_colors = {}
         stories = self.df['Story'].unique()
         import random
         for s in stories:
             self.story_colors[s] = random.choices(range(150, 256), k=3)
 
-    def create_diaphs(self):
-        self.diaphs = self.df['Diaph'].tolist()
-        diaphs = []
-        for _, row in self.df.iterrows():
-            diaph = row[self.i_diaph].split(',')[0]
-            diaphs.append(diaph)
-        self.df['Diaph'] = diaphs
+    # def create_diaphs(self):
+    #     self.diaphs = self.df['Diaph'].tolist()
+    #     diaphs = []
+    #     for _, row in self.df.iterrows():
+    #         diaph = row[self.i_diaph].split(',')[0]
+    #         diaphs.append(diaph)
+    #     self.df['Diaph'] = diaphs
 
     def rowCount(self, parent=None):
         return self.df.shape[0]
@@ -228,6 +241,7 @@ class AjApplyModel(QAbstractTableModel):
                 if col == self.i_ecc_len:
                     return f'{value}'
                 return str(value)
+
             elif role == Qt.BackgroundColorRole:
                 case = self.df.iloc[row][self.i_case]
                 return QColor(*self.story_colors[case])

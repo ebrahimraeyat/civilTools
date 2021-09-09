@@ -1,5 +1,8 @@
 __all__ = ['Story']
 
+from typing import Union
+
+
 class Story:
     def __init__(
                 self,
@@ -118,6 +121,18 @@ class Story:
             if diaph:
                 diaphs.add(diaph)
         return diaphs
+
+    def get_stories_diaphragms(self,
+        stories : Union[list, bool] = None,
+        ):
+        if stories is None:
+            stories = self.get_story_names()
+        story_diaphs = {}
+        for story in stories:
+            diaphs = self.get_story_diaphragms(story)
+            story_diaphs[story] = list(diaphs)
+        return story_diaphs
+
 
     # def disconnect_story_diaphragm(self, story_name):
     #     areas = self.SapModel.AreaObj.GetNameListOnStory(story_name)[1]
