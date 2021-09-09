@@ -29,13 +29,9 @@ class AjForm(story_base, story_window):
         self.model = StoryLengthModel(self.data, self.headers)
         self.story_xy_length.setModel(self.model)
         self.story_xy_length.setItemDelegate(StoryLengthDelegate(self))
-        df = self.etabs.get_magnification_coeff_aj()
-        self.aj_model = AjModel(df)
-        self.aj_table_view.setModel(self.aj_model)
-        self.aj_table_view.setItemDelegate(AjDelegate(self))
-        self.aj_table_view.resizeColumnsToContents()
-        self.aj_apply_model = AjApplyModel(self.aj_table_view.model().df)
-        self.aj_apply_static_view.setModel(self.aj_apply_model)
+        self.df = self.etabs.get_magnification_coeff_aj()
+        aj_apply_model = AjApplyModel(self.df)
+        self.aj_apply_static_view.setModel(aj_apply_model)
         # self.aj_apply_static_view.setItemDelegate(AjDelegate(self))
         self.aj_apply_static_view.resizeColumnsToContents()
         self.setWindowFlag(Qt.WindowMinimizeButtonHint, True)
@@ -65,11 +61,11 @@ class AjForm(story_base, story_window):
             dir_ = 'Y'
         elif col == 2:
             dir_ = 'X'
-        story_dir = (self.aj_model.df['Story'] ==story) & (self.aj_model.df['Dir'] == dir_)
-        self.aj_model.df.loc[story_dir, 'Length (Cm)'] = value
-        self.aj_model.df.loc[story_dir, 'Ecc. Length (Cm)'] = \
-                self.aj_model.df[story_dir]['Ecc. Ratio'] * \
-                self.aj_model.df[story_dir]['Length (Cm)'] 
+        story_dir = (self.df['Story'] ==story) & (self.df['Dir'] == dir_)
+        self.df.loc[story_dir, 'Length (Cm)'] = value
+        self.df.loc[story_dir, 'Ecc. Length (Cm)'] = \
+                self.df[story_dir]['Ecc. Ratio'] * \
+                self.df[story_dir]['Length (Cm)'] 
         indexes = story_dir.index[story_dir].tolist()
         for i in indexes:
             index = self.aj_model.createIndex(i, self.aj_model.i_len)
@@ -80,7 +76,7 @@ class AjForm(story_base, story_window):
         indexes = stories.index[stories].tolist()
         for i in indexes:
             index = self.aj_apply_model.createIndex(i, 3)
-            df = self.aj_model.df
+            df = self.df
             self.aj_apply_model.df.iat[i, 3] = df[(df['Story'] == story) & (df['Dir'] == dir_)]['Ecc. Length (Cm)'].max()
             self.aj_apply_model.dataChanged.emit(index, index)
 
@@ -107,98 +103,6 @@ class AjForm(story_base, story_window):
                 item = lw.item(i)
                 item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
                 item.setCheckState(Qt.Checked)
-
-
-class AjModel(QAbstractTableModel):
-    def __init__(self, df):
-        QAbstractTableModel.__init__(self)
-        self.df = df
-        self.df = self.df[[
-            'Story',
-            'OutputCase',
-            'Label',
-            'aj',
-            'Ecc. Ratio',
-            'Length (Cm)',
-            'Ecc. Length (Cm)',
-            'Diaph',
-            'Dir',
-        ]]
-        self.headers = tuple(self.df.columns)
-        self.i_story = self.headers.index('Story')
-        self.i_aj = self.headers.index('aj')
-        self.i_ecc_ratio = self.headers.index('Ecc. Ratio')
-        self.i_len = self.headers.index('Length (Cm)')
-        self.i_ecc_len = self.headers.index('Ecc. Length (Cm)')
-        self.i_diaph = self.headers.index('Diaph')
-        # self.create_diaphs()
-        self.story_colors = {}
-        stories = self.df['Story'].unique()
-        import random
-        for s in stories:
-            self.story_colors[s] = random.choices(range(150, 256), k=3)
-
-    # def create_diaphs(self):
-    #     self.diaphs = self.df['Diaph'].tolist()
-    #     diaphs = []
-    #     for _, row in self.df.iterrows():
-    #         diaph = row[self.i_diaph].split(',')[0]
-    #         diaphs.append(diaph)
-    #     self.df['Diaph'] = diaphs
-
-    def rowCount(self, parent=None):
-        return self.df.shape[0]
-
-    def columnCount(self, parent=None):
-        return self.df.shape[1]
-
-    def data(self, index, role=Qt.DisplayRole):
-        row = index.row()
-        col = index.column()
-        if index.isValid():
-            value = self.df.iloc[row][col]
-            if role == Qt.DisplayRole:
-                if col in (self.i_aj, self.i_ecc_ratio):
-                    return f'{value:.3f}'
-                elif col in (self.i_len, self.i_ecc_len):
-                    return f'{value:.0f}'
-                return str(value)
-            elif role == Qt.BackgroundColorRole:
-                story = self.df.iloc[row][self.i_story]
-                return QColor(*self.story_colors[story])
-            elif role == Qt.TextAlignmentRole:
-                return int(Qt.AlignCenter | Qt.AlignVCenter)
-            elif role == Qt.TextColorRole and col == self.i_ecc_len:
-                return QColor('blue')
-
-    def setData(self, index, value, role=Qt.EditRole):
-        if not index.isValid():
-            return False
-        col = index.column()
-        if role == Qt.EditRole and col == self.i_diaph:
-            row = index.row()
-            self.df.iat[row, col] = value
-            self.dataChanged.emit(index, index)
-            return True
-        return False
-    
-    def flags(self, index):
-        if not index.isValid():
-            return Qt.ItemIsEnabled
-        col = index.column()
-        if col != self.i_diaph:
-            return Qt.ItemIsEnabled
-
-        return Qt.ItemFlags(
-            QAbstractTableModel.flags(self, index) | Qt.ItemIsEditable)
-
-    def headerData(self, col, orientation, role):
-        if role != Qt.DisplayRole:
-            return
-        if orientation == Qt.Horizontal:
-            return self.headers[col]
-        return int(col + 1)
-
 
 class AjApplyModel(QAbstractTableModel):
     def __init__(self, df):

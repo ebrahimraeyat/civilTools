@@ -1,7 +1,7 @@
 import sys
 import comtypes.client
 from pathlib import Path
-from typing import Tuple
+from typing import Tuple, Union
 import shutil
 import math
 
@@ -445,8 +445,45 @@ class EtabsModel:
         story_diaphs = self.story.get_stories_diaphragms(story_names)
         df['Diaph'] = df['Story'].map(story_diaphs)
         df['Diaph'] = df['Diaph'].str.join(',')
-        # diaphs = ','.join(list(diaphs))
         return df
+
+    def get_static_magnification_coeff_aj(self,
+            df : Union['pandas.DataFrame', bool] = None,
+            ):
+        if df is None:
+            df = self.get_magnification_coeff_aj()
+        df = df.groupby(['OutputCase', 'Story', 'Diaph'], as_index=False)['Ecc. Length (Cm)'].max()
+        df = df.astype({'Ecc. Length (Cm)': int})
+        return df
+    
+    def get_Dynamic_magnification_coeff_aj(self,
+            df : Union['pandas.DataFrame', bool] = None,
+            ):
+        if df is None:
+            df = self.get_magnification_coeff_aj()
+        df = df.groupby(['OutputCase', 'Story', 'Diaph', 'Dir'], as_index=False)['Ecc. Length (Cm)'].max()
+        df = df.astype({'Ecc. Length (Cm)': int})
+        import pandas as pd
+        ret_df = pd.DataFrame(columns=['OutputCase', 'Story', 'Diaph', 'Ecc. Length (Cm)'])
+        x_names, y_names = self.load_cases.get_response_spectrum_xy_loadcases_names()
+        all_specs = self.load_cases.get_response_spectrum_loadcase_name()
+        angular_names = set(all_specs).difference(x_names + y_names)
+        if x_names:
+            new_df = df[df['Dir'] == 'X'].groupby(['Story', 'Diaph'], as_index=False)['Ecc. Length (Cm)'].max()
+            for name in x_names:
+                new_df['OutputCase'] = name
+                ret_df = ret_df.append(new_df)
+        if y_names:
+            new_df = df[df['Dir'] == 'Y'].groupby(['Story', 'Diaph'], as_index=False)['Ecc. Length (Cm)'].max()
+            for name in y_names:
+                new_df['OutputCase'] = name
+                ret_df = ret_df.append(new_df)
+        if angular_names:
+            new_df = df.groupby(['Story', 'Diaph'], as_index=False)['Ecc. Length (Cm)'].max()
+            for name in angular_names:
+                new_df['OutputCase'] = name
+                ret_df = ret_df.append(new_df)
+        return ret_df
 
     def apply_aj_df(self, df):
         print("Applying cfactor to edb\n")
@@ -754,7 +791,7 @@ class Build:
 if __name__ == '__main__':
     etabs = EtabsModel(backup=False)
     SapModel = etabs.SapModel
-    df = etabs.get_magnification_coeff_aj()
+    df = etabs.get_Dynamic_magnification_coeff_aj()
     # df = etabs.get_diaphragm_max_over_avg_drifts()
     etabs.angles_response_spectrums_analysis('EX', 'EY', ('SPEC0', 'SPEC15', 'SPEC30', 'SPEC45', 'SPEC60', 'SPEC75', 'SPEC90', 'SPEC105', 'SPEC120', 'SPEC135', 'SPEC150', 'SPEC165', 'SPEC180'), 
             section_cuts=('SEC0', 'SEC15', 'SEC30', 'SEC45', 'SEC60', 'SEC75', 'SEC90', 'SEC105', 'SEC120', 'SEC135', 'SEC150', 'SEC165', 'SEC180'), num_iteration=5)
