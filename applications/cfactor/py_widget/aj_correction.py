@@ -29,11 +29,16 @@ class AjForm(story_base, story_window):
         self.model = StoryLengthModel(self.data, self.headers)
         self.story_xy_length.setModel(self.model)
         self.story_xy_length.setItemDelegate(StoryLengthDelegate(self))
-        self.df = self.etabs.get_magnification_coeff_aj()
-        aj_apply_model = AjApplyModel(self.df)
-        self.aj_apply_static_view.setModel(aj_apply_model)
+        df = self.etabs.get_magnification_coeff_aj()
+        self.static_df = self.etabs.get_static_magnification_coeff_aj(df)
+        self.dynamic_df = self.etabs.get_dynamic_magnification_coeff_aj(df)
+        aj_apply_model_static = AjApplyModel(self.static_df)
+        self.aj_apply_static_view.setModel(aj_apply_model_static)
+        aj_apply_model_dynamic = AjApplyModel(self.dynamic_df)
+        self.aj_apply_dynamic_view.setModel(aj_apply_model_dynamic)
         # self.aj_apply_static_view.setItemDelegate(AjDelegate(self))
         self.aj_apply_static_view.resizeColumnsToContents()
+        self.aj_apply_dynamic_view.resizeColumnsToContents()
         self.setWindowFlag(Qt.WindowMinimizeButtonHint, True)
         self.setWindowFlag(Qt.WindowMaximizeButtonHint, True)
         self.adjustSize()
@@ -107,8 +112,7 @@ class AjForm(story_base, story_window):
 class AjApplyModel(QAbstractTableModel):
     def __init__(self, df):
         QAbstractTableModel.__init__(self)
-        self.df = df.query('aj > 1').groupby(
-            ['OutputCase', 'Story', 'Diaph'], as_index=False)['Ecc. Length (Cm)'].max()
+        self.df = df
         self.df = self.df.astype({'Ecc. Length (Cm)': int})
         self.headers = tuple(self.df.columns)
         self.i_story = self.headers.index('Story')

@@ -456,7 +456,7 @@ class EtabsModel:
         df = df.astype({'Ecc. Length (Cm)': int})
         return df
     
-    def get_Dynamic_magnification_coeff_aj(self,
+    def get_dynamic_magnification_coeff_aj(self,
             df : Union['pandas.DataFrame', bool] = None,
             ):
         if df is None:
@@ -791,7 +791,7 @@ class Build:
 if __name__ == '__main__':
     etabs = EtabsModel(backup=False)
     SapModel = etabs.SapModel
-    df = etabs.get_Dynamic_magnification_coeff_aj()
+    df = etabs.get_dynamic_magnification_coeff_aj()
     # df = etabs.get_diaphragm_max_over_avg_drifts()
     etabs.angles_response_spectrums_analysis('EX', 'EY', ('SPEC0', 'SPEC15', 'SPEC30', 'SPEC45', 'SPEC60', 'SPEC75', 'SPEC90', 'SPEC105', 'SPEC120', 'SPEC135', 'SPEC150', 'SPEC165', 'SPEC180'), 
             section_cuts=('SEC0', 'SEC15', 'SEC30', 'SEC45', 'SEC60', 'SEC75', 'SEC90', 'SEC105', 'SEC120', 'SEC135', 'SEC150', 'SEC165', 'SEC180'), num_iteration=5)
