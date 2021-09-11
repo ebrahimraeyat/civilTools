@@ -72,6 +72,7 @@ class Ui(QMainWindow, main_window):
         self.action_offset_beam.triggered.connect(self.offset_beam)
         self.action_connect_beam.triggered.connect(self.connect_beam)
         self.action_remove_backups.triggered.connect(self.clear_backups)
+        self.action_restore_backup.triggered.connect(self.restore_backup)
         self.action_scale_response_spec.triggered.connect(self.scale_response_spectrums)
         self.action_create_section_cuts.triggered.connect(self.create_section_cuts)
         self.action_create_period_file.triggered.connect(self.create_period_file)
@@ -714,6 +715,16 @@ class Ui(QMainWindow, main_window):
             return
         from py_widget import delete_backups as db
         db_win = db.ListForm(etabs)
+        db_win.exec_()
+    
+    def restore_backup(self):
+        sys.path.insert(0, str(civiltools_path))
+        from etabs_api import etabs_obj
+        etabs = etabs_obj.EtabsModel(backup=False)
+        if not self.is_etabs_running(etabs):
+            return
+        from py_widget import restore_backup as rb
+        db_win = rb.ListForm(etabs)
         db_win.exec_()
 
     def allowed_to_continue(self,

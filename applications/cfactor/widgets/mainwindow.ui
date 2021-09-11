@@ -1091,7 +1091,6 @@ p, li { white-space: pre-wrap; }
     <addaction name="action_scale_response_spec"/>
     <addaction name="separator"/>
     <addaction name="menuEdit"/>
-    <addaction name="action_remove_backups"/>
    </widget>
    <widget class="QMenu" name="menuFile">
     <property name="title">
@@ -1099,6 +1098,8 @@ p, li { white-space: pre-wrap; }
     </property>
     <addaction name="action_open"/>
     <addaction name="action_save"/>
+    <addaction name="action_remove_backups"/>
+    <addaction name="action_restore_backup"/>
     <addaction name="action_word"/>
     <addaction name="action_save_spectrals"/>
    </widget>
@@ -1150,6 +1151,7 @@ p, li { white-space: pre-wrap; }
    <addaction name="action_word"/>
    <addaction name="action_save_spectrals"/>
    <addaction name="action_remove_backups"/>
+   <addaction name="action_restore_backup"/>
   </widget>
   <widget class="QToolBar" name="control_toolbar">
    <property name="windowTitle">
@@ -1492,6 +1494,15 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Wall Loads</string>
+   </property>
+  </action>
+  <action name="action_restore_backup">
+   <property name="icon">
+    <iconset resource="../resource.qrc">
+     <normaloff>:/cfactor/images/backup-recovery.svg</normaloff>:/cfactor/images/backup-recovery.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Restore Backup</string>
    </property>
   </action>
  </widget>

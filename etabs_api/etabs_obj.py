@@ -107,12 +107,18 @@ class EtabsModel:
         asli_file_path = asli_file_path.with_suffix('.EDB')
         new_file_path = asli_file_path.with_name(name)
         shutil.copy(asli_file_path, new_file_path)
+        return new_file_path
 
     def remove_backups(self):
         file_path = self.get_filepath()
         for edb in file_path.glob(f'BACKUP_*.EDB'):
             edb.unlink()
         return None
+
+    def restore_backup(self, filepath):
+        current_file_path = self.get_filename()
+        self.SapModel.File.OpenFile(str(filepath))
+        self.SapModel.File.Save(str(current_file_path))
 
     def lock_model(self):
         self.SapModel.SetModelIsLocked(True)

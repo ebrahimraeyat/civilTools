@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="cfactor">
+    <file>../../images/backup-recovery.svg</file>
     <file>../../images/wall.svg</file>
     <file>../../images/time.svg</file>
     <file>../../images/wall_load.svg</file>
