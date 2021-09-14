@@ -34,6 +34,7 @@ class FormWidget(QtWidgets.QWidget, main_window):
         self.about_Button.clicked.connect(self.about)
         self.update_Button.clicked.connect(self.git_updates)
         self.help_button.clicked.connect(self.help)
+        self.register_button.clicked.connect(self.register)
 
     def run_section(self):
         os.chdir(civiltools_path + "/applications/section")
@@ -60,6 +61,12 @@ class FormWidget(QtWidgets.QWidget, main_window):
         self.child_win = AboutForm(self)
         self.child_win.show()
 
+    def register(self):
+        serial_win = SerialForm(self)
+        serial = str(subprocess.check_output("wmic csproduct get uuid")).split("\\r\\r\\n")[1].split()[0]
+        serial_win.serial.setText(serial)
+        serial_win.exec_()
+
     def help(self):
         import webbrowser
         path = civiltools_path +  "/help" + "/help.pdf"
@@ -85,6 +92,11 @@ class FormWidget(QtWidgets.QWidget, main_window):
 class AboutForm(about_base, about_window):
     def __init__(self, parent=None):
         super(AboutForm, self).__init__()
+        self.setupUi(self)
+
+class SerialForm(serial_base, serial_window):
+    def __init__(self, parent=None):
+        super().__init__()
         self.setupUi(self)
 
 
