@@ -260,13 +260,13 @@ p, li { white-space: pre-wrap; }
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
-      <widget class="QPushButton" name="exit_Button">
+      <widget class="QPushButton" name="register_button">
        <property name="text">
-        <string>    خروج</string>
+        <string>فعال سازی</string>
        </property>
        <property name="icon">
         <iconset resource="../resource.qrc">
-         <normaloff>:/civiltools/images/quit.png</normaloff>:/civiltools/images/quit.png</iconset>
+         <normaloff>:/civiltools/images/Register.png</normaloff>:/civiltools/images/Register.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -297,23 +297,6 @@ p, li { white-space: pre-wrap; }
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="about_Button">
-       <property name="text">
-        <string>   درباره</string>
-       </property>
-       <property name="icon">
-        <iconset resource="../resource.qrc">
-         <normaloff>:/civiltools/images/about.png</normaloff>:/civiltools/images/about.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>64</width>
-         <height>64</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QPushButton" name="help_button">
        <property name="text">
         <string>راهنما</string>
@@ -331,13 +314,13 @@ p, li { white-space: pre-wrap; }
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="register_button">
+      <widget class="QPushButton" name="about_Button">
        <property name="text">
-        <string>فعال سازی</string>
+        <string>   درباره</string>
        </property>
        <property name="icon">
         <iconset resource="../resource.qrc">
-         <normaloff>:/civiltools/images/Register.png</normaloff>:/civiltools/images/Register.png</iconset>
+         <normaloff>:/civiltools/images/about.png</normaloff>:/civiltools/images/about.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -354,22 +337,5 @@ p, li { white-space: pre-wrap; }
  <resources>
   <include location="../resource.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>exit_Button</sender>
-   <signal>clicked()</signal>
-   <receiver>main_form</receiver>
-   <slot>close()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>146</x>
-     <y>523</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>182</x>
-     <y>574</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>
