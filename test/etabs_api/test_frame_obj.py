@@ -132,4 +132,16 @@ def test_assign_gravity_load_to_selfs_and_above_beams(shayesteh):
     ret = shayesteh.frame_obj.assign_gravity_load_to_selfs_and_above_beams('DEAD', 220)
     assert ret == None
 
+@pytest.mark.setmethod
+def test_concrete_section_names(shayesteh):
+    beam_names = shayesteh.frame_obj.concrete_section_names('Beam')
+    assert len(beam_names) == 37
+    beam_names = shayesteh.frame_obj.concrete_section_names('Column')
+    assert len(beam_names) == 112
+
+@pytest.mark.setmethod
+def test_all_section_names(shayesteh):
+    all_names = shayesteh.frame_obj.all_section_names()
+    assert len(all_names) == 149
+
 

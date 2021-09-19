@@ -531,6 +531,19 @@ class FrameObj:
         self.SapModel.View.RefreshView()
         return None
 
+    def concrete_section_names(self, type_='Beam'):
+        '''
+        type_ can be 'Beam' or 'Column'
+        '''
+        table_key = f'Frame Section Property Definitions - Concrete {type_} Reinforcing'
+        df = self.etabs.database.read(table_key, to_dataframe=True, cols=['Name'])
+        if df is None:
+            return []
+        names = list(df.Name.unique())
+        return names
+
+    def all_section_names(self):
+        return self.SapModel.PropFrame.GetNameList()[1]
 
 if __name__ == '__main__':
     from pathlib import Path
