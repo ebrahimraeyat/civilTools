@@ -709,6 +709,14 @@ class Ui(QMainWindow, main_window):
         self.calculate()
     
     def assign_frame_sections(self):
+        allow, check = self.allowed_to_continue(
+            'assign_frame_section.bin',
+            'https://gist.githubusercontent.com/ebrahimraeyat/7a72a787854de95017f389e2936f75d5/raw',
+            'cfactor',
+            n=5,
+            )
+        if not allow:
+            return
         sys.path.insert(0, str(civiltools_path))
         from etabs_api import etabs_obj
         etabs = etabs_obj.EtabsModel(backup=False)
@@ -717,7 +725,7 @@ class Ui(QMainWindow, main_window):
         from py_widget.assign import assign_frame_sections
         win = assign_frame_sections.Dialog(etabs)
         win.exec_()
-        
+        self.show_warning_about_number_of_use(check)
 
     def clear_backups(self):
         sys.path.insert(0, str(civiltools_path))
