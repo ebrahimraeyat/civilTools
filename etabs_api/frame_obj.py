@@ -545,6 +545,8 @@ class FrameObj:
     def all_section_names(self):
         return self.SapModel.PropFrame.GetNameList()[1]
 
+    
+
 if __name__ == '__main__':
     from pathlib import Path
     current_path = Path(__file__).parent

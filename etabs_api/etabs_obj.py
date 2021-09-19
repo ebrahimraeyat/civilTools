@@ -20,6 +20,7 @@ from etabs_api.results import Results
 from etabs_api.points import Points
 from etabs_api.group import Group
 from etabs_api.select_obj import SelectObj
+from etabs_api.material import Material
 
 __all__ = ['EtabsModel']
 
@@ -81,6 +82,7 @@ class EtabsModel:
             self.points = Points(None, self)
             self.group = Group(self)
             self.select_obj = SelectObj(self)
+            self.material = Material(self)
     
     def close_etabs(self):
         self.SapModel.SetModelIsLocked(False)
