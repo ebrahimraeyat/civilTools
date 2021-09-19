@@ -14,7 +14,7 @@ class Dialog(base, window):
         self.fill_stories()
         self.beam_names = self.etabs.frame_obj.concrete_section_names('Beam')
         self.column_names = self.etabs.frame_obj.concrete_section_names('Column')
-        self.other_names = self.etabs.frame_obj.all_section_names()
+        self.other_names = self.etabs.frame_obj.other_sections(self.beam_names + self.column_names)
         self.fill_sections()
         self.create_connections()
 

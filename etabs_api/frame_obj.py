@@ -545,6 +545,13 @@ class FrameObj:
     def all_section_names(self):
         return self.SapModel.PropFrame.GetNameList()[1]
 
+    def other_sections(self, sections):
+        '''
+        return all frame sections except sections
+        '''
+        all_sections = self.all_section_names()
+        return list(set(all_sections).difference(sections))
+
     def assign_sections(self,
             sec_name : str,
             frame_names : Union[list, bool] = None,
