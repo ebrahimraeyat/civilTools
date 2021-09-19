@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from PyQt5 import uic, QtGui
+from PyQt5 import uic
 
 cfactor_path = Path(__file__).absolute().parent.parent.parent
 
@@ -42,6 +42,13 @@ class Dialog(base, window):
         self.beams.clicked.connect(self.fill_sections)
         self.columns.clicked.connect(self.fill_sections)
         self.assign_button.clicked.connect(self.accept)
+        self.filter_line.textChanged.connect(self.filter_sections)
+
+    def filter_sections(self):
+        text = self.filter_line.text()
+        for i in range(self.sections.count()):
+            item = self.sections.item(i)
+            item.setHidden(not (item.text().__contains__(text)))
 
     def accept(self):
         stories = [item.text() for item in self.stories.selectedItems()]
