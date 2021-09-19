@@ -545,7 +545,43 @@ class FrameObj:
     def all_section_names(self):
         return self.SapModel.PropFrame.GetNameList()[1]
 
-    
+    def assign_sections(self,
+            sec_name : str,
+            frame_names : Union[list, bool] = None,
+        ) -> None:
+        if frame_names is None:
+            return
+        for name in frame_names:
+            self.SapModel.FrameObj.SetSection(name, sec_name)
+
+    def assign_sections_stories(self,
+            sec_name : str,
+            stories : Union[list, bool] = None,
+            frame_names : Union[list, bool] = None,
+            sec_type : str = 'other',
+            ) -> None:
+        if frame_names is None:
+            frame_names = []
+            types, all_names = self.SapModel.SelectObj.GetSelected()[1:3]
+            func = None
+            if sec_type == 'beam':
+                func  = self.is_beam
+            elif sec_type == 'column':
+                func = self.is_column
+            for t, name in zip(types, all_names):
+                if t == 2:
+                    if func is None:
+                        frame_names.append(name)
+                    else:
+                        if func(name):
+                            frame_names.append(name)
+        if stories is None:
+            stories = self.SapModel.Story.GetNameList()[1]
+        for name in frame_names:
+            curr_names = self.get_above_frames(name, stories)
+            self.assign_sections(sec_name, curr_names)
+        self.SapModel.View.RefreshView()
+        return None
 
 if __name__ == '__main__':
     from pathlib import Path

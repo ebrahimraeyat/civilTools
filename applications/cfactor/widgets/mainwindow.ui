@@ -1114,6 +1114,7 @@ p, li { white-space: pre-wrap; }
      <string>&amp;Assing</string>
     </property>
     <addaction name="action_wall_loads"/>
+    <addaction name="action_frame_sections"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuETABS"/>
@@ -1232,6 +1233,7 @@ p, li { white-space: pre-wrap; }
     <bool>false</bool>
    </attribute>
    <addaction name="action_wall_loads"/>
+   <addaction name="action_frame_sections"/>
   </widget>
   <action name="action_to_etabs">
    <property name="icon">
@@ -1503,6 +1505,15 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Restore Backup</string>
+   </property>
+  </action>
+  <action name="action_frame_sections">
+   <property name="icon">
+    <iconset resource="../resource.qrc">
+     <normaloff>:/cfactor/images/assign_frame_section.svg</normaloff>:/cfactor/images/assign_frame_section.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Frame Sections</string>
    </property>
   </action>
  </widget>
