@@ -29,9 +29,16 @@ class FrameObj:
     def is_beam(self, name):
         return self.SapModel.FrameObj.GetDesignOrientation(name)[0] == 2
 
+    def is_frame_on_story(self, frame, story=None):
+        if story is None:
+            return True
+        st = self.SapModel.FrameObj.GetLabelFromName(frame)[1]
+        return st == story
+
     def get_beams_columns(
             self,
             type_=2,
+            story : Union[str, bool] = None,
             ):
         '''
         type_: 1=steel and 2=concrete
@@ -40,7 +47,10 @@ class FrameObj:
         columns = []
         others = []
         for label in self.SapModel.FrameObj.GetLabelNameList()[1]:
-            if self.SapModel.FrameObj.GetDesignProcedure(label)[0] == type_: 
+            if (
+                self.SapModel.FrameObj.GetDesignProcedure(label)[0] == type_ and
+                self.is_frame_on_story(label, story)
+                ): 
                 if self.is_column(label):
                     columns.append(label)
                 elif self.is_beam(label):
@@ -307,26 +317,31 @@ class FrameObj:
             p1_name, p2_name, _ = self.SapModel.FrameObj.GetPoints(name)
             x1, y1, z1 = self.SapModel.PointObj.GetCoordCartesian(p1_name)[:3]
             x2, y2 = self.SapModel.PointObj.GetCoordCartesian(p2_name)[:2]
-            if x2 == x1:
-                dy = 0
-                dx = distance
-            else:
-                import math
-                m = (y2 - y1) / (x2 - x1)
-                dy = distance / math.sqrt(1 + m ** 2)
-                dx = m * dy
-            if neg:
-                dx *= -1
-                dy *= -1
-            x1_offset = x1 - dx
-            x2_offset = x2 - dx
-            y1_offset = y1 + dy
-            y2_offset = y2 + dy
+            x1_offset, y1_offset, x2_offset, y2_offset = self.offset_frame_points(x1, y1, x2, y2, distance, neg)
             line = self.SapModel.FrameObj.AddByCoord(x1_offset, y1_offset, z1, x2_offset, y2_offset, z1)[0]
             lines.append(line)
         self.SapModel.SelectObj.ClearSelection()
         self.SapModel.View.RefreshView()
         return lines
+
+    @staticmethod
+    def offset_frame_points(x1, y1, x2, y2, distance, neg:bool):
+        if x2 == x1:
+            dy = 0
+            dx = distance
+        else:
+            import math
+            m = (y2 - y1) / (x2 - x1)
+            dy = distance / math.sqrt(1 + m ** 2)
+            dx = m * dy
+        if neg:
+            dx *= -1
+            dy *= -1
+        x1_offset = x1 - dx
+        x2_offset = x2 - dx
+        y1_offset = y1 + dy
+        y2_offset = y2 + dy
+        return x1_offset, y1_offset, x2_offset, y2_offset
 
     def connect_two_beams(self,
                 names : Union[list, bool] = None,
@@ -589,6 +604,9 @@ class FrameObj:
             self.assign_sections(sec_name, curr_names)
         self.SapModel.View.RefreshView()
         return None
+
+
+
 
 if __name__ == '__main__':
     from pathlib import Path

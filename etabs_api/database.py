@@ -1,5 +1,6 @@
 from pathlib import Path
 import sys
+from typing import Union
 
 import pandas as pd
 
@@ -61,6 +62,17 @@ class DatabaseTables:
             table_data += i
         return table_data
 
+    def apply_data(self,
+            table_key : str,
+            data : Union[list, pd.core.frame.DataFrame],
+            fields : Union[list, tuple, bool] = None,
+            ) -> None:
+        if type(data) == pd.core.frame.DataFrame:
+            fields = list(data.columns)
+            data = list(data.values.reshape(1, data.size)[0])
+        self.SapModel.DatabaseTables.SetTableForEditingArray(table_key, 0, fields, 0, data)
+        self.apply_table()
+    
     def apply_table(self):
         if self.SapModel.GetModelIsLocked():
             self.SapModel.SetModelIsLocked(False)
@@ -338,6 +350,11 @@ class DatabaseTables:
         story_forces = list(result)
         return story_forces, loadcases, FieldsKeysIncluded
 
+    def select_design_load_combinations(self):
+        load_combinations = self.get_concrete_frame_design_load_combinations()
+        self.SapModel.DatabaseTables.SetLoadCasesSelectedForDisplay('')
+        self.SapModel.DatabaseTables.SetLoadCombinationsSelectedForDisplay(load_combinations)
+
     def get_beams_forces(self,
                         load_combinations : list = None,
                         beams : list = None,
@@ -410,16 +427,232 @@ class DatabaseTables:
             loadcases : list = None,
             section_cuts: list = None,
             ):
-            self.etabs.run_analysis()
-            table = 'Section Cut Forces - Analysis'
-            columns = ['SectionCut', 'OutputCase', 'F1', 'F2']
-            self.etabs.load_cases.select_load_cases(loadcases)
-            df = self.read(table, to_dataframe=True, cols=columns)
-            df = df[
-                    (df['OutputCase'].isin(loadcases)) &
-                    (df['SectionCut'].isin(section_cuts))
-                    ]
-            return df
+        self.etabs.run_analysis()
+        table = 'Section Cut Forces - Analysis'
+        columns = ['SectionCut', 'OutputCase', 'F1', 'F2']
+        self.etabs.load_cases.select_load_cases(loadcases)
+        df = self.read(table, to_dataframe=True, cols=columns)
+        df = df[
+                (df['OutputCase'].isin(loadcases)) &
+                (df['SectionCut'].isin(section_cuts))
+                ]
+        return df
+
+    def get_joint_design_reactions(self):
+        self.select_design_load_combinations()
+        table_key = 'Joint Design Reactions'
+        df = self.read(table_key, to_dataframe=True)
+        if 'StepType' in df.columns:
+            cols = ['UniqueName', 'OutputCase', 'StepType', 'FZ', 'MX', 'MY']
+            df = df[cols]
+            df['StepType'].fillna('Max', inplace=True)
+            df['OutputCase'] = df['OutputCase'] + '_' + df['StepType']
+            df.drop(columns=['StepType'], inplace=True)
+        else:
+            cols = ['UniqueName', 'OutputCase', 'FZ', 'MX', 'MY']
+            df = df[cols]
+        return df
+
+    def get_frame_assignment_summary(self):
+        table_key = 'Frame Assignments - Summary'
+        df = self.read(table_key, to_dataframe=True)
+        if 'AxisAngle' in df.columns:
+            cols = ['Story', 'Label', 'UniqueName', 'Type', 'DesignSect', 'AxisAngle']
+            df = df[cols]
+            df['AxisAngle'].fillna(0, inplace=True)
+        else:
+            cols = ['Story', 'Label', 'UniqueName', 'Type', 'DesignSect']
+            df = df[cols]
+            df['AxisAngle'] = 0
+        return df
+
+    def get_base_columns_summary(self):
+        df = self.get_frame_assignment_summary()
+        story = self.SapModel.Story.GetNameList()[1][-1]
+        filt = (df['Story'] == story) & (df['Type'] == 'Column')
+        return df.loc[filt]
+
+    def get_frame_section_property_definitions_concrete_rectangular(self, cols=[]):
+        table_key = 'Frame Section Property Definitions - Concrete Rectangular'
+        df = self.read(table_key, to_dataframe=True, cols=cols)
+        return df
+
+    def get_base_column_summary_with_section_dimensions(self):
+        df_props = self.get_base_columns_summary()
+        cols = ['Name', 't3', 't2']
+        df_sections = self.get_frame_section_property_definitions_concrete_rectangular(cols=cols)
+        filt = df_sections['Name'].isin(df_props['DesignSect'])
+        df_sections = df_sections.loc[filt]
+        for t in ['t2', 't3']:
+            s = df_sections[t]
+            s.index = df_sections['Name']
+            df_props[t] = df_props['DesignSect'].map(s)
+        return df_props
+
+    def get_frame_connectivity(self, frame_type='Beam'):
+        '''
+        frame type : 'Beam', 'Column'
+        '''
+        table_key = f'{frame_type} Object Connectivity'
+        cols = ['UniqueName', 'UniquePtI', 'UniquePtJ']
+        df = self.read(table_key, to_dataframe=True, cols=cols)
+        return df
+    
+    def get_points_connectivity(self):
+        table_key = 'Point Object Connectivity'
+        cols = ['UniqueName', 'X', 'Y', 'Z']
+        df = self.read(table_key, to_dataframe=True, cols=cols)
+        import pandas as pd
+        df[['X', 'Y', 'Z']] = df[['X', 'Y', 'Z']].apply(pd.to_numeric, downcast='float')
+        return df
+
+    def get_frame_points_xyz(self,
+            frames : Union[list, None] = None,
+            ) -> 'pandas.DataFrame':
+        if frames is None:
+            frames = self.SapModel.SelectObj.GetSelected()[2]
+        df_frames = self.get_frame_connectivity()
+        filt = df_frames['UniqueName'].isin(frames)
+        df_frames = df_frames.loc[filt]
+        df_points = self.get_points_connectivity()
+        for i in ['X', 'Y', 'Z']:
+            col_name = f'{i.lower()}i'
+            s = df_points[i]
+            s.index = df_points['UniqueName']
+            df_frames[col_name] = df_frames['UniquePtI'].map(s)
+        for i in ['X', 'Y', 'Z']:
+            col_name = f'{i.lower()}j'
+            s = df_points[i]
+            s.index = df_points['UniqueName']
+            df_frames[col_name] = df_frames['UniquePtJ'].map(s)
+        return df_frames
+
+    def get_basepoints_coord_and_dims(self,
+        joint_design_reactions_df : Union['pandas.DataFrame', None] = None,
+        base_columns_df : Union['pandas.DataFrame', None] = None,
+        ):
+        '''
+        get base points coordinates and related column dimensions
+        '''
+        if joint_design_reactions_df is None:
+            joint_design_reactions_df = self.get_joint_design_reactions()
+        df = pd.DataFrame()
+        points = joint_design_reactions_df['UniqueName'].unique()
+        df['UniqueName'] = points
+        points_and_columns = self.get_points_connectivity_with_type(points, 2)
+        dic_x = {}
+        dic_y = {}
+        dic_z = {}
+        for name in points:
+            x, y, z, _ = self.SapModel.PointObj.GetCoordCartesian(name)
+            dic_x[name] = x
+            dic_y[name] = y
+            dic_z[name] = z
+        for col, dic in zip(('column', 'x', 'y', 'z'), (points_and_columns, dic_x, dic_y, dic_z)):
+            df[col] = df['UniqueName'].map(dic)
+        if base_columns_df is None:
+            base_columns_df = self.get_base_column_summary_with_section_dimensions()
+        st2 = pd.Series(base_columns_df['t2'])
+        st2.index = base_columns_df['UniqueName']
+        st3 = pd.Series(base_columns_df['t3'])
+        st3.index = base_columns_df['UniqueName']
+        s_axisangle = pd.Series(base_columns_df['AxisAngle'])
+        s_axisangle.index = base_columns_df['UniqueName']
+        df['t2'] = df['column'].map(st2)
+        df['t3'] = df['column'].map(st3)
+        df['AxisAngle'] = df['column'].map(s_axisangle)
+        return df
+
+    def get_point_connectivity_with_type(self, point, type_=2):
+        types, names = self.SapModel.PointObj.GetConnectivity(point)[1:3]
+        for t, name in zip(types, names):
+            if t == type_:
+                return name
+        return None
+
+    def get_points_connectivity_with_type(self, points, type_=2) -> dict:
+        connections = {}
+        for p in points:
+            connections[p] = self.get_point_connectivity_with_type(p, type_)
+        return connections
+
+    def get_strip_connectivity(self):
+        table_key = 'Strip Object Connectivity'
+        cols = ['Name', 'NumSegs', 'StartPoint', 'EndPoint', 'WStartLeft',
+            'WStartRight', 'WEndLeft', 'WEndRight', 'AutoWiden', 'Layer']
+        if self.etabs.software == 'ETABS':
+            cols.insert(1, 'Story')
+        df = self.read(table_key, to_dataframe=True, cols=cols)
+        return df
+
+    def create_area_spring_table(self,
+            names_props : list,
+            ) -> None:
+        table_key = 'Spring Property Definitions - Area Springs'
+        fields = ('Name', 'SubModulus', 'NonlinOpt')
+        data = []
+        for name, submodulus in names_props:
+            data.append(
+            (name, submodulus, 'Compression Only')
+            )
+        data = self.unique_data(data)
+        self.etabs.set_current_unit('kgf', 'cm')
+        self.apply_data(table_key, data, fields)
+
+    def create_punching_shear_general_table(self,
+            punches : list,
+            ) -> None:
+        table_key = 'Concrete Slab Design Overwrites - Punching Shear - General'
+        fields = ('UniqueName', 'CheckPunchingShear', 'LocationType', 'Perimeter',
+                'EffDepthType', 'EffDepth', 'OpeningDef'
+                )
+        data = []
+        for punch in punches:
+            data.append(
+            (punch.id,
+            'Program Determined',
+            punch.Location,
+            'Specified Perimeter',
+            # f'{punch.bx}',
+            # f'{punch.by}',
+            # f'{punch.angle.Value}',
+            'Specified',
+            f'{punch.d}',
+            'Specified',
+            ))
+        data = self.unique_data(data)
+        self.etabs.set_current_unit('kgf', 'mm')
+        self.apply_data(table_key, data, fields)
+
+    def create_punching_shear_perimeter_table(self,
+            punches : list,
+            ) -> None:
+        try:
+            from safe.punch import punch_funcs
+        except:
+            import punch_funcs
+        table_key = 'Concrete Slab Design Overwrites - Punching Shear - Perimeter'
+        fields = ('UniqueName', 'PointNum', 'XCoord', 'YCoord', 'Radius', 'IsNull')
+        data = []
+        for punch in punches:
+            name = punch.id
+            nulls, null_points = punch_funcs.punch_null_points(punch)
+            for i, (point, is_null) in enumerate(zip(null_points, nulls), start=1):
+                x, y = point.x, point.y
+                data.append(
+                    (name,
+                    str(i),
+                    f'{x}',
+                    f'{y}',
+                    '0',
+                    is_null,
+                ))
+        data = self.unique_data(data)
+        self.etabs.set_current_unit('kgf', 'mm')
+        self.apply_data(table_key, data, fields)
+
+    
+
 
 
 if __name__ == '__main__':
@@ -430,5 +663,5 @@ if __name__ == '__main__':
     from etabs_obj import EtabsModel
     etabs = EtabsModel()
     SapModel = etabs.SapModel
-    ret = etabs.database.write_daynamic_aj_user_coefficient()
+    ret = etabs.database.get_joint_design_reactions()
     print('Wow')
