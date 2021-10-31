@@ -3,9 +3,9 @@ from pathlib import Path
 from PyQt5 import uic
 
 cfactor_path = Path(__file__).absolute().parent.parent
-delete_base, delete_window = uic.loadUiType(cfactor_path / 'widgets' / 'delete_backups.ui')
+base, window = uic.loadUiType(cfactor_path / 'widgets' / 'delete_backups.ui')
 
-class ListForm(delete_base, delete_window):
+class ListForm(base, window):
     def __init__(self, etabs_model, parent=None):
         super(ListForm, self).__init__(parent)
         self.setupUi(self)
@@ -16,6 +16,7 @@ class ListForm(delete_base, delete_window):
     def create_connections(self):
         self.select_all.clicked.connect(self.set_list_items_selected)
         self.deselect_all.clicked.connect(self.set_list_items_selected)
+        self.delete_button.clicked.connect(self.accept)
 
     def accept(self):
         items = self.list.selectedItems()
@@ -26,6 +27,7 @@ class ListForm(delete_base, delete_window):
         self.list.clear()
         self.fill_list()
         self.set_list_items_selected(False)
+        window.accept(self)
 
     def fill_list(self, select=True):
         self.file_path = self.etabs.get_filepath()
