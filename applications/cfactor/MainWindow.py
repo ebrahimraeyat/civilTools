@@ -405,7 +405,16 @@ class Ui(QMainWindow, main_window):
         etabs = etabs_obj.EtabsModel()
         if not self.is_etabs_running(etabs):
             return
-        df = etabs.get_diaphragm_max_over_avg_drifts(only_ecc=True)
+        from py_widget import torsion
+        win = torsion.Form(etabs)
+        if win.exec_():
+            loadcases = []
+            for lw in (win.x_loadcase_list, win.y_loadcase_list):
+                for i in range(lw.count()):
+                    item = lw.item(i)
+                    if item.checkState() == Qt.Checked:
+                        loadcases.append(item.text())
+        df = etabs.get_diaphragm_max_over_avg_drifts(loadcases=loadcases)
         data, headers = df.values, list(df.columns)
         table_model.show_results(data, headers, table_model.TorsionModel, etabs.view.show_point)
         self.show_warning_about_number_of_use(check)
