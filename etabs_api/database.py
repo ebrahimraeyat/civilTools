@@ -111,6 +111,100 @@ class DatabaseTables:
         NumFatalErrors, ret = self.apply_table()
         return NumFatalErrors, ret
 
+    def expand_seismic_load_patterns(self,
+        equal_names : dict = {
+            'XDir' : 'EX',
+            'XDirPlusE' : 'EPX',
+            'XDirMinusE' : 'ENX',
+            'YDir' : 'EY',
+            'YDirPlusE' : 'EPY',
+            'YDirMinusE' : 'ENY',
+            },
+            replace_ex : bool = False,
+            replace_ey : bool = False,
+            drift_prefix : str = '',
+            drift_suffix : str = '_DRIFT',
+            ):
+        self.etabs.unlock_model()
+        self.etabs.lock_and_unlock_model()
+        drift_load_names = self.etabs.load_patterns.get_drift_load_pattern_names()
+        table_key = 'Load Pattern Definitions - Auto Seismic - User Coefficient'
+        df = self.read(table_key, to_dataframe=True)
+        # remove aj applide
+        filt = df['XDir'].isin(('Yes', 'No'))
+        df = df.loc[filt]
+        for col in ('OverStory', 'OverDiaph', 'OverEcc'):
+            df[col] = None
+        # obtain multi assign loads
+        d = {'Yes' : 1, 'No' : 0}
+        cols = list(equal_names.keys())
+        for col in cols:
+            df[col] = df[col].map(d)
+        filt_multi = (df[cols].sum(axis=1) > 1)
+        if not True in filt_multi.values:
+            return None
+        df_multi = df.loc[filt_multi]
+        # search for existance EX and EY
+        filt_ex = ~((df['XDir'] == 1) & (df[cols].sum(axis=1) == 1))
+        is_ex = False in filt_ex.values
+        filt_ey = ~((df['YDir'] == 1) & (df[cols].sum(axis=1) == 1))
+        is_ey = False in filt_ey.values
+        if replace_ex:
+            df = df.loc[filt_ex]
+        if replace_ey:
+            filt = ~((df['YDir'] == 1) & (df[cols].sum(axis=1) == 1))
+            df = df.loc[filt]
+        additional_rows = []
+        import copy
+        multi_load_names = list(df_multi['Name'].values)
+        converted_loads = dict.fromkeys(multi_load_names)
+        for i, row in df.loc[filt_multi].iterrows():
+            name = row['Name']
+            load_type = 37 if name in drift_load_names else 5
+            for col in cols:
+                if row[col] == 1:
+                    if col == 'XDir' and is_ex and not replace_ex:
+                        continue
+                    if col == 'YDir' and is_ey and not replace_ey:
+                        continue
+                    load_name = equal_names[col]
+                    if name in drift_load_names:
+                        load_name = f'{drift_prefix}{load_name}{drift_suffix}'
+                    new_row = copy.deepcopy(row)
+                    new_row[cols] = 0
+                    new_row[col] = 1
+                    new_row['Name'] = load_name
+                    additional_rows.append(new_row)
+                    if converted_loads[name] is None:
+                        converted_loads[name] = [(load_name, load_type)]
+                    else:
+                        converted_loads[name].append((load_name, load_type))
+                    self.SapModel.LoadPatterns.Add(load_name, load_type, 0, False)
+        
+        df_expanded = pd.DataFrame.from_records(additional_rows, columns=df.columns)
+        # remove ex or ey if replace
+        if replace_ex and replace_ey:
+            filt = ~((filt_ex == False) | (filt_ey == False))
+        elif replace_ex:
+            filt = filt_ex
+        elif replace_ey:
+            filt = filt_ey
+        if replace_ex or replace_ey:
+            df = df.loc[filt]
+        filt = ~(df['Name'].isin(multi_load_names))
+        df = df.loc[filt]
+        df = df.append(df_expanded)
+        d = {1: 'Yes', 0: 'No'}
+        for col in cols:
+            df[col] = df[col].map(d)
+        # data = self.unique_data([list(i) for i in df.values])
+        # self.write_seismic_user_coefficient(table_key, list(df.columns), data)
+        return df, converted_loads
+
+
+        
+        
+
     def get_story_mass(self):
         self.SapModel.SetPresentUnits_2(5, 6, 2)
         self.etabs.run_analysis()
@@ -663,5 +757,8 @@ if __name__ == '__main__':
     from etabs_obj import EtabsModel
     etabs = EtabsModel()
     SapModel = etabs.SapModel
-    ret = etabs.database.get_joint_design_reactions()
+    ret = etabs.database.expand_seismic_load_patterns()
+    ret = etabs.database.expand_seismic_load_patterns(replace_ex=True)
+    ret = etabs.database.expand_seismic_load_patterns(replace_ey=True)
+    ret = etabs.database.expand_seismic_load_patterns(replace_ex=True, replace_ey=True)
     print('Wow')
