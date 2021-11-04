@@ -1,6 +1,6 @@
 from pathlib import Path
 import sys
-from typing import Union
+from typing import Iterable, Union
 
 import pandas as pd
 
@@ -62,14 +62,19 @@ class DatabaseTables:
             table_data += i
         return table_data
 
+    @staticmethod
+    def get_fields_and_data_from_dataframe(df):
+        fields = list(df.columns)
+        data = list(df.values.reshape(1, df.size)[0])
+        return fields, data
+
     def apply_data(self,
             table_key : str,
             data : Union[list, pd.core.frame.DataFrame],
             fields : Union[list, tuple, bool] = None,
             ) -> None:
         if type(data) == pd.core.frame.DataFrame:
-            fields = list(data.columns)
-            data = list(data.values.reshape(1, data.size)[0])
+            fields, data = self.get_fields_and_data_from_dataframe(data)
         self.SapModel.DatabaseTables.SetTableForEditingArray(table_key, 0, fields, 0, data)
         self.apply_table()
     
@@ -95,6 +100,14 @@ class DatabaseTables:
         NumberRecords = 0
         TableData = []
         return self.SapModel.DatabaseTables.GetTableForDisplayArray(table_key, FieldKeyList, GroupName, TableVersion, FieldsKeysIncluded, NumberRecords, TableData)
+
+    @staticmethod
+    def remove_df_columns(df,
+            columns : Iterable = ('GUID', 'Notes'),
+            ):
+        for col in columns:
+            if col in df.columns:
+                del df[col]
 
     def write_seismic_user_coefficient(self, TableKey, FieldsKeysIncluded, TableData):
         FieldsKeysIncluded1 = ['Name', 'Is Auto Load', 'X Dir?', 'X Dir Plus Ecc?', 'X Dir Minus Ecc?',
@@ -133,8 +146,7 @@ class DatabaseTables:
         # remove aj applide
         filt = df['XDir'].isin(('Yes', 'No'))
         df = df.loc[filt]
-        for col in ('OverStory', 'OverDiaph', 'OverEcc'):
-            df[col] = None
+        self.remove_df_columns(df, ('OverStory', 'OverDiaph', 'OverEcc'))
         # obtain multi assign loads
         d = {'Yes' : 1, 'No' : 0}
         cols = list(equal_names.keys())
@@ -163,9 +175,17 @@ class DatabaseTables:
             load_type = 37 if name in drift_load_names else 5
             for col in cols:
                 if row[col] == 1:
-                    if col == 'XDir' and is_ex and not replace_ex:
-                        continue
-                    if col == 'YDir' and is_ey and not replace_ey:
+                    if all((
+                            col == 'XDir',
+                            is_ex,
+                            load_type == 5,
+                            not replace_ex,
+                        )) or all((
+                            col == 'YDir',
+                            is_ey,
+                            load_type == 5,
+                            not replace_ey,
+                        )):
                         continue
                     load_name = equal_names[col]
                     if name in drift_load_names:
@@ -197,13 +217,132 @@ class DatabaseTables:
         d = {1: 'Yes', 0: 'No'}
         for col in cols:
             df[col] = df[col].map(d)
-        # data = self.unique_data([list(i) for i in df.values])
-        # self.write_seismic_user_coefficient(table_key, list(df.columns), data)
         return df, converted_loads
 
 
-        
-        
+    def expand_loadcases(self,
+            loads_expanded : Union[dict, bool] = None,
+            ):
+        if loads_expanded is None:
+            ret = self.expand_seismic_load_patterns()
+            if ret is None:
+                return
+            loads_expanded = ret[1]
+        zip_loadpatterns = list(loads_expanded.keys())
+        table_key = 'Load Case Definitions - Linear Static'
+        loadcases_df = self.read(table_key, to_dataframe=True)
+        self.remove_df_columns(loadcases_df)
+        filt = loadcases_df['LoadName'].isin(zip_loadpatterns)
+        loadcases_include_zip_loadpatterns = list(loadcases_df.loc[filt]['Name'])
+        filt = ~(loadcases_df['Name'].isin(loadcases_include_zip_loadpatterns))
+        new_loadcase_df = loadcases_df.loc[filt]
+        zip_loadcases = dict()
+        for loadcase in loadcases_include_zip_loadpatterns:
+            filt = loadcases_df['Name'] == loadcase
+            zip_df = loadcases_df.loc[filt]
+            load_names = list(zip_df['LoadName'])
+            for zip_loadpat, expand_loaded in loads_expanded.items():
+                if zip_loadpat in load_names:
+                    for i, (load, load_type) in enumerate(expand_loaded):
+                        append_df = zip_df.replace(zip_loadpat, load)
+                        scale_factor_name = append_df['LoadSF'].str.replace('1', '') + append_df['LoadName']
+                        names = scale_factor_name.to_list()
+                        new_names = [names[0]]
+                        for name in names[1:]:
+                            new_names.append(name) if name.startswith('-') else new_names.append(f'+{name}')
+                        name = ''.join(new_names)
+                        append_df['Name'] = name
+                        new_loadcase_df = new_loadcase_df.append(append_df)
+                        # if load_type == 5:
+                        if i == 0:
+                            zip_loadcases[loadcase] = [name]
+                        else:
+                            zip_loadcases[loadcase].append(name)
+        return new_loadcase_df, zip_loadcases
+    
+    def expand_linear_loadcombos(self,
+            loads_expanded : Union[dict, bool] = None,
+            loadcombos_df : Union[pd.DataFrame, bool] = None,
+            ):
+        if loads_expanded is None:
+            ret = self.expand_loadcases()
+            if ret is None:
+                return
+            loads_expanded = ret[1]
+        zip_loadcases = list(loads_expanded.keys())
+        if loadcombos_df is None:
+            table_key = 'Load Combination Definitions'
+            loadcombos_df = self.read(table_key, to_dataframe=True)
+        self.remove_df_columns(loadcombos_df, ('GUID',))
+        # remove envelop combos, because envelopes not to be iterate, must be add
+        envelop_combos = list(loadcombos_df[loadcombos_df['Type'] == 'Envelope']['Name'])
+        filt_envelope = loadcombos_df['Name'].isin(envelop_combos)
+        new_loadcombo_df = loadcombos_df.loc[~filt_envelope]
+        filt = new_loadcombo_df['LoadName'].isin(zip_loadcases)
+        loadcombos_include_zip_loadcases = list(new_loadcombo_df.loc[filt]['Name'].unique())
+        filt = ~(new_loadcombo_df['Name'].isin(loadcombos_include_zip_loadcases))
+        new_loadcombo_df = new_loadcombo_df.loc[filt]
+        zip_loadcombos = dict()
+        for loadcombo in loadcombos_include_zip_loadcases:
+            filt = loadcombos_df['Name'] == loadcombo
+            zip_df = loadcombos_df.loc[filt]
+            load_names = list(zip_df['LoadName'])
+            for zip_loadpat, expand_loaded in loads_expanded.items():
+                n = len(expand_loaded)
+                if zip_loadpat in load_names:
+                    for i, load in enumerate(expand_loaded, start=1):
+                        append_df = zip_df.replace(zip_loadpat, load)
+                        name = f'{loadcombo}({i}/{n})'
+                        append_df['Name'] = name
+                        new_loadcombo_df = new_loadcombo_df.append(append_df)
+                        # if load_type == 5:
+                        if i == 1:
+                            zip_loadcombos[loadcombo] = [name]
+                        else:
+                            zip_loadcombos[loadcombo].append(name)
+        return new_loadcombo_df, zip_loadcombos
+
+    def set_expand_seismic_load_patterns(self,
+            df : pd.core.frame.DataFrame,
+            converted_loads : dict,
+            ):
+        fields, data = self.get_fields_and_data_from_dataframe(df)
+        table_key = 'Load Pattern Definitions - Auto Seismic - User Coefficient'
+        self.write_seismic_user_coefficient(table_key, fields, data)
+        # remove multi loadpat
+        table_key = 'Load Pattern Definitions'
+        dflp = self.read(table_key, to_dataframe=True)
+        multi_load_names = list(converted_loads.keys())
+        filt = ~(dflp.Name.isin(multi_load_names))
+        dflp = dflp.loc[filt]
+        self.apply_data(table_key, dflp)
+    
+    def set_expand_loadcases(self,
+            df : pd.core.frame.DataFrame,
+            converted_loadcases : dict,
+            ):
+        table_key = 'Load Case Definitions - Summary'
+        df_loadcases_summary = self.read(table_key, to_dataframe=True)
+        zip_loadcases = list(converted_loadcases.keys())
+        filt = ~(df_loadcases_summary['Name'].isin(zip_loadcases))
+        new_loadcase_summary = df_loadcases_summary.loc[filt]
+        self.remove_df_columns(new_loadcase_summary)
+        for loadcases in converted_loadcases.values():
+            for loadcase in loadcases:
+                row = pd.Series({'Name': loadcase, 'Type': 'Linear Static'})
+                new_loadcase_summary = new_loadcase_summary.append(row, ignore_index=True)
+        self.apply_data(table_key, new_loadcase_summary)
+        table_key = 'Load Case Definitions - Linear Static'
+        self.apply_data(table_key, df)
+        all_loadcases = list(df['Name'].unique())
+        for loadcase in all_loadcases:
+            temp_df = df.loc[df['Name'] == loadcase]
+            lcs = tuple(temp_df['LoadName'])
+            n = len(lcs)
+            lsf = tuple(temp_df['LoadSF'])
+            lsf = [float(i) for i in lsf]
+            self.SapModel.LoadCases.StaticLinear.SetLoads(loadcase, n, n * ('Load',), lcs, lsf)
+
 
     def get_story_mass(self):
         self.SapModel.SetPresentUnits_2(5, 6, 2)
@@ -757,8 +896,13 @@ if __name__ == '__main__':
     from etabs_obj import EtabsModel
     etabs = EtabsModel()
     SapModel = etabs.SapModel
-    ret = etabs.database.expand_seismic_load_patterns()
-    ret = etabs.database.expand_seismic_load_patterns(replace_ex=True)
-    ret = etabs.database.expand_seismic_load_patterns(replace_ey=True)
-    ret = etabs.database.expand_seismic_load_patterns(replace_ex=True, replace_ey=True)
+    dflp, convert_lps = etabs.database.expand_seismic_load_patterns()
+    dflc, convert_lcs = etabs.database.expand_loadcases(convert_lps)
+    dflcomb, convert_lcombos = etabs.database.expand_linear_loadcombos(convert_lcs)
+    additional_convert_lcombos = convert_lcombos.copy()
+    while additional_convert_lcombos:
+        dflcomb, additional_convert_lcombos = etabs.database.expand_linear_loadcombos(additional_convert_lcombos, dflcomb)
+        convert_lcombos.update(additional_convert_lcombos)
+    etabs.database.set_expand_seismic_load_patterns(dflp, convert_lps)
+    etabs.database.set_expand_loadcases(dflc, convert_lcs)
     print('Wow')
