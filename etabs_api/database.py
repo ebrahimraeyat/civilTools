@@ -46,6 +46,9 @@ class DatabaseTables:
                 to_dataframe : bool = False,
                 cols : list = None,
                 ):
+        all_table = SapModel.DatabaseTables.GetAvailableTables()[1]
+        if table_key not in all_table:
+            return None
         _, _, fields, _, data, _ = self.read_table(table_key)
         if fields[0] is None:
             return None
@@ -337,9 +340,7 @@ class DatabaseTables:
             convert_lcombos.update(additional_convert_lcombos)
         df_envelop_combos = self.expand_envelop_loadcombos(convert_lcombos)
         df = df_linear_combos.append(df_envelop_combos)
-        return df
-
-    
+        return df, convert_lcombos
 
     def set_expand_seismic_load_patterns(self,
             df : pd.core.frame.DataFrame,
@@ -382,6 +383,20 @@ class DatabaseTables:
             lsf = [float(i) for i in lsf]
             self.SapModel.LoadCases.StaticLinear.SetLoads(loadcase, n, n * ('Load',), lcs, lsf)
 
+    def set_expand_load_combinations(self,
+        df : pd.DataFrame,
+        ):
+        table_key = 'Load Combination Definitions'
+        self.apply_data(table_key, df)
+        all_loadcases = self.etabs.load_cases.get_load_cases()
+        for _, row in df.iterrows():
+            name = row['Name']
+            loadname = row['LoadName']
+            type_ = 1
+            if loadname in all_loadcases:
+                type_ = 0
+            scale_factor = float(row['SF'])
+            self.SapModel.RespCombo.SetCaseList(name, type_, loadname, scale_factor)
 
     def get_story_mass(self):
         self.SapModel.SetPresentUnits_2(5, 6, 2)
@@ -663,9 +678,19 @@ class DatabaseTables:
         return df
 
     def get_concrete_frame_design_load_combinations(self):
-        TableKey = 'Concrete Frame Design Load Combination Data'
-        [_, _, _, _, TableData, _] = self.read_table(TableKey)
-        return [i for i in TableData[1::2]]
+        table_key = 'Concrete Frame Design Load Combination Data'
+        df = self.read(table_key, to_dataframe=True)
+        return list(df['ComboName'])
+    
+    def get_design_load_combinations(self,
+            type_ : str = 'Concrete', # 'Steel'
+            ):
+        if type_ == 'Concrete':
+            table_key = 'Concrete Frame Design Load Combination Data'   
+        elif type_ == 'Steel':
+            table_key = 'Steel Design Load Combination Data'   
+        df = self.read(table_key, to_dataframe=True)
+        return list(df['ComboName'])
 
     def create_section_cuts(self,
             group : str,
@@ -937,7 +962,8 @@ if __name__ == '__main__':
     SapModel = etabs.SapModel
     dflp, convert_lps = etabs.database.expand_seismic_load_patterns()
     dflc, convert_lcs = etabs.database.expand_loadcases(convert_lps)
-    df_loadcombo = etabs.database.expand_loadcombos(convert_lcs)
+    df_loadcombo, convert_lcombos = etabs.database.expand_loadcombos(convert_lcs)
     etabs.database.set_expand_seismic_load_patterns(dflp, convert_lps)
     etabs.database.set_expand_loadcases(dflc, convert_lcs)
+    etabs.database.set_expand_load_combinations(df_loadcombo)
     print('Wow')
