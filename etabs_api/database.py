@@ -301,6 +301,45 @@ class DatabaseTables:
                         else:
                             zip_loadcombos[loadcombo].append(name)
         return new_loadcombo_df, zip_loadcombos
+    
+    def expand_envelop_loadcombos(self,
+            loads_expanded : Union[dict, bool] = None,
+            loadcombos_df : Union[pd.DataFrame, bool] = None,
+            ):
+        if loads_expanded is None:
+            ret = self.expand_loadcases()
+            if ret is None:
+                return
+            loads_expanded = ret[1]
+        zip_loadcases = list(loads_expanded.keys())
+        if loadcombos_df is None:
+            table_key = 'Load Combination Definitions'
+            loadcombos_df = self.read(table_key, to_dataframe=True)
+        self.remove_df_columns(loadcombos_df, ('GUID',))
+        # remove envelop combos, because envelopes not to be iterate, must be add
+        envelop_combos = list(loadcombos_df[loadcombos_df['Type'] == 'Envelope']['Name'])
+        filt_envelope = loadcombos_df['Name'].isin(envelop_combos)
+        new_loadcombo_df = loadcombos_df.loc[filt_envelope]
+        filt = new_loadcombo_df['LoadName'].isin(zip_loadcases)
+        df_loadcombos_include_zip_loadcases = new_loadcombo_df.loc[filt]
+        df_loadcombos_not_include_zip_loadcases = new_loadcombo_df.loc[~filt]
+        df_loadcombos_include_zip_loadcases['LoadName'] = df_loadcombos_include_zip_loadcases['LoadName'].map(loads_expanded)
+        df_loadcombos_include_zip_loadcases = df_loadcombos_include_zip_loadcases.explode('LoadName')
+        df = df_loadcombos_not_include_zip_loadcases.append(df_loadcombos_include_zip_loadcases)
+        return df
+
+    def expand_loadcombos(self,
+            convert_loadcases : dict):
+        df_linear_combos, convert_lcombos = self.expand_linear_loadcombos(convert_loadcases)
+        additional_convert_lcombos = convert_lcombos.copy()
+        while additional_convert_lcombos:
+            df_linear_combos, additional_convert_lcombos = self.expand_linear_loadcombos(additional_convert_lcombos, df_linear_combos)
+            convert_lcombos.update(additional_convert_lcombos)
+        df_envelop_combos = self.expand_envelop_loadcombos(convert_lcombos)
+        df = df_linear_combos.append(df_envelop_combos)
+        return df
+
+    
 
     def set_expand_seismic_load_patterns(self,
             df : pd.core.frame.DataFrame,
@@ -898,11 +937,7 @@ if __name__ == '__main__':
     SapModel = etabs.SapModel
     dflp, convert_lps = etabs.database.expand_seismic_load_patterns()
     dflc, convert_lcs = etabs.database.expand_loadcases(convert_lps)
-    dflcomb, convert_lcombos = etabs.database.expand_linear_loadcombos(convert_lcs)
-    additional_convert_lcombos = convert_lcombos.copy()
-    while additional_convert_lcombos:
-        dflcomb, additional_convert_lcombos = etabs.database.expand_linear_loadcombos(additional_convert_lcombos, dflcomb)
-        convert_lcombos.update(additional_convert_lcombos)
+    df_loadcombo = etabs.database.expand_loadcombos(convert_lcs)
     etabs.database.set_expand_seismic_load_patterns(dflp, convert_lps)
     etabs.database.set_expand_loadcases(dflc, convert_lcs)
     print('Wow')
