@@ -3,6 +3,7 @@ import sys
 from typing import Iterable, Union
 
 import pandas as pd
+from pandas.core.tools.datetimes import to_datetime
 
 civil_path = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(civil_path))
@@ -397,6 +398,24 @@ class DatabaseTables:
                 type_ = 0
             scale_factor = float(row['SF'])
             self.SapModel.RespCombo.SetCaseList(name, type_, loadname, scale_factor)
+
+    def expand_table(self,
+            df : Union[pd.DataFrame, str],
+            expand : dict,
+            col_name : str,
+            ):
+        expand_keys = list(expand.keys())
+        if type(df) == str:
+            df = self.read(df, to_dataframe=True)
+            if df is None:
+                return
+        filt = df[col_name].isin(expand_keys)
+        df_include = df[filt]
+        df_not_include = df[~filt]
+        df_include[col_name] = df_include[col_name].map(expand)
+        df_include = df_include.explode(col_name)
+        new_df = df_not_include.append(df_include)
+        return new_df
 
     def get_story_mass(self):
         self.SapModel.SetPresentUnits_2(5, 6, 2)

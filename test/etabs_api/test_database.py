@@ -156,3 +156,19 @@ def test_expand_seismic_load_patterns(khiabany):
     assert len(df) == 12
     assert set(df.Name) == {'EY', 'EX', 'EY_DRIFT', 'ENY_DRIFT', 'EPY_DRIFT', 'EPX', 'ENY', 'ENX', 'ENX_DRIFT', 'EPX_DRIFT', 'EX_DRIFT', 'EPY'}
     assert set(loads.keys()) == {'EYDRIFT', 'EXALL', 'EYALL', 'EXDRIFT'}
+
+@pytest.mark.getmethod
+def test_expand_table(khiabany):
+    d1 = {
+        'EXALL' : ['EX', 'EPX', 'ENX'],
+        'EYALL' : ['EY', 'EPY', 'ENY'],
+        'EXDRIFT' : ['EPXDRIFT'],
+        }
+    d2 = {'Name': ['EXALL', 'EX', 'Dead', 'EYALL', 'EXDRIFT'],
+            'SF' : [1, 2, 3, 4, 5],
+            }
+    import pandas as pd
+    df = pd.DataFrame(d2)
+    df = khiabany.database.expand_table(df, d1,'Name')
+    assert len(df) == 9
+
