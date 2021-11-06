@@ -172,3 +172,26 @@ def test_expand_table(khiabany):
     df = khiabany.database.expand_table(df, d1,'Name')
     assert len(df) == 9
 
+@pytest.mark.getmethod
+def test_expand_design_combos(khiabany):
+    d1 = {
+        'EXALL' : ['EX', 'EPX', 'ENX'],
+        'EYALL' : ['EY', 'EPY', 'ENY'],
+        'EXDRIFT' : ['EPXDRIFT'],
+        }
+    dfs = khiabany.database.expand_design_combos(d1)
+    assert len(dfs) == 1
+    assert list(dfs.keys())[0] == 'Concrete Frame Design Load Combination Data'
+
+@pytest.mark.getmethod
+def test_apply_expand_design_combos(khiabany):
+    import pandas as pd
+    table_key = 'Concrete Frame Design Load Combination Data'
+    d = {'Strength' : 'UDCon-DYN1'}
+    d1 = {table_key: pd.DataFrame(d, index=range(len(d)))}
+    khiabany.database.apply_expand_design_combos(d1)
+    d = khiabany.database.get_design_load_combinations()
+    assert d is not None
+    assert list(d.keys())[0] == table_key
+    
+

@@ -47,7 +47,7 @@ class DatabaseTables:
                 to_dataframe : bool = False,
                 cols : list = None,
                 ):
-        all_table = SapModel.DatabaseTables.GetAvailableTables()[1]
+        all_table = self.SapModel.DatabaseTables.GetAvailableTables()[1]
         if table_key not in all_table:
             return None
         _, _, fields, _, data, _ = self.read_table(table_key)
@@ -343,6 +343,23 @@ class DatabaseTables:
         df = df_linear_combos.append(df_envelop_combos)
         return df, convert_lcombos
 
+    def expand_design_combos(self,
+            convert_loadcombos : dict,
+            ):
+        expanded_dfs = dict()
+        table_keys = {
+            'concrete': 'Concrete Frame Design Load Combination Data',
+            'steel': 'Steel Design Load Combination Data',
+            'shearwall': 'Shear Wall Design Load Combination Data',
+            'slab': 'Concrete Slab Design Load Combination Data',
+        }
+        for type_ in ('concrete', 'steel', 'shearwall', 'slab'):
+            table_key = table_keys[type_]
+            df = self.expand_table(table_key, convert_loadcombos, 'ComboName')
+            if df is not None:
+                expanded_dfs[table_key] = df
+        return expanded_dfs
+
     def set_expand_seismic_load_patterns(self,
             df : pd.core.frame.DataFrame,
             converted_loads : dict,
@@ -398,6 +415,41 @@ class DatabaseTables:
                 type_ = 0
             scale_factor = float(row['SF'])
             self.SapModel.RespCombo.SetCaseList(name, type_, loadname, scale_factor)
+    
+    def apply_expand_design_combos(self,
+            expanded_tables : dict,
+            ):
+        fields = ('Combo Type', 'Combo Name')
+        for table_key, df in expanded_tables.items():
+            _, data = self.get_fields_and_data_from_dataframe(df)
+            self.apply_data(table_key, data, fields)
+
+    def expand_loads(self,
+        equal_names : dict = {
+            'XDir' : 'EX',
+            'XDirPlusE' : 'EPX',
+            'XDirMinusE' : 'ENX',
+            'YDir' : 'EY',
+            'YDirPlusE' : 'EPY',
+            'YDirMinusE' : 'ENY',
+            },
+            replace_ex : bool = False,
+            replace_ey : bool = False,
+            drift_prefix : str = '',
+            drift_suffix : str = '_DRIFT',
+            ):
+        ret = self.expand_seismic_load_patterns(equal_names, replace_ex, replace_ey, drift_prefix, drift_suffix)
+        if ret is None:
+            return False
+        dflp, convert_lps = ret
+        dflc, convert_lcs = self.expand_loadcases(convert_lps)
+        df_loadcombo, convert_lcombos = self.expand_loadcombos(convert_lcs)
+        expanded_design_tables = self.expand_design_combos(convert_lcombos)
+        self.set_expand_seismic_load_patterns(dflp, convert_lps)
+        self.set_expand_loadcases(dflc, convert_lcs)
+        self.set_expand_load_combinations(df_loadcombo)
+        self.apply_expand_design_combos(expanded_design_tables)
+        return True
 
     def expand_table(self,
             df : Union[pd.DataFrame, str],
@@ -702,13 +754,19 @@ class DatabaseTables:
         return list(df['ComboName'])
     
     def get_design_load_combinations(self,
-            type_ : str = 'Concrete', # 'Steel'
+            type_ : str = 'concrete', # 'steel', 'shearwall', 'slab'
             ):
-        if type_ == 'Concrete':
+        if type_ == 'concrete':
             table_key = 'Concrete Frame Design Load Combination Data'   
-        elif type_ == 'Steel':
-            table_key = 'Steel Design Load Combination Data'   
+        elif type_ == 'steel':
+            table_key = 'Steel Design Load Combination Data'
+        elif type_ == 'shearwall':
+            table_key = 'Shear Wall Design Load Combination Data'
+        elif type_ == 'slab':
+            table_key = 'Concrete Slab Design Load Combination Data'
         df = self.read(table_key, to_dataframe=True)
+        if df is None:
+            return None
         return list(df['ComboName'])
 
     def create_section_cuts(self,
@@ -979,10 +1037,5 @@ if __name__ == '__main__':
     from etabs_obj import EtabsModel
     etabs = EtabsModel()
     SapModel = etabs.SapModel
-    dflp, convert_lps = etabs.database.expand_seismic_load_patterns()
-    dflc, convert_lcs = etabs.database.expand_loadcases(convert_lps)
-    df_loadcombo, convert_lcombos = etabs.database.expand_loadcombos(convert_lcs)
-    etabs.database.set_expand_seismic_load_patterns(dflp, convert_lps)
-    etabs.database.set_expand_loadcases(dflc, convert_lcs)
-    etabs.database.set_expand_load_combinations(df_loadcombo)
+    etabs.database.expand_loads()
     print('Wow')
