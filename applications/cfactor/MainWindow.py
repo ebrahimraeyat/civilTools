@@ -78,6 +78,7 @@ class Ui(QMainWindow, main_window):
         self.action_create_period_file.triggered.connect(self.create_period_file)
         self.action_wall_loads.triggered.connect(self.wall_load_on_frames)
         self.action_frame_sections.triggered.connect(self.assign_frame_sections)
+        self.action_explode_loads.triggered.connect(self.explode_loads)
 
     def create_connections(self):
         self.calculate_button.clicked.connect(self.calculate)
@@ -392,6 +393,24 @@ class Ui(QMainWindow, main_window):
         QMessageBox.information(None, "done", msg)
         self.show_warning_about_number_of_use(check)
 
+    def explode_loads(self):
+        allow, check = self.allowed_to_continue(
+            'explode_loads.bin',
+            'https://gist.githubusercontent.com/ebrahimraeyat/f05421c70967b698ca9016a1bdb54b01/raw',
+            'cfactor',
+            n=1,
+            )
+        if not allow:
+            return
+        from etabs_api import etabs_obj
+        etabs = etabs_obj.EtabsModel()
+        if not self.is_etabs_running(etabs):
+            return
+        from py_widget import explode_seismic_load_patterns
+        win = explode_seismic_load_patterns.Form(etabs)
+        win.exec_()
+        self.show_warning_about_number_of_use(check)
+    
     def show_torsion_table(self):
         allow, check = self.allowed_to_continue(
             'torsion.bin',

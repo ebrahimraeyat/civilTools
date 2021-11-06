@@ -1108,6 +1108,7 @@ p, li { white-space: pre-wrap; }
      <string>Define</string>
     </property>
     <addaction name="action_create_section_cuts"/>
+    <addaction name="action_explode_loads"/>
    </widget>
    <widget class="QMenu" name="menu_Assing">
     <property name="title">
@@ -1217,6 +1218,7 @@ p, li { white-space: pre-wrap; }
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="action_explode_loads"/>
    <addaction name="action_create_section_cuts"/>
   </widget>
   <widget class="QToolBar" name="assign_toolbar">
@@ -1514,6 +1516,18 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Frame Sections</string>
+   </property>
+  </action>
+  <action name="action_explode_loads">
+   <property name="icon">
+    <iconset resource="../resource.qrc">
+     <normaloff>:/cfactor/images/explode.svg</normaloff>:/cfactor/images/explode.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Explode Load Patterns</string>
+   </property>
+   <property name="toolTip">
+    <string>Explode Load Patterns, Like EXALL to EX, EPX, ENX</string>
    </property>
   </action>
  </widget>
