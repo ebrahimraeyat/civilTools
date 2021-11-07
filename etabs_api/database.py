@@ -78,9 +78,16 @@ class DatabaseTables:
             fields : Union[list, tuple, bool] = None,
             ) -> None:
         if type(data) == pd.core.frame.DataFrame:
-            fields, data = self.get_fields_and_data_from_dataframe(data)
+            if fields is None:
+                fields, data = self.get_fields_and_data_from_dataframe(data)
+            else:
+                if len(data.columns) == len(fields):
+                    _, data = self.get_fields_and_data_from_dataframe(data)
+                else:
+                    return False
         self.SapModel.DatabaseTables.SetTableForEditingArray(table_key, 0, fields, 0, data)
         self.apply_table()
+        return True
     
     def apply_table(self):
         if self.SapModel.GetModelIsLocked():
@@ -381,48 +388,57 @@ class DatabaseTables:
             ):
         table_key = 'Load Case Definitions - Summary'
         df_loadcases_summary = self.read(table_key, to_dataframe=True)
-        zip_loadcases = list(converted_loadcases.keys())
-        filt = ~(df_loadcases_summary['Name'].isin(zip_loadcases))
-        new_loadcase_summary = df_loadcases_summary.loc[filt]
-        self.remove_df_columns(new_loadcase_summary)
-        for loadcases in converted_loadcases.values():
-            for loadcase in loadcases:
-                row = pd.Series({'Name': loadcase, 'Type': 'Linear Static'})
-                new_loadcase_summary = new_loadcase_summary.append(row, ignore_index=True)
-        self.apply_data(table_key, new_loadcase_summary)
+        # zip_loadcases = list(converted_loadcases.keys())
+        # filt = ~(df_loadcases_summary['Name'].isin(zip_loadcases))
+        # new_loadcase_summary = df_loadcases_summary.loc[filt]
+        self.remove_df_columns(df_loadcases_summary)
+        df_loadcases_summary = self.expand_table(df_loadcases_summary, converted_loadcases, 'Name')
+        # for loadcases in converted_loadcases.values():
+        #     for loadcase in loadcases:
+        #         row = pd.Series({'Name': loadcase, 'Type': 'Linear Static'})
+        #         new_loadcase_summary = new_loadcase_summary.append(row, ignore_index=True)
+        self.apply_data(table_key, df_loadcases_summary)
         table_key = 'Load Case Definitions - Linear Static'
-        self.apply_data(table_key, df)
-        all_loadcases = list(df['Name'].unique())
-        for loadcase in all_loadcases:
-            temp_df = df.loc[df['Name'] == loadcase]
-            lcs = tuple(temp_df['LoadName'])
-            n = len(lcs)
-            lsf = tuple(temp_df['LoadSF'])
-            lsf = [float(i) for i in lsf]
-            self.SapModel.LoadCases.StaticLinear.SetLoads(loadcase, n, n * ('Load',), lcs, lsf)
+        fields = ('Name', 'Exclude Group', 'Mass Source', 'Stiffness Type', 'Load Type', 'Load Name', 'Load SF', 'Design Type', 'User Design Type')
+        df = df[['Name', 'Group', 'MassSource', 'StiffType', 'LoadType', 'LoadName', 'LoadSF', 'DesignType', 'UserDesType']]
+        ret = self.apply_data(table_key, df, fields)
+        if not ret:
+            all_loadcases = list(df['Name'].unique())
+            for loadcase in all_loadcases:
+                temp_df = df.loc[df['Name'] == loadcase]
+                lcs = tuple(temp_df['LoadName'])
+                n = len(lcs)
+                lsf = tuple(temp_df['LoadSF'])
+                lsf = [float(i) for i in lsf]
+                self.SapModel.LoadCases.StaticLinear.SetLoads(loadcase, n, n * ('Load',), lcs, lsf)
 
     def set_expand_load_combinations(self,
         df : pd.DataFrame,
         ):
         table_key = 'Load Combination Definitions'
-        self.apply_data(table_key, df)
-        all_loadcases = self.etabs.load_cases.get_load_cases()
-        for _, row in df.iterrows():
-            name = row['Name']
-            loadname = row['LoadName']
-            type_ = 1
-            if loadname in all_loadcases:
-                type_ = 0
-            scale_factor = float(row['SF'])
-            self.SapModel.RespCombo.SetCaseList(name, type_, loadname, scale_factor)
+        fields = ('Name', 'Type', 'Is Auto', 'Load Name', 'SF', 'Notes')
+        df = df[['Name', 'Type', 'IsAuto', 'LoadName', 'SF', 'Notes']]
+        ret = self.apply_data(table_key, df, fields)
+        if not ret:
+            all_loadcases = self.etabs.load_cases.get_load_cases()
+            for _, row in df.iterrows():
+                name = row['Name']
+                loadname = row['LoadName']
+                type_ = 1
+                if loadname in all_loadcases:
+                    type_ = 0
+                scale_factor = float(row['SF'])
+                self.SapModel.RespCombo.SetCaseList(name, type_, loadname, scale_factor)
     
     def apply_expand_design_combos(self,
             expanded_tables : dict,
             ):
-        fields = ('Combo Type', 'Combo Name')
         for table_key, df in expanded_tables.items():
-            _, data = self.get_fields_and_data_from_dataframe(df)
-            self.apply_data(table_key, data, fields)
+            if len(df.columns) == 3:
+                fields = ('Design Type', 'Combo Type', 'Combo Name')
+            elif len(df.columns) == 2:
+                fields = ('Combo Type', 'Combo Name')
+            self.apply_data(table_key, df, fields)
 
     def expand_loads(self,
         equal_names : dict = {
