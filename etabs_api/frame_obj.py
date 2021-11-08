@@ -313,7 +313,6 @@ class FrameObj:
         elif type(line1) == Iterable:
             l1_x1, l1_y1, l1_x2, l1_y2 = line1
             l2_x1, l2_y1, l2_x2, l2_y2 = line2
-        import math
         def dot(vector_a, vector_b):
             return vector_a[0]*vector_b[0]+vector_a[1]*vector_b[1]
         vector_a = [(l1_x1-l1_x2), (l1_y1-l1_y2)]
@@ -327,7 +326,18 @@ class FrameObj:
             return 360 - ang_deg
         else: 
             return ang_deg
-            
+
+    def get_frame_angle(self,
+        line : Union[str, Iterable],
+        ):
+        if type(line) == str: # frame name in etabs model
+            x1, y1, x2, y2 = self.get_xy_of_frame_points(line)
+        elif type(line) == Iterable:
+            x1, y1, x2, y2 = line
+        if x2 == x1:
+            return 90
+        return math.degrees(math.atan((y2 - y1) / (x2 - x1)))
+        
     def get_xy_of_frame_points(self, name : str):
         p1_name, p2_name, _ = self.SapModel.FrameObj.GetPoints(name)
         x1, y1 = self.SapModel.PointObj.GetCoordCartesian(p1_name)[:2]
