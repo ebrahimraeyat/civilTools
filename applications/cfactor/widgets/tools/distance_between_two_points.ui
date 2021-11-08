@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>264</width>
+    <width>267</width>
     <height>325</height>
    </rect>
   </property>
@@ -16,6 +16,11 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QLabel" name="label">
+     <property name="font">
+      <font>
+       <pointsize>8</pointsize>
+      </font>
+     </property>
      <property name="text">
       <string>Points</string>
      </property>
@@ -32,12 +37,18 @@
      <property name="enabled">
       <bool>true</bool>
      </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>31</height>
+      </size>
+     </property>
      <property name="font">
       <font>
        <pointsize>8</pointsize>
-       <weight>75</weight>
+       <weight>50</weight>
        <italic>false</italic>
-       <bold>true</bold>
+       <bold>false</bold>
        <strikeout>false</strikeout>
       </font>
      </property>
@@ -54,6 +65,23 @@
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="show_button">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../../resource.qrc">
+         <normaloff>:/cfactor/images/show.svg</normaloff>:/cfactor/images/show.svg</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </widget>
+     </item>
      <item>
       <widget class="QDialogButtonBox" name="buttonBox">
        <property name="orientation">

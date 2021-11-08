@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="cfactor">
+    <file>../../images/show.svg</file>
     <file>../../images/distance.svg</file>
     <file>../../images/explode.svg</file>
     <file>../../images/assign_frame_section.svg</file>
