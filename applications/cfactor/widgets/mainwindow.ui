@@ -1117,10 +1117,23 @@ p, li { white-space: pre-wrap; }
     <addaction name="action_wall_loads"/>
     <addaction name="action_frame_sections"/>
    </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>Tools</string>
+    </property>
+    <widget class="QMenu" name="menuMeasure">
+     <property name="title">
+      <string>Measure</string>
+     </property>
+     <addaction name="action_distance"/>
+    </widget>
+    <addaction name="menuMeasure"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuETABS"/>
    <addaction name="menuDefine"/>
    <addaction name="menu_Assing"/>
+   <addaction name="menuTools"/>
   </widget>
   <widget class="QToolBar" name="toolbar">
    <property name="sizePolicy">
@@ -1202,6 +1215,7 @@ p, li { white-space: pre-wrap; }
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="action_distance"/>
    <addaction name="action_offset_beam"/>
    <addaction name="action_connect_beam"/>
   </widget>
@@ -1528,6 +1542,18 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="toolTip">
     <string>Explode Load Patterns, Like EXALL to EX, EPX, ENX</string>
+   </property>
+  </action>
+  <action name="action_distance">
+   <property name="icon">
+    <iconset resource="../resource.qrc">
+     <normaloff>:/cfactor/images/distance.svg</normaloff>:/cfactor/images/distance.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Distance</string>
+   </property>
+   <property name="toolTip">
+    <string>Get Distance</string>
    </property>
   </action>
  </widget>
