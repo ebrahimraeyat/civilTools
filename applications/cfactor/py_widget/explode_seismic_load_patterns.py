@@ -1,7 +1,6 @@
 from pathlib import Path
 
 from PyQt5 import uic
-from PyQt5.QtWidgets import QMessageBox
 
 cfactor_path = Path(__file__).absolute().parent.parent
 
@@ -49,9 +48,6 @@ class Form(base, window):
                 if not ret:
                     self.result_label.setText("Error Occurred, process did not finished.")
                     return
-                else:
-
-                    window.accept(self)
-                    msg = "Exploding Load Patterns Done."
-                    QMessageBox.information(None, 'Successful', str(msg))
+            elif type(ret) == str:
+                self.result_label.setText(ret)
 
