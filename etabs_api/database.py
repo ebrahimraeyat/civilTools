@@ -461,27 +461,27 @@ class DatabaseTables:
             drift_prefix : str = '',
             drift_suffix : str = '_DRIFT',
             ):
-        yield ("Get expanding seismic load patterns ...", 5)
-        ret = self.expand_seismic_load_patterns(equal_names, replace_ex, replace_ey, drift_prefix, drift_suffix)
-        if ret is None:
-            yield ('There is No zip load pattern in this Model.', 100)
-            yield False
-        dflp, convert_lps = ret
-        yield ("Get expanding load cases ...", 15)
-        dflc, convert_lcs = self.expand_loadcases(convert_lps)
-        yield ("Get expanding load combinations ...", 25)
-        df_loadcombo, convert_lcombos = self.expand_loadcombos(convert_lcs)
-        yield ("Get expanding Design load combinations ...", 35)
-        expanded_design_tables = self.expand_design_combos(convert_lcombos)
-        yield ("Apply expanding  seismic load patterns ...", 45)
-        self.set_expand_seismic_load_patterns(dflp, convert_lps)
-        yield ("Apply expanding load cases ...", 60)
-        self.set_expand_loadcases(dflc, convert_lcs)
-        yield ("Apply expanding load combinations ...", 70)
-        self.set_expand_load_combinations(df_loadcombo)
-        yield ("Apply expanding Design load combinations ...", 90)
-        self.apply_expand_design_combos(expanded_design_tables)
-        yield ("Expanding Load Patterns Finished ...", 100)
+        # yield ("Get expanding seismic load patterns ...", 5)
+        # ret = self.expand_seismic_load_patterns(equal_names, replace_ex, replace_ey, drift_prefix, drift_suffix)
+        # if ret is None:
+        #     yield ('There is No zip load pattern in this Model.', 100)
+        #     yield False
+        # dflp, convert_lps = ret
+        # yield ("Get expanding load cases ...", 15)
+        # dflc, convert_lcs = self.expand_loadcases(convert_lps)
+        # yield ("Get expanding load combinations ...", 25)
+        # df_loadcombo, convert_lcombos = self.expand_loadcombos(convert_lcs)
+        # yield ("Get expanding Design load combinations ...", 35)
+        # expanded_design_tables = self.expand_design_combos(convert_lcombos)
+        # yield ("Apply expanding  seismic load patterns ...", 45)
+        # self.set_expand_seismic_load_patterns(dflp, convert_lps)
+        # yield ("Apply expanding load cases ...", 60)
+        # self.set_expand_loadcases(dflc, convert_lcs)
+        # yield ("Apply expanding load combinations ...", 70)
+        # self.set_expand_load_combinations(df_loadcombo)
+        # yield ("Apply expanding Design load combinations ...", 90)
+        # self.apply_expand_design_combos(expanded_design_tables)
+        # yield ("Expanding Load Patterns Finished ...", 100)
         yield True
 
     def expand_table(self,

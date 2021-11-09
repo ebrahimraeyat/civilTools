@@ -12,6 +12,8 @@ class Form(base, window):
         super(Form, self).__init__()
         self.setupUi(self)
         self.etabs = etabs_model
+        self.start_button.clicked.connect(self.accept)
+        self.close_button.clicked.connect(self.reject)
         
     def accept(self):
         ex = self.ex.text()
@@ -48,6 +50,8 @@ class Form(base, window):
                 if not ret:
                     self.result_label.setText("Error Occurred, process did not finished.")
                     return
+                else:
+                    self.close_button.setEnabled(False)
             elif type(ret) == str:
                 self.result_label.setText(ret)
 
