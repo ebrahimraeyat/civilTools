@@ -405,7 +405,10 @@ class DatabaseTables:
             }
         fields = []
         for col in df.columns:
-            fields.append(equal_fields[col])
+            field = equal_fields.get(col, None)
+            if field:
+                fields.append(field)
+        df = df[fields]
         # fields = ('Name', 'Exclude Group', 'Mass Source', 'Stiffness Type', 'Load Type', 'Load Name', 'Load SF', 'Design Type', 'User Design Type')
         # df = df[['Name', 'Group', 'MassSource', 'StiffType', 'LoadType', 'LoadName', 'LoadSF', 'DesignType', 'UserDesType']]
         ret = self.apply_data(table_key, df, fields)
