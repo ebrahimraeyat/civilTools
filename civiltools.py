@@ -38,11 +38,11 @@ class FormWidget(QtWidgets.QWidget, main_window):
 
     def run_section(self):
         os.chdir(civiltools_path + "/applications/section")
-        subprocess.Popen([python_exe, 'MainWindow.py'])
+        subprocess.Popen([python_exe, 'MainWindow.pyc'])
 
     def run_cfactor(self):
         os.chdir(civiltools_path + "/applications/cfactor")
-        subprocess.Popen([python_exe, 'MainWindow.py'])
+        subprocess.Popen([python_exe, 'MainWindow.pyc'])
 
     def run_punch(self):
         os.chdir(civiltools_path + "/applications/punch")
