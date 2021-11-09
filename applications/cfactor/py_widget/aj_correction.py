@@ -32,8 +32,8 @@ class AjForm(story_base, story_window):
         df = self.etabs.get_magnification_coeff_aj()
         self.static_df = self.etabs.get_static_magnification_coeff_aj(df)
         self.dynamic_df = self.etabs.get_dynamic_magnification_coeff_aj(df)
-        aj_apply_model_static = AjApplyModel(self.static_df)
-        self.aj_apply_static_view.setModel(aj_apply_model_static)
+        self.aj_apply_model_static = AjApplyModel(self.static_df)
+        self.aj_apply_static_view.setModel(self.aj_apply_model_static)
         aj_apply_model_dynamic = AjApplyModel(self.dynamic_df)
         self.aj_apply_dynamic_view.setModel(aj_apply_model_dynamic)
         # self.aj_apply_static_view.setItemDelegate(AjDelegate(self))
@@ -53,7 +53,7 @@ class AjForm(story_base, story_window):
         # self.model.dataChanged.connect(self.story_length_changed)
 
     def apply_static_aj(self):
-        self.etabs.apply_aj_df(self.aj_apply_model.df)
+        self.etabs.apply_aj_df(self.aj_apply_model_static.df)
         msg = "Successfully written to Etabs."
         QMessageBox.information(None, "done", msg)
         self.parent_widget.show_warning_about_number_of_use(self.parent_widget.check)
