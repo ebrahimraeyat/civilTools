@@ -392,8 +392,22 @@ class DatabaseTables:
         df_loadcases_summary = self.expand_table(df_loadcases_summary, converted_loadcases, 'Name')
         self.apply_data(table_key, df_loadcases_summary)
         table_key = 'Load Case Definitions - Linear Static'
-        fields = ('Name', 'Exclude Group', 'Mass Source', 'Stiffness Type', 'Load Type', 'Load Name', 'Load SF', 'Design Type', 'User Design Type')
-        df = df[['Name', 'Group', 'MassSource', 'StiffType', 'LoadType', 'LoadName', 'LoadSF', 'DesignType', 'UserDesType']]
+        equal_fields = {
+            'Name' : 'Name',
+            'Group' : 'Exclude Group',
+            'MassSource' : 'Mass Source',
+            'StiffType' : 'Stiffness Type',
+            'LoadType' : 'Load Type',
+            'LoadName' : 'Load Name',
+            'LoadSF' : 'LoadSF',
+            'DesignType' : 'Design Type',
+            'UserDesType' : 'User Design Type',
+            }
+        fields = []
+        for col in df.columns:
+            fields.append(equal_fields[col])
+        # fields = ('Name', 'Exclude Group', 'Mass Source', 'Stiffness Type', 'Load Type', 'Load Name', 'Load SF', 'Design Type', 'User Design Type')
+        # df = df[['Name', 'Group', 'MassSource', 'StiffType', 'LoadType', 'LoadName', 'LoadSF', 'DesignType', 'UserDesType']]
         ret = self.apply_data(table_key, df, fields)
         if not ret:
             all_loadcases = list(df['Name'].unique())
