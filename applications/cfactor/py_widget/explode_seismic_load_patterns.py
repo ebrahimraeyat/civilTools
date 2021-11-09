@@ -33,14 +33,25 @@ class Form(base, window):
         replace_ey = self.replace_ey.isChecked()
         drift_prefix = self.drift_prefix.text()
         drift_suffix = self.drift_suffix.text()
-        self.etabs.database.expand_loads(
+        for ret in self.etabs.database.expand_loads(
             equal_names=equal_names,
             replace_ex = replace_ex,
             replace_ey = replace_ey,
             drift_prefix = drift_prefix,
             drift_suffix = drift_suffix,
-            )
-        window.accept(self)
-        msg = "Exploding Load Patterns Done."
-        QMessageBox.information(None, 'Successful', str(msg))
+            ):
+            if type(ret) == tuple and len(ret) == 2:
+                message, number = ret
+                if type(message) == str and type(number) == int:
+                    self.result_label.setText(message)
+                    self.progressbar.setValue(number)
+            elif type(ret) == bool:
+                if not ret:
+                    self.result_label.setText("Error Occurred, process did not finished.")
+                    return
+                else:
+
+                    window.accept(self)
+                    msg = "Exploding Load Patterns Done."
+                    QMessageBox.information(None, 'Successful', str(msg))
 

@@ -388,15 +388,8 @@ class DatabaseTables:
             ):
         table_key = 'Load Case Definitions - Summary'
         df_loadcases_summary = self.read(table_key, to_dataframe=True)
-        # zip_loadcases = list(converted_loadcases.keys())
-        # filt = ~(df_loadcases_summary['Name'].isin(zip_loadcases))
-        # new_loadcase_summary = df_loadcases_summary.loc[filt]
         self.remove_df_columns(df_loadcases_summary)
         df_loadcases_summary = self.expand_table(df_loadcases_summary, converted_loadcases, 'Name')
-        # for loadcases in converted_loadcases.values():
-        #     for loadcase in loadcases:
-        #         row = pd.Series({'Name': loadcase, 'Type': 'Linear Static'})
-        #         new_loadcase_summary = new_loadcase_summary.append(row, ignore_index=True)
         self.apply_data(table_key, df_loadcases_summary)
         table_key = 'Load Case Definitions - Linear Static'
         fields = ('Name', 'Exclude Group', 'Mass Source', 'Stiffness Type', 'Load Type', 'Load Name', 'Load SF', 'Design Type', 'User Design Type')
@@ -454,18 +447,28 @@ class DatabaseTables:
             drift_prefix : str = '',
             drift_suffix : str = '_DRIFT',
             ):
+        yield ("Get expanding seismic load patterns ...", 5)
         ret = self.expand_seismic_load_patterns(equal_names, replace_ex, replace_ey, drift_prefix, drift_suffix)
         if ret is None:
-            return False
+            yield ('There is No zip load pattern in this Model.', 100)
+            yield False
         dflp, convert_lps = ret
+        yield ("Get expanding load cases ...", 15)
         dflc, convert_lcs = self.expand_loadcases(convert_lps)
+        yield ("Get expanding load combinations ...", 25)
         df_loadcombo, convert_lcombos = self.expand_loadcombos(convert_lcs)
+        yield ("Get expanding Design load combinations ...", 35)
         expanded_design_tables = self.expand_design_combos(convert_lcombos)
+        yield ("Apply expanding  seismic load patterns ...", 45)
         self.set_expand_seismic_load_patterns(dflp, convert_lps)
+        yield ("Apply expanding load cases ...", 60)
         self.set_expand_loadcases(dflc, convert_lcs)
+        yield ("Apply expanding load combinations ...", 70)
         self.set_expand_load_combinations(df_loadcombo)
+        yield ("Apply expanding Design load combinations ...", 90)
         self.apply_expand_design_combos(expanded_design_tables)
-        return True
+        yield ("Expanding Load Patterns Finished ...", 100)
+        yield True
 
     def expand_table(self,
             df : Union[pd.DataFrame, str],
