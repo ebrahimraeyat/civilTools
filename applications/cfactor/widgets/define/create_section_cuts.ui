@@ -18,13 +18,6 @@
     <normaloff>:/cfactor/images/cut.svg</normaloff>:/cfactor/images/cut.svg</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="2">
-    <widget class="QComboBox" name="group">
-     <property name="editable">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
    <item row="2" column="0" colspan="2">
     <widget class="QLabel" name="label_3">
      <property name="text">
@@ -32,10 +25,10 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="2">
-    <widget class="QLineEdit" name="prefix_name">
-     <property name="text">
-      <string>SEC</string>
+   <item row="0" column="2">
+    <widget class="QComboBox" name="group">
+     <property name="editable">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
@@ -43,13 +36,6 @@
     <widget class="QLabel" name="label_2">
      <property name="text">
       <string>Prefix Name</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Group</string>
      </property>
     </widget>
    </item>
@@ -69,6 +55,20 @@
      </property>
      <property name="value">
       <number>15</number>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Group</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QLineEdit" name="prefix_name">
+     <property name="text">
+      <string>SEC</string>
      </property>
     </widget>
    </item>
@@ -97,6 +97,19 @@
       <bool>true</bool>
      </property>
     </widget>
+   </item>
+   <item row="8" column="0" colspan="2">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>

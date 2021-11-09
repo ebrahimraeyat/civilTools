@@ -208,16 +208,16 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
-      <widget class="QPushButton" name="start_button">
+      <widget class="QPushButton" name="close_button">
        <property name="text">
-        <string>Start</string>
+        <string>CLose</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="close_button">
+      <widget class="QPushButton" name="start_button">
        <property name="text">
-        <string>CLose</string>
+        <string>Start</string>
        </property>
       </widget>
      </item>

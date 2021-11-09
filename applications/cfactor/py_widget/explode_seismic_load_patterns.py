@@ -49,9 +49,7 @@ class Form(base, window):
             elif type(ret) == bool:
                 if not ret:
                     self.result_label.setText("Error Occurred, process did not finished.")
-                    return
-                else:
-                    self.close_button.setEnabled(False)
+                self.start_button.setEnabled(False)
             elif type(ret) == str:
                 self.result_label.setText(ret)
 

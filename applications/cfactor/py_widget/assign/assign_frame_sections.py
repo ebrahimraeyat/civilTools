@@ -43,6 +43,7 @@ class Dialog(base, window):
         self.columns.clicked.connect(self.fill_sections)
         self.assign_button.clicked.connect(self.accept)
         self.filter_line.textChanged.connect(self.filter_sections)
+        self.close_button.clicked.connect(self.reject)
 
     def filter_sections(self):
         text = self.filter_line.text()
