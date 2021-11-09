@@ -151,6 +151,7 @@ class DatabaseTables:
             ):
         self.etabs.unlock_model()
         self.etabs.lock_and_unlock_model()
+        self.etabs.SapModel.load_patterns.select_all_load_patterns()
         drift_load_names = self.etabs.load_patterns.get_drift_load_pattern_names()
         table_key = 'Load Pattern Definitions - Auto Seismic - User Coefficient'
         df = self.read(table_key, to_dataframe=True)
@@ -403,15 +404,17 @@ class DatabaseTables:
             'DesignType' : 'Design Type',
             'UserDesType' : 'User Design Type',
             }
+        etabs_fields = []
         fields = []
         for col in df.columns:
             field = equal_fields.get(col, None)
             if field:
-                fields.append(field)
+                etabs_fields.append(field)
+                fields.append(col)
         df = df[fields]
         # fields = ('Name', 'Exclude Group', 'Mass Source', 'Stiffness Type', 'Load Type', 'Load Name', 'Load SF', 'Design Type', 'User Design Type')
         # df = df[['Name', 'Group', 'MassSource', 'StiffType', 'LoadType', 'LoadName', 'LoadSF', 'DesignType', 'UserDesType']]
-        ret = self.apply_data(table_key, df, fields)
+        ret = self.apply_data(table_key, df, etabs_fields)
         if not ret:
             all_loadcases = list(df['Name'].unique())
             for loadcase in all_loadcases:
