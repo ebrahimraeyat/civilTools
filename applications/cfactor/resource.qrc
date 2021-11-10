@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="cfactor">
+    <file>../../images/check.png</file>
+    <file>../../images/cancel.png</file>
     <file>../../images/show.svg</file>
     <file>../../images/distance.svg</file>
     <file>../../images/explode.svg</file>

@@ -151,7 +151,7 @@ class DatabaseTables:
             ):
         self.etabs.unlock_model()
         self.etabs.lock_and_unlock_model()
-        self.etabs.SapModel.load_patterns.select_all_load_patterns()
+        self.etabs.load_patterns.select_all_load_patterns()
         drift_load_names = self.etabs.load_patterns.get_drift_load_pattern_names()
         table_key = 'Load Pattern Definitions - Auto Seismic - User Coefficient'
         df = self.read(table_key, to_dataframe=True)
