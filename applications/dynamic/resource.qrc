@@ -1,7 +1,0 @@
-<RCC>
-  <qresource prefix="dynamic">
-    <file>../../images/clear.svg</file>
-    <file>../../images/undo.png</file>
-    <file>../../images/select.png</file>
-  </qresource>
-</RCC>

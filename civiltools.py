@@ -1,14 +1,14 @@
 import sys
 import os
 import subprocess
-from PyQt5 import uic, QtWidgets, QtCore
+from PyQt5 import uic, QtWidgets
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QSplashScreen, QMessageBox, QProgressBar
 from PyQt5.QtCore import Qt
 
 _appname = 'civiltools'
-_version = '5.0'
-branch = 'v5'
+_version = '6.0'
+branch = 'v6'
 civiltools_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, civiltools_path)
 main_window = uic.loadUiType(civiltools_path + '/widgets' + '/main_form.ui')[0]
@@ -28,9 +28,6 @@ class FormWidget(QtWidgets.QWidget, main_window):
         self.about_Button.clicked.connect(self.about)
         self.section_Button.clicked.connect(self.run_section)
         self.cfactor_Button.clicked.connect(self.run_cfactor)
-        self.punch_Button.clicked.connect(self.run_punch)
-        self.record_Button.clicked.connect(self.run_record)
-        self.dynamic_button.clicked.connect(self.run_dynamic)
         self.about_Button.clicked.connect(self.about)
         self.update_Button.clicked.connect(self.git_updates)
         self.help_button.clicked.connect(self.help)
@@ -43,19 +40,6 @@ class FormWidget(QtWidgets.QWidget, main_window):
     def run_cfactor(self):
         os.chdir(civiltools_path + "/applications/cfactor")
         subprocess.Popen([python_exe, 'MainWindow.pyc'])
-
-    def run_punch(self):
-        os.chdir(civiltools_path + "/applications/punch")
-        subprocess.Popen([python_exe, 'mainwindow.py'])
-
-    def run_record(self):
-        os.chdir(civiltools_path + "/applications/records")
-        subprocess.Popen([python_exe, 'MainWindow.py'])
-
-    def run_dynamic(self):
-        directory = os.path.join(civiltools_path, 'applications', 'dynamic')
-        os.chdir(directory)
-        subprocess.Popen([python_exe, 'freevibrationwin.py'])
 
     def about(self):
         self.child_win = AboutForm(self)
