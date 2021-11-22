@@ -12,7 +12,7 @@ sys.path.insert(0, str(civiltools_path))
 class GitUpdate:
 
     def __init__(self,
-                branch='v5',
+                branch='v6',
                 git_url="https://github.com/ebrahimraeyat/civilTools.git",
                 ):
         self.git_url = git_url
@@ -25,7 +25,7 @@ class GitUpdate:
         msg = ''
         try:
             g.execute('git submodule update --init --recursive')
-		    msg = g.execute(f'git pull --recurse-submodules origin {self.branch}')
+            msg = g.execute(f'git pull --recurse-submodules origin {self.branch}')
             if not 'already' in msg.lower():
                 msg = 'update done successfully.'
         except:
@@ -39,7 +39,7 @@ class GitUpdate:
             civiltools_temp_dir = Path(default_tmp_dir) /  'civiltools' / name
             civiltools_temp_dir.mkdir()
             os.chdir(str(civiltools_temp_dir))
-            g.execute(f'git clone --recurse-submodules origin {self.branch}')
+            g.execute(f'git clone --branch {self.branch} --depth 1 --recurse-submodules {self.git_url}')
             shutil.rmtree(str(civiltools_path), onerror=onerror)
             src_folder = civiltools_temp_dir / 'civilTools'
             shutil.copytree(str(src_folder), str(civiltools_path))
