@@ -35,10 +35,10 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_3">
+     <item row="5" column="0">
+      <widget class="QLabel" name="label_6">
        <property name="text">
-        <string>No. Iteration</string>
+        <string>Max. allow j</string>
        </property>
       </widget>
      </item>
@@ -55,20 +55,45 @@
        </property>
       </widget>
      </item>
-     <item row="5" column="0">
-      <widget class="QLabel" name="label_6">
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_3">
        <property name="text">
-        <string>Max. allow j</string>
+        <string>No. Iteration</string>
        </property>
       </widget>
      </item>
-     <item row="6" column="0">
-      <widget class="QCheckBox" name="initial_checkbox">
-       <property name="text">
-        <string>Set Initial j</string>
+     <item row="4" column="1">
+      <widget class="QDoubleSpinBox" name="minj_spinbox">
+       <property name="decimals">
+        <number>3</number>
        </property>
-       <property name="checked">
-        <bool>true</bool>
+       <property name="minimum">
+        <double>0.001000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.010000000000000</double>
+       </property>
+       <property name="value">
+        <double>0.001000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="QDoubleSpinBox" name="maxj_spinbox">
+       <property name="minimum">
+        <double>0.010000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.010000000000000</double>
+       </property>
+       <property name="value">
+        <double>1.000000000000000</double>
        </property>
       </widget>
      </item>
@@ -95,38 +120,20 @@
        </property>
       </widget>
      </item>
-     <item row="5" column="1">
-      <widget class="QDoubleSpinBox" name="maxj_spinbox">
-       <property name="minimum">
-        <double>0.010000000000000</double>
-       </property>
-       <property name="maximum">
-        <double>1.000000000000000</double>
-       </property>
-       <property name="singleStep">
-        <double>0.010000000000000</double>
-       </property>
-       <property name="value">
-        <double>1.000000000000000</double>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Load Combinations</string>
        </property>
       </widget>
      </item>
-     <item row="4" column="1">
-      <widget class="QDoubleSpinBox" name="minj_spinbox">
-       <property name="decimals">
-        <number>3</number>
-       </property>
+     <item row="1" column="1">
+      <widget class="QSpinBox" name="iteration_spinbox">
        <property name="minimum">
-        <double>0.001000000000000</double>
-       </property>
-       <property name="maximum">
-        <double>1.000000000000000</double>
-       </property>
-       <property name="singleStep">
-        <double>0.010000000000000</double>
+        <number>1</number>
        </property>
        <property name="value">
-        <double>0.001000000000000</double>
+        <number>3</number>
        </property>
       </widget>
      </item>
@@ -153,20 +160,36 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
-      <widget class="QSpinBox" name="iteration_spinbox">
+     <item row="8" column="1">
+      <widget class="QSpinBox" name="round_decimals">
        <property name="minimum">
         <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>10</number>
        </property>
        <property name="value">
         <number>3</number>
        </property>
       </widget>
      </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label">
+     <item row="6" column="0">
+      <widget class="QCheckBox" name="initial_checkbox">
        <property name="text">
-        <string>Load Combinations</string>
+        <string>Set Initial j</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="0">
+      <widget class="QCheckBox" name="rounding">
+       <property name="text">
+        <string>Rounding Decimals</string>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
        </property>
       </widget>
      </item>

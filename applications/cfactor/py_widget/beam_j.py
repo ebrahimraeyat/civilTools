@@ -41,6 +41,8 @@ class BeamJForm(beamj_base, beamj_window):
         j_min_value = self.minj_spinbox.value()
         initial_j = self.initial_checkbox.isChecked()
         initial_j = self.initial_spinbox.value() if initial_j else None
+        decimals = self.rounding.isChecked()
+        decimals = self.round_decimals.value() if decimals else None
         df = self.etabs.frame_obj.correct_torsion_stiffness_factor(
             load_combinations,
             beams_names,
@@ -50,6 +52,7 @@ class BeamJForm(beamj_base, beamj_window):
             j_max_value,
             j_min_value,
             initial_j,
+            decimals,
             )
         super(BeamJForm, self).accept()
         self.table_model.show_results(df, None, self.table_model.BeamsJModel, self.etabs.view.show_frame)
