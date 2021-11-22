@@ -24,7 +24,8 @@ class GitUpdate:
         g = git.cmd.Git(str(civiltools_path))
         msg = ''
         try:
-            msg = g.pull('origin', self.branch, env={'GIT_SSL_NO_VERIFY': '1'})
+            g.execute('git submodule update --init --recursive')
+		    msg = g.execute('git pull --recurse-submodules origin master')
             if not 'already' in msg.lower():
                 msg = 'update done successfully.'
         except:
