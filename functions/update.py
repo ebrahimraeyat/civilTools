@@ -39,7 +39,7 @@ class GitUpdate:
             civiltools_temp_dir = Path(default_tmp_dir) /  'civiltools' / name
             civiltools_temp_dir.mkdir()
             os.chdir(str(civiltools_temp_dir))
-            g.execute(f'git clone --recurse-submodules origin {self.branch}')
+            g.execute(f'git clone --branch {self.branch} --depth 1 --recurse-submodules {self.git_url}')
             shutil.rmtree(str(civiltools_path), onerror=onerror)
             src_folder = civiltools_temp_dir / 'civilTools'
             shutil.copytree(str(src_folder), str(civiltools_path))
