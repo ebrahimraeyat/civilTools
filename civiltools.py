@@ -8,7 +8,7 @@ from PyQt5.QtCore import Qt
 
 _appname = 'civiltools'
 _version = '5.0'
-branch = 'v6'
+branch = 'v5'
 civiltools_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, civiltools_path)
 main_window = uic.loadUiType(civiltools_path + '/widgets' + '/main_form.ui')[0]
