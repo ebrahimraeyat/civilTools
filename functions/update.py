@@ -25,7 +25,7 @@ class GitUpdate:
         msg = ''
         try:
             g.execute('git submodule update --init --recursive')
-		    msg = g.execute('git pull --recurse-submodules origin master')
+		    msg = g.execute(f'git pull --recurse-submodules origin {self.branch}')
             if not 'already' in msg.lower():
                 msg = 'update done successfully.'
         except:
@@ -39,7 +39,7 @@ class GitUpdate:
             civiltools_temp_dir = Path(default_tmp_dir) /  'civiltools' / name
             civiltools_temp_dir.mkdir()
             os.chdir(str(civiltools_temp_dir))
-            git.Git('.').clone(self.git_url, branch=self.branch, depth=1, env={'GIT_SSL_NO_VERIFY': '1'})
+            g.execute(f'git clone --recurse-submodules origin {self.branch}')
             shutil.rmtree(str(civiltools_path), onerror=onerror)
             src_folder = civiltools_temp_dir / 'civilTools'
             shutil.copytree(str(src_folder), str(civiltools_path))
