@@ -12,7 +12,7 @@ sys.path.insert(0, str(civiltools_path))
 class GitUpdate:
 
     def __init__(self,
-                branch='v5',
+                branch='v6',
                 git_url="https://github.com/ebrahimraeyat/civilTools.git",
                 ):
         self.git_url = git_url
@@ -25,7 +25,7 @@ class GitUpdate:
         msg = ''
         try:
             g.execute('git submodule update --init --recursive')
-		    msg = g.execute(f'git pull --recurse-submodules origin {self.branch}')
+            msg = g.execute(f'git pull --recurse-submodules origin {self.branch}')
             if not 'already' in msg.lower():
                 msg = 'update done successfully.'
         except:
