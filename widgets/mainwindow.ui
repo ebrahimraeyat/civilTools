@@ -671,7 +671,7 @@
              </property>
              <property name="icon">
               <iconset resource="../resource.qrc">
-               <normaloff>:/cfactor/images/run.png</normaloff>:/cfactor/images/run.png</iconset>
+               <normaloff>:/cfactor/images/run.svg</normaloff>:/cfactor/images/run.svg</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -1102,6 +1102,7 @@ p, li { white-space: pre-wrap; }
     <addaction name="action_restore_backup"/>
     <addaction name="action_word"/>
     <addaction name="action_save_spectrals"/>
+    <addaction name="action_register"/>
    </widget>
    <widget class="QMenu" name="menuDefine">
     <property name="title">
@@ -1178,6 +1179,7 @@ p, li { white-space: pre-wrap; }
    <addaction name="action_equal_section"/>
    <addaction name="action_remove_backups"/>
    <addaction name="action_restore_backup"/>
+   <addaction name="action_register"/>
   </widget>
   <widget class="QToolBar" name="control_toolbar">
    <property name="windowTitle">

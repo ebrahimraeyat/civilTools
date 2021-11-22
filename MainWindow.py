@@ -867,6 +867,24 @@ def register(self):
     serial_win.serial.setText(serial)
     serial_win.exec_()
 
+def submit():
+    sys.path.insert(0, str(civiltools_path))
+    from functions import check_legal
+    check = check_legal.CheckLegalUse(
+                                'civiltools5.bin',
+                                'https://gist.githubusercontent.com/ebrahimraeyat/b8cbd078eb7b211e3154804a8bb77633/raw',
+                                'cfactor',
+                                )
+    text = check.submit()
+
+    if text == 'INTERNET':
+        msg = 'Please connect to the internet!'
+    elif text == 'SERIAL':
+        msg = 'You are not registered, Please Contact author to buy the software.'
+    elif text == 'REGISTERED':
+        msg = "Congrajulation! You are now registered, enjoy using CivilTools."
+    QMessageBox.information(None, 'Registeration', msg)
+
 def help():
     import webbrowser
     path = civiltools_path / "help" / "help.pdf"
@@ -891,6 +909,7 @@ class SerialForm(serial_base, serial_window):
     def __init__(self, parent=None):
         super(SerialForm, self).__init__()
         self.setupUi(self)
+        self.submit_button.clicked.connect(submit)
 
 def main():
     import time
