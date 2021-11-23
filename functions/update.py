@@ -2,9 +2,6 @@ import os
 import sys
 from pathlib import Path
 
-from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QMessageBox
-
 civiltools_path = Path(__file__).parent.parent
 sys.path.insert(0, str(civiltools_path))
 
