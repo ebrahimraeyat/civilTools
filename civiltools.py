@@ -900,7 +900,7 @@ def git_updates():
                                 QMessageBox.Yes | QMessageBox.No) == QMessageBox.No):
         return
     update_win = progressbar.UpdateWindow()
-    update_win.show()
+    self.hsplitter.insertWidget(0, update_win)
     up = update.GitUpdate(branch)
     msg = up.git_update()
     update_win.label.setText(msg)
