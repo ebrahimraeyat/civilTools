@@ -73,7 +73,7 @@ class Ui(QMainWindow, main_window):
         self.action_frame_sections.triggered.connect(self.assign_frame_sections)
         self.action_explode_loads.triggered.connect(self.explode_loads)
         self.action_distance.triggered.connect(self.get_distance_between_two_points)
-        self.action_update.triggered.connect(git_updates)
+        self.action_update.triggered.connect(self.git_updates)
         self.action_register.triggered.connect(register)
         self.action_help.triggered.connect(help)
         self.action_equal_section.triggered.connect(run_section)
