@@ -852,6 +852,21 @@ class Ui(QMainWindow, main_window):
             return False
         return True
 
+    def git_updates(self):
+        from functions import update, progressbar
+        if not update.internet():
+            msg = "You are not connected to the Internet, please check your internet connection."
+            QMessageBox.warning(None, 'update', str(msg))
+            return
+        if (QMessageBox.question(None, "update", ("update to latest version?!"),
+                                    QMessageBox.Yes | QMessageBox.No) == QMessageBox.No):
+            return
+        update_win = progressbar.UpdateWindow()
+        self.hsplitter.insertWidget(0, update_win)
+        up = update.GitUpdate(branch)
+        msg = up.git_update()
+        update_win.label.setText(msg)
+
 def run_section():
     import subprocess
     python_exe = 'pythonw'
@@ -889,21 +904,6 @@ def help():
     import webbrowser
     path = civiltools_path / "help" / "help.pdf"
     webbrowser.open_new(str(path))
-
-def git_updates():
-    from functions import update, progressbar
-    if not update.internet():
-        msg = "You are not connected to the Internet, please check your internet connection."
-        QMessageBox.warning(None, 'update', str(msg))
-        return
-    if (QMessageBox.question(None, "update", ("update to latest version?!"),
-                                QMessageBox.Yes | QMessageBox.No) == QMessageBox.No):
-        return
-    update_win = progressbar.UpdateWindow()
-    self.hsplitter.insertWidget(0, update_win)
-    up = update.GitUpdate(branch)
-    msg = up.git_update()
-    update_win.label.setText(msg)
 
 class SerialForm(serial_base, serial_window):
     def __init__(self, parent=None):
