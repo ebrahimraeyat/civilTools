@@ -915,7 +915,7 @@ def main():
     import time
     os.chdir(civiltools_path)
     app = QApplication(sys.argv)
-    splash_pix = QPixmap("./images/civil-engineering.jpg")
+    splash_pix = QPixmap("./images/civil-engineering.png")
     splash = QSplashScreen(splash_pix, Qt.WindowStaysOnTopHint)
     splash.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint)
     splash.setEnabled(False)
@@ -925,7 +925,7 @@ def main():
     progressbar.setGeometry(50, splash_pix.height() - 30, splash_pix.width() - 100, 20)
 
     splash.show()
-    splash.showMessage("<h1><font color='DarkRed'>civiltools by Ebrahim Raeyat Roknabadi </font></h1>", Qt.AlignCenter | Qt.AlignCenter, Qt.black)
+    splash.showMessage("<h1><font color='orange'>civiltools v6.0 Made by Ebrahim Raeyat Roknabadi </font></h1>", Qt.AlignHCenter | Qt.AlignTop, Qt.black)
 
     for i in range(1, 11):
         progressbar.setValue(i)
