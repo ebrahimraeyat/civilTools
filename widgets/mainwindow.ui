@@ -1176,9 +1176,9 @@ p, li { white-space: pre-wrap; }
    <addaction name="action_save"/>
    <addaction name="action_word"/>
    <addaction name="action_save_spectrals"/>
-   <addaction name="action_equal_section"/>
    <addaction name="action_remove_backups"/>
    <addaction name="action_restore_backup"/>
+   <addaction name="action_equal_section"/>
    <addaction name="action_register"/>
   </widget>
   <widget class="QToolBar" name="control_toolbar">
