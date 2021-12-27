@@ -116,7 +116,7 @@ class SerialForm:
 
 
 # Gui.addCommand('Civil_help', CivilHelp())
-Gui.addCommand('civil_settings', gui_settings.CivilSettings())
+# Gui.addCommand('civil_settings', gui_settings.CivilSettings())
 Gui.addCommand('civil_irregurality_of_mass', gui_irregurality_of_mass.CivilIrregularityOfMass())
 Gui.addCommand('civil_explod_load_patterns', gui_explod_load_patterns.CivilExplodLoadPatterns())
 Gui.addCommand('civil_story_stiffness', gui_story_stiffness.CivilStoryStiffness())
