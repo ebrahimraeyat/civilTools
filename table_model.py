@@ -9,7 +9,7 @@ from PySide2.QtUiTools import loadUiType
 # from matplotlib.colors import Normalize
 # import matplotlib
 
-civiltools_path = Path(__file__).parent.parent / 'civilTools'
+civiltools_path = Path(__file__).absolute().parent
 
 low = 'cyan'
 intermediate = 'yellow'
