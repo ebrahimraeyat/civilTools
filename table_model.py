@@ -10,6 +10,7 @@ from PySide2.QtUiTools import loadUiType
 # import matplotlib
 
 civiltools_path = Path(__file__).absolute().parent
+print(str(civiltools_path / 'widgets' / 'results.ui'))
 
 low = 'cyan'
 intermediate = 'yellow'
