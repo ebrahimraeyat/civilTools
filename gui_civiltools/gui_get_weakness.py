@@ -37,7 +37,7 @@ class CivilGetWeakness:
         if not allow:
             return
         from py_widget import get_weakness
-        from etabs_api import etabs_obj
+        import etabs_obj
         etabs = etabs_obj.EtabsModel()
         if not etabs.success:
             from PySide2.QtWidgets import QMessageBox

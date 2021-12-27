@@ -38,7 +38,7 @@ class CivilExplodLoadPatterns:
             )
         if not allow:
             return
-        from etabs_api import etabs_obj
+        import etabs_obj
         from py_widget import explode_seismic_load_patterns
         etabs = etabs_obj.EtabsModel()
         panel = explode_seismic_load_patterns.Form(etabs)

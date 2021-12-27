@@ -533,7 +533,7 @@ class Ui(QMainWindow, main_window):
         if not allow:
             return
         sys.path.insert(0, str(civiltools_path))
-        from etabs_api import etabs_obj
+        import etabs_obj
         etabs = etabs_obj.EtabsModel()
         etabs.sections.import_sections_to_etabs(self.model1.sections)
         msg = "Successfully written to Etabs."
