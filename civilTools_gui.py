@@ -73,7 +73,7 @@ def allowed_to_continue(
                         dir_name,
                         n = 2,
                         ):
-    import check_legal
+    from functions import check_legal
     check = check_legal.CheckLegalUse(
                                 filename,
                                 gist_url,
