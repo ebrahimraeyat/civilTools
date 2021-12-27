@@ -2,21 +2,21 @@ import os
 from pathlib import Path
 from PySide2 import QtCore
 from PySide2.QtWidgets import QMessageBox
-import FreeCAD
+# import FreeCAD
 import FreeCADGui as Gui
-import DraftTools
-import civiltoolswelcome
+# import DraftTools
+# import civiltoolswelcome
 
 
 from gui_civiltools import (
-    gui_settings,
+    # gui_settings,
     gui_irregurality_of_mass,
     gui_explod_load_patterns,
     gui_story_stiffness,
     gui_get_weakness,
     gui_show_torsion,
     gui_create_period_file,
-    gui_automatic_drift,
+    # gui_automatic_drift,
     gui_modify_torsion_stiffness,
     gui_show_story_forces,
     gui_show_story_stiffness,
@@ -132,7 +132,7 @@ Gui.addCommand('civil_show_aj', gui_show_aj.CivilShowAj())
 Gui.addCommand('civil_scale_response_spec', gui_scale_response_spec.CivilScaleResponseSpec())
 
 civiltools_list = [
-            "civil_settings",
+            # "civil_settings",
             "civil_irregurality_of_mass",
             "civil_explod_load_patterns",
             "civil_story_stiffness",
