@@ -1,4 +1,3 @@
-import sys
 from pathlib import Path
 
 from PySide2.QtUiTools import loadUiType
@@ -52,7 +51,6 @@ def show_warning_about_number_of_use(check):
 
 
 class SerialForm(*loadUiType(str(civiltools_path / 'widgets' / 'serial.ui'))):
-# class SerialForm(*loadUiType(str(civiltools_path / 'widgets' / 'serial.ui'))):
     def __init__(self, parent=None):
         super(SerialForm, self).__init__()
         self.setupUi(self)
