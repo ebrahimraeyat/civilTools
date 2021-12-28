@@ -67,8 +67,8 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../../civiltools.qrc">
-         <normaloff>:/civiltools/civilTools/images/xlsx.png</normaloff>:/civiltools/civilTools/images/xlsx.png</iconset>
+        <iconset resource="../civiltools.qrc">
+         <normaloff>:/civiltools/images/xlsx.png</normaloff>:/civiltools/images/xlsx.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -90,7 +90,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../../civiltools.qrc"/>
+  <include location="../civiltools.qrc"/>
  </resources>
  <connections/>
 </ui>
