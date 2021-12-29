@@ -1,16 +1,14 @@
 from pathlib import Path
-# import comtypes.client
 import pandas as pd
 from PySide2.QtCore import QAbstractTableModel, Qt 
-from PySide2.QtGui import QColor
+from PySide2.QtGui import QColor, QIcon
 from PySide2 import QtCore, QtWidgets
-from PySide2.QtUiTools import loadUiType
 # import matplotlib.cm as cm
 # from matplotlib.colors import Normalize
 # import matplotlib
+import FreeCADGui as Gui
 
 civiltools_path = Path(__file__).absolute().parent
-print(str(civiltools_path / 'widgets' / 'results.ui'))
 
 low = 'cyan'
 intermediate = 'yellow'
@@ -344,11 +342,30 @@ class BeamsJModel(ResultsModel):
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
 
 
-class ResultWidget(*loadUiType(str(civiltools_path / 'widgets' / 'results.ui'))):
+# class ResultWidget(*loadUiType(str(civiltools_path / 'widgets' / 'results.ui'))):
+class ResultWidget(QtWidgets.QWidget):
     # main widget for user interface
     def __init__(self, data, headers, model, function, parent=None):
         super(ResultWidget, self).__init__(parent)
-        self.setupUi(self)
+        # self = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'results.ui'))
+        # self.setupUi(self)
+        self.push_button_to_excel = QtWidgets.QPushButton()
+        self.push_button_to_excel.setIcon(QIcon(':/images/xls.png'))
+        label = QtWidgets.QLabel("Filter")
+        self.lineEdit = QtWidgets.QLineEdit()
+        label2 = QtWidgets.QLabel("By Column:")
+        self.comboBox = QtWidgets.QComboBox()
+        hbox = QtWidgets.QHBoxLayout()
+        hbox.addWidget(label)
+        hbox.addWidget(self.lineEdit)
+        hbox.addWidget(label2)
+        hbox.addWidget(self.comboBox)
+        hbox.addWidget(self.push_button_to_excel)
+        vbox = QtWidgets.QVBoxLayout()
+        vbox.addLayout(hbox)
+        self.result_table_view = QtWidgets.QTableView()
+        vbox.addWidget(self.result_table_view)
+        self.setLayout(vbox)
         self.function = function
         self.data = data
         self.headers = headers
@@ -459,8 +476,6 @@ class ResultWidget(*loadUiType(str(civiltools_path / 'widgets' / 'results.ui')))
     def on_comboBox_currentIndexChanged(self, index):
         self.proxy.setFilterKeyColumn(index)
 
-
-
     # def saveResults(self):
     #     if self.modelPath:
     #         excel_path = self.modelPath + '/results.xlsx'
@@ -476,6 +491,7 @@ class ResultWidget(*loadUiType(str(civiltools_path / 'widgets' / 'results.ui')))
 
 def show_results(data, headers, model, function=None):
     win = ResultWidget(data, headers, model, function)
+    # Gui.Control.showDialog(win)
     mdi = get_mdiarea()
     if not mdi:
         return None
