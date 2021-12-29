@@ -1,22 +1,24 @@
 from pathlib import Path
 
-from PySide2.QtUiTools import loadUiType
+from PySide2 import  QtWidgets
+import FreeCADGui as Gui
 
 civiltools_path = Path(__file__).absolute().parent.parent
 
 
-class Form(*loadUiType(str(civiltools_path / 'widgets' / 'beam_j.ui'))):
+class Form(QtWidgets.QWidget):
     def __init__(self, etabs_obj):
         super(Form, self).__init__()
-        self.setupUi(self)
-        self.form = self
+        self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'beam_j.ui'))
+        # self.setupUi(self)
+        # self.form = self
         self.etabs = etabs_obj
         self.create_connections()
 
     def accept(self):
         load_combinations = None
-        selected_beams = self.selected_beams.isChecked()
-        exclude_selected_beams = self.exclude_selected_beams.isChecked()
+        selected_beams = self.form.selected_beams.isChecked()
+        exclude_selected_beams = self.form.exclude_selected_beams.isChecked()
         beams_names = None
         if (selected_beams or exclude_selected_beams):
             beams, _  = self.etabs.frame_obj.get_beams_columns()
@@ -26,15 +28,15 @@ class Form(*loadUiType(str(civiltools_path / 'widgets' / 'beam_j.ui'))):
                 beams_names = set(names).intersection(beams)
             elif exclude_selected_beams:
                 beams_names = set(beams).difference(names)
-        phi = self.phi_spinbox.value()
-        num_iteration = self.iteration_spinbox.value()
-        tolerance = self.tolerance_spinbox.value()
-        j_max_value = self.maxj_spinbox.value()
-        j_min_value = self.minj_spinbox.value()
-        initial_j = self.initial_checkbox.isChecked()
-        initial_j = self.initial_spinbox.value() if initial_j else None
-        decimals = self.rounding.isChecked()
-        decimals = self.round_decimals.value() if decimals else None
+        phi = self.form.phi_spinbox.value()
+        num_iteration = self.form.iteration_spinbox.value()
+        tolerance = self.form.tolerance_spinbox.value()
+        j_max_value = self.form.maxj_spinbox.value()
+        j_min_value = self.form.minj_spinbox.value()
+        initial_j = self.form.initial_checkbox.isChecked()
+        initial_j = self.form.initial_spinbox.value() if initial_j else None
+        decimals = self.form.rounding.isChecked()
+        decimals = self.form.round_decimals.value() if decimals else None
         df = self.etabs.frame_obj.correct_torsion_stiffness_factor(
             load_combinations,
             beams_names,
@@ -54,11 +56,11 @@ class Form(*loadUiType(str(civiltools_path / 'widgets' / 'beam_j.ui'))):
         Gui.Control.closeDialog()
 
     def create_connections(self):
-        self.initial_checkbox.stateChanged.connect(self.set_initial_j)
+        self.form.initial_checkbox.stateChanged.connect(self.set_initial_j)
 
     def set_initial_j(self):
-        if self.initial_checkbox.isChecked():
-            self.initial_spinbox.setEnabled(True)
+        if self.form.initial_checkbox.isChecked():
+            self.form.initial_spinbox.setEnabled(True)
         else:
-            self.initial_spinbox.setEnabled(False)
+            self.form.initial_spinbox.setEnabled(False)
 

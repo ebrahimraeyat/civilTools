@@ -1,7 +1,9 @@
 from pathlib import Path
 
-from PySide2.QtUiTools import loadUiType
+# from PySide2.QtUiTools import loadUiType
 from PySide2.QtWidgets import QMessageBox
+from PySide2 import  QtWidgets
+import FreeCADGui as Gui
 
 civiltools_path = Path(__file__).absolute().parent.parent
 
@@ -50,11 +52,12 @@ def show_warning_about_number_of_use(check):
             QMessageBox.warning(None, 'Not registered!', str(msg))
 
 
-class SerialForm(*loadUiType(str(civiltools_path / 'widgets' / 'serial.ui'))):
+class SerialForm(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super(SerialForm, self).__init__()
-        self.setupUi(self)
-        self.submit_button.clicked.connect(submit)
+        self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'serial.ui'))
+        # self.setupUi(self)
+        self.form.submit_button.clicked.connect(submit)
 
 
 def submit():
