@@ -1,16 +1,20 @@
 from pathlib import Path
 
-from PySide2.QtUiTools import loadUiType
+from PySide2 import  QtWidgets
+import FreeCADGui as Gui
 from PySide2.QtWidgets import QMessageBox
+
+import civiltools_rc
 
 civiltools_path = Path(__file__).absolute().parent.parent
 
 
-class Form(*loadUiType(str(civiltools_path / 'widgets' / 'get_siffness_story_way.ui'))):
+class Form(QtWidgets.QWidget):
     def __init__(self):
         super(Form, self).__init__()
-        self.setupUi(self)
-        self.form = self
+        self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'get_siffness_story_way.ui'))
+        # self.setupUi(self)
+        # self.form = self
 
     def accept(self):
         import etabs_obj
@@ -18,11 +22,11 @@ class Form(*loadUiType(str(civiltools_path / 'widgets' / 'get_siffness_story_way
         if not etabs.success:
             QMessageBox.warning(None, 'ETABS', 'Please open etabs file!')
             return False
-        if self.radio_button_2800.isChecked():
+        if self.form.radio_button_2800.isChecked():
                 way = '2800'
-        if self.radio_button_modal.isChecked():
+        if self.form.radio_button_modal.isChecked():
             way = 'modal'
-        if self.radio_button_earthquake.isChecked():
+        if self.form.radio_button_earthquake.isChecked():
             way = 'earthquake'
         ret = etabs.get_story_stiffness_table(way)
         if not ret:

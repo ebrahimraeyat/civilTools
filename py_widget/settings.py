@@ -15,6 +15,7 @@ from models import *
 import export
 from exporter import config
 
+import civiltools_rc
 
 rTable = RFactorTable()
 systemTypes = rTable.getSystemTypes()

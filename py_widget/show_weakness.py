@@ -1,26 +1,28 @@
 from pathlib import Path
 
-from PySide2.QtUiTools import loadUiType
+from PySide2 import  QtWidgets
+import FreeCADGui as Gui
 from PySide2.QtWidgets import QFileDialog, QMessageBox
 
 civiltools_path = Path(__file__).absolute().parent.parent
 
 
-class Form(*loadUiType(str(civiltools_path / 'widgets' / 'show_weakness.ui'))):
+class Form(QtWidgets.QWidget):
     def __init__(self, etabs_obj):
         super(Form, self).__init__()
-        self.setupUi(self)
-        self.form = self
+        self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'show_weakness.ui'))
+        # self.setupUi(self)
+        # self.form = self
         self.etabs = etabs_obj
         self.directory = str(Path(self.etabs.SapModel.GetModelFilename()).parent)
         self.set_filenames()
         self.create_connections()
 
     def accept(self):
-        use_json_file = self.file_groupbox.isChecked()
-        dir_ = 'x' if self.x_radio_button.isChecked() else 'y'
+        use_json_file = self.form.file_groupbox.isChecked()
+        dir_ = 'x' if self.form.x_radio_button.isChecked() else 'y'
         if use_json_file:
-            json_file = Path(self.json_file.text())
+            json_file = Path(self.form.json_file.text())
         else:
             json_file = Path(self.etabs.SapModel.GetModelFilepath()) / f'columns_pmm_beams_rebars_{dir_}.json'
         if json_file.exists():
@@ -40,27 +42,27 @@ class Form(*loadUiType(str(civiltools_path / 'widgets' / 'show_weakness.ui'))):
 
     def set_filenames(self):
         f = Path(self.etabs.SapModel.GetModelFilename())
-        if self.x_radio_button.isChecked():
-            self.json_file.setText(str(f.with_name('columns_pmm_beams_rebars_x.json')))
-        elif self.y_radio_button.isChecked():
-            self.json_file.setText(str(f.with_name('columns_pmm_beams_rebars_y.json')))
+        if self.form.x_radio_button.isChecked():
+            self.form.json_file.setText(str(f.with_name('columns_pmm_beams_rebars_x.json')))
+        elif self.form.y_radio_button.isChecked():
+            self.form.json_file.setText(str(f.with_name('columns_pmm_beams_rebars_y.json')))
         
     def create_connections(self):
-        self.weakness_button.clicked.connect(self.get_filename)
-        self.x_radio_button.toggled.connect(self.set_filenames)
-        self.y_radio_button.toggled.connect(self.set_filenames)
-        self.file_groupbox.toggled.connect(self.change_frame_enable)
+        self.form.weakness_button.clicked.connect(self.get_filename)
+        self.form.x_radio_button.toggled.connect(self.set_filenames)
+        self.form.y_radio_button.toggled.connect(self.set_filenames)
+        self.form.file_groupbox.toggled.connect(self.change_frame_enable)
 
     def change_frame_enable(self):
-        if self.file_groupbox.isChecked():
-            self.dir_frame.setEnabled(False)
+        if self.form.file_groupbox.isChecked():
+            self.form.dir_frame.setEnabled(False)
         else:
-            self.dir_frame.setEnabled(True)
+            self.form.dir_frame.setEnabled(True)
 
     def get_filename(self):
         filename, _ = QFileDialog.getOpenFileName(self, 'select *.json file',
                                                   self.directory, "Results(*.json)")
         if filename == '':
             return
-        self.json_file.setText(filename)
+        self.form.json_file.setText(filename)
 

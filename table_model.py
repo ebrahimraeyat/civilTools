@@ -3,6 +3,8 @@ import pandas as pd
 from PySide2.QtCore import QAbstractTableModel, Qt 
 from PySide2.QtGui import QColor, QIcon
 from PySide2 import QtCore, QtWidgets
+
+import civiltools_rc
 # import matplotlib.cm as cm
 # from matplotlib.colors import Normalize
 # import matplotlib
@@ -342,7 +344,6 @@ class BeamsJModel(ResultsModel):
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
 
 
-# class ResultWidget(*loadUiType(str(civiltools_path / 'widgets' / 'results.ui'))):
 class ResultWidget(QtWidgets.QWidget):
     # main widget for user interface
     def __init__(self, data, headers, model, function, parent=None):

@@ -2,6 +2,9 @@ from pathlib import Path
 
 from PyQt5 import uic
 
+import civiltools_rc
+
+
 cfactor_path = Path(__file__).absolute().parent.parent
 base, window = uic.loadUiType(cfactor_path / 'widgets' / 'delete_backups.ui')
 

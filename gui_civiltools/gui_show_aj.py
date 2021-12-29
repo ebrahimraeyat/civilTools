@@ -40,11 +40,13 @@ class CivilShowAj:
             return False
         from py_widget import aj_correction
         win = aj_correction.Form(etabs)
-        mdi = get_mdiarea()
-        if not mdi:
-            return None
-        sub = mdi.addSubWindow(win)
-        sub.show()
+        import FreeCADGui as Gui
+        Gui.Control.showDialog(win)
+        # mdi = get_mdiarea()
+        # if not mdi:
+        #     return None
+        # sub = mdi.addSubWindow(win)
+        # sub.show()
         show_warning_about_number_of_use(check)
         
     def IsActive(self):

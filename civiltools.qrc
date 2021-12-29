@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="civiltools">
+    <file>images/show.svg</file>
+    <file>images/wall_load.svg</file>
     <file>images/torsion.svg</file>
     <file>images/clear.png</file>
     <file>images/run.svg</file>

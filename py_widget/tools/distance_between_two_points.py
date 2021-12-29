@@ -2,6 +2,8 @@ from pathlib import Path
 from PyQt5 import uic
 from PyQt5.QtWidgets import QMessageBox
 
+import civiltools_rc
+
 cfactor_path = Path(__file__).absolute().parent.parent.parent
 
 base, window = uic.loadUiType(cfactor_path / 'widgets' / 'tools' / 'distance_between_two_points.ui')

@@ -14,7 +14,7 @@
    <string>Assign Wall Loads on Frames</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../../resource.qrc">
+   <iconset>
     <normaloff>:/cfactor/images/wall.svg</normaloff>:/cfactor/images/wall.svg</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -304,7 +304,7 @@
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap resource="../../resource.qrc">:/cfactor/images/wall_load.svg</pixmap>
+          <pixmap resource="../../civiltools.qrc">:/civiltools/images/wall_load.svg</pixmap>
          </property>
          <property name="scaledContents">
           <bool>true</bool>
@@ -344,6 +344,7 @@
   </layout>
  </widget>
  <resources>
+  <include location="../../civiltools.qrc"/>
   <include location="../../resource.qrc"/>
  </resources>
  <connections>

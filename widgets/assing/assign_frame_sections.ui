@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>498</width>
+    <width>463</width>
     <height>631</height>
    </rect>
   </property>
@@ -14,7 +14,7 @@
    <string>Assign Frame Sections</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../../resource.qrc">
+   <iconset>
     <normaloff>:/cfactor/images/assign_frame_section.svg</normaloff>:/cfactor/images/assign_frame_section.svg</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -140,8 +140,6 @@
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../../resource.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

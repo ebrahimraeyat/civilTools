@@ -490,7 +490,7 @@
  <resources>
   <include location="../civiltools.qrc"/>
   <include location="../civiltools.qrc"/>
-  <include location="../../civiltools.qrc"/>
+  <include location="../civiltools.qrc"/>
  </resources>
  <connections/>
 </ui>

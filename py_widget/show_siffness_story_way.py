@@ -1,35 +1,37 @@
 from pathlib import Path
 
-from PySide2.QtUiTools import loadUiType
+from PySide2 import  QtWidgets
+import FreeCADGui as Gui
 from PySide2.QtWidgets import QFileDialog, QMessageBox
 
 civiltools_path = Path(__file__).absolute().parent.parent
 
 
-class Form(*loadUiType(str(civiltools_path / 'widgets' / 'show_siffness_story_way.ui'))):
+class Form(QtWidgets.QWidget):
     def __init__(self, etabs_obj):
         super(Form, self).__init__()
-        self.setupUi(self)
-        self.form = self
+        self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'show_siffness_story_way.ui'))
+        # self.setupUi(self)
+        # self.form = self
         self.etabs = etabs_obj
-        self.radio_button_file.toggled.connect(self.file_toggled)
-        self.browse_push_button.clicked.connect(self.get_file_name)
+        self.form.radio_button_file.toggled.connect(self.file_toggled)
+        self.form.browse_push_button.clicked.connect(self.get_file_name)
 
     def accept(self):
-        if self.radio_button_2800.isChecked():
+        if self.form.radio_button_2800.isChecked():
             way = '2800'
-        elif self.radio_button_modal.isChecked():
+        elif self.form.radio_button_modal.isChecked():
             way = 'modal'
-        elif self.radio_button_earthquake.isChecked():
+        elif self.form.radio_button_earthquake.isChecked():
             way = 'earthquake'
-        elif self.radio_button_file.isChecked():
+        elif self.form.radio_button_file.isChecked():
             way = 'file'
         if way != 'file':
             e_name = self.etabs.get_file_name_without_suffix()
             name = f'{e_name}_story_stiffness_{way}_table.json'
             json_file = Path(self.etabs.SapModel.GetModelFilepath()) / name
         else:
-            json_file = self.json_line_edit.text()
+            json_file = self.form.json_line_edit.text()
         ret = self.etabs.load_from_json(json_file)
         if not ret:
             err = "Can not find the results!"
@@ -44,12 +46,12 @@ class Form(*loadUiType(str(civiltools_path / 'widgets' / 'show_siffness_story_wa
         Gui.Control.closeDialog()
 
     def file_toggled(self):
-        if self.radio_button_file.isChecked():
-            self.json_line_edit.setEnabled(True)
-            self.browse_push_button.setEnabled(True)
+        if self.form.radio_button_file.isChecked():
+            self.form.json_line_edit.setEnabled(True)
+            self.form.browse_push_button.setEnabled(True)
         else:
-            self.json_line_edit.setEnabled(False)
-            self.browse_push_button.setEnabled(False)
+            self.form.json_line_edit.setEnabled(False)
+            self.form.browse_push_button.setEnabled(False)
 
     def get_file_name(self):
         from pathlib import Path
@@ -64,6 +66,6 @@ class Form(*loadUiType(str(civiltools_path / 'widgets' / 'show_siffness_story_wa
                                                   directory, "json(*.json)")
         if filename == '':
             return
-        self.json_line_edit.setText(filename)
+        self.form.json_line_edit.setText(filename)
 
 

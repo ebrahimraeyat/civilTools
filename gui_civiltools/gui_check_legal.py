@@ -1,6 +1,5 @@
 from pathlib import Path
 
-# from PySide2.QtUiTools import loadUiType
 from PySide2.QtWidgets import QMessageBox
 from PySide2 import  QtWidgets
 import FreeCADGui as Gui

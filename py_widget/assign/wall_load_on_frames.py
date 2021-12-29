@@ -2,6 +2,8 @@ from pathlib import Path
 
 from PyQt5 import uic, QtGui
 
+import civiltools_rc
+
 cfactor_path = Path(__file__).absolute().parent.parent.parent
 
 wall_load_base, wall_load_window = uic.loadUiType(cfactor_path / 'widgets' / 'assing' / 'wall_load_on_frames.ui')

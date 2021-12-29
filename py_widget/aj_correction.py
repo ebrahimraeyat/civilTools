@@ -5,15 +5,18 @@ import pandas as pd
 from PySide2.QtCore import QAbstractTableModel, Qt, QSettings
 from PySide2.QtWidgets import QDoubleSpinBox, QItemDelegate, QComboBox, QMessageBox
 from PySide2.QtGui import QColor
-from PySide2.QtUiTools import loadUiType
+from PySide2 import  QtWidgets
+import FreeCADGui as Gui
+
 
 civiltools_path = Path(__file__).absolute().parent.parent
 
 
-class Form(*loadUiType(str(civiltools_path / 'widgets' / 'aj_correction.ui'))):
+class Form(QtWidgets.QWidget):
     def __init__(self, etabs_obj):
         super(Form, self).__init__()
-        self.setupUi(self)
+        self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'aj_correction.ui'))
+        # self.setupUi(self)
         self.etabs = etabs_obj
         self.stories = self.etabs.SapModel.Story.GetStories()[1]
         self.fill_xy_loadpattern_names()
@@ -21,71 +24,70 @@ class Form(*loadUiType(str(civiltools_path / 'widgets' / 'aj_correction.ui'))):
         story_length = self.etabs.story.get_stories_length()
         self.data = [[key, value[0], value[1]] for key, value in story_length.items()]
         self.headers = ('story', 'x (Cm)', 'y (Cm)')
-        self.model = StoryLengthModel(self.data, self.headers)
-        self.story_xy_length.setModel(self.model)
-        self.story_xy_length.setItemDelegate(StoryLengthDelegate(self))
+        self.form.model = StoryLengthModel(self.data, self.headers)
+        self.form.story_xy_length.setModel(self.form.model)
+        # self.form.story_xy_length.setItemDelegate(StoryLengthDelegate(self))
         df = self.etabs.get_magnification_coeff_aj()
         self.static_df = self.etabs.get_static_magnification_coeff_aj(df)
         self.dynamic_df = self.etabs.get_dynamic_magnification_coeff_aj(df)
         self.aj_apply_model_static = AjApplyModel(self.static_df)
-        self.aj_apply_static_view.setModel(self.aj_apply_model_static)
+        self.form.aj_apply_static_view.setModel(self.aj_apply_model_static)
         aj_apply_model_dynamic = AjApplyModel(self.dynamic_df)
-        self.aj_apply_dynamic_view.setModel(aj_apply_model_dynamic)
+        self.form.aj_apply_dynamic_view.setModel(aj_apply_model_dynamic)
         # self.aj_apply_static_view.setItemDelegate(AjDelegate(self))
-        self.aj_apply_static_view.resizeColumnsToContents()
-        self.aj_apply_dynamic_view.resizeColumnsToContents()
-        self.setWindowFlag(Qt.WindowMinimizeButtonHint, True)
-        self.setWindowFlag(Qt.WindowMaximizeButtonHint, True)
-        self.adjustSize()
+        self.form.aj_apply_static_view.resizeColumnsToContents()
+        self.form.aj_apply_dynamic_view.resizeColumnsToContents()
+        self.form.setWindowFlag(Qt.WindowMinimizeButtonHint, True)
+        self.form.setWindowFlag(Qt.WindowMaximizeButtonHint, True)
+        self.form.adjustSize()
         self.load_settings()
 
-        # self.fill_xy_loadcase_names()
         self.create_connections()
 
     def create_connections(self):
-        self.static_apply.clicked.connect(self.apply_static_aj)
+        self.form.static_apply.clicked.connect(self.apply_static_aj)
         
-        # self.model.dataChanged.connect(self.story_length_changed)
+        # self.form.model.dataChanged.connect(self.story_length_changed)
 
     def apply_static_aj(self):
         self.etabs.apply_aj_df(self.aj_apply_model_static.df)
         msg = "Successfully written to Etabs."
         QMessageBox.information(None, "done", msg)
 
-    def story_length_changed(self, index):
-        row = index.row()
-        col = index.column()
-        value = self.model.df.iat[row, col]
-        story = self.model.df.iat[row, 0]
-        if col == 1:
-            dir_ = 'Y'
-        elif col == 2:
-            dir_ = 'X'
-        story_dir = (self.df['Story'] ==story) & (self.df['Dir'] == dir_)
-        self.df.loc[story_dir, 'Length (Cm)'] = value
-        self.df.loc[story_dir, 'Ecc. Length (Cm)'] = \
-                self.df[story_dir]['Ecc. Ratio'] * \
-                self.df[story_dir]['Length (Cm)'] 
-        indexes = story_dir.index[story_dir].tolist()
-        for i in indexes:
-            index = self.aj_model.createIndex(i, self.aj_model.i_len)
-            self.aj_model.dataChanged.emit(index, index)
-            index = self.aj_model.createIndex(i, self.aj_model.i_ecc_len)
-            self.aj_model.dataChanged.emit(index, index)
-        stories = self.aj_apply_model.df['Story'] == story
-        indexes = stories.index[stories].tolist()
-        for i in indexes:
-            index = self.aj_apply_model.createIndex(i, 3)
-            df = self.df
-            self.aj_apply_model.df.iat[i, 3] = df[(df['Story'] == story) & (df['Dir'] == dir_)]['Ecc. Length (Cm)'].max()
-            self.aj_apply_model.dataChanged.emit(index, index)
+    # def story_length_changed(self, index):
+    #     row = index.row()
+    #     col = index.column()
+    #     value = self.form.model.df.iat[row, col]
+    #     story = self.form.model.df.iat[row, 0]
+    #     if col == 1:
+    #         dir_ = 'Y'
+    #     elif col == 2:
+    #         dir_ = 'X'
+    #     story_dir = (self.df['Story'] ==story) & (self.df['Dir'] == dir_)
+    #     self.df.loc[story_dir, 'Length (Cm)'] = value
+    #     self.df.loc[story_dir, 'Ecc. Length (Cm)'] = \
+    #             self.df[story_dir]['Ecc. Ratio'] * \
+    #             self.df[story_dir]['Length (Cm)'] 
+    #     indexes = story_dir.index[story_dir].tolist()
+    #     for i in indexes:
+    #         index = self.form.aj_model.createIndex(i, self.form.aj_model.i_len)
+    #         self.form.aj_model.dataChanged.emit(index, index)
+    #         index = self.form.aj_model.createIndex(i, self.form.aj_model.i_ecc_len)
+    #         self.form.aj_model.dataChanged.emit(index, index)
+    #     stories = self.form.aj_apply_model.df['Story'] == story
+    #     indexes = stories.index[stories].tolist()
+    #     for i in indexes:
+    #         index = self.form.aj_apply_model.createIndex(i, 3)
+    #         df = self.df
+    #         self.form.aj_apply_model.df.iat[i, 3] = df[(df['Story'] == story) & (df['Dir'] == dir_)]['Ecc. Length (Cm)'].max()
+    #         self.form.aj_apply_model.dataChanged.emit(index, index)
 
     def fill_xy_loadpattern_names(self):
         x_names, y_names = self.etabs.load_patterns.get_load_patterns_in_XYdirection(
                 only_ecc=True)
-        self.x_load_pattern_list.addItems(x_names)
-        self.y_load_pattern_list.addItems(y_names)
-        for lw in (self.x_load_pattern_list, self.y_load_pattern_list):
+        self.form.x_load_pattern_list.addItems(x_names)
+        self.form.y_load_pattern_list.addItems(y_names)
+        for lw in (self.form.x_load_pattern_list, self.form.y_load_pattern_list):
             for i in range(lw.count()):
                 item = lw.item(i)
                 item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
@@ -93,12 +95,12 @@ class Form(*loadUiType(str(civiltools_path / 'widgets' / 'aj_correction.ui'))):
 
     def fill_xy_loadcase_names(self):
         x_names, y_names = self.etabs.load_cases.get_response_spectrum_xy_loadcases_names()
-        self.x_loadcase_list.addItems(x_names)
-        self.y_loadcase_list.addItems(y_names)
+        self.form.x_loadcase_list.addItems(x_names)
+        self.form.y_loadcase_list.addItems(y_names)
         all_specs = self.etabs.load_cases.get_response_spectrum_loadcase_name()
         angular_names = set(all_specs).difference(x_names + y_names)
-        self.angular_loadcase_list.addItems(angular_names)
-        for lw in (self.x_loadcase_list, self.y_loadcase_list, self.angular_loadcase_list):
+        self.form.angular_loadcase_list.addItems(angular_names)
+        for lw in (self.form.x_loadcase_list, self.form.y_loadcase_list, self.form.angular_loadcase_list):
             for i in range(lw.count()):
                 item = lw.item(i)
                 item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
@@ -109,16 +111,16 @@ class Form(*loadUiType(str(civiltools_path / 'widgets' / 'aj_correction.ui'))):
         qsettings.setValue("geometry", self.saveGeometry())
         qsettings.setValue("pos", self.pos())
         qsettings.setValue("size", self.size())
-        qsettings.setValue("hsplitter", self.hsplitter.saveState())
-        qsettings.setValue("vsplitter", self.vsplitter.saveState())
+        qsettings.setValue("hsplitter1", self.form.hsplitter1.saveState())
+        qsettings.setValue("hsplitter2", self.form.hsplitter1.saveState())
 
     def load_settings(self):
         qsettings = QSettings("civiltools", 'aj_correction')
         self.restoreGeometry(qsettings.value("geometry", self.saveGeometry()))
         self.move(qsettings.value("pos", self.pos()))
         self.resize(qsettings.value("size", self.size()))
-        self.hsplitter.restoreState(qsettings.value("hsplitter", self.hsplitter.saveState()))
-        self.vsplitter.restoreState(qsettings.value("vsplitter", self.vsplitter.saveState()))
+        self.form.hsplitter1.restoreState(qsettings.value("hsplitter1", self.form.hsplitter1.saveState()))
+        self.form.hsplitter2.restoreState(qsettings.value("hsplitter2", self.form.hsplitter2.saveState()))
 
 class AjApplyModel(QAbstractTableModel):
     def __init__(self, df):
@@ -174,7 +176,7 @@ class AjApplyModel(QAbstractTableModel):
         if role == Qt.EditRole and col == self.i_ecc_len:
             row = index.row()
             self.df.iat[row, col] = int(value)
-            self.dataChanged.emit(index, index)
+            self.form.dataChanged.emit(index, index)
             return True
         return False
     
@@ -259,15 +261,15 @@ class StoryLengthModel(QAbstractTableModel):
         row = index.row()
         # if role == Qt.CheckStateRole and col == 0:
         #     self.levels_state[row] = value
-        #     self.dataChanged.emit(index, index)
+        #     self.form.dataChanged.emit(index, index)
         #     return True
         if role == Qt.EditRole:
             # if col == 3:
             #     self.diaphs[row] = value
-            #     self.dataChanged.emit(index, index)
+            #     self.form.dataChanged.emit(index, index)
             if col in (1,2):
                 self.df.iat[row, col] = value
-                self.dataChanged.emit(index, index)
+                self.form.dataChanged.emit(index, index)
             return True
         return False
     
@@ -289,47 +291,47 @@ class StoryLengthModel(QAbstractTableModel):
         return int(col + 1)
 
 
-class StoryLengthDelegate(QItemDelegate):
-    def __init__(self, parent=None):
-        super().__init__(parent)
+# class StoryLengthDelegate(QItemDelegate):
+#     def __init__(self, parent=None):
+#         super().__init__(parent)
 
-    def createEditor(self, parent, option, index):
-        col = index.column()
-        row = index.row()
-        # if col == 3:
-        #     combobox = QComboBox(parent)
-        #     diaphs = (index.model().df.iloc[row][3]).split(',')
-        #     combobox.addItems(diaphs)
-        #     # combobox.setEditable(True)
-        #     return combobox
-        if col in (1,2):
-            spinbox = QDoubleSpinBox(parent)
-            spinbox.setRange(1, 20000)
-            spinbox.setSingleStep(10)
-            spinbox.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
-            spinbox.setSuffix(' Cm')
-            value = index.model().df.iloc[row][col]
-            spinbox.setValue(float(value))
-            return spinbox
-        else:
-            return QItemDelegate.createEditor(self, parent, option, index)
+#     def createEditor(self, parent, option, index):
+#         col = index.column()
+#         row = index.row()
+#         # if col == 3:
+#         #     combobox = QComboBox(parent)
+#         #     diaphs = (index.model().df.iloc[row][3]).split(',')
+#         #     combobox.addItems(diaphs)
+#         #     # combobox.setEditable(True)
+#         #     return combobox
+#         if col in (1,2):
+#             spinbox = QDoubleSpinBox(parent)
+#             spinbox.setRange(1, 20000)
+#             spinbox.setSingleStep(10)
+#             spinbox.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+#             spinbox.setSuffix(' Cm')
+#             value = index.model().df.iloc[row][col]
+#             spinbox.setValue(float(value))
+#             return spinbox
+#         else:
+#             return QItemDelegate.createEditor(self, parent, option, index)
 
-    def setEditorData(self, editor, index):
-        col = index.column()
-        text = index.model().data(index, Qt.DisplayRole)
-        if col in (1,2):
-            editor.setValue(float(text))
-        # elif col == 3:
-        #     i = editor.findText(text)
-        #     if i == -1:
-        #         i = 0
-        #     editor.setCurrentIndex(i)
-        else:
-            super().setEditorData(editor, index)
+#     def setEditorData(self, editor, index):
+#         col = index.column()
+#         text = index.model().data(index, Qt.DisplayRole)
+#         if col in (1,2):
+#             editor.setValue(float(text))
+#         # elif col == 3:
+#         #     i = editor.findText(text)
+#         #     if i == -1:
+#         #         i = 0
+#         #     editor.setCurrentIndex(i)
+#         else:
+#             super().setEditorData(editor, index)
 
-    def setModelData(self, editor, model, index):
-        col = index.column()
-        # if col == 3:
-        #     model.setData(index, editor.currentText())
-        if col in (1,2):
-            model.setData(index, editor.value())
+#     def setModelData(self, editor, model, index):
+#         col = index.column()
+#         # if col == 3:
+#         #     model.setData(index, editor.currentText())
+#         if col in (1,2):
+#             model.setData(index, editor.value())

@@ -32,9 +32,9 @@ class CivilShowStoryStiffness:
         from py_widget import show_siffness_story_way
         win = show_siffness_story_way.Form(etabs)
         e_name = etabs.get_file_name_without_suffix()
-        way_radio_button = {'2800': win.radio_button_2800,
-                            'modal': win.radio_button_modal,
-                            'earthquake': win.radio_button_earthquake}
+        way_radio_button = {'2800': win.form.radio_button_2800,
+                            'modal': win.form.radio_button_modal,
+                            'earthquake': win.form.radio_button_earthquake}
         for w, rb in way_radio_button.items():
             name = f'{e_name}_story_stiffness_{w}_table.json'
             json_file = Path(etabs.SapModel.GetModelFilepath()) / name
