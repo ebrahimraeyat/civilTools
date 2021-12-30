@@ -343,15 +343,44 @@ class BeamsJModel(ResultsModel):
             elif role == Qt.TextAlignmentRole:
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
 
+class HighPressureColumnModel(ResultsModel):
+    def __init__(self, data, headers):
+        super(HighPressureColumnModel, self).__init__(data, headers)
+        self.headers = tuple(self.df.columns)
+        self.col_function = (1,)
+
+    def data(self, index, role=Qt.DisplayRole):
+        row = index.row()
+        col = index.column()
+        self.i_p = self.headers.index('P')
+        self.i_t2 = self.headers.index('t2')
+        self.i_t3 = self.headers.index('t3')
+        self.i_fc = self.headers.index('fc')
+        self.i_Agfc = self.headers.index('0.3*Ag*fc')
+        self.i_hp = self.headers.index('high pressure')
+        if index.isValid():
+            value = self.df.iloc[row][col]
+            if role == Qt.DisplayRole:
+                if col in (self.i_p, self.i_t2, self.i_t3, self.i_fc):
+                    return f'{value:.0f}'
+                return str(value)
+            elif role == Qt.BackgroundColorRole:
+                if self.df.iloc[row][self.i_hp]:
+                    return QColor(high)
+                else:
+                    return QColor(low)
+            elif role == Qt.TextAlignmentRole:
+                return int(Qt.AlignCenter | Qt.AlignVCenter)
+
 
 class ResultWidget(QtWidgets.QWidget):
     # main widget for user interface
-    def __init__(self, data, headers, model, function, parent=None):
+    def __init__(self, data, headers, model, function=None, parent=None):
         super(ResultWidget, self).__init__(parent)
         # self = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'results.ui'))
         # self.setupUi(self)
         self.push_button_to_excel = QtWidgets.QPushButton()
-        self.push_button_to_excel.setIcon(QIcon(':/images/xls.png'))
+        self.push_button_to_excel.setIcon(QIcon(str(civiltools_path / 'images' / 'xlsx.png')))
         label = QtWidgets.QLabel("Filter")
         self.lineEdit = QtWidgets.QLineEdit()
         label2 = QtWidgets.QLabel("By Column:")
