@@ -21,18 +21,20 @@ class CivilToolsWorkbench(Workbench):
         # assign_list = civilTools_gui.assign_list
         civiltools_list = civilTools_gui.civiltools_list
         civiltools_assign = civilTools_gui.civiltools_assign
+        civiltools_tools = civilTools_gui.civiltools_tools
 
-        # self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Civil tools")), command_list)
         # self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Civil Export")), export_list)
         # self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Civil Draw")), draw_list)
         # self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Civil Assign")), assign_list)
         self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("Civil", "civiltools")), civiltools_list)
         self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Assign")), civiltools_assign)
-        
+        self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Tools")), civiltools_tools)
+
         self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("Civil", "civiltools")), civiltools_list)
+        self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Assign")), civiltools_assign)
+        self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Tools")), civiltools_tools)
         # self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Export")), export_list)
         # self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Draw")), draw_list)
-        self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Assign")), civiltools_assign)
 
         # pref_visual_ui_abs_path = str(Path(civilTools_gui.__file__).parent.absolute() / 'ui' / 'preferences-punch_visual.ui')
         # Gui.addPreferencePage(pref_visual_ui_abs_path, "punch")

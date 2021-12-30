@@ -25,6 +25,7 @@ from gui_civiltools import (
     gui_scale_response_spec,
     gui_high_pressure_columns,
     gui_assign_frame_sections,
+    gui_offset_beams,
     )
 
 
@@ -134,6 +135,7 @@ Gui.addCommand('civil_show_aj', gui_show_aj.CivilShowAj())
 Gui.addCommand('civil_scale_response_spec', gui_scale_response_spec.CivilScaleResponseSpec())
 Gui.addCommand('civil_high_pressure_columns', gui_high_pressure_columns.CivilHighPressureColumns())
 Gui.addCommand('civil_assign_frame_sections', gui_assign_frame_sections.CivilAssignFrameSections())
+Gui.addCommand('civil_offset_beams', gui_offset_beams.CivilOffsetBeam())
 
 civiltools_list = [
             # "civil_settings",
@@ -154,4 +156,8 @@ civiltools_list = [
             ]
 civiltools_assign = [
             "civil_assign_frame_sections",
+            ]
+
+civiltools_tools = [
+            "civil_offset_beams",
             ]
