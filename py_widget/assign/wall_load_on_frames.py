@@ -1,78 +1,72 @@
 from pathlib import Path
 
-from PyQt5 import uic, QtGui
 
+from PySide2 import  QtWidgets
+import FreeCADGui as Gui
 import civiltools_rc
 
-cfactor_path = Path(__file__).absolute().parent.parent.parent
+civiltools_path = Path(__file__).absolute().parent.parent.parent
 
-wall_load_base, wall_load_window = uic.loadUiType(cfactor_path / 'widgets' / 'assing' / 'wall_load_on_frames.ui')
 
-class WallLoadForm(wall_load_base, wall_load_window):
+class Form(QtWidgets.QWidget):
     LOADTYPE = {'Force' : 1, 'Moment': 2}
-    def __init__(self, etabs_model, parent=None):
-        super(WallLoadForm, self).__init__()
-        self.setupUi(self)
+    def __init__(self, etabs_model):
+        super(Form, self).__init__()
+        self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'assign' / 'wall_load_on_frames.ui'))
         self.etabs = etabs_model
         self.fill_widget()
         self.create_connections()
 
     def fill_widget(self):
         stories = self.etabs.SapModel.Story.GetNameList()[1]
-        self.stories.addItems(stories)
+        self.form.stories.addItems(stories)
         self.select_all_stories()
         load_patterns = self.etabs.load_patterns.get_load_patterns()
-        self.loadpat.addItems(load_patterns)
+        self.form.loadpat.addItems(load_patterns)
 
     def select_all_stories(self):
-        for i in range(self.stories.count()):
-            item = self.stories.item(i)
+        for i in range(self.form.stories.count()):
+            item = self.form.stories.item(i)
             item.setSelected(True)
 
     def create_connections(self):
-        self.auto_height.clicked.connect(self.reset_widget)
-        self.override_height.clicked.connect(self.reset_widget)
-        self.relative.clicked.connect(self.set_dists_range)
-        self.buttonBox.clicked.connect(self.handleButtonClick)
-
-    def handleButtonClick(self, button):
-        sb = self.buttonBox.standardButton(button)
-        if sb == QtGui.QDialogButtonBox.Apply:
-            self.accept()
+        self.form.auto_height.clicked.connect(self.reset_widget)
+        self.form.override_height.clicked.connect(self.reset_widget)
+        self.form.relative.clicked.connect(self.set_dists_range)
 
     def set_dists_range(self):
-        if self.relative.isChecked():
-            self.dist1.setRange(0, 1)
-            self.dist2.setRange(0, 1)
+        if self.form.relative.isChecked():
+            self.form.dist1.setRange(0, 1)
+            self.form.dist2.setRange(0, 1)
         else:
-            self.dist1.setRange(0, 30)
-            self.dist2.setRange(0, 30)
+            self.form.dist1.setRange(0, 30)
+            self.form.dist2.setRange(0, 30)
 
     def reset_widget(self):
-        if self.auto_height.isChecked():
-            self.none_beam_h.setEnabled(True)
-            self.height.setEnabled(False)
-        elif self.override_height.isChecked():
-            self.none_beam_h.setEnabled(False)
-            self.height.setEnabled(True)
+        if self.form.auto_height.isChecked():
+            self.form.none_beam_h.setEnabled(True)
+            self.form.height.setEnabled(False)
+        elif self.form.override_height.isChecked():
+            self.form.none_beam_h.setEnabled(False)
+            self.form.height.setEnabled(True)
 
     def accept(self):
-        loadpat = self.loadpat.currentText()
-        mass_per_area = self.mass.value()
-        if self.override_height.isChecked():
-            height = self.height.value()
+        loadpat = self.form.loadpat.currentText()
+        mass_per_area = self.form.mass.value()
+        if self.form.override_height.isChecked():
+            height = self.form.height.value()
         else:
             height = None
-        stories = [item.text() for item in self.stories.selectedItems()]
-        none_beam_h = self.none_beam_h.value()
-        dist1 = self.dist1.value()
-        dist2 = self.dist2.value()
-        relative = self.relative.isChecked()
-        load_type = WallLoadForm.LOADTYPE[self.load_type.currentText()]
-        replace = self.replace.isChecked()
-        parapet_wall_height = self.parapet_wall_height.value()
-        height_from_below = self.height_from_below.isChecked()
-        opening_ratio = self.opening_ratio.value()
+        stories = [item.text() for item in self.form.stories.selectedItems()]
+        none_beam_h = self.form.none_beam_h.value()
+        dist1 = self.form.dist1.value()
+        dist2 = self.form.dist2.value()
+        relative = self.form.relative.isChecked()
+        load_type = Form.LOADTYPE[self.form.load_type.currentText()]
+        replace = self.form.replace.isChecked()
+        parapet_wall_height = self.form.parapet_wall_height.value()
+        height_from_below = self.form.height_from_below.isChecked()
+        opening_ratio = self.form.opening_ratio.value()
         names = None
         item_type = 0
         self.etabs.frame_obj.assign_gravity_load_to_selfs_and_above_beams(
@@ -92,3 +86,6 @@ class WallLoadForm(wall_load_base, wall_load_window):
             height_from_below,
             opening_ratio,
         )
+
+    def reject(self):
+        Gui.Control.closeDialog()
