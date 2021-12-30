@@ -74,5 +74,4 @@ class Form(QtWidgets.QWidget):
                 self.form.result_label.setText(ret)
 
     def reject(self):
-        import FreeCADGui as Gui
         Gui.Control.closeDialog()

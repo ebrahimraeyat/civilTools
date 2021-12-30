@@ -24,6 +24,7 @@ from gui_civiltools import (
     gui_show_aj,
     gui_scale_response_spec,
     gui_high_pressure_columns,
+    gui_assign_frame_sections,
     )
 
 
@@ -132,6 +133,7 @@ Gui.addCommand('civil_show_weakness', gui_show_weakness.CivilShowWeakness())
 Gui.addCommand('civil_show_aj', gui_show_aj.CivilShowAj())
 Gui.addCommand('civil_scale_response_spec', gui_scale_response_spec.CivilScaleResponseSpec())
 Gui.addCommand('civil_high_pressure_columns', gui_high_pressure_columns.CivilHighPressureColumns())
+Gui.addCommand('civil_assign_frame_sections', gui_assign_frame_sections.CivilAssignFrameSections())
 
 civiltools_list = [
             # "civil_settings",
@@ -149,4 +151,7 @@ civiltools_list = [
             "civil_show_aj",
             "civil_scale_response_spec",
             "civil_high_pressure_columns",
+            ]
+civiltools_assign = [
+            "civil_assign_frame_sections",
             ]
