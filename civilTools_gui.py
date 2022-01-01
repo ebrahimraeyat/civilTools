@@ -9,7 +9,7 @@ import FreeCADGui as Gui
 
 
 from gui_civiltools import (
-    # gui_settings,
+    gui_earthquake_factor,
     gui_irregurality_of_mass,
     gui_explod_load_patterns,
     gui_story_stiffness,
@@ -120,7 +120,7 @@ class SerialForm:
 
 
 # Gui.addCommand('Civil_help', CivilHelp())
-# Gui.addCommand('civil_settings', gui_settings.CivilSettings())
+Gui.addCommand('civil_earthquake_factor', gui_earthquake_factor.CivilEarthquakeFactor())
 Gui.addCommand('civil_irregurality_of_mass', gui_irregurality_of_mass.CivilIrregularityOfMass())
 Gui.addCommand('civil_explod_load_patterns', gui_explod_load_patterns.CivilExplodLoadPatterns())
 Gui.addCommand('civil_story_stiffness', gui_story_stiffness.CivilStoryStiffness())
@@ -140,7 +140,7 @@ Gui.addCommand('civil_offset_beams', gui_offset_beams.CivilOffsetBeam())
 Gui.addCommand('civil_wall_load_on_frames', gui_wall_load_on_frames.CivilWallLoadOnFrames())
 
 civiltools_list = [
-            # "civil_settings",
+            # "civil_earthquake_factor",
             "civil_irregurality_of_mass",
             "civil_explod_load_patterns",
             "civil_story_stiffness",

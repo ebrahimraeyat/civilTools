@@ -43,14 +43,9 @@ class CivilHighPressureColumns:
             from PySide2.QtWidgets import QMessageBox
             QMessageBox.warning(None, 'ETABS', 'Please open etabs file!')
             return False
-        data, headers = etabs.database.get_hight_pressure_columns()
-        import table_model
-        table_model.show_results(
-            data,
-            headers,
-            model=table_model.HighPressureColumnModel,
-            function=etabs.view.show_frame,
-            )
+        from py_widget.control import high_pressure_columns
+        win = high_pressure_columns.Form(etabs)
+        Gui.Control.showDialog(win)
         show_warning_about_number_of_use(check)
         
     def IsActive(self):

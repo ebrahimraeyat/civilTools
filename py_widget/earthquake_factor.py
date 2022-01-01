@@ -2,11 +2,22 @@
 import os
 from pathlib import Path
 
+from PySide2 import  QtWidgets
+from PySide2.QtWidgets import (
+    QTreeWidgetItemIterator,
+    QTableWidgetItem,
+    QMessageBox,
+    QFileDialog,
+    )
+
+import FreeCADGui as Gui
+import civiltools_rc
+
 civiltools_path = Path(__file__).absolute().parent.parent
-from PySide2.QtCore import *
-from PySide2.QtGui import *
-from PySide2.QtWidgets import *
-from PySide2.QtUiTools import loadUiType
+# from PySide2.QtCore import *
+# from PySide2.QtGui import *
+# from PySide2.QtWidgets import *
+# from PySide2.QtUiTools import loadUiType
 from db import ostanha
 from building.build import *
 from models import *
@@ -15,17 +26,16 @@ from models import *
 import export
 from exporter import config
 
-import civiltools_rc
 
 rTable = RFactorTable()
 systemTypes = rTable.getSystemTypes()
 
 
-class Ui(QDialog, loadUiType(str(civiltools_path / 'widgets' / 'settings.ui'))[0]):
 
-    def __init__(self):
-        super(Ui, self).__init__()
-        self.setupUi(self)
+class Form(QtWidgets.QWidget):
+    def __init__(self, etabs_model):
+        super(Form, self).__init__()
+        self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'assign' / 'wall_load_on_frames.ui'))
         self.dirty = False
         self.lastDirectory = ''
         self.printer = None
@@ -253,7 +263,7 @@ class Ui(QDialog, loadUiType(str(civiltools_path / 'widgets' / 'settings.ui'))[0
         config.save(self, json_file)
 
     def ok_to_continue(self, title='save config?', message='save configuration file?'):
-        return QMessageBox.question(self, title, message,
+        return QMessageBox.question(None, title, message,
                                          QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel)
 
     def xactivate(self):

@@ -9,17 +9,17 @@ import FreeCADGui as Gui
 
 
 
-class CivilSettings:
+class CivilEarthquakeFactor:
 
     def GetResources(self):
         menu_text = QtCore.QT_TRANSLATE_NOOP(
             "Civil",
-            "Settings")
+            "Earthquake Factors")
         tooltip = QtCore.QT_TRANSLATE_NOOP(
             "Civil",
-            "Setting for cfactor")
+            "Calculate Earthquake Factors and Write to ETABS Model")
         path = str(
-                   Path(__file__).parent.absolute().parent / "images" / "settings.svg"
+                   Path(__file__).parent.absolute().parent / "images" / "earthquake.svg"
                    )
         return {'Pixmap': path,
                 'MenuText': menu_text,
@@ -40,10 +40,10 @@ class CivilSettings:
         mdi = get_mdiarea()
         if not mdi:
             return None
-        self.initiate()
-        from py_widget import settings
-        self.win = settings.Ui()
-        sub = mdi.addSubWindow(self.win)
+        # self.initiate()
+        from py_widget import earthquake_factor
+        win = earthquake_factor.Form()
+        sub = mdi.addSubWindow(win)
         sub.show()
         
     def IsActive(self):
