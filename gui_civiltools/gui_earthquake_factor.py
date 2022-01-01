@@ -41,9 +41,15 @@ class CivilEarthquakeFactor:
         if not mdi:
             return None
         # self.initiate()
+        import etabs_obj
+        etabs = etabs_obj.EtabsModel()
+        if not etabs.success:
+            from PySide2.QtWidgets import QMessageBox
+            QMessageBox.warning(None, 'ETABS', 'Please open etabs file!')
+            return False
         from py_widget import earthquake_factor
-        win = earthquake_factor.Form()
-        sub = mdi.addSubWindow(win)
+        win = earthquake_factor.Form(etabs)
+        sub = mdi.addSubWindow(win.form)
         sub.show()
         
     def IsActive(self):

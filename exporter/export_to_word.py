@@ -1,3 +1,11 @@
+try:
+    from docx.shared import Inches
+except ImportError:
+    import subprocess
+    import sys
+    package = 'python-docx'
+    subprocess.check_call(['python', "-m", "pip", "install", package])
+    
 from docx import Document
 from docx.enum.table import WD_TABLE_DIRECTION
 import sys

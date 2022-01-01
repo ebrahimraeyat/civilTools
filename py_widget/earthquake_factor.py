@@ -23,7 +23,7 @@ from building.build import *
 from models import *
 # import pyqtgraph as pg
 # from plots.plotB import PlotB as pl
-import export
+# import export
 from exporter import config
 
 
@@ -35,14 +35,14 @@ systemTypes = rTable.getSystemTypes()
 class Form(QtWidgets.QWidget):
     def __init__(self, etabs_model):
         super(Form, self).__init__()
-        self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'assign' / 'wall_load_on_frames.ui'))
+        self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'earthquake_factor.ui'))
         self.dirty = False
         self.lastDirectory = ''
         self.printer = None
         self.create_widgets()
         self.final_building = self.current_building()
-        self.structure_model = StructureModel(self.final_building)
-        self.structure_properties_table.setModel(self.structure_model)
+        self.form.structure_model = StructureModel(self.final_building)
+        self.form.structure_properties_table.setModel(self.form.structure_model)
         self.resizeColumns()
         self.create_connections()
         # self.add_actions()
@@ -51,18 +51,18 @@ class Form(QtWidgets.QWidget):
         self.calculate()
 
     def create_connections(self):
-        self.calculate_button.clicked.connect(self.calculate)
-        self.x_treeWidget.itemActivated.connect(self.xactivate)
-        self.ostanBox.currentIndexChanged.connect(self.set_shahrs_of_current_ostan)
-        self.shahrBox.currentIndexChanged.connect(self.setA)
+        self.form.calculate_button.clicked.connect(self.calculate)
+        self.form.x_treeWidget.itemActivated.connect(self.xactivate)
+        self.form.ostanBox.currentIndexChanged.connect(self.set_shahrs_of_current_ostan)
+        self.form.shahrBox.currentIndexChanged.connect(self.setA)
 
     def resizeColumns(self):
         for column in (X, Y):
-            self.structure_properties_table.resizeColumnToContents(column)
+            self.form.structure_properties_table.resizeColumnToContents(column)
 
     def create_widgets(self):
         ostans = ostanha.ostans.keys()
-        self.ostanBox.addItems(ostans)
+        self.form.ostanBox.addItems(ostans)
         self.set_shahrs_of_current_ostan()
         self.setA()
         #
@@ -75,34 +75,34 @@ class Form(QtWidgets.QWidget):
         # self.draw_frame.setLayout(draw_layout)
 
         for i in range(5):
-            self.soilPropertiesTable.setSpan(i, 0, 1, 2)
-        iterator = QTreeWidgetItemIterator(self.x_treeWidget)
+            self.form.soilPropertiesTable.setSpan(i, 0, 1, 2)
+        iterator = QTreeWidgetItemIterator(self.form.x_treeWidget)
         i = 0
         while iterator.value():
             item = iterator.value()
             iterator += 1
             if i == 2:
-                self.x_treeWidget.setCurrentItem(item, 0)
+                self.form.x_treeWidget.setCurrentItem(item, 0)
                 break
             i += 1
-        iterator = QTreeWidgetItemIterator(self.y_treeWidget)
+        iterator = QTreeWidgetItemIterator(self.form.y_treeWidget)
         i = 0
         while iterator.value():
             item = iterator.value()
             iterator += 1
             if i == 2:
-                self.y_treeWidget.setCurrentItem(item, 0)
+                self.form.y_treeWidget.setCurrentItem(item, 0)
                 break
             i += 1
 
     def closeEvent(self, event):
         qsettings = QSettings("civiltools", "cfactor")
         qsettings.setValue("geometry", self.saveGeometry())
-        qsettings.setValue("hsplitter", self.hsplitter.saveState())
-        qsettings.setValue("v1splitter", self.v1splitter.saveState())
-        qsettings.setValue("v2splitter", self.v2splitter.saveState())
+        qsettings.setValue("hsplitter", self.form.hsplitter.saveState())
+        qsettings.setValue("v1splitter", self.form.v1splitter.saveState())
+        qsettings.setValue("v2splitter", self.form.v2splitter.saveState())
         self.save_config()
-        self.set_site_and_building_props()
+        # self.set_site_and_building_props()
         event.accept()
 
     def set_site_and_building_props(self):
@@ -234,9 +234,9 @@ class Form(QtWidgets.QWidget):
     def load_settings(self):
         qsettings = QSettings("civiltools", "cfactor")
         self.restoreGeometry(qsettings.value("geometry", self.saveGeometry()))
-        self.hsplitter.restoreState(qsettings.value("hsplitter", self.hsplitter.saveState()))
-        self.v1splitter.restoreState(qsettings.value("v1splitter", self.v1splitter.saveState()))
-        self.v2splitter.restoreState(qsettings.value("v2splitter", self.v2splitter.saveState()))
+        self.form.hsplitter.restoreState(qsettings.value("hsplitter", self.form.hsplitter.saveState()))
+        self.form.v1splitter.restoreState(qsettings.value("v1splitter", self.form.v1splitter.saveState()))
+        self.form.v2splitter.restoreState(qsettings.value("v2splitter", self.form.v2splitter.saveState()))
 
     def load_config(self, json_file=None):
         if not json_file:
@@ -248,7 +248,7 @@ class Form(QtWidgets.QWidget):
                 json_file = cfactor_dir / 'cfactor.json'
                 if not json_file.exists():
                     return
-        config.load(self, json_file)
+        config.load(self.form, json_file)
 
     def save_config(self, json_file=None):
         if not json_file:
@@ -260,43 +260,43 @@ class Form(QtWidgets.QWidget):
             if not cfactor_dir.exists():
                 cfactor_dir.mkdir()
             json_file = cfactor_dir / 'cfactor.json'
-        config.save(self, json_file)
+        config.save(self.form, json_file)
 
     def ok_to_continue(self, title='save config?', message='save configuration file?'):
         return QMessageBox.question(None, title, message,
                                          QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel)
 
     def xactivate(self):
-        if self.x_treeWidget.currentItem().parent():
-            system = self.x_treeWidget.currentItem().parent().text(0)
-            lateral = self.x_treeWidget.currentItem().text(0)
-            self.y_treeWidget.scrollToItem(self.x_treeWidget.currentItem())
+        if self.form.x_treeWidget.currentItem().parent():
+            system = self.form.x_treeWidget.currentItem().parent().text(0)
+            lateral = self.form.x_treeWidget.currentItem().text(0)
+            self.form.y_treeWidget.scrollToItem(self.form.x_treeWidget.currentItem())
             return (system, lateral)
         return None
 
     def yactivate(self):
-        if self.y_treeWidget.currentItem().parent():
-            system = self.y_treeWidget.currentItem().parent().text(0)
-            lateral = self.y_treeWidget.currentItem().text(0)
+        if self.form.y_treeWidget.currentItem().parent():
+            system = self.form.y_treeWidget.currentItem().parent().text(0)
+            lateral = self.form.y_treeWidget.currentItem().text(0)
             return (system, lateral)
         return None
 
     def get_current_ostan(self):
-        return self.ostanBox.currentText()
+        return self.form.ostanBox.currentText()
 
     def get_current_shahr(self):
-        return self.shahrBox.currentText()
+        return self.form.shahrBox.currentText()
 
     def get_shahrs_of_current_ostan(self, ostan):
         '''return shahrs of ostan'''
         return ostanha.ostans[ostan].keys()
 
     def set_shahrs_of_current_ostan(self):
-        self.shahrBox.clear()
+        self.form.shahrBox.clear()
         ostan = self.get_current_ostan()
         shahrs = self.get_shahrs_of_current_ostan(ostan)
         # shahrs.sort()
-        self.shahrBox.addItems(shahrs)
+        self.form.shahrBox.addItems(shahrs)
 
     def setA(self):
         sotoh = ['خیلی زیاد', 'زیاد', 'متوسط', 'کم']
@@ -304,25 +304,25 @@ class Form(QtWidgets.QWidget):
         shahr = self.get_current_shahr()
         try:
             A = int(ostanha.ostans[ostan][shahr][0])
-            self.accText.setText(sotoh[A - 1])
+            self.form.accText.setText(sotoh[A - 1])
         except KeyError:
             pass
 
     def get_current_soil_type(self):
-        return str(self.soilType.currentText())
+        return str(self.form.soilType.currentText())
 
     def setInfillCheckBoxStatus(self, xSystem, ySystem):
         infill = xSystem.is_infill and ySystem.is_infill
         if infill is None:
-            self.infillCheckBox.setEnabled(False)
-            self.infillCheckBox.setCheckState(False)
+            self.form.infillCheckBox.setEnabled(False)
+            self.form.infillCheckBox.setCheckState(False)
         else:
-            self.infillCheckBox.setEnabled(True)
+            self.form.infillCheckBox.setEnabled(True)
 
     def getTAnalatical(self):
         useTan = True
-        xTan = self.xTAnalaticalSpinBox.value()
-        yTan = self.yTAnalaticalSpinBox.value()
+        xTan = self.form.xTAnalaticalSpinBox.value()
+        yTan = self.form.yTAnalaticalSpinBox.value()
         return useTan, xTan, yTan
 
     def setSoilProperties(self, build=None):
@@ -339,17 +339,17 @@ class Form(QtWidgets.QWidget):
             else:
                 item = QTableWidgetItem("%.2f " % item)
             item.setTextAlignment(Qt.AlignCenter)
-            self.soilPropertiesTable.setItem(row, 0, item)
+            self.form.soilPropertiesTable.setItem(row, 0, item)
 
         for row, item in enumerate(xSoilProp):
             item = QTableWidgetItem("%.2f " % item)
             item.setTextAlignment(Qt.AlignCenter)
-            self.soilPropertiesTable.setItem(row + len(soilProp), 0, item)
+            self.form.soilPropertiesTable.setItem(row + len(soilProp), 0, item)
 
         for row, item in enumerate(ySoilProp):
             item = QTableWidgetItem("%.2f " % item)
             item.setTextAlignment(Qt.AlignCenter)
-            self.soilPropertiesTable.setItem(row + len(soilProp), 1, item)
+            self.form.soilPropertiesTable.setItem(row + len(soilProp), 1, item)
 
     def updateBCurve(self, build):
         self.p.clear()
@@ -384,12 +384,12 @@ class Form(QtWidgets.QWidget):
         self.p.setYRange(0, B.max() + 1, padding=0)
 
     def current_building(self):
-        risk_level = self.accText.text()
+        risk_level = self.form.accText.text()
         city = self.get_current_shahr()
-        height = self.HSpinBox.value()
-        importance_factor = float(self.IBox.currentText())
+        height = self.form.HSpinBox.value()
+        importance_factor = float(self.form.IBox.currentText())
         soil = self.get_current_soil_type()
-        noStory = self.storySpinBox.value()
+        noStory = self.form.storySpinBox.value()
         x_system = self.xactivate()
         y_system = self.yactivate()
         if not x_system and y_system:
@@ -403,7 +403,7 @@ class Form(QtWidgets.QWidget):
         useTan = Tan[0]
         xTan = Tan[1]
         yTan = Tan[2]
-        is_infill = self.infillCheckBox.isChecked()
+        is_infill = self.form.infillCheckBox.isChecked()
         build = Building(risk_level, importance_factor, soil, noStory, height, is_infill,
                          xSystem, ySystem, city, xTan, yTan, useTan)
         return build
@@ -414,9 +414,9 @@ class Form(QtWidgets.QWidget):
         if not self.final_building:
             return
         self.setSoilProperties(self.final_building)
-        self.structure_model.beginResetModel()
-        self.structure_model.build = self.final_building
-        self.structure_model.endResetModel()
+        self.form.structure_model.beginResetModel()
+        self.form.structure_model.build = self.final_building
+        self.form.structure_model.endResetModel()
         self.resizeColumns()
         results = self.final_building.results
         if results[0] is True:
@@ -442,10 +442,12 @@ class Form(QtWidgets.QWidget):
             return
 
     def export_to_word(self):
+        import export
         export_result = export.Export(self, self.dirty, self.lastDirectory, self.final_building)
         export_result.to_word()
 
     def save(self):
+        import export
         export_result = export.Export(self, self.dirty, self.lastDirectory, None)
         export_result.to_json()
 
