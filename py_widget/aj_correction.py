@@ -111,16 +111,14 @@ class Form(QtWidgets.QWidget):
         qsettings.setValue("geometry", self.saveGeometry())
         qsettings.setValue("pos", self.pos())
         qsettings.setValue("size", self.size())
-        qsettings.setValue("hsplitter1", self.form.hsplitter1.saveState())
-        qsettings.setValue("hsplitter2", self.form.hsplitter1.saveState())
+        qsettings.setValue("splitter", self.form.splitter.saveState())
 
     def load_settings(self):
         qsettings = QSettings("civiltools", 'aj_correction')
         self.restoreGeometry(qsettings.value("geometry", self.saveGeometry()))
         self.move(qsettings.value("pos", self.pos()))
         self.resize(qsettings.value("size", self.size()))
-        self.form.hsplitter1.restoreState(qsettings.value("hsplitter1", self.form.hsplitter1.saveState()))
-        self.form.hsplitter2.restoreState(qsettings.value("hsplitter2", self.form.hsplitter2.saveState()))
+        self.form.splitter.restoreState(qsettings.value("splitter", self.form.splitter.saveState()))
 
 class AjApplyModel(QAbstractTableModel):
     def __init__(self, df):
