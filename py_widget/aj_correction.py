@@ -32,8 +32,8 @@ class Form(QtWidgets.QWidget):
         self.dynamic_df = self.etabs.get_dynamic_magnification_coeff_aj(df)
         self.aj_apply_model_static = AjApplyModel(self.static_df)
         self.form.aj_apply_static_view.setModel(self.aj_apply_model_static)
-        aj_apply_model_dynamic = AjApplyModel(self.dynamic_df)
-        self.form.aj_apply_dynamic_view.setModel(aj_apply_model_dynamic)
+        self.aj_apply_model_dynamic = AjApplyModel(self.dynamic_df)
+        self.form.aj_apply_dynamic_view.setModel(self.aj_apply_model_dynamic)
         # self.aj_apply_static_view.setItemDelegate(AjDelegate(self))
         self.form.aj_apply_static_view.resizeColumnsToContents()
         self.form.aj_apply_dynamic_view.resizeColumnsToContents()
@@ -46,11 +46,17 @@ class Form(QtWidgets.QWidget):
 
     def create_connections(self):
         self.form.static_apply.clicked.connect(self.apply_static_aj)
+        self.form.dynamic_apply.clicked.connect(self.apply_dynamic_aj)
         
         # self.form.model.dataChanged.connect(self.story_length_changed)
 
     def apply_static_aj(self):
         self.etabs.apply_aj_df(self.aj_apply_model_static.df)
+        msg = "Successfully written to Etabs."
+        QMessageBox.information(None, "done", msg)
+    
+    def apply_dynamic_aj(self):
+        self.etabs.database.write_daynamic_aj_user_coefficient(self.aj_apply_model_dynamic.df)
         msg = "Successfully written to Etabs."
         QMessageBox.information(None, "done", msg)
 
