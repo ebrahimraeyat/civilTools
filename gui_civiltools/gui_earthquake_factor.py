@@ -26,20 +26,20 @@ class CivilEarthquakeFactor:
                 'ToolTip': tooltip}
     
     def Activated(self):
-        def get_mdiarea():
-            """ Return FreeCAD MdiArea. """
-            mw = Gui.getMainWindow()
-            if not mw:
-                return None
-            childs = mw.children()
-            for c in childs:
-                if isinstance(c, PySide2.QtWidgets.QMdiArea):
-                    return c
-            return None
+        # def get_mdiarea():
+        #     """ Return FreeCAD MdiArea. """
+        #     mw = Gui.getMainWindow()
+        #     if not mw:
+        #         return None
+        #     childs = mw.children()
+        #     for c in childs:
+        #         if isinstance(c, PySide2.QtWidgets.QMdiArea):
+        #             return c
+        #     return None
 
-        mdi = get_mdiarea()
-        if not mdi:
-            return None
+        # mdi = get_mdiarea()
+        # if not mdi:
+        #     return None
         # self.initiate()
         import etabs_obj
         etabs = etabs_obj.EtabsModel()
@@ -49,8 +49,9 @@ class CivilEarthquakeFactor:
             return False
         from py_widget import earthquake_factor
         win = earthquake_factor.Form(etabs)
-        sub = mdi.addSubWindow(win.form)
-        sub.show()
+        Gui.Control.showDialog(win)
+        # sub = mdi.addSubWindow(win.form)
+        # sub.show()
         
     def IsActive(self):
         return True

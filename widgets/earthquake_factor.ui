@@ -542,7 +542,7 @@
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -570,7 +570,7 @@
              <cursorShape>PointingHandCursor</cursorShape>
             </property>
             <property name="toolTip">
-             <string>اجرا</string>
+             <string>Caculate Earthquake Factor</string>
             </property>
             <property name="layoutDirection">
              <enum>Qt::RightToLeft</enum>
@@ -603,7 +603,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="calculate_button_2">
+           <widget class="QPushButton" name="apply_to_etabs">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -626,7 +626,7 @@
              <cursorShape>PointingHandCursor</cursorShape>
             </property>
             <property name="toolTip">
-             <string>اجرا</string>
+             <string>Apply Earthquke factor to ETABS Model</string>
             </property>
             <property name="layoutDirection">
              <enum>Qt::RightToLeft</enum>
@@ -639,7 +639,7 @@
             </property>
             <property name="icon">
              <iconset resource="../civiltools.qrc">
-              <normaloff>:/civiltools/images/word.svg</normaloff>:/civiltools/images/word.svg</iconset>
+              <normaloff>:/civiltools/images/etabs.png</normaloff>:/civiltools/images/etabs.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -991,7 +991,7 @@ p, li { white-space: pre-wrap; }
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
          <widget class="QTableView" name="structure_properties_table">

@@ -55,6 +55,7 @@ class Form(QtWidgets.QWidget):
         self.form.x_treeWidget.itemActivated.connect(self.xactivate)
         self.form.ostanBox.currentIndexChanged.connect(self.set_shahrs_of_current_ostan)
         self.form.shahrBox.currentIndexChanged.connect(self.setA)
+        self.form.apply_to_etabs.clicked.connect(self.apply_factors_to_etabs)
 
     def resizeColumns(self):
         for column in (X, Y):
@@ -95,15 +96,16 @@ class Form(QtWidgets.QWidget):
                 break
             i += 1
 
-    def closeEvent(self, event):
+    def accept(self):
         qsettings = QSettings("civiltools", "cfactor")
         qsettings.setValue("geometry", self.saveGeometry())
         qsettings.setValue("hsplitter", self.form.hsplitter.saveState())
         qsettings.setValue("v1splitter", self.form.v1splitter.saveState())
         qsettings.setValue("v2splitter", self.form.v2splitter.saveState())
         self.save_config()
+        Gui.Control.closeDialog()
         # self.set_site_and_building_props()
-        event.accept()
+        # event.accept()
 
     def set_site_and_building_props(self):
         import FreeCAD
@@ -440,6 +442,33 @@ class Form(QtWidgets.QWidget):
             title, err, direction = results[1:]
             QMessageBox.critical(self, title % direction, str(err))
             return
+
+    def apply_factors_to_etabs(self):
+        from gui_civiltools.gui_check_legal import (
+                allowed_to_continue,
+                show_warning_about_number_of_use,
+                )
+        allow, check = allowed_to_continue(
+            'export_to_etabs.bin',
+            'https://gist.githubusercontent.com/ebrahimraeyat/7f10571fab2a08b7a17ab782778e53e1/raw',
+            'cfactor'
+            )
+        if not allow:
+            return
+        import etabs_obj
+        etabs = etabs_obj.EtabsModel()
+        if not etabs.success:
+            QMessageBox.warning(None, 'ETABS', 'Please open etabs file!')
+            return False
+        ret = etabs.apply_cfactor_to_edb(self.final_building)
+        if ret == 1:
+            msg = "Data can not be written to your Etabs file,\n If you want to correct this problem, try Run analysis."
+            title = "Remove Error?"
+            QMessageBox.information(None, title, msg)
+            return
+        msg = "Successfully written to Etabs."
+        QMessageBox.information(None, "done", msg)
+        show_warning_about_number_of_use(check)
 
     def export_to_word(self):
         import export

@@ -140,7 +140,7 @@ Gui.addCommand('civil_offset_beams', gui_offset_beams.CivilOffsetBeam())
 Gui.addCommand('civil_wall_load_on_frames', gui_wall_load_on_frames.CivilWallLoadOnFrames())
 
 civiltools_list = [
-            # "civil_earthquake_factor",
+            "civil_earthquake_factor",
             "civil_irregurality_of_mass",
             "civil_explod_load_patterns",
             "civil_story_stiffness",

@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="civiltools">
+    <file>images/etabs.png</file>
     <file>images/word.svg</file>
     <file>images/show.svg</file>
     <file>images/wall_load.svg</file>
