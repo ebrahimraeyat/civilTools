@@ -4,19 +4,39 @@ def save(json_file, widget):
 	d = {}
 	d['ostan'] = widget.ostanBox.currentText()
 	d['city'] = widget.cityBox.currentText()
+	d['risk_level'] = widget.accText.text()
 	d['soil_type'] = widget.soilType.currentText()
 	d['importance_factor'] = widget.IBox.currentText()
 	d['bot_x_combo'] = widget.bot_x_combo.currentText()
 	d['top_x_combo'] = widget.top_x_combo.currentText()
 	d['height_x'] = widget.height_x_spinbox.value()
 	d['no_of_story_x'] = widget.no_story_x_spinbox.value()
-	d['t_an_x'] = widget.xTAnalaticalSpinBox.value()
-	d['t_an_y'] = widget.yTAnalaticalSpinBox.value()
+	# d['t_an_x'] = widget.xTAnalaticalSpinBox.value()
+	# d['t_an_y'] = widget.yTAnalaticalSpinBox.value()
 	d['infill'] = widget.infillCheckBox.isChecked()
 	d['x_system'] = find_selected_item_in_treewidget(widget.x_treeWidget)
 	d['y_system'] = find_selected_item_in_treewidget(widget.y_treeWidget)
+	d['x_system_name'] = widget.x_treeWidget.currentItem().parent().text(0)
+	d['x_lateral_name'] = widget.x_treeWidget.currentItem().text(0)
+	d['y_system_name'] = widget.y_treeWidget.currentItem().parent().text(0)
+	d['y_lateral_name'] = widget.y_treeWidget.currentItem().text(0)
 	with open(json_file, 'w') as f:
 		json.dump(d, f)
+
+def save_analytical_periods(json_file, tx, ty):
+	with open(json_file, 'r') as f:
+		d = json.load(f)
+	d['t_an_x'] = tx
+	d['t_an_y'] = ty
+	with open(json_file, 'w') as f:
+		json.dump(d, f)
+
+def get_analytical_periods(json_file):
+	with open(json_file, 'r') as f:
+		d = json.load(f)
+	tx = d.get('t_an_x', 2)
+	ty = d.get('t_an_y', 2)
+	return tx, ty
 
 def load(json_file, widget=None):
 	with open(json_file, 'r') as f:
@@ -34,8 +54,8 @@ def load(json_file, widget=None):
 	widget.top_x_combo.setCurrentIndex(index)
 	widget.height_x_spinbox.setValue(d['height_x'])
 	widget.no_story_x_spinbox.setValue(d['no_of_story_x'])
-	widget.xTAnalaticalSpinBox.setValue(d['t_an_x'])
-	widget.yTAnalaticalSpinBox.setValue(d['t_an_y'])
+	# widget.xTAnalaticalSpinBox.setValue(d['t_an_x'])
+	# widget.yTAnalaticalSpinBox.setValue(d['t_an_y'])
 	widget.infillCheckBox.setChecked(d['infill'])
 	x_item = d.get('x_system', None)
 	y_item = d.get('y_system', None)

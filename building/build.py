@@ -12,7 +12,7 @@ class Building(object):
     IDs3354 = (31, 34, 41, 42, 43, 44, 45, 46, 47, 48, 49)
 
     def __init__(self, risk_level, importance_factor, soilType, number_of_story, height,
-                 is_infill, x_system, y_system, city, x_period_an, y_period_an, useTan=True):
+                 is_infill, x_system, y_system, city, x_period_an, y_period_an):
 
         self.filename = ''
         self.risk_level = risk_level
@@ -29,7 +29,6 @@ class Building(object):
         self.y_system = y_system
         self.exp_period_x = self.period(x_system)
         self.exp_period_y = self.period(y_system)
-        self.useTan = useTan
         self.Tx = max(min(x_period_an, 1.25 * self.exp_period_x), self.exp_period_x)
         self.Ty = max(min(y_period_an, 1.25 * self.exp_period_y), self.exp_period_y)
         self.x_period_an = x_period_an
@@ -194,111 +193,6 @@ class Building(object):
         # else:
         #     return check_inputs
 
-    def __str__(self):
-        html = ''
-        #stamp = QDateTime().currentDateTime().toString("ddMMyyyyhhmmss")
-        html += '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"'
-        html += '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">\n'
-        #html += '<html xmlns="http://www.w3.org/1999/xhtml">\n'
-        #html += '<html>\n'
-        html += '<html dir="rtl" align="right">\n'
-        html += '<head>\n'
-        html += '<meta http-equiv="content-type" content="text/html; charset=UTF-8" />\n'
-        #html += '<meta name="stamp" content="' + stamp + '" /> \n'
-        html += '<title>CFactor Calculation Results</title>\n'
-        html += '<style type="text/css">\n'
-        html += 'body {\n'
-        html += 'font-size: 12pt;\n'
-        html += '}\n'
-        html += 'table {\n'
-        html += 'border-collapse: collapse;\n'
-        html += '}\n'
-        html += 'p#pfarsi {font-size:120%;}'
-        html += 'p#pmath {text-dir:ltr;text-align:left;font-size:120%;}'
-        # html += 'p#pmath {text-dir:ltr;font-size:120%;}'
-        html += '</style>\n'
-        html += '</head>\n'
-
-        html += '<body>\n'
-        html += '<h2 align=left>CFactor Calculations</h2>\n'
-        #html += 'Date: ' + QDateTime().currentDateTime().toString("dd MMM yyyy") + '\n'
-        html += '<br />\n'
-
-        html += u"<h1 align=center> مشخصات پروژه: </h1>\n"
-        html += (u"<p id=pfarsi> تعداد طبقات: {0} طبقه</p>"
-                 u"<p id=pfarsi> ارتفاع ساختمان: {1} متر</p>"
-                 ).format(self.number_of_story,
-                          self.height)
-        html += (u"<p id=pfarsi><b>  مشخصات سازه در راستای X:</b> </p>"
-                 u"<p id=pfarsi> {0}</p>"
-                 u"<p id=pfarsi><b>  مشخصات سازه در راستای Y:</b> </p>"
-                 u"<p id=pfarsi> {1}</p>").format(self.x_system.__str__(),
-                                                  self.y_system.__str__())
-        html += u"<p id=pfarsi><b>مشخصات ساختگاه:</b></p>"
-        html += (u"<p id=pfarsi>  محل اجرای پروژه: شهر {0} </p>"
-                 u"<p id=pfarsi> خطر نسبی زلزله: {1} </p>"
-                 u"<p id=pfarsi> نسبت شتاب مبنای طرح : {2}</p>"
-                 u"<p id=pfarsi> نوع خاک : تیپ {3} </p>"
-                 ).format(self.city,
-                          self.risk_level,
-                          self.acc,
-                          self.soilType
-                          )
-        html += u"<p id=pfarsi><b> محاسبه زمان تناوب سازه:</b> </p>"
-        if self.useTan:
-            html += (u"<p id=pfarsi> از زمان تناوب تحلیلی استفاده میگردد: </p>"
-                     u"<p id=pmath> T<sub>anx</sub>={0} Sec; T<sub>any</sub>={1} Sec</p>"
-                     ).format(self.Tx, self.Ty)
-        else:
-            if self.is_infill:
-                html += u"<p id=pfarsi>اثر میانقاب در نظر گرفته شده است.</p>"
-                html += ("<p id=pmath> T<sub>x</sub> = 0.8 &#215 {0} &#215 H <sup>{2}</sup>"
-                         " = 0.8 &#215 {0} &#215 ({1}) <sup>{2}</sup> = {3:.2f} Sec</p>").format(
-                    self.x_system.alpha, self.height, self.x_system.pow, self.Tx)
-                html += ("<p id=pmath> T<sub>y</sub> = 0.8 &#215 {0} &#215 H <sup>{2}</sup>"
-                         " = 0.8 &#215 {0} &#215 ({1}) <sup>{2}</sup> = {3:.2f} Sec</p>").format(
-                    self.y_system.alpha, self.height, self.y_system.pow, self.Ty)
-            else:
-                html += u"<p id=pfarsi>اثر میانقاب در نظر گرفته نشده است.</p>"
-                html += ("<p id=pmath> T<sub>x</sub> = {0} &#215 H <sup>{2}</sup>"
-                         " = {0} &#215 ({1}) <sup>{2}</sup> = {3:.2f} Sec</p>").format(
-                    self.x_system.alpha, self.height, self.x_system.pow, self.Tx)
-                html += ("<p id=pmath> T<sub>y</sub> = {0} &#215 H <sup>{2}</sup>"
-                         " = {0} &#215 ({1}) <sup>{2}</sup> = {3:.2f} Sec</p>").format(
-                    self.y_system.alpha, self.height, self.y_system.pow, self.Ty)
-        html += (u"<p id=pfarsi><b> مشخصات خاک: </b> </p>"
-                 u"<p id=pfarsi> {0}</p>").format(self.soilProperties.__str__())
-        html += (u"<p id=pfarsi><b> محاسبه ضریب بازتاب در راستای x: </b> {0}</p>"
-                 u'<p id=pmath> <b>B<sub>x</sub> = {1:.2f}</b></p>'
-                 ).format(self.soil_reflection_prop_x.__str__(), self.Bx)
-        html += (u"<p id=pfarsi><b> محاسبه ضریب بازتاب در راستای y: </b> {0}</p>"
-                 u'<p id=pmath> <b>B<sub>y</sub> = {1:.2f}</b></p>'
-                 ).format(self.soil_reflection_prop_y.__str__(), self.By)
-        #cx, cy = self.calculateC()
-        html += u"<p id=pfarsi><b> محاسبه ضریب K: </b> </p>"
-        html += (u"<p id=pmath> K<sub>x</sub>: {0} &#8658 <b>K<sub>x</sub> = {1:.2f}</b></p>"
-                 ).format(self._kxStr, self.kx)
-        html += (u"<p id=pmath> K<sub>y</sub>: {0} &#8658 <b>K<sub>y</sub> = {1:.2f}</b></p>"
-                 ).format(self._kyStr, self.ky)
-        html += u"<p id=pfarsi><b> محاسبه ضریب زلزله: </b> </p>"
-        html += (u"<p id=pmath>C<sub>min</sub> = 0.12 &#215 A &#215 I = {0:.4f}</p>"
-                 ).format(self.CMin)
-        html += (u"<p id=pmath><b>C<sub>x</sub></b> = A &#215 B<sub>x</sub> &#215 I / R<sub>ux</sub>"
-                 " = {0} &#215 {1:.2f} &#215 {2} / {3} = " + self.cxStr
-                 ).format(self.acc, self.Bx, self.importance_factor, self.x_system.Ru)
-        html += (u"<p id=pmath><b>C<sub>y</sub></b> = A &#215 B<sub>y</sub> &#215 I / R<sub>uy</sub>"
-                 " = {0} &#215 {1:.2f} &#215 {2} / {3} = " + self.cyStr
-                 ).format(self.acc, self.By, self.importance_factor, self.y_system.Ru)
-        html += '<hr />\n'
-        #html += '<b style="font-size: 8pt;">Cfactor Calculator ver. ' + __version__ + '</b>\n'
-        # if ext != 'pdf':
-        #html += u'     <a href="http://ebrahimraeyat.blog.ir"> دانلود آخرین ورژن نرم افزار</a> \n'
-        html += '</body>\n'
-        html += '</html>\n'
-        #html = html.encode('utf-8')
-        return html
-
-
 class StructureSystem(object):
 
     def __init__(self, system, lateral, direction='X'):
@@ -316,17 +210,6 @@ class StructureSystem(object):
         self.pow = Rus[5]
         self.is_infill = Rus[6]
         self.ID = Rus[7]
-
-    def __str__(self):
-        structure = ''
-        structure += u"<p id=pfarsi> سیستم سازه: {0} </p>"
-        structure += u"<p id=pfarsi> سیستم مقاوم در برابر نیروهای جانبی: {1} </p>"
-        structure += u'<p id=pmath>R<sub>u</sub>={2}; H<sub>m</sub>={3} m; '
-        structure += u'\u2126<sub>0</sub>={4}; C<sub>d</sub>={5}</p>'
-        structure = structure.format(self.systemType, self.lateralType,
-                                     self.Ru, self.maxHeight, self.phi0, self.cd)
-
-        return structure
 
     def __eq__(self, another):
         if self.systemType == another.systemType and \
@@ -359,17 +242,6 @@ class SoilProperties(object):
         self.S = soilTable.Ss[(soilType, acc)]
         self.S0 = soilTable.S0s[(soilType, acc)]
 
-    def __str__(self):
-        soilProp = u'<p id=pmath>soil type <b>{0}</b>: '
-        soilProp += u'<b>T<sub>0</sub></b>={1}; '
-        soilProp += u'<b>T<sub>s</sub></b>={2}; '
-        soilProp += u'<b>S=</b>{3}; '
-        soilProp += u'<b>S<sub>0</sub>=</b>{4}</p>'
-        soilProp = soilProp.format(self.soilType, self.T0,
-                                   self.Ts, self.S, self.S0)
-        return soilProp
-
-
 class ReflectionFactor(object):
 
     def __init__(self, soilType, acc, period):
@@ -390,13 +262,6 @@ class ReflectionFactor(object):
         self.b1Curve = self.B1Curve()
         self.nCurve = self.NCurve()
         self.bCurve = self.BCurve()
-
-    def __str__(self):
-        rf = u'<p id=pmath>' + self.B1str1 + '= {0:.2f}</p>'
-        rf += u'<p id=pmath>' + self.Nstr + ' &#8658 N = {1:.2f}</p>'
-        #rf += u'<p id=pmath> B = {2:.2f}</p>'
-        rf = rf.format(self.B1, self.N)
-        return rf
 
     def calculatB1(self):
         T = self.T

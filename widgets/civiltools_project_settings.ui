@@ -42,6 +42,38 @@
            </property>
           </widget>
          </item>
+         <item row="9" column="0">
+          <widget class="Gui::PrefDoubleSpinBox" name="height_x_spinbox">
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+           <property name="suffix">
+            <string> m</string>
+           </property>
+           <property name="maximum">
+            <double>300.000000000000000</double>
+           </property>
+           <property name="value">
+            <double>10.000000000000000</double>
+           </property>
+           <property name="prefEntry" stdset="0">
+            <cstring>building_height</cstring>
+           </property>
+           <property name="prefPath" stdset="0">
+            <cstring>Mod/civilTools</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QLabel" name="label_5">
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+           <property name="text">
+            <string>نوع خاک</string>
+           </property>
+          </widget>
+         </item>
          <item row="4" column="0">
           <widget class="Gui::PrefComboBox" name="IBox">
            <property name="currentIndex">
@@ -73,38 +105,6 @@
              <string>1.4</string>
             </property>
            </item>
-          </widget>
-         </item>
-         <item row="3" column="1">
-          <widget class="QLabel" name="label_5">
-           <property name="layoutDirection">
-            <enum>Qt::LeftToRight</enum>
-           </property>
-           <property name="text">
-            <string>نوع خاک</string>
-           </property>
-          </widget>
-         </item>
-         <item row="9" column="0">
-          <widget class="Gui::PrefDoubleSpinBox" name="height_x_spinbox">
-           <property name="layoutDirection">
-            <enum>Qt::LeftToRight</enum>
-           </property>
-           <property name="suffix">
-            <string> m</string>
-           </property>
-           <property name="maximum">
-            <double>300.000000000000000</double>
-           </property>
-           <property name="value">
-            <double>10.000000000000000</double>
-           </property>
-           <property name="prefEntry" stdset="0">
-            <cstring>building_height</cstring>
-           </property>
-           <property name="prefPath" stdset="0">
-            <cstring>Mod/civilTools</cstring>
-           </property>
           </widget>
          </item>
          <item row="3" column="0">
@@ -150,38 +150,6 @@
            </property>
           </widget>
          </item>
-         <item row="10" column="0">
-          <widget class="Gui::PrefDoubleSpinBox" name="no_story_x_spinbox">
-           <property name="layoutDirection">
-            <enum>Qt::LeftToRight</enum>
-           </property>
-           <property name="decimals">
-            <number>0</number>
-           </property>
-           <property name="maximum">
-            <double>100.000000000000000</double>
-           </property>
-           <property name="value">
-            <double>3.000000000000000</double>
-           </property>
-           <property name="prefEntry" stdset="0">
-            <cstring>num_story</cstring>
-           </property>
-           <property name="prefPath" stdset="0">
-            <cstring>Mod/civilTools</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="10" column="1">
-          <widget class="QLabel" name="label_8">
-           <property name="layoutDirection">
-            <enum>Qt::LeftToRight</enum>
-           </property>
-           <property name="text">
-            <string>تعداد طبقات</string>
-           </property>
-          </widget>
-         </item>
          <item row="7" column="1">
           <widget class="QLabel" name="label_13">
            <property name="layoutDirection">
@@ -202,7 +170,37 @@
            </property>
           </widget>
          </item>
-         <item row="14" column="0" colspan="2">
+         <item row="10" column="1">
+          <widget class="QLabel" name="label_8">
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+           <property name="text">
+            <string>تعداد طبقات</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="1">
+          <widget class="QLabel" name="label_12">
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+           <property name="text">
+            <string>پایینترین طبقه</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="0">
+          <widget class="Gui::PrefComboBox" name="top_x_combo">
+           <property name="prefEntry" stdset="0">
+            <cstring>ostan</cstring>
+           </property>
+           <property name="prefPath" stdset="0">
+            <cstring>Mod/civilTools</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="11" column="0" colspan="2">
           <widget class="Gui::PrefCheckBox" name="infillCheckBox">
            <property name="layoutDirection">
             <enum>Qt::RightToLeft</enum>
@@ -221,119 +219,13 @@
            </property>
           </widget>
          </item>
-         <item row="7" column="0">
-          <widget class="Gui::PrefComboBox" name="top_x_combo">
-           <property name="prefEntry" stdset="0">
-            <cstring>ostan</cstring>
-           </property>
-           <property name="prefPath" stdset="0">
-            <cstring>Mod/civilTools</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="1">
-          <widget class="QLabel" name="label_12">
+         <item row="0" column="1">
+          <widget class="QLabel" name="label_3">
            <property name="layoutDirection">
             <enum>Qt::LeftToRight</enum>
            </property>
            <property name="text">
-            <string>پایینترین طبقه</string>
-           </property>
-          </widget>
-         </item>
-         <item row="12" column="0">
-          <widget class="Gui::PrefDoubleSpinBox" name="xTAnalaticalSpinBox">
-           <property name="layoutDirection">
-            <enum>Qt::LeftToRight</enum>
-           </property>
-           <property name="suffix">
-            <string> sec</string>
-           </property>
-           <property name="decimals">
-            <number>4</number>
-           </property>
-           <property name="maximum">
-            <double>5.000000000000000</double>
-           </property>
-           <property name="singleStep">
-            <double>0.100000000000000</double>
-           </property>
-           <property name="value">
-            <double>2.000000000000000</double>
-           </property>
-           <property name="prefEntry" stdset="0">
-            <cstring>tx_an</cstring>
-           </property>
-           <property name="prefPath" stdset="0">
-            <cstring>Mod/civilTools</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="13" column="0">
-          <widget class="Gui::PrefDoubleSpinBox" name="yTAnalaticalSpinBox">
-           <property name="layoutDirection">
-            <enum>Qt::LeftToRight</enum>
-           </property>
-           <property name="suffix">
-            <string> sec</string>
-           </property>
-           <property name="decimals">
-            <number>4</number>
-           </property>
-           <property name="maximum">
-            <double>5.000000000000000</double>
-           </property>
-           <property name="singleStep">
-            <double>0.100000000000000</double>
-           </property>
-           <property name="value">
-            <double>2.000000000000000</double>
-           </property>
-           <property name="prefEntry" stdset="0">
-            <cstring>ty_an</cstring>
-           </property>
-           <property name="prefPath" stdset="0">
-            <cstring>Mod/civilTools</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="13" column="1">
-          <widget class="QLabel" name="label_11">
-           <property name="layoutDirection">
-            <enum>Qt::LeftToRight</enum>
-           </property>
-           <property name="text">
-            <string>راستای Y</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="Gui::PrefComboBox" name="cityBox">
-           <property name="prefEntry" stdset="0">
-            <cstring>city</cstring>
-           </property>
-           <property name="prefPath" stdset="0">
-            <cstring>Mod/civilTools</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0">
-          <widget class="Gui::PrefComboBox" name="ostanBox">
-           <property name="prefEntry" stdset="0">
-            <cstring>ostan</cstring>
-           </property>
-           <property name="prefPath" stdset="0">
-            <cstring>Mod/civilTools</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="12" column="1">
-          <widget class="QLabel" name="label_10">
-           <property name="layoutDirection">
-            <enum>Qt::LeftToRight</enum>
-           </property>
-           <property name="text">
-            <string>راستای X</string>
+            <string>استان</string>
            </property>
           </widget>
          </item>
@@ -347,26 +239,6 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="1">
-          <widget class="QLabel" name="label_3">
-           <property name="layoutDirection">
-            <enum>Qt::LeftToRight</enum>
-           </property>
-           <property name="text">
-            <string>استان</string>
-           </property>
-          </widget>
-         </item>
-         <item row="11" column="0" colspan="2">
-          <widget class="QLabel" name="label_9">
-           <property name="layoutDirection">
-            <enum>Qt::LeftToRight</enum>
-           </property>
-           <property name="text">
-            <string>زمان تناوب تحلیلی</string>
-           </property>
-          </widget>
-         </item>
          <item row="2" column="1">
           <widget class="QLabel" name="label_14">
            <property name="layoutDirection">
@@ -377,10 +249,40 @@
            </property>
           </widget>
          </item>
+         <item row="0" column="0">
+          <widget class="Gui::PrefComboBox" name="ostanBox">
+           <property name="prefEntry" stdset="0">
+            <cstring>ostan</cstring>
+           </property>
+           <property name="prefPath" stdset="0">
+            <cstring>Mod/civilTools</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="Gui::PrefComboBox" name="cityBox">
+           <property name="prefEntry" stdset="0">
+            <cstring>city</cstring>
+           </property>
+           <property name="prefPath" stdset="0">
+            <cstring>Mod/civilTools</cstring>
+           </property>
+          </widget>
+         </item>
          <item row="2" column="0">
           <widget class="QLineEdit" name="accText">
            <property name="enabled">
             <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="10" column="0">
+          <widget class="QSpinBox" name="no_story_x_spinbox">
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="value">
+            <number>3</number>
            </property>
           </widget>
          </item>

@@ -1,10 +1,9 @@
 
 from pathlib import Path
 
-import PySide2
 from PySide2 import QtCore
+from PySide2.QtWidgets import QMessageBox
 
-import FreeCAD
 import FreeCADGui as Gui
 
 
@@ -26,46 +25,33 @@ class CivilEarthquakeFactor:
                 'ToolTip': tooltip}
     
     def Activated(self):
-        # def get_mdiarea():
-        #     """ Return FreeCAD MdiArea. """
-        #     mw = Gui.getMainWindow()
-        #     if not mw:
-        #         return None
-        #     childs = mw.children()
-        #     for c in childs:
-        #         if isinstance(c, PySide2.QtWidgets.QMdiArea):
-        #             return c
-        #     return None
-
-        # mdi = get_mdiarea()
-        # if not mdi:
-        #     return None
-        # self.initiate()
+        from gui_civiltools.gui_check_legal import (
+                allowed_to_continue,
+                show_warning_about_number_of_use,
+                )
+        allow, check = allowed_to_continue(
+            'export_to_etabs.bin',
+            'https://gist.githubusercontent.com/ebrahimraeyat/7f10571fab2a08b7a17ab782778e53e1/raw',
+            'cfactor'
+            )
+        if not allow:
+            return
         import etabs_obj
         etabs = etabs_obj.EtabsModel()
         if not etabs.success:
-            from PySide2.QtWidgets import QMessageBox
             QMessageBox.warning(None, 'ETABS', 'Please open etabs file!')
             return False
+        etabs_filename = etabs.get_filename()
+        json_file = etabs_filename.with_suffix('.json')
+        if not json_file.exists():
+            QMessageBox.warning(None, 'Settings', 'Please Set Options First!')
+            Gui.runCommand("civiltools_settings")
+            return
         from py_widget import earthquake_factor
-        win = earthquake_factor.Form(etabs)
+        win = earthquake_factor.Form(etabs, json_file)
         Gui.Control.showDialog(win)
-        # sub = mdi.addSubWindow(win.form)
-        # sub.show()
+        show_warning_about_number_of_use(check)
         
     def IsActive(self):
         return True
-
-    def initiate(self):
-        doc = FreeCAD.ActiveDocument
-        if doc is None:
-            doc = FreeCAD.newDocument()
-        if not hasattr(doc, 'Site'):
-            import Arch
-            site = Arch.makeSite([])
-            build = Arch.makeBuilding([])
-            # build.recompute()
-            site.Group = [build]
-            doc.recompute()
-
         
