@@ -122,10 +122,16 @@ class Form(QtWidgets.QWidget):
         self.form.cityBox.setCurrentIndex(index)
 
     def save_config(self, json_file=None):
+        exists = False
         if not json_file:
             etabs_filename = self.etabs.get_filename()
             json_file = etabs_filename.with_suffix('.json')
+        if json_file.exists():
+            exists = True
+            tx, ty = config.get_analytical_periods(json_file)
         config.save(json_file, self.form)
+        if exists:
+            config.save_analytical_periods(json_file, tx, ty)
         param = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools")
         show_at_startup = self.form.show_at_startup.isChecked()
         param.SetBool("FirstTime", show_at_startup)
