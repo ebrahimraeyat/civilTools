@@ -28,7 +28,7 @@ class CivilToolsWorkbench(Workbench):
         # self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Civil Assign")), assign_list)
         self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("Civil", "civiltools")), civiltools_list)
         self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Assign")), civiltools_assign)
-        self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Tools")), civiltools_tools)
+        self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Tools")), civiltools_tools[1:])
 
         self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("Civil", "civiltools")), civiltools_list)
         self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Assign")), civiltools_assign)
@@ -36,8 +36,8 @@ class CivilToolsWorkbench(Workbench):
         # self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Export")), export_list)
         # self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Draw")), draw_list)
 
-        # pref_visual_ui_abs_path = str(Path(civilTools_gui.__file__).parent.absolute() / 'ui' / 'preferences-punch_visual.ui')
-        # Gui.addPreferencePage(pref_visual_ui_abs_path, "punch")
+        # pref_visual_ui_abs_path = str(Path(civilTools_gui.__file__).parent.absolute() / 'widgets' / 'civiltools_preferences.ui')
+        # Gui.addPreferencePage(pref_visual_ui_abs_path, "CivilTools")
         # Gui.addIconPath(
         #     str(
         #         Path(civilTools_gui.__file__).parent.absolute()
@@ -45,10 +45,10 @@ class CivilToolsWorkbench(Workbench):
         #         )
         #     )
 
-    # def Activated(self):
-    #     if FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/Civil").GetBool("FirstTime", True):
-    #         from DraftGui import todo
-    #         todo.delay(Gui.runCommand, "Civil_welcome")
+    def Activated(self):
+        if FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools").GetBool("FirstTime", True):
+            from DraftGui import todo
+            todo.delay(Gui.runCommand, "civiltools_settings")
 
 
 Gui.addWorkbench(CivilToolsWorkbench())

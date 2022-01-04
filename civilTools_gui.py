@@ -9,6 +9,7 @@ import FreeCADGui as Gui
 
 
 from gui_civiltools import (
+    gui_civiltools_settings,
     gui_earthquake_factor,
     gui_irregurality_of_mass,
     gui_explod_load_patterns,
@@ -16,7 +17,7 @@ from gui_civiltools import (
     gui_get_weakness,
     gui_show_torsion,
     gui_create_period_file,
-    # gui_automatic_drift,
+    gui_automatic_drift,
     gui_modify_torsion_stiffness,
     gui_show_story_forces,
     gui_show_story_stiffness,
@@ -120,6 +121,7 @@ class SerialForm:
 
 
 # Gui.addCommand('Civil_help', CivilHelp())
+Gui.addCommand('civiltools_settings', gui_civiltools_settings.CivilToolsSettings())
 Gui.addCommand('civil_earthquake_factor', gui_earthquake_factor.CivilEarthquakeFactor())
 Gui.addCommand('civil_irregurality_of_mass', gui_irregurality_of_mass.CivilIrregularityOfMass())
 Gui.addCommand('civil_explod_load_patterns', gui_explod_load_patterns.CivilExplodLoadPatterns())
@@ -127,7 +129,7 @@ Gui.addCommand('civil_story_stiffness', gui_story_stiffness.CivilStoryStiffness(
 Gui.addCommand('civil_get_weakness', gui_get_weakness.CivilGetWeakness())
 Gui.addCommand('civil_show_torsion', gui_show_torsion.CivilShowTorsion())
 Gui.addCommand('civil_create_period_file', gui_create_period_file.CivilCreatePeriodFile())
-# Gui.addCommand('civil_automatic_drift', gui_automatic_drift.CivilAutomaticDrift())
+Gui.addCommand('civil_automatic_drift', gui_automatic_drift.CivilAutomaticDrift())
 Gui.addCommand('civil_modify_torsion_stiffness', gui_modify_torsion_stiffness.CivilBeamJ())
 Gui.addCommand('civil_show_story_forces', gui_show_story_forces.CivilStoryForces())
 Gui.addCommand('civil_show_story_stiffness', gui_show_story_stiffness.CivilShowStoryStiffness())
@@ -146,7 +148,7 @@ civiltools_list = [
             "civil_story_stiffness",
             "civil_get_weakness",
             "civil_show_torsion",
-            # "civil_automatic_drift",
+            "civil_automatic_drift",
             "civil_create_period_file",
             "civil_modify_torsion_stiffness",
             "civil_show_story_forces",
@@ -162,5 +164,6 @@ civiltools_assign = [
             ]
 
 civiltools_tools = [
+            "civiltools_settings",
             "civil_offset_beams",
             ]

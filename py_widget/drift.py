@@ -1,16 +1,18 @@
 from pathlib import Path
 
-from PySide2.QtUiTools import loadUiType
+from PySide2 import  QtWidgets
+from PySide2.QtWidgets import QMessageBox
 from PySide2.QtCore import Qt
+
+import FreeCADGui as Gui
 
 civiltools_path = Path(__file__).absolute().parent.parent
 
 
-class Form(*loadUiType(str(civiltools_path / 'widgets' / 'drift.ui'))):
+class Form(QtWidgets.QWidget):
     def __init__(self, etabs_obj, stories):
         super(Form, self).__init__()
-        self.setupUi(self)
-        self.form = self
+        self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'drift.ui'))
         self.etabs = etabs_obj
         self.stories = stories
         self.fill_top_bot_stories()
@@ -19,11 +21,11 @@ class Form(*loadUiType(str(civiltools_path / 'widgets' / 'drift.ui'))):
         self.create_connections()
 
     def accept(self):
-        no_of_stories = self.no_story_x_spinbox.value()
-        height = self.height_x_spinbox.value()
-        create_t_file = self.create_t_file_box.isChecked()
+        no_of_stories = self.form.no_story_x_spinbox.value()
+        height = self.form.height_x_spinbox.value()
+        create_t_file = self.form.create_t_file_box.isChecked()
         loadcases = []
-        for lw in (self.x_loadcase_list, self.y_loadcase_list):
+        for lw in (self.form.x_loadcase_list, self.form.y_loadcase_list):
             for i in range(lw.count()):
                 item = lw.item(i)
                 if item.checkState() == Qt.Checked:

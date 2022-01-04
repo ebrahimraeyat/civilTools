@@ -1,0 +1,966 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Gui::Dialog::DlgSettingsCivilTools</class>
+ <widget class="QWidget" name="Gui::Dialog::DlgSettingsCivilTools">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>710</width>
+    <height>659</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Project Settings</string>
+  </property>
+  <property name="layoutDirection">
+   <enum>Qt::LeftToRight</enum>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_4">
+   <item>
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <widget class="QFrame" name="frame">
+      <property name="frameShape">
+       <enum>QFrame::Box</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="4" column="1">
+          <widget class="QLabel" name="label_6">
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+           <property name="text">
+            <string>ضریب اهمیت</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="Gui::PrefComboBox" name="IBox">
+           <property name="currentIndex">
+            <number>1</number>
+           </property>
+           <property name="prefEntry" stdset="0">
+            <cstring>importance_factor</cstring>
+           </property>
+           <property name="prefPath" stdset="0">
+            <cstring>Mod/civilTools</cstring>
+           </property>
+           <item>
+            <property name="text">
+             <string>0.8</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>1.0</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>1.2</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>1.4</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QLabel" name="label_5">
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+           <property name="text">
+            <string>نوع خاک</string>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="0">
+          <widget class="Gui::PrefDoubleSpinBox" name="height_x_spinbox">
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+           <property name="suffix">
+            <string> m</string>
+           </property>
+           <property name="maximum">
+            <double>300.000000000000000</double>
+           </property>
+           <property name="value">
+            <double>10.000000000000000</double>
+           </property>
+           <property name="prefEntry" stdset="0">
+            <cstring>building_height</cstring>
+           </property>
+           <property name="prefPath" stdset="0">
+            <cstring>Mod/civilTools</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="Gui::PrefComboBox" name="soilType">
+           <property name="currentIndex">
+            <number>2</number>
+           </property>
+           <property name="prefEntry" stdset="0">
+            <cstring>soiltype</cstring>
+           </property>
+           <property name="prefPath" stdset="0">
+            <cstring>Mod/civilTools</cstring>
+           </property>
+           <item>
+            <property name="text">
+             <string>I</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>II</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>III</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>IV</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="9" column="1">
+          <widget class="QLabel" name="label_7">
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+           <property name="text">
+            <string>ارتفاع</string>
+           </property>
+          </widget>
+         </item>
+         <item row="10" column="0">
+          <widget class="Gui::PrefDoubleSpinBox" name="no_story_x_spinbox">
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+           <property name="decimals">
+            <number>0</number>
+           </property>
+           <property name="maximum">
+            <double>100.000000000000000</double>
+           </property>
+           <property name="value">
+            <double>3.000000000000000</double>
+           </property>
+           <property name="prefEntry" stdset="0">
+            <cstring>num_story</cstring>
+           </property>
+           <property name="prefPath" stdset="0">
+            <cstring>Mod/civilTools</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="10" column="1">
+          <widget class="QLabel" name="label_8">
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+           <property name="text">
+            <string>تعداد طبقات</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="1">
+          <widget class="QLabel" name="label_13">
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+           <property name="text">
+            <string>بالاترین طبقه</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0">
+          <widget class="Gui::PrefComboBox" name="bot_x_combo">
+           <property name="prefEntry" stdset="0">
+            <cstring>ostan</cstring>
+           </property>
+           <property name="prefPath" stdset="0">
+            <cstring>Mod/civilTools</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="14" column="0" colspan="2">
+          <widget class="Gui::PrefCheckBox" name="infillCheckBox">
+           <property name="layoutDirection">
+            <enum>Qt::RightToLeft</enum>
+           </property>
+           <property name="text">
+            <string>اثر میانقاب</string>
+           </property>
+           <property name="checked">
+            <bool>false</bool>
+           </property>
+           <property name="prefEntry" stdset="0">
+            <cstring>is_infill</cstring>
+           </property>
+           <property name="prefPath" stdset="0">
+            <cstring>Mod/Civil</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="0">
+          <widget class="Gui::PrefComboBox" name="top_x_combo">
+           <property name="prefEntry" stdset="0">
+            <cstring>ostan</cstring>
+           </property>
+           <property name="prefPath" stdset="0">
+            <cstring>Mod/civilTools</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="1">
+          <widget class="QLabel" name="label_12">
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+           <property name="text">
+            <string>پایینترین طبقه</string>
+           </property>
+          </widget>
+         </item>
+         <item row="12" column="0">
+          <widget class="Gui::PrefDoubleSpinBox" name="xTAnalaticalSpinBox">
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+           <property name="suffix">
+            <string> sec</string>
+           </property>
+           <property name="decimals">
+            <number>4</number>
+           </property>
+           <property name="maximum">
+            <double>5.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>0.100000000000000</double>
+           </property>
+           <property name="value">
+            <double>2.000000000000000</double>
+           </property>
+           <property name="prefEntry" stdset="0">
+            <cstring>tx_an</cstring>
+           </property>
+           <property name="prefPath" stdset="0">
+            <cstring>Mod/civilTools</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="13" column="0">
+          <widget class="Gui::PrefDoubleSpinBox" name="yTAnalaticalSpinBox">
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+           <property name="suffix">
+            <string> sec</string>
+           </property>
+           <property name="decimals">
+            <number>4</number>
+           </property>
+           <property name="maximum">
+            <double>5.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>0.100000000000000</double>
+           </property>
+           <property name="value">
+            <double>2.000000000000000</double>
+           </property>
+           <property name="prefEntry" stdset="0">
+            <cstring>ty_an</cstring>
+           </property>
+           <property name="prefPath" stdset="0">
+            <cstring>Mod/civilTools</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="13" column="1">
+          <widget class="QLabel" name="label_11">
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+           <property name="text">
+            <string>راستای Y</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="Gui::PrefComboBox" name="cityBox">
+           <property name="prefEntry" stdset="0">
+            <cstring>city</cstring>
+           </property>
+           <property name="prefPath" stdset="0">
+            <cstring>Mod/civilTools</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="Gui::PrefComboBox" name="ostanBox">
+           <property name="prefEntry" stdset="0">
+            <cstring>ostan</cstring>
+           </property>
+           <property name="prefPath" stdset="0">
+            <cstring>Mod/civilTools</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="12" column="1">
+          <widget class="QLabel" name="label_10">
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+           <property name="text">
+            <string>راستای X</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLabel" name="label_4">
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+           <property name="text">
+            <string>شهر</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLabel" name="label_3">
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+           <property name="text">
+            <string>استان</string>
+           </property>
+          </widget>
+         </item>
+         <item row="11" column="0" colspan="2">
+          <widget class="QLabel" name="label_9">
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+           <property name="text">
+            <string>زمان تناوب تحلیلی</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLabel" name="label_14">
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+           <property name="text">
+            <string>خطر نسبی</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLineEdit" name="accText">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
+        <string>X System</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QTreeWidget" name="x_treeWidget">
+          <property name="cursor" stdset="0">
+           <cursorShape>ArrowCursor</cursorShape>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::RightToLeft</enum>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="alternatingRowColors">
+           <bool>false</bool>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>50</width>
+            <height>50</height>
+           </size>
+          </property>
+          <property name="animated">
+           <bool>false</bool>
+          </property>
+          <property name="headerHidden">
+           <bool>true</bool>
+          </property>
+          <column>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="font">
+            <font>
+             <weight>50</weight>
+             <italic>false</italic>
+             <bold>false</bold>
+             <strikeout>false</strikeout>
+            </font>
+           </property>
+           <property name="textAlignment">
+            <set>AlignCenter</set>
+           </property>
+          </column>
+          <item>
+           <property name="text">
+            <string>سیستم قاب خمشی</string>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <italic>false</italic>
+             <bold>true</bold>
+             <underline>false</underline>
+             <strikeout>false</strikeout>
+             <kerning>true</kerning>
+            </font>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>basePlate.png</normaloff>basePlate.png</iconset>
+           </property>
+           <item>
+            <property name="text">
+             <string>قاب خمشی بتن آرمه ویژه</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>قاب خمشی بتن آرمه متوسط</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>قاب خمشی بتن آرمه معمولی</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>قاب خمشی فولادی ویژه</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>قاب خمشی فولادی متوسط</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>قاب خمشی فولادی معمولی</string>
+            </property>
+           </item>
+          </item>
+          <item>
+           <property name="text">
+            <string>سیستم دوگانه یا ترکیبی</string>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <item>
+            <property name="text">
+             <string>قاب خمشی ویژه (فولادی یا بتنی) + دیوارهای برشی بتن آرمه ویژه</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>قاب خمشی بتن آرمه متوسط + دیواربرشی بتن آرمه ویژه</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>قاب خمشی بتن آرمه متوسط + دیواربرشی بتن آرمه متوسط</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>قاب خمشی فولادی متوسط + دیواربرشی بتن آرمه متوسط</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>قاب خمشی فولادی ویژه + مهاربندی واگرای ویژه فولادی</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>قاب خمشی فولادی متوسط + مهاربندی واگرای ویژه فولادی</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>قاب خمشی فولادی ویژه + مهاربندی همگرای ویژه فولادی</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>قاب خمشی فولادی متوسط + مهاربندی همگرای ویژه فولادی</string>
+            </property>
+           </item>
+          </item>
+          <item>
+           <property name="text">
+            <string>سیستم قاب ساختمانی</string>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <item>
+            <property name="text">
+             <string>دیوارهای برشی بتن آرمه ویژه</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>دیوارهای برشی بتن آرمه متوسط</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>دیوارهای برشی بتن آرمه معمولی</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>دیوارهای برشی با مصالح بنایی مسلح</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>مهاربندی واگرای ویژه فولادی</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>مهاربندی کمانش تاب</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>مهاربندی همگرای معمولی فولادی</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>مهاربندی همگرای ویژه فولادی</string>
+            </property>
+           </item>
+          </item>
+          <item>
+           <property name="text">
+            <string>سیستم دیوارهای باربر</string>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="flags">
+            <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+           </property>
+           <item>
+            <property name="text">
+             <string>دیوارهای برشی بتن آرمه ویژه</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>دیوارهای برشی بتن آرمه متوسط</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>دیوارهای برشی بتن آرمه معمولی</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>دیوارهای برشی با مصالح بنایی مسلح</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>دیوارهای متشکل از قاب فولادی سردنورد و مهارهای تسمه ای</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>دیوارهای متشکل از قاب فولادی سردنورد و صفحات پوشش فولادی</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>دیوارهای بتن پاششی سه بعدی</string>
+            </property>
+           </item>
+          </item>
+          <item>
+           <property name="text">
+            <string>سیستم کنسولی</string>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <item>
+            <property name="text">
+             <string>سازه های فولادی یا بتن آرمه ویژه</string>
+            </property>
+           </item>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_2">
+       <attribute name="title">
+        <string>Y System</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <widget class="QTreeWidget" name="y_treeWidget">
+          <property name="layoutDirection">
+           <enum>Qt::RightToLeft</enum>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="alternatingRowColors">
+           <bool>false</bool>
+          </property>
+          <property name="animated">
+           <bool>false</bool>
+          </property>
+          <property name="headerHidden">
+           <bool>true</bool>
+          </property>
+          <column>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="font">
+            <font>
+             <weight>50</weight>
+             <italic>false</italic>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="textAlignment">
+            <set>AlignCenter</set>
+           </property>
+          </column>
+          <item>
+           <property name="text">
+            <string>سیستم قاب خمشی</string>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <item>
+            <property name="text">
+             <string>قاب خمشی بتن آرمه ویژه</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>قاب خمشی بتن آرمه متوسط</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>قاب خمشی بتن آرمه معمولی</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>قاب خمشی فولادی ویژه</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>قاب خمشی فولادی متوسط</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>قاب خمشی فولادی معمولی</string>
+            </property>
+           </item>
+          </item>
+          <item>
+           <property name="text">
+            <string>سیستم دوگانه یا ترکیبی</string>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <item>
+            <property name="text">
+             <string>قاب خمشی ویژه (فولادی یا بتنی) + دیوارهای برشی بتن آرمه ویژه</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>قاب خمشی بتن آرمه متوسط + دیواربرشی بتن آرمه ویژه</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>قاب خمشی بتن آرمه متوسط + دیواربرشی بتن آرمه متوسط</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>قاب خمشی فولادی متوسط + دیواربرشی بتن آرمه متوسط</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>قاب خمشی فولادی ویژه + مهاربندی واگرای ویژه فولادی</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>قاب خمشی فولادی متوسط + مهاربندی واگرای ویژه فولادی</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>قاب خمشی فولادی ویژه + مهاربندی همگرای ویژه فولادی</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>قاب خمشی فولادی متوسط + مهاربندی همگرای ویژه فولادی</string>
+            </property>
+           </item>
+          </item>
+          <item>
+           <property name="text">
+            <string>سیستم قاب ساختمانی</string>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <item>
+            <property name="text">
+             <string>دیوارهای برشی بتن آرمه ویژه</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>دیوارهای برشی بتن آرمه متوسط</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>دیوارهای برشی بتن آرمه معمولی</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>دیوارهای برشی با مصالح بنایی مسلح</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>مهاربندی واگرای ویژه فولادی</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>مهاربندی کمانش تاب</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>مهاربندی همگرای معمولی فولادی</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>مهاربندی همگرای ویژه فولادی</string>
+            </property>
+           </item>
+          </item>
+          <item>
+           <property name="text">
+            <string>سیستم دیوارهای باربر</string>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="flags">
+            <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+           </property>
+           <item>
+            <property name="text">
+             <string>دیوارهای برشی بتن آرمه ویژه</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>دیوارهای برشی بتن آرمه متوسط</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>دیوارهای برشی بتن آرمه معمولی</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>دیوارهای برشی با مصالح بنایی مسلح</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>دیوارهای متشکل از قاب فولادی سردنورد و مهارهای تسمه ای</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>دیوارهای متشکل از قاب فولادی سردنورد و صفحات پوشش فولادی</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>دیوارهای بتن پاششی سه بعدی</string>
+            </property>
+           </item>
+          </item>
+          <item>
+           <property name="text">
+            <string>سیستم کنسولی</string>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <item>
+            <property name="text">
+             <string>سازه های فولادی یا بتن آرمه ویژه</string>
+            </property>
+           </item>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="Gui::PrefCheckBox" name="show_at_startup">
+     <property name="text">
+      <string>Show at Startup</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+     <property name="prefEntry" stdset="0">
+      <cstring>show_at_startup</cstring>
+     </property>
+     <property name="prefPath" stdset="0">
+      <cstring>Mod/Civil</cstring>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>Gui::PrefCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>Gui/PrefWidgets.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Gui::PrefComboBox</class>
+   <extends>QComboBox</extends>
+   <header>Gui/PrefWidgets.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Gui::PrefDoubleSpinBox</class>
+   <extends>QDoubleSpinBox</extends>
+   <header>Gui/PrefWidgets.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
