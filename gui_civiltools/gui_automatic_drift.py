@@ -2,6 +2,7 @@
 from pathlib import Path
 
 from PySide2 import QtCore
+from PySide2.QtWidgets import QMessageBox
 
 import FreeCADGui as Gui
 
@@ -38,12 +39,16 @@ class CivilAutomaticDrift:
         import etabs_obj
         etabs = etabs_obj.EtabsModel()
         if not etabs.success:
-            from PySide2.QtWidgets import QMessageBox
             QMessageBox.warning(None, 'ETABS', 'Please open etabs file!')
             return False
-        stories = etabs.SapModel.Story.GetStories()[1]
+        etabs_filename = etabs.get_filename()
+        json_file = etabs_filename.with_suffix('.json')
+        if not json_file.exists():
+            QMessageBox.warning(None, 'Settings', 'Please Set Options First!')
+            Gui.runCommand("civiltools_settings")
+            return
         from py_widget import drift
-        win = drift.Form(etabs, stories)
+        win = drift.Form(etabs, json_file)
         Gui.Control.showDialog(win)
         show_warning_about_number_of_use(check)
         

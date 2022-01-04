@@ -1,5 +1,7 @@
 import json
 
+from building.RuTable import Ru
+
 def save(json_file, widget):
 	d = {}
 	d['ostan'] = widget.ostanBox.currentText()
@@ -16,10 +18,17 @@ def save(json_file, widget):
 	d['infill'] = widget.infillCheckBox.isChecked()
 	d['x_system'] = find_selected_item_in_treewidget(widget.x_treeWidget)
 	d['y_system'] = find_selected_item_in_treewidget(widget.y_treeWidget)
-	d['x_system_name'] = widget.x_treeWidget.currentItem().parent().text(0)
-	d['x_lateral_name'] = widget.x_treeWidget.currentItem().text(0)
-	d['y_system_name'] = widget.y_treeWidget.currentItem().parent().text(0)
-	d['y_lateral_name'] = widget.y_treeWidget.currentItem().text(0)
+	x_system_name = widget.x_treeWidget.currentItem().parent().text(0)
+	y_system_name = widget.y_treeWidget.currentItem().parent().text(0)
+	x_lateral_name = widget.x_treeWidget.currentItem().text(0)
+	y_lateral_name = widget.y_treeWidget.currentItem().text(0)
+	d['x_system_name'] = x_system_name
+	d['y_system_name'] = y_system_name
+	d['x_lateral_name'] = x_lateral_name
+	d['y_lateral_name'] = y_lateral_name
+	from building import RuTable
+	d['cdx'] = RuTable.Ru[x_system_name][x_lateral_name][2]
+	d['cdy'] = RuTable.Ru[y_system_name][y_lateral_name][2]
 	with open(json_file, 'w') as f:
 		json.dump(d, f)
 
@@ -37,6 +46,21 @@ def get_analytical_periods(json_file):
 	tx = d.get('t_an_x', 2)
 	ty = d.get('t_an_y', 2)
 	return tx, ty
+
+def save_cd(json_file, cdx, cdy):
+	with open(json_file, 'r') as f:
+		d = json.load(f)
+	d['cdx'] = cdx
+	d['cdy'] = cdy
+	with open(json_file, 'w') as f:
+		json.dump(d, f)
+
+def get_cd(json_file):
+	with open(json_file, 'r') as f:
+		d = json.load(f)
+	cdx = d.get('cdx')
+	cdy = d.get('cdy')
+	return cdx, cdy
 
 def load(json_file, widget=None):
 	with open(json_file, 'r') as f:
