@@ -4,11 +4,7 @@ from PySide2.QtGui import *
 from PySide2.QtCore import *
 import os
 from functools import reduce
-# import pyqtgraph as pg
-from exporter import export_to_word as word
 from exporter import config
-from pathlib import Path
-import sys
 
 def getLastSaveDirectory(f):
     f = str(f)
@@ -36,6 +32,7 @@ class Export:
         if not filename.endswith(".docx"):
             filename += ".docx"
         self.lastDirectory = getLastSaveDirectory(filename)
+        from exporter import export_to_word as word
         word.export(self.building, filename)
 
     def to_json(self):
