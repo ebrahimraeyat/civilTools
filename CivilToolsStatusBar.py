@@ -69,13 +69,13 @@ def setStatusIcons(show=True):
             self.updateAvailable.emit(False)
 
     def checkUpdates():
-
+        print('checkupdate')
         FreeCAD.civiltools_update_checker = CheckWorker()
         FreeCAD.civiltools_update_checker.updateAvailable.connect(showUpdateButton)
         FreeCAD.civiltools_update_checker.start()
 
     def showUpdateButton(avail):
-
+        print('showUpdateButton')
         if avail:
             FreeCAD.Console.PrintLog("A civilTools update is available\n")
             mw = FreeCADGui.getMainWindow()
@@ -85,6 +85,8 @@ def setStatusIcons(show=True):
                 if statuswidget:
                     updatebutton = statuswidget.findChild(QtGui.QPushButton,"UpdateButton")
                     if updatebutton:
+                        print(updatebutton)
+                        print(dir(updatebutton))
                         #updatebutton.show() # doesn't work for some reason
                         statuswidget.actions()[-1].setVisible(True)
         else:
@@ -118,6 +120,7 @@ def setStatusIcons(show=True):
                 QtCore.QObject.connect(updatebutton,QtCore.SIGNAL("pressed()"),addonMgr)
                 updatebutton.hide()
                 statuswidget.addWidget(updatebutton)
+                st.addPermanentWidget(statuswidget)
                 QtCore.QTimer.singleShot(2500, checkUpdates) # delay a bit the check for BIM WB update...
         else:
             if statuswidget:
