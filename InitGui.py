@@ -46,6 +46,7 @@ class CivilToolsWorkbench(Workbench):
         #     )
 
     def Activated(self):
+        
         from DraftGui import todo
         import CivilToolsStatusBar
 
