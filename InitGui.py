@@ -46,9 +46,20 @@ class CivilToolsWorkbench(Workbench):
         #     )
 
     def Activated(self):
+        from DraftGui import todo
+        import CivilToolsStatusBar
+
+        todo.delay(CivilToolsStatusBar.setStatusIcons,True)
         if FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools").GetBool("FirstTime", True):
             from DraftGui import todo
             todo.delay(Gui.runCommand, "civiltools_settings")
+
+    def Deactivated(self):
+
+        from DraftGui import todo
+        import CivilToolsStatusBar
+
+        todo.delay(CivilToolsStatusBar.setStatusIcons,False)
 
 
 Gui.addWorkbench(CivilToolsWorkbench())
