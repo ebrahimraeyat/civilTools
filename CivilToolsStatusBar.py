@@ -55,27 +55,24 @@ def setStatusIcons(show=True):
             civiltools_dir = os.path.join(FreeCAD.getUserAppDataDir(),"Mod","civilTools")
             etabs_api_dir = os.path.join(FreeCAD.getUserAppDataDir(),"Mod","etabs_api")
             for directory in (civiltools_dir, etabs_api_dir):
-                if os.path.exists(directory):
-                    if os.path.exists(directory + os.sep + '.git'):
-                        gitrepo = git.Git(directory)
-                        try:
-                            gitrepo.fetch()
-                            if "git pull" in gitrepo.status():
-                                self.updateAvailable.emit(True)
-                                return
-                        except:
-                            # can fail for any number of reasons, ex. not being online
-                            pass
+                if os.path.exists(directory) and os.path.exists(directory + os.sep + '.git'):
+                    gitrepo = git.Git(directory)
+                    try:
+                        gitrepo.fetch()
+                        if "git pull" in gitrepo.status():
+                            self.updateAvailable.emit(True)
+                            return
+                    except:
+                        # can fail for any number of reasons, ex. not being online
+                        pass
             self.updateAvailable.emit(False)
 
     def checkUpdates():
-        print('checkupdate')
         FreeCAD.civiltools_update_checker = CheckWorker()
         FreeCAD.civiltools_update_checker.updateAvailable.connect(showUpdateButton)
         FreeCAD.civiltools_update_checker.start()
 
     def showUpdateButton(avail):
-        print('showUpdateButton')
         if avail:
             FreeCAD.Console.PrintLog("A civilTools update is available\n")
             mw = FreeCADGui.getMainWindow()
@@ -85,9 +82,7 @@ def setStatusIcons(show=True):
                 if statuswidget:
                     updatebutton = statuswidget.findChild(QtGui.QPushButton,"UpdateButton")
                     if updatebutton:
-                        print(updatebutton)
-                        print(dir(updatebutton))
-                        #updatebutton.show() # doesn't work for some reason
+                        # updatebutton.show() # doesn't work for some reason
                         statuswidget.actions()[-1].setVisible(True)
         else:
             FreeCAD.Console.PrintLog("No civilTools update available\n")
@@ -113,7 +108,7 @@ def setStatusIcons(show=True):
                 bwidth = updatebutton.fontMetrics().boundingRect("AAAA").width()
                 updatebutton.setObjectName("UpdateButton")
                 updatebutton.setMaximumWidth(bwidth)
-                updatebutton.setIcon(QtGui.QIcon(":/images/update.png"))
+                updatebutton.setIcon(QtGui.QIcon(os.path.join(os.path.dirname(__file__),"images","update.png")))
                 updatebutton.setText("")
                 updatebutton.setToolTip(translate("civilTools","An update to the civilTools workbench is available. Click here to open the addons manager."))
                 updatebutton.setFlat(True)
@@ -121,7 +116,7 @@ def setStatusIcons(show=True):
                 updatebutton.hide()
                 statuswidget.addWidget(updatebutton)
                 st.addPermanentWidget(statuswidget)
-                QtCore.QTimer.singleShot(2500, checkUpdates) # delay a bit the check for BIM WB update...
+                QtCore.QTimer.singleShot(2500, checkUpdates) # delay a bit the check for civilTools WB update...
         else:
             if statuswidget:
                 statuswidget.hide()
