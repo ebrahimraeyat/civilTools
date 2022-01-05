@@ -144,7 +144,6 @@ Gui.addCommand('civil_wall_load_on_frames', gui_wall_load_on_frames.CivilWallLoa
 civiltools_list = [
             "civil_earthquake_factor",
             "civil_irregurality_of_mass",
-            "civil_explod_load_patterns",
             "civil_story_stiffness",
             "civil_get_weakness",
             "civil_show_torsion",
@@ -164,6 +163,7 @@ civiltools_assign = [
             ]
 
 civiltools_tools = [
-            "civiltools_settings",
+            "civil_explod_load_patterns",
             "civil_offset_beams",
+            "civiltools_settings",
             ]
