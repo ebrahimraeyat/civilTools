@@ -34,7 +34,7 @@ class CivilToolsWorkbench(Workbench):
 
         self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("civiltools", "Controls")), civiltools_list)
         self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("civiltools", "Assign")), civiltools_assign)
-        self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("civiltools", "Tools")), civiltools_tools)
+        self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("civiltools", "&Tools")), civiltools_tools)
         self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("civiltools", "Define")), civiltools_define)
         # self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Export")), export_list)
         # self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Draw")), draw_list)

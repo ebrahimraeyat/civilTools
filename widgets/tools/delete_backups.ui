@@ -36,7 +36,7 @@
         <string>Delete</string>
        </property>
        <property name="icon">
-        <iconset resource="../civiltools.qrc">
+        <iconset resource="../../civiltools.qrc">
          <normaloff>:/civiltools/images/clear.png</normaloff>:/civiltools/images/clear.png</iconset>
        </property>
       </widget>
@@ -86,7 +86,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../civiltools.qrc"/>
+  <include location="../../civiltools.qrc"/>
  </resources>
  <connections/>
 </ui>
