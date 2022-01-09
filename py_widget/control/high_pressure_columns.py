@@ -21,7 +21,7 @@ class Form(QtWidgets.QWidget):
             data,
             headers,
             model=table_model.HighPressureColumnModel,
-            # function=self.etabs.view.show_frame,
+            function=self.etabs.view.show_frame,
             )
         def get_high_pressure_names():
             filt = data['high pressure'] == True

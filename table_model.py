@@ -347,7 +347,7 @@ class HighPressureColumnModel(ResultsModel):
     def __init__(self, data, headers):
         super(HighPressureColumnModel, self).__init__(data, headers)
         self.headers = tuple(self.df.columns)
-        self.col_function = (1,)
+        self.col_function = (3,)
 
     def data(self, index, role=Qt.DisplayRole):
         row = index.row()
@@ -361,7 +361,7 @@ class HighPressureColumnModel(ResultsModel):
         if index.isValid():
             value = self.df.iloc[row][col]
             if role == Qt.DisplayRole:
-                if col in (self.i_p, self.i_t2, self.i_t3, self.i_fc):
+                if col in (self.i_p, self.i_t2, self.i_t3, self.i_fc, self.i_Agfc):
                     return f'{value:.0f}'
                 return str(value)
             elif role == Qt.BackgroundColorRole:
