@@ -60,6 +60,9 @@ p, li { white-space: pre-wrap; }
        <bold>true</bold>
       </font>
      </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
     </widget>
    </item>
    <item>
@@ -70,7 +73,7 @@ p, li { white-space: pre-wrap; }
         <string>Register</string>
        </property>
        <property name="icon">
-        <iconset resource="../civiltools.qrc">
+        <iconset resource="../../civiltools.qrc">
          <normaloff>:/civiltools/images/Register.png</normaloff>:/civiltools/images/Register.png</iconset>
        </property>
        <property name="iconSize">
@@ -86,7 +89,7 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <resources>
-  <include location="../civiltools.qrc"/>
+  <include location="../../civiltools.qrc"/>
  </resources>
  <connections/>
 </ui>

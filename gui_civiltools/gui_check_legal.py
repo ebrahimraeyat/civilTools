@@ -2,6 +2,7 @@ from pathlib import Path
 
 from PySide2.QtWidgets import QMessageBox
 from PySide2 import  QtWidgets
+from PySide2 import QtCore
 import FreeCADGui as Gui
 
 civiltools_path = Path(__file__).absolute().parent.parent
@@ -75,3 +76,28 @@ def submit():
     elif text == 'REGISTERED':
         msg = "Congrajulation! You are now registered, enjoy using CivilTools."
     QMessageBox.information(None, 'Registeration', msg)
+
+
+class CivilToolsRegister:
+
+    def GetResources(self):
+        menu_text = QtCore.QT_TRANSLATE_NOOP(
+            "civiltools",
+            "Activate CivilTools")
+        tooltip = QtCore.QT_TRANSLATE_NOOP(
+            "civiltools",
+            "Activate CivilTools")
+        path = str(
+                   Path(__file__).parent.absolute().parent / "images" / "register.png"
+                   )
+        return {'Pixmap': path,
+                'MenuText': menu_text,
+                'ToolTip': tooltip}
+    
+    def Activated(self):
+        from py_widget.tools import register
+        win = register.Form()
+        Gui.Control.showDialog(win)
+        
+    def IsActive(self):
+        return True

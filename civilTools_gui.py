@@ -34,6 +34,7 @@ from gui_civiltools import (
     gui_delete_backups,
     gui_restore_backups,
     gui_help,
+    gui_check_legal,
     )
 
 
@@ -152,6 +153,7 @@ Gui.addCommand('civil_create_section_cuts', gui_create_section_cuts.CivilSection
 Gui.addCommand('civil_delete_backups', gui_delete_backups.CivilDeleteBackups())
 Gui.addCommand('civil_restore_backups', gui_restore_backups.CivilRestoreBackups())
 Gui.addCommand('civil_help', gui_help.CivilToolsHelp())
+Gui.addCommand('civil_registe', gui_check_legal.CivilToolsRegister())
 
 civiltools_list = [
             "civil_earthquake_factor",
@@ -186,4 +188,9 @@ civiltools_tools = [
 
 civiltools_define = [
             "civil_create_section_cuts",
+            ]
+
+civiltools_help = [
+            "civil_registe",
+            "civil_help",
             ]

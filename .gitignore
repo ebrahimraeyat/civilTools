@@ -167,12 +167,8 @@ ENV/
 
 # securiry
 test/etabs_api/test.*
-applications/cfactor/MainWindow.py
-applications/section/MainWindow.py
 functions/check_legal.py
 test/functions/test_check_legal.py
-!applications/cfactor/MainWindow.pyc
-!applications/section/MainWindow.pyc
 !functions/check_legal.pyc
 !test/functions/test_check_legal.pyc
 
