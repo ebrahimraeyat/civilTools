@@ -1,28 +1,26 @@
 from pathlib import Path
-from PyQt5 import uic
-from PyQt5.QtWidgets import QMessageBox
+from PySide2 import  QtWidgets
+from PySide2.QtWidgets import QMessageBox
+import FreeCADGui as Gui
 
 import civiltools_rc
 
-cfactor_path = Path(__file__).absolute().parent.parent.parent
+civiltools_path = Path(__file__).absolute().parent.parent.parent
 
-base, window = uic.loadUiType(cfactor_path / 'widgets' / 'tools' / 'distance_between_two_points.ui')
 
-class Form(base, window):
-    def __init__(self,
-            etabs,
-            parent=None):
+class Form(QtWidgets.QWidget):
+    def __init__(self, etabs_model):
         super(Form, self).__init__()
-        self.setupUi(self)
-        self.etabs = etabs
+        self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'tools' / 'distance_between_two_points.ui'))
+        self.etabs = etabs_model
         self.fill_points()
-        self.show_button.clicked.connect(self.show_points)
+        self.form.show_button.clicked.connect(self.show_points)
     
     def show_points(self):
-        if len(self.point_list) == 0:
+        if len(self.form.point_list) == 0:
             return
-        p1 = self.point_list.item(0).text()
-        p2 = self.point_list.item(1).text()
+        p1 = self.form.point_list.item(0).text()
+        p2 = self.form.point_list.item(1).text()
         self.etabs.SapModel.SelectObj.ClearSelection()
         self.etabs.SapModel.PointObj.SetSelected(p1, True)
         self.etabs.SapModel.PointObj.SetSelected(p2, True)
@@ -41,19 +39,19 @@ class Form(base, window):
             p1, p2 = points_names[:2]
         else:
             p1, p2, _ = self.etabs.SapModel.FrameObj.GetPoints(line_name[0])
-        self.point_list.clear()
-        self.point_list.addItems([p1, p2])
+        self.form.point_list.clear()
+        self.form.point_list.addItems([p1, p2])
         return True
 
     def accept(self):
         ret = self.fill_points()
         if ret is None:
             return
-        p1 = self.point_list.item(0).text()
-        p2 = self.point_list.item(1).text()
+        p1 = self.form.point_list.item(0).text()
+        p2 = self.form.point_list.item(1).text()
         self.etabs.set_current_unit('N', 'm')
         distance = self.etabs.points.get_distance_between_two_points_in_XY(p1, p2)
-        self.dist.setValue(distance)
+        self.form.dist.setValue(distance)
         self.etabs.SapModel.SelectObj.ClearSelection()
         self.etabs.SapModel.View.RefreshView()
 
