@@ -33,6 +33,7 @@ from gui_civiltools import (
     gui_create_section_cuts,
     gui_delete_backups,
     gui_restore_backups,
+    gui_help,
     )
 
 
@@ -150,6 +151,7 @@ Gui.addCommand('civil_distance_between_two_points', gui_distance_between_two_poi
 Gui.addCommand('civil_create_section_cuts', gui_create_section_cuts.CivilSectionCuts())
 Gui.addCommand('civil_delete_backups', gui_delete_backups.CivilDeleteBackups())
 Gui.addCommand('civil_restore_backups', gui_restore_backups.CivilRestoreBackups())
+Gui.addCommand('civil_help', gui_help.CivilToolsHelp())
 
 civiltools_list = [
             "civil_earthquake_factor",
