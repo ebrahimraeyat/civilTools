@@ -30,6 +30,7 @@ from gui_civiltools import (
     gui_wall_load_on_frames,
     gui_connect_beam,
     gui_distance_between_two_points,
+    gui_create_section_cuts,
     )
 
 
@@ -144,6 +145,7 @@ Gui.addCommand('civil_offset_beams', gui_offset_beams.CivilOffsetBeam())
 Gui.addCommand('civil_wall_load_on_frames', gui_wall_load_on_frames.CivilWallLoadOnFrames())
 Gui.addCommand('civil_connect_beam', gui_connect_beam.CivilConnectBeam())
 Gui.addCommand('civil_distance_between_two_points', gui_distance_between_two_points.CivilDistance())
+Gui.addCommand('civil_create_section_cuts', gui_create_section_cuts.CivilSectionCuts())
 
 civiltools_list = [
             "civil_earthquake_factor",
@@ -172,4 +174,8 @@ civiltools_tools = [
             "civil_connect_beam",
             "civil_distance_between_two_points",
             "civiltools_settings",
+            ]
+
+civiltools_define = [
+            "civil_create_section_cuts",
             ]

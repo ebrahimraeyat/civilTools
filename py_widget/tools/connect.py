@@ -2,6 +2,8 @@ from pathlib import Path
 from PySide2 import  QtWidgets
 import FreeCADGui as Gui
 
+import civiltools_rc
+
 
 civiltools_path = Path(__file__).absolute().parent.parent.parent
 

@@ -22,17 +22,20 @@ class CivilToolsWorkbench(Workbench):
         civiltools_list = civilTools_gui.civiltools_list
         civiltools_assign = civilTools_gui.civiltools_assign
         civiltools_tools = civilTools_gui.civiltools_tools
+        civiltools_define = civilTools_gui.civiltools_define
 
         # self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Civil Export")), export_list)
         # self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Civil Draw")), draw_list)
         # self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Civil Assign")), assign_list)
-        self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("Civil", "civiltools")), civiltools_list)
-        self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Assign")), civiltools_assign)
-        self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Tools")), civiltools_tools)
+        self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("civiltools", "Controls")), civiltools_list)
+        self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("civiltools", "Assign")), civiltools_assign)
+        self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("civiltools", "Tools")), civiltools_tools)
+        self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("civiltools", "Define")), civiltools_define)
 
-        self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("Civil", "civiltools")), civiltools_list)
-        self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Assign")), civiltools_assign)
-        self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Tools")), civiltools_tools)
+        self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("civiltools", "Controls")), civiltools_list)
+        self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("civiltools", "Assign")), civiltools_assign)
+        self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("civiltools", "Tools")), civiltools_tools)
+        self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("civiltools", "Define")), civiltools_define)
         # self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Export")), export_list)
         # self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Draw")), draw_list)
 
