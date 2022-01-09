@@ -17,7 +17,7 @@ class CivilDeleteBackups:
             "civiltools",
             "Delete Backup files that automatically created with Software")
         path = str(
-                   Path(__file__).parent.absolute().parent / "images" / "clear.svg"
+                   Path(__file__).parent.absolute().parent / "images" / "clear.png"
                    )
         return {'Pixmap': path,
                 'MenuText': menu_text,

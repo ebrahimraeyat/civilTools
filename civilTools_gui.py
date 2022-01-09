@@ -177,6 +177,7 @@ civiltools_assign = [
             ]
 
 civiltools_tools = [
+            "Separator",
             "civil_explod_load_patterns",
             "civil_offset_beams",
             "civil_connect_beam",
@@ -191,6 +192,7 @@ civiltools_define = [
             ]
 
 civiltools_help = [
+            "Separator",
             "civil_registe",
             "civil_help",
             ]
