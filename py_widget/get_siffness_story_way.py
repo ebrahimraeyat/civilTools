@@ -10,25 +10,19 @@ civiltools_path = Path(__file__).absolute().parent.parent
 
 
 class Form(QtWidgets.QWidget):
-    def __init__(self):
+    def __init__(self, etabs_obj):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'get_siffness_story_way.ui'))
-        # self.setupUi(self)
-        # self.form = self
+        self.etabs = etabs_obj
 
     def accept(self):
-        import etabs_obj
-        etabs = etabs_obj.EtabsModel()
-        if not etabs.success:
-            QMessageBox.warning(None, 'ETABS', 'Please open etabs file!')
-            return False
         if self.form.radio_button_2800.isChecked():
                 way = '2800'
         if self.form.radio_button_modal.isChecked():
             way = 'modal'
         if self.form.radio_button_earthquake.isChecked():
             way = 'earthquake'
-        ret = etabs.get_story_stiffness_table(way)
+        ret = self.etabs.get_story_stiffness_table(way)
         if not ret:
             err = "Please Activate Calculate Diaphragm Center of Rigidity in ETABS!"
             QMessageBox.critical(None, "Error", err)

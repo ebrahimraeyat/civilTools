@@ -26,7 +26,7 @@ class CivilConnectBeam:
     def Activated(self):
         
         import etabs_obj
-        etabs = etabs_obj.EtabsModel()
+        etabs = etabs_obj.EtabsModel(backup=False)
         if not etabs.success:
             QMessageBox.warning(None, 'ETABS', 'Please open etabs file!')
             return False

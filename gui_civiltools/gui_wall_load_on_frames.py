@@ -25,7 +25,7 @@ class CivilWallLoadOnFrames:
     
     def Activated(self):
         import etabs_obj
-        etabs = etabs_obj.EtabsModel()
+        etabs = etabs_obj.EtabsModel(backup=False)
         if not etabs.success:
             from PySide2.QtWidgets import QMessageBox
             QMessageBox.warning(None, 'ETABS', 'Please open etabs file!')

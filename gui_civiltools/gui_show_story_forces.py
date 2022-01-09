@@ -23,14 +23,14 @@ class CivilStoryForces:
                 'ToolTip': tooltip}
     
     def Activated(self):
-        import table_model
         import etabs_obj
-        etabs = etabs_obj.EtabsModel()
+        etabs = etabs_obj.EtabsModel(backup=False)
         if not etabs.success:
             from PySide2.QtWidgets import QMessageBox
             QMessageBox.warning(None, 'ETABS', 'Please open etabs file!')
             return False
         data, headers = etabs.get_story_forces_with_percentages()
+        import table_model
         table_model.show_results(data, headers, table_model.StoryForcesModel)
         
     def IsActive(self):
