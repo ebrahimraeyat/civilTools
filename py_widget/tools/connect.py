@@ -1,17 +1,16 @@
 from pathlib import Path
-from PySide2.QtUiTools import loadUiType
+from PySide2 import  QtWidgets
+import FreeCADGui as Gui
 
-cfactor_path = Path(__file__).absolute().parent.parent
 
-connect_base, connect_window = loadUiType(cfactor_path / 'widgets' / 'connect.ui')
+civiltools_path = Path(__file__).absolute().parent.parent.parent
 
-class ConnectForm(connect_base, connect_window):
-    def __init__(self,
-            etabs,
-            parent=None):
-        super(ConnectForm, self).__init__()
-        self.setupUi(self)
-        self.etabs = etabs
+
+class Form(QtWidgets.QWidget):
+    def __init__(self, etabs_model):
+        super(Form, self).__init__()
+        self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'tools' / 'connect.ui'))
+        self.etabs = etabs_model
         self.SapModel = self.etabs.SapModel
         self.b1 = None
         self.b2 = None
@@ -19,14 +18,14 @@ class ConnectForm(connect_base, connect_window):
         self.create_connections()
         
     def create_connections(self):
-        self.point_list1.itemClicked.connect(self.point_clicked)
-        self.point_list2.itemClicked.connect(self.point_clicked)
-        self.refresh_button.clicked.connect(self.fill_points)
+        self.form.point_list1.itemClicked.connect(self.point_clicked)
+        self.form.point_list2.itemClicked.connect(self.point_clicked)
+        self.form.refresh_button.clicked.connect(self.fill_points)
 
     def point_clicked(self):
         self.SapModel.SelectObj.ClearSelection()
-        p1 = self.point_list1.currentItem().text()
-        p2 = self.point_list2.currentItem().text()
+        p1 = self.form.point_list1.currentItem().text()
+        p2 = self.form.point_list2.currentItem().text()
         self.SapModel.PointObj.SetSelected(p1, True)
         self.SapModel.PointObj.SetSelected(p2, True)
         self.SapModel.View.RefreshView()
@@ -40,10 +39,10 @@ class ConnectForm(connect_base, connect_window):
         self.b1, self.b2 = names[:2]
         p1, p2, _ = self.SapModel.FrameObj.GetPoints(self.b1)
         p3, p4, _ = self.SapModel.FrameObj.GetPoints(self.b2)
-        self.point_list1.clear()
-        self.point_list2.clear()
-        self.point_list1.addItems([p1, p2])
-        self.point_list2.addItems([p3, p4])
+        self.form.point_list1.clear()
+        self.form.point_list2.clear()
+        self.form.point_list1.addItems([p1, p2])
+        self.form.point_list2.addItems([p3, p4])
         x1, y1 = self.SapModel.PointObj.GetCoordCartesian(p1)[:2]
         x2, y2 = self.SapModel.PointObj.GetCoordCartesian(p2)[:2]
         x3, y3 = self.SapModel.PointObj.GetCoordCartesian(p3)[:2]
@@ -59,17 +58,21 @@ class ConnectForm(connect_base, connect_window):
         d3 = self.etabs.points.get_distance_between_two_points_in_XY(p3, (xp, yp))
         d4 = self.etabs.points.get_distance_between_two_points_in_XY(p4, (xp, yp))
         if d1 < d2:
-            self.point_list1.setCurrentRow(0)
+            self.form.point_list1.setCurrentRow(0)
         else:
-            self.point_list1.setCurrentRow(1)
+            self.form.point_list1.setCurrentRow(1)
         if d3 < d4:
-            self.point_list2.setCurrentRow(0)
+            self.form.point_list2.setCurrentRow(0)
         else:
-            self.point_list2.setCurrentRow(1)
+            self.form.point_list2.setCurrentRow(1)
 
     def accept(self):
-        p1 = self.point_list1.currentItem().text()
-        p2 = self.point_list2.currentItem().text()
+        p1 = self.form.point_list1.currentItem().text()
+        p2 = self.form.point_list2.currentItem().text()
         self.etabs.frame_obj.connect_two_beams((self.b1, self.b2), (p1, p2))
+
+    def reject(self):
+        Gui.Control.closeDialog()
+
 
 

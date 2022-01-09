@@ -28,6 +28,7 @@ from gui_civiltools import (
     gui_assign_frame_sections,
     gui_offset_beams,
     gui_wall_load_on_frames,
+    gui_connect_beam,
     )
 
 
@@ -140,6 +141,7 @@ Gui.addCommand('civil_high_pressure_columns', gui_high_pressure_columns.CivilHig
 Gui.addCommand('civil_assign_frame_sections', gui_assign_frame_sections.CivilAssignFrameSections())
 Gui.addCommand('civil_offset_beams', gui_offset_beams.CivilOffsetBeam())
 Gui.addCommand('civil_wall_load_on_frames', gui_wall_load_on_frames.CivilWallLoadOnFrames())
+Gui.addCommand('civil_connect_beam', gui_connect_beam.CivilConnectBeam())
 
 civiltools_list = [
             "civil_earthquake_factor",
@@ -165,5 +167,6 @@ civiltools_assign = [
 civiltools_tools = [
             "civil_explod_load_patterns",
             "civil_offset_beams",
+            "civil_connect_beam",
             "civiltools_settings",
             ]
