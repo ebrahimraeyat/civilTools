@@ -1,28 +1,31 @@
 from pathlib import Path
 
-from PyQt5 import uic
+from PySide2 import  QtWidgets
+import FreeCADGui as Gui
 
-cfactor_path = Path(__file__).absolute().parent.parent
-restore_base, restore_window = uic.loadUiType(cfactor_path / 'widgets' / 'restore_backup.ui')
+import civiltools_rc
 
-class ListForm(restore_base, restore_window):
-    def __init__(self, etabs_model, parent=None):
-        super(ListForm, self).__init__(parent)
-        self.setupUi(self)
+
+civiltools_path = Path(__file__).absolute().parent.parent.parent
+
+
+class Form(QtWidgets.QWidget):
+    def __init__(self, etabs_model):
+        super(Form, self).__init__()
+        self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'tools' / 'restore_backup.ui'))
         self.etabs = etabs_model
         self.fill_list()
 
     def accept(self):
-        item = self.list.currentItem()
+        item = self.form.list.currentItem()
         filename_path = self.file_path / item.text()
         self.etabs.restore_backup(filename_path)
-        super(ListForm, self).accept()
 
     def fill_list(self):
-        self.file_path = self.etabs.get_filepath()
+        self.file_path = self.etabs.get_filepath() / 'backups'
         edbs = self.file_path.glob(f'BACKUP_*')
         edbs = [edb.name for edb in edbs]
-        self.list.addItems(edbs)
+        self.form.list.addItems(edbs)
         filename = self.etabs.get_file_name_without_suffix()
         file_path = self.etabs.get_filepath()
         max_num = 0
@@ -41,5 +44,5 @@ class ListForm(restore_base, restore_window):
             i = edbs.index(name)
         except ValueError:
             i = len(edbs) - 1
-        self.list.setCurrentRow(i)
+        self.form.list.setCurrentRow(i)
 
