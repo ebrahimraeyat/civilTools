@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Iterable
 
 import pandas as pd
 
@@ -51,12 +52,27 @@ class Form(QtWidgets.QWidget):
         # self.form.model.dataChanged.connect(self.story_length_changed)
 
     def apply_static_aj(self):
-        self.etabs.apply_aj_df(self.aj_apply_model_static.df)
+        df = self.aj_apply_model_static.df.copy(deep=True)
+        load_patterns = self.qlistwidgets_item_text((
+            self.form.x_load_pattern_list,
+            self.form.y_load_pattern_list,
+        ))
+        filt = df['OutputCase'].isin(load_patterns)
+        df = df.loc[filt]
+        self.etabs.apply_aj_df(df)
         msg = "Successfully written to Etabs."
         QMessageBox.information(None, "done", msg)
     
     def apply_dynamic_aj(self):
-        self.etabs.database.write_daynamic_aj_user_coefficient(self.aj_apply_model_dynamic.df)
+        df = self.aj_apply_model_dynamic.df.copy(deep=True)
+        loadcases = self.qlistwidgets_item_text((
+            self.form.x_loadcase_list,
+            self.form.y_loadcase_list,
+            self.form.angular_loadcase_list,
+        ))
+        filt = df['OutputCase'].isin(loadcases)
+        df = df.loc[filt]
+        self.etabs.database.write_daynamic_aj_user_coefficient(df)
         msg = "Successfully written to Etabs."
         QMessageBox.information(None, "done", msg)
 
@@ -111,6 +127,16 @@ class Form(QtWidgets.QWidget):
                 item = lw.item(i)
                 item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
                 item.setCheckState(Qt.Checked)
+
+    @staticmethod
+    def qlistwidgets_item_text(qlistwidgets: Iterable):
+        names = []
+        for lw in qlistwidgets:
+            for i in range(lw.count()):
+                item = lw.item(i)
+                if item.checkState() == Qt.Checked:
+                    names.append(item.text())
+        return names
 
     def closeEvent(self, event):
         qsettings = QSettings("civiltools", 'aj_correction')
