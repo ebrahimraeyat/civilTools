@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from PySide2.QtGui import *
-from PySide2.QtCore import *
+# from PySide2.QtGui import *
+# from PySide2.QtCore import *
+from PySide2.QtWidgets import QFileDialog
 import os
 from functools import reduce
 from exporter import config
@@ -10,45 +11,6 @@ def getLastSaveDirectory(f):
     f = str(f)
     return os.sep.join(f.split(os.sep)[:-1])
 
-
-class Export:
-
-    def __init__(self, widget, dirty, lastDirectory, building):
-        self.widget = widget
-        self.dirty = dirty
-        self.lastDirectory = lastDirectory
-        self.building = building
-
-    def to_word(self):
-        if not self.dirty:
-            QMessageBox.warning(self.widget, u'خروجی', u'نتیجه ای جهت ارسال وجود ندارد')
-            return
-
-        filters = "docx(*.docx)"
-        filename, _ = QFileDialog.getSaveFileName(self.widget, 'Word خروجی به',
-                                                  self.lastDirectory, filters)
-        if filename == '':
-            return
-        if not filename.endswith(".docx"):
-            filename += ".docx"
-        self.lastDirectory = getLastSaveDirectory(filename)
-        from exporter import export_to_word as word
-        word.export(self.building, filename)
-
-    def to_json(self):
-        if not self.dirty:
-            QMessageBox.warning(self.widget, u'خروجی', u'نتیجه ای جهت ارسال وجود ندارد')
-            return
-
-        filters = "json(*.json)"
-        filename, _ = QFileDialog.getSaveFileName(self.widget, 'save project',
-                                                  self.lastDirectory, filters)
-        if filename == '':
-            return
-        if not filename.endswith('.json'):
-            filename += '.json'
-        self.lastDirectory = getLastSaveDirectory(filename)
-        config.save(self.widget, filename)
 
 
 class ExportGraph:

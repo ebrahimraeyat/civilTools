@@ -4,6 +4,7 @@ from PySide2 import  QtWidgets
 from PySide2.QtWidgets import (
     QTableWidgetItem,
     QMessageBox,
+    QFileDialog,
     )
 from PySide2.QtCore import QSettings, Qt
 
@@ -12,6 +13,7 @@ import FreeCADGui as Gui
 from building.build import *
 from models import StructureModel
 from exporter import config
+import civiltools_rc
 
 civiltools_path = Path(__file__).absolute().parent.parent
 
@@ -27,16 +29,28 @@ class Form(QtWidgets.QWidget):
         self.city = None
         self.etabs = etabs_model
         self.load_config()
+        self.set_properties_from_json()
         self.final_building = self.current_building()
         self.structure_model = StructureModel(self.final_building)
         self.form.structure_properties_table.setModel(self.structure_model)
         self.create_connections()
         # self.load_settings()
         self.calculate()
+        self.fill_dialog()
 
     def create_connections(self):
         self.form.xTAnalaticalSpinBox.valueChanged.connect(self.calculate)
         self.form.yTAnalaticalSpinBox.valueChanged.connect(self.calculate)
+        self.form.xTAnalaticalSpinBox.valueChanged.connect(self.set_bx)
+        self.form.yTAnalaticalSpinBox.valueChanged.connect(self.set_by)
+        self.form.apply_to_etabs.clicked.connect(self.apply_factors_to_etabs)
+        self.form.export_to_word.clicked.connect(self.export_to_word)
+
+    def set_bx(self):
+        self.form.bx = self.final_building.Bx
+    
+    def set_by(self):
+        self.form.by = self.final_building.By
 
     def create_widgets(self):
         self.load_config()
@@ -51,11 +65,6 @@ class Form(QtWidgets.QWidget):
 
 
     def accept(self):
-        # qsettings = QSettings("civiltools", "cfactor")
-        # qsettings.setValue("geometry", self.saveGeometry())
-        # qsettings.setValue("hsplitter1", self.form.hsplitter1.saveState())
-        self.save_config()
-        self.apply_factors_to_etabs()
         Gui.Control.closeDialog()
         
     def load_settings(self):
@@ -105,25 +114,39 @@ class Form(QtWidgets.QWidget):
             item.setTextAlignment(Qt.AlignCenter)
             self.form.soilPropertiesTable.setItem(row + len(soilProp), 1, item)
 
+    def set_properties_from_json(self):
+        if self.json_file is None:
+            etabs_filename = self.etabs.get_filename()
+            self.json_file = etabs_filename.with_suffix('.json')
+        d = config.load(self.json_file)
+        self.risk_level = d['risk_level']
+        self.height_x = d['height_x']
+        self.importance_factor = float(d['importance_factor'])
+        self.soil = d['soil_type']
+        self.city = d['city']
+        self.noStory = d['no_of_story_x']
+        self.xSystemType = d['x_system_name']
+        self.xLateralType = d['x_lateral_name']
+        self.ySystemType = d['y_system_name']
+        self.yLateralType = d['y_lateral_name']
+        self.is_infill = d['infill']
+        self.xSystem = StructureSystem(self.xSystemType, self.xLateralType, "X")
+        self.ySystem = StructureSystem(self.ySystemType, self.yLateralType, "Y")
+
+    def fill_dialog(self):
+        if self.city is not None:
+            self.form.risk_level.setText(self.risk_level)
+            self.form.importance_factor.setText(str(self.importance_factor))
+            self.form.rx.setText(str(self.final_building.x_system.Ru))
+            self.form.ry.setText(str(self.final_building.y_system.Ru))
+            self.form.bx.setText(str(self.final_building.Bx))
+            self.form.by.setText(str(self.final_building.By))
+
+
+
     def current_building(self):
         if self.city is None:
-            if self.json_file is None:
-                etabs_filename = self.etabs.get_filename()
-                self.json_file = etabs_filename.with_suffix('.json')
-            d = config.load(self.json_file)
-            self.risk_level = d['risk_level']
-            self.height_x = d['height_x']
-            self.importance_factor = float(d['importance_factor'])
-            self.soil = d['soil_type']
-            self.city = d['city']
-            self.noStory = d['no_of_story_x']
-            self.xSystemType = d['x_system_name']
-            self.xLateralType = d['x_lateral_name']
-            self.ySystemType = d['y_system_name']
-            self.yLateralType = d['y_lateral_name']
-            self.is_infill = d['infill']
-            self.xSystem = StructureSystem(self.xSystemType, self.xLateralType, "X")
-            self.ySystem = StructureSystem(self.ySystemType, self.yLateralType, "Y")
+            return None
         xTan, yTan = self.getTAnalatical()
         build = Building(
                     self.risk_level,
@@ -162,6 +185,7 @@ class Form(QtWidgets.QWidget):
             QMessageBox.information(None, title, msg)
             return
         msg = "Successfully written to Etabs."
+        self.save_config()
         QMessageBox.information(None, "done", msg)
 
     def exportBCurveToImage(self):
@@ -171,4 +195,16 @@ class Form(QtWidgets.QWidget):
     def exportBCurveToCsv(self):
         export_graph = export.ExportGraph(self, self.lastDirectory, self.p)
         export_graph.to_csv()
+
+    def export_to_word(self):
+        filters = "docx(*.docx)"
+        directory = str(self.json_file.parent)
+        filename, _ = QFileDialog.getSaveFileName(None, 'Export To Word',
+                                                  directory, filters)
+        if filename == '':
+            return
+        if not filename.endswith(".docx"):
+            filename += ".docx"
+        from exporter import export_to_word as word
+        word.export(self.final_building, filename)
 
