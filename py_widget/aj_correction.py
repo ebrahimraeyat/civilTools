@@ -41,7 +41,7 @@ class Form(QtWidgets.QWidget):
         self.form.setWindowFlag(Qt.WindowMinimizeButtonHint, True)
         self.form.setWindowFlag(Qt.WindowMaximizeButtonHint, True)
         self.form.adjustSize()
-        self.load_settings()
+        # self.load_settings()
 
         self.create_connections()
 
@@ -138,19 +138,19 @@ class Form(QtWidgets.QWidget):
                     names.append(item.text())
         return names
 
-    def closeEvent(self, event):
-        qsettings = QSettings("civiltools", 'aj_correction')
-        qsettings.setValue("geometry", self.saveGeometry())
-        qsettings.setValue("pos", self.pos())
-        qsettings.setValue("size", self.size())
-        qsettings.setValue("splitter", self.form.splitter.saveState())
+    # def closeEvent(self, event):
+    #     qsettings = QSettings("civiltools", 'aj_correction')
+    #     qsettings.setValue("geometry", self.saveGeometry())
+    #     qsettings.setValue("pos", self.pos())
+    #     qsettings.setValue("size", self.size())
+    #     qsettings.setValue("splitter", self.form.splitter.saveState())
 
-    def load_settings(self):
-        qsettings = QSettings("civiltools", 'aj_correction')
-        self.restoreGeometry(qsettings.value("geometry", self.saveGeometry()))
-        self.move(qsettings.value("pos", self.pos()))
-        self.resize(qsettings.value("size", self.size()))
-        self.form.splitter.restoreState(qsettings.value("splitter", self.form.splitter.saveState()))
+    # def load_settings(self):
+    #     qsettings = QSettings("civiltools", 'aj_correction')
+    #     self.restoreGeometry(qsettings.value("geometry", self.saveGeometry()))
+    #     self.move(qsettings.value("pos", self.pos()))
+    #     self.resize(qsettings.value("size", self.size()))
+    #     self.form.splitter.restoreState(qsettings.value("splitter", self.form.splitter.saveState()))
 
 class AjApplyModel(QAbstractTableModel):
     def __init__(self, df):
