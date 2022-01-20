@@ -35,6 +35,7 @@ from gui_civiltools import (
     gui_restore_backups,
     gui_help,
     gui_check_legal,
+    gui_100_30_columns,
     )
 
 
@@ -154,6 +155,7 @@ Gui.addCommand('civil_delete_backups', gui_delete_backups.CivilDeleteBackups())
 Gui.addCommand('civil_restore_backups', gui_restore_backups.CivilRestoreBackups())
 Gui.addCommand('civil_help', gui_help.CivilToolsHelp())
 Gui.addCommand('civil_registe', gui_check_legal.CivilToolsRegister())
+Gui.addCommand('civiltools_100_30', gui_100_30_columns.CivilTools100_30Columns())
 
 civiltools_list = [
             "civil_earthquake_factor",
@@ -170,6 +172,7 @@ civiltools_list = [
             "civil_show_aj",
             "civil_scale_response_spec",
             "civil_high_pressure_columns",
+            "civiltools_100_30",
             ]
 civiltools_assign = [
             "civil_assign_frame_sections",

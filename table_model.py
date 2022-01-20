@@ -372,6 +372,33 @@ class HighPressureColumnModel(ResultsModel):
             elif role == Qt.TextAlignmentRole:
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
 
+class Column100_30Model(ResultsModel):
+    def __init__(self, data, headers):
+        super(Column100_30Model, self).__init__(data, headers)
+        self.headers = tuple(self.df.columns)
+
+    def data(self, index, role=Qt.DisplayRole):
+        row = index.row()
+        col = index.column()
+        self.i_p = self.headers.index('P')
+        self.i_mmajor = self.headers.index('MMajor')
+        self.i_mminor = self.headers.index('MMinor')
+        self.i_ratio = self.headers.index('RatioRebar')
+        self.i_result = self.headers.index('Result')
+        if index.isValid():
+            value = self.df.iloc[row][col]
+            if role == Qt.DisplayRole:
+                if col in (self.i_p, self.i_ratio):
+                    return f'{value:.2f}'
+                return str(value)
+            elif role == Qt.BackgroundColorRole:
+                if self.df.iloc[row][self.i_result]:
+                    return QColor(low)
+                else:
+                    return QColor(high)
+            elif role == Qt.TextAlignmentRole:
+                return int(Qt.AlignCenter | Qt.AlignVCenter)
+
 
 class ResultWidget(QtWidgets.QWidget):
     # main widget for user interface
