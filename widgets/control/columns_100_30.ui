@@ -61,6 +61,11 @@
          <string>Concrete</string>
         </property>
        </item>
+       <item>
+        <property name="text">
+         <string>Steel</string>
+        </property>
+       </item>
       </widget>
      </item>
      <item row="2" column="0">
@@ -74,6 +79,9 @@
       <widget class="QLineEdit" name="design_code">
        <property name="text">
         <string/>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
        </property>
       </widget>
      </item>

@@ -383,7 +383,7 @@ class Column100_30Model(ResultsModel):
         self.i_p = self.headers.index('P')
         self.i_mmajor = self.headers.index('MMajor')
         self.i_mminor = self.headers.index('MMinor')
-        self.i_ratio = self.headers.index('RatioRebar')
+        self.i_ratio = self.headers.index('Ratio')
         self.i_result = self.headers.index('Result')
         if index.isValid():
             value = self.df.iloc[row][col]
