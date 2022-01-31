@@ -113,6 +113,8 @@ class Form(QtWidgets.QWidget):
         section_cuts = list(section_cuts_angles.keys())
         angles_spectral = self.etabs.load_cases.get_spectral_with_angles(angles)
         specs = list(angles_spectral.values())
+        self.form.angular_specs.clear()
+        self.form.section_cuts.clear()
         self.form.angular_specs.addItems(specs)
         self.form.section_cuts.addItems(section_cuts)
         self.select_angular_list()
