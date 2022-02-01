@@ -45,16 +45,16 @@ class Form(QtWidgets.QWidget):
     def reset_widget(self):
         if self.form.auto_height.isChecked():
             self.form.none_beam_h.setEnabled(True)
-            self.form.height.setEnabled(False)
+            self.form.user_height.setEnabled(False)
         elif self.form.override_height.isChecked():
             self.form.none_beam_h.setEnabled(False)
-            self.form.height.setEnabled(True)
+            self.form.user_height.setEnabled(True)
 
     def accept(self):
         loadpat = self.form.loadpat.currentText()
         mass_per_area = self.form.mass.value()
         if self.form.override_height.isChecked():
-            height = self.form.height.value()
+            height = self.form.user_height.value()
         else:
             height = None
         stories = [item.text() for item in self.form.stories.selectedItems()]
