@@ -34,6 +34,9 @@ def import_model(
             9 : ['C', 'CIRCLE'],
         }
         frames = etabs.SapModel.FrameObj.GetAllFrames()
+        progressbar = FreeCAD.Base.ProgressIndicator()
+        frames_count = frames[0]
+        progressbar.start("Importing "+str(frames_count)+" Frame Elements...", frames_count)
         for i in range(frames[0]):
             # p1_name = frames[4][i]
             # p2_name = frames[5][i]
@@ -115,11 +118,14 @@ def import_model(
                 stories_objects[story] = [structure]
             else:
                 story_objects.append(structure)
-
+            progressbar.next(True)
+        progressbar.stop()
     if import_floors or import_walls:
         (n, names, design, _, delim, _,
         x_coords, y_coords, z_coords, _) = etabs.SapModel.AreaObj.GetAllAreas()
         i = 0
+        progressbar = FreeCAD.Base.ProgressIndicator()
+        progressbar.start("Importing "+str(n)+" Floors and Walls Elements...", n)
         for count, j in enumerate(delim):
             xs = x_coords[i: j + 1]
             ys = y_coords[i: j + 1]
@@ -143,7 +149,8 @@ def import_model(
                 area.ViewObject.LineWidth = 1
                 area.ViewObject.PointSize = 1
                 area.ViewObject.Transparency = 40
-
+            progressbar.next(True)
+        progressbar.stop()
     # create IFC objects
     floors = make_building(etabs)
     for f in floors:
@@ -158,6 +165,8 @@ def make_building(etabs):
         f = Arch.makeFloor([], name=ret[1][i])
         f.Placement.Base.z = ret[2][i]
         f.Height = ret[3][i]
+        f.ViewObject.FontSize = '300 mm'
+        f.ViewObject.ShapeColor = (0.67,0.06,0.14)
         floors.append(f)
     # building = Arch.makeBuilding(floors)
     # site = Arch.makeSite([building])
