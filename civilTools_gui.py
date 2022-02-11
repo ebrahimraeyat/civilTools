@@ -36,6 +36,7 @@ from gui_civiltools import (
     gui_help,
     gui_check_legal,
     gui_100_30_columns,
+    gui_import_model,
     )
 
 
@@ -156,16 +157,17 @@ Gui.addCommand('civil_restore_backups', gui_restore_backups.CivilRestoreBackups(
 Gui.addCommand('civil_help', gui_help.CivilToolsHelp())
 Gui.addCommand('civil_registe', gui_check_legal.CivilToolsRegister())
 Gui.addCommand('civiltools_100_30', gui_100_30_columns.CivilTools100_30Columns())
+Gui.addCommand('civiltools_import_model', gui_import_model.CivilToolsImportModel())
 
 civiltools_list = [
-            "civil_earthquake_factor",
+            "civiltools_import_model",
+            "civil_automatic_drift",
+            "civil_modify_torsion_stiffness",
             "civil_irregurality_of_mass",
             "civil_story_stiffness",
             "civil_get_weakness",
             "civil_show_torsion",
-            "civil_automatic_drift",
             "civil_create_period_file",
-            "civil_modify_torsion_stiffness",
             "civil_show_story_forces",
             "civil_show_story_stiffness",
             "civil_show_weakness",
@@ -173,6 +175,7 @@ civiltools_list = [
             "civil_scale_response_spec",
             "civil_high_pressure_columns",
             "civiltools_100_30",
+            "civil_earthquake_factor",
             ]
 civiltools_assign = [
             "civil_assign_frame_sections",

@@ -1,6 +1,8 @@
 <RCC>
   <qresource prefix="civiltools">
+    <file>images/clear.svg</file>
     <file>images/100_30.svg</file>
+    <file>images/import.svg</file>
     <file>images/tick.svg</file>
     <file>images/earthquake.svg</file>
     <file>images/etabs.png</file>
