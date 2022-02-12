@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="civiltools">
+    <file>images/shear.svg</file>
     <file>images/clear.svg</file>
     <file>images/100_30.svg</file>
     <file>images/import.svg</file>

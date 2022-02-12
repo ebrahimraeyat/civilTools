@@ -29,9 +29,9 @@ class CivilStoryForces:
             from PySide2.QtWidgets import QMessageBox
             QMessageBox.warning(None, 'ETABS', 'Please open etabs file!')
             return False
-        data, headers = etabs.get_story_forces_with_percentages()
-        import table_model
-        table_model.show_results(data, headers, table_model.StoryForcesModel)
+        from py_widget.control import shear_story
+        win = shear_story.Form(etabs)
+        Gui.Control.showDialog(win)
         
     def IsActive(self):
         return True
