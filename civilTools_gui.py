@@ -38,6 +38,9 @@ from gui_civiltools import (
     gui_100_30_columns,
     gui_import_model,
     )
+from gui_civiltools.define import (
+    gui_create_load_combinations, 
+)
 
 
 def QT_TRANSLATE_NOOP(ctx, txt): return txt
@@ -158,6 +161,7 @@ Gui.addCommand('civil_help', gui_help.CivilToolsHelp())
 Gui.addCommand('civil_registe', gui_check_legal.CivilToolsRegister())
 Gui.addCommand('civiltools_100_30', gui_100_30_columns.CivilTools100_30Columns())
 Gui.addCommand('civiltools_import_model', gui_import_model.CivilToolsImportModel())
+Gui.addCommand('civiltools_create_load_combinations', gui_create_load_combinations.CivilToolsCreateLoadCombinations())
 
 civiltools_list = [
             "civiltools_import_model",
@@ -194,6 +198,7 @@ civiltools_tools = [
             ]
 
 civiltools_define = [
+            "civiltools_create_load_combinations",
             "civil_create_section_cuts",
             ]
 

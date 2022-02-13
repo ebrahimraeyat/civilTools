@@ -1,13 +1,10 @@
 from pathlib import Path
 
 from PySide2 import  QtWidgets
-from PySide2.QtWidgets import QMessageBox
 from PySide2.QtCore import Qt
 
 import FreeCADGui as Gui
 
-from exporter import config
-from building.build import StructureSystem, Building
 
 civiltools_path = Path(__file__).absolute().parent.parent.parent
 
