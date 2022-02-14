@@ -187,7 +187,7 @@ class Form(QtWidgets.QWidget):
         if snow:
             equivalent_loads['Snow'] = [snow]
             if not snow in load_patterns:
-                self.etabs.SapModel.LoadPatterns.Add(snow, 3)
+                self.etabs.SapModel.LoadPatterns.Add(snow, 7)
         # seismic
         ## EX
         ex = self.form.ex_combobox.currentText()
