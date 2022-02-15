@@ -79,12 +79,19 @@ def import_model(
             if etabs.frame_obj.is_beam(frame_name):
                 is_beam = True
                 color = (1.0, 1.0, 0.0, 0.0)
+                name = 'Beam'
+                structure.IfcType = name
+                structure.PredefinedType = 'BEAM'
             elif etabs.frame_obj.is_column(frame_name):
                 is_column = True
                 color = (.0, 1.0, 0.0, 0.0)
+                name = 'Column'
+                structure.IfcType = name
+                structure.PredefinedType = 'COLUMN'
             elif etabs.frame_obj.is_brace(frame_name):
                 is_brace = True
                 color = (.0, 1.0, 0.0, 0.0)
+                name = 'Brace'
             else:
                 color = (1.0, 1.0, 0.0, 0.0)
             # view property of structure
@@ -102,7 +109,7 @@ def import_model(
                     line.ViewObject.hide()
                 line.ViewObject.LineWidth = 1
             
-            structure.Label = frame_name
+            structure.Label = f'{name}_{frame_name}'
             rotation = etabs.SapModel.FrameObj.GetLocalAxes(frame_name)[0]
             insertion = etabs.SapModel.FrameObj.GetInsertionPoint(frame_name)
             x, y = get_xy_cardinal_point(insertion[0], width, height)
@@ -115,9 +122,9 @@ def import_model(
             story = frames[3][i]
             story_objects = stories_objects.get(story, None)
             if story_objects is None:
-                stories_objects[story] = [structure]
+                stories_objects[story] = [structure, line]
             else:
-                story_objects.append(structure)
+                story_objects.extend([structure, line])
             progressbar.next(True)
         progressbar.stop()
     if import_floors or import_walls:
@@ -132,17 +139,33 @@ def import_model(
             zs = z_coords[i: j + 1]
             area = Draft.make_wire([FreeCAD.Vector(x, y, z) for x, y, z in zip(xs, ys, zs)],
                 closed=True, face=True)
-            area.Label = names[count]
             i = j + 1
             # View Object
-            if FreeCAD.GuiUp:
-                design_type = design[count]
-                if design_type == 1:  # wall
-                    color = (1., 0., 0.)
-                elif design_type == 2: # floor
-                    color = (.8, .8, .8)
-                elif design_type == 4:
+            name = 'Area'
+            area_name = names[count]
+            story = etabs.SapModel.AreaObj.GetLabelFromName(area_name)[1]
+            story_objects = stories_objects.get(story, None)
+            if story_objects is None:
+                stories_objects[story] = [area]
+            else:
+                story_objects.append(area)
+            design_type = design[count]
+            if design_type == 1:  # wall
+                color = (1., 0., 0.)
+                name = 'Wall'
+                # area.IfcType = name
+                # area.PredefinedType = 'SHEAR'
+            elif design_type == 2: # floor
+                color = (.8, .8, .8)
+                name = 'Slab'
+                # area.IfcType = name
+                # area.PredefinedType = 'FLOOR'
+            elif design_type == 4:
+                if FreeCAD.GuiUp:
                     area.ViewObject.DisplayMode = "Wireframe"
+                name = 'Opening'
+            area.Label = f'{name}_{area_name}'
+            if FreeCAD.GuiUp:
                 area.ViewObject.ShapeColor = color
                 area.ViewObject.LineColor = color
                 area.ViewObject.PointColor = color
@@ -165,8 +188,9 @@ def make_building(etabs):
         f = Arch.makeFloor([], name=ret[1][i])
         f.Placement.Base.z = ret[2][i]
         f.Height = ret[3][i]
-        f.ViewObject.FontSize = '300 mm'
-        f.ViewObject.ShapeColor = (0.67,0.06,0.14)
+        if FreeCAD.GuiUp:
+            f.ViewObject.FontSize = '300 mm'
+            f.ViewObject.ShapeColor = (0.67,0.06,0.14)
         floors.append(f)
     # building = Arch.makeBuilding(floors)
     # site = Arch.makeSite([building])
@@ -210,4 +234,3 @@ def get_xyz_offset(insertion : list):
     y += (y1 + y2) / 2
     z = (z1 + z2) / 2
     return x, y, z
-
