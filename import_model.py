@@ -97,8 +97,10 @@ def import_model(
             structure.IfcType = ifc_type
             structure.PredefinedType = predefined_type
             structure.Label = f'{label}_{story}'
+            structure.Label2 = frame_name
             line = Draft.make_line(v1, v2)
             line.Label = f'{label}_{story}_CenterLine'
+            line.Label2 = frame_name
             line.recompute()
             place_the_beam(structure, line)
             # view property of structure
@@ -172,6 +174,7 @@ def import_model(
             else:
                 story_objects.append(area)
             area.Label = f'{label}_{story}'
+            area.Label2 = area_name
             if FreeCAD.GuiUp:
                 area.ViewObject.ShapeColor = color
                 area.ViewObject.LineColor = color
