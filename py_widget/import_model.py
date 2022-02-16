@@ -22,9 +22,8 @@ class Form(QtWidgets.QWidget):
         import_braces = self.form.braces.isChecked()
         import_floors = self.form.floors.isChecked()
         import_walls = self.form.walls.isChecked()
+        import_openings = self.form.openings.isChecked()
         new_model = self.form.new_model.isChecked()
-        import_roofs = True
-        import_walls = True
         import import_model
         import_model.import_model(
             etabs=self.etabs,
@@ -33,6 +32,7 @@ class Form(QtWidgets.QWidget):
             import_braces=import_braces,
             import_floors=import_floors,
             import_walls=import_walls,
+            import_openings=import_openings,
             new_model=new_model,
             )
         Gui.SendMsgToActiveView("ViewFit")

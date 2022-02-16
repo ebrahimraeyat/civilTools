@@ -14,6 +14,7 @@ def import_model(
         import_braces : bool = True,
         import_floors : bool = True,
         import_walls : bool = True,
+        import_openings : bool = True,
         new_model : bool = True,
         ):
     if etabs is None:
@@ -38,6 +39,30 @@ def import_model(
         frames_count = frames[0]
         progressbar.start("Importing "+str(frames_count)+" Frame Elements...", frames_count)
         for i in range(frames[0]):
+            progressbar.next(True)
+            frame_name = frames[1][i]
+            is_beam = is_column = is_brace = color = None
+            if etabs.frame_obj.is_beam(frame_name):
+                if not import_beams:
+                    continue
+                # is_beam = True
+                color = (1.0, 1.0, 0.0, 0.0)
+                ifc_type = 'Beam'
+                predefined_type = 'BEAM'
+            elif etabs.frame_obj.is_column(frame_name):
+                if not import_columns:
+                    continue
+                is_column = True
+                color = (.0, 1.0, 0.0, 0.0)
+                ifc_type = 'Column'
+                predefined_type = 'COLUMN'
+            elif etabs.frame_obj.is_brace(frame_name):
+                if not import_braces:
+                    continue
+                # is_brace = True
+                color = (.0, 1.0, 0.0, 0.0)
+            else:
+                color = (1.0, 1.0, 0.0, 0.0)
             v1 = FreeCAD.Vector(frames[6][i], frames[7][i], frames[8][i])
             v2 = FreeCAD.Vector(frames[9][i], frames[10][i], frames[11][i])
             section_name = frames[2][i]
@@ -67,30 +92,15 @@ def import_model(
                 profiles[section_name] = profile
                 profile.Label = section_name
             # edge = Part.makeLine(v1, v2)
-            frame_name = frames[1][i]
             label, story, _ = etabs.SapModel.FrameObj.GetLabelFromName(frame_name)
             structure = Arch.makeStructure(profile)
+            structure.IfcType = ifc_type
+            structure.PredefinedType = predefined_type
             structure.Label = f'{label}_{story}'
             line = Draft.make_line(v1, v2)
             line.Label = f'{label}_{story}_CenterLine'
             line.recompute()
             place_the_beam(structure, line)
-            is_beam = is_column = is_brace = color = None
-            if etabs.frame_obj.is_beam(frame_name):
-                is_beam = True
-                color = (1.0, 1.0, 0.0, 0.0)
-                structure.IfcType = 'Beam'
-                structure.PredefinedType = 'BEAM'
-            elif etabs.frame_obj.is_column(frame_name):
-                is_column = True
-                color = (.0, 1.0, 0.0, 0.0)
-                structure.IfcType = 'Column'
-                structure.PredefinedType = 'COLUMN'
-            elif etabs.frame_obj.is_brace(frame_name):
-                is_brace = True
-                color = (.0, 1.0, 0.0, 0.0)
-            else:
-                color = (1.0, 1.0, 0.0, 0.0)
             # view property of structure
             if FreeCAD.GuiUp:
                 structure.ViewObject.LineWidth = 1
@@ -120,7 +130,6 @@ def import_model(
                 stories_objects[story] = [structure, line]
             else:
                 story_objects.extend([structure, line])
-            progressbar.next(True)
         progressbar.stop()
     if import_floors or import_walls:
         (n, names, design, _, delim, _,
@@ -132,9 +141,28 @@ def import_model(
             xs = x_coords[i: j + 1]
             ys = y_coords[i: j + 1]
             zs = z_coords[i: j + 1]
+            i = j + 1
+            progressbar.next(True)
+            design_type = design[count]
+            if design_type == 1:  # wall
+                if not import_walls:
+                    continue
+                color = (1., 0., 0.)
+                # area.IfcType = name
+                # area.PredefinedType = 'SHEAR'
+            elif design_type == 2: # floor
+                if not import_floors:
+                    continue
+                color = (.8, .8, .8)
+                # area.IfcType = name
+                # area.PredefinedType = 'FLOOR'
+            elif design_type == 4:
+                if not import_openings:
+                    continue
+                if FreeCAD.GuiUp:
+                    area.ViewObject.DisplayMode = "Wireframe"
             area = Draft.make_wire([FreeCAD.Vector(x, y, z) for x, y, z in zip(xs, ys, zs)],
                 closed=True, face=True)
-            i = j + 1
             # View Object
             area_name = names[count]
             label, story, _ = etabs.SapModel.AreaObj.GetLabelFromName(area_name)
@@ -143,18 +171,6 @@ def import_model(
                 stories_objects[story] = [area]
             else:
                 story_objects.append(area)
-            design_type = design[count]
-            if design_type == 1:  # wall
-                color = (1., 0., 0.)
-                # area.IfcType = name
-                # area.PredefinedType = 'SHEAR'
-            elif design_type == 2: # floor
-                color = (.8, .8, .8)
-                # area.IfcType = name
-                # area.PredefinedType = 'FLOOR'
-            elif design_type == 4:
-                if FreeCAD.GuiUp:
-                    area.ViewObject.DisplayMode = "Wireframe"
             area.Label = f'{label}_{story}'
             if FreeCAD.GuiUp:
                 area.ViewObject.ShapeColor = color
@@ -163,7 +179,6 @@ def import_model(
                 area.ViewObject.LineWidth = 1
                 area.ViewObject.PointSize = 1
                 area.ViewObject.Transparency = 40
-            progressbar.next(True)
         progressbar.stop()
     # create IFC objects
     floors = make_building(etabs)
