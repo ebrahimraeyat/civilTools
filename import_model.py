@@ -183,7 +183,8 @@ def make_building(etabs):
             f.ViewObject.FontSize = '300 mm'
             f.ViewObject.ShapeColor = (0.67,0.06,0.14)
         floors.append(f)
-    # building = Arch.makeBuilding(floors)
+    building = Arch.makeBuilding(floors)
+    building.Label = FreeCAD.ActiveDocument.Name
     # site = Arch.makeSite([building])
     # Arch.makeProject([site])
     return floors
