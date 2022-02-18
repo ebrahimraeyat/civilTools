@@ -37,6 +37,7 @@ class CivilToolsWorkbench(Workbench):
         self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("civiltools", "&Tools")), civiltools_tools)
         self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("civiltools", "Define")), civiltools_define)
         self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("civiltools", "&Help")), civilTools_gui.civiltools_help)
+        self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("civiltools", "&View")), civilTools_gui.civiltools_view)
         # self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Export")), export_list)
         # self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Draw")), draw_list)
 
@@ -59,12 +60,31 @@ class CivilToolsWorkbench(Workbench):
             from DraftGui import todo
             todo.delay(Gui.runCommand, "civiltools_settings")
 
+        # restore views widget if needed
+
+        if FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools").GetBool("RestoreCivilToolsViews",True):
+            from freecad_py import civiltools_views
+            w = civiltools_views.findWidget()
+            if not w:
+                FreeCADGui.runCommand("civiltools_views")
+            else:
+                w.show()
+
     def Deactivated(self):
 
         from DraftGui import todo
         import CivilToolsStatusBar
+        from freecad_py import civiltools_views
 
         todo.delay(CivilToolsStatusBar.setStatusIcons,False)
+
+        # store views widget state and vertical size
+
+        w = civiltools_views.findWidget()
+        FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools").SetBool("RestoreCivilToolsViews",bool(w))
+        if w:
+            FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools").SetInt("civilToolsViewsSize",w.height())
+            w.hide()
 
 
 Gui.addWorkbench(CivilToolsWorkbench())

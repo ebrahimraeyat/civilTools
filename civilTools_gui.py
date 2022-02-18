@@ -42,6 +42,8 @@ from gui_civiltools.define import (
     gui_create_load_combinations, 
 )
 
+from freecad_py import civiltools_views
+
 
 def QT_TRANSLATE_NOOP(ctx, txt): return txt
 
@@ -162,7 +164,7 @@ Gui.addCommand('civil_registe', gui_check_legal.CivilToolsRegister())
 Gui.addCommand('civiltools_100_30', gui_100_30_columns.CivilTools100_30Columns())
 Gui.addCommand('civiltools_import_model', gui_import_model.CivilToolsImportModel())
 Gui.addCommand('civiltools_create_load_combinations', gui_create_load_combinations.CivilToolsCreateLoadCombinations())
-
+Gui.addCommand('civiltools_views',civiltools_views.CivilToolsViews())
 civiltools_list = [
             "civiltools_import_model",
             "civil_automatic_drift",
@@ -195,6 +197,10 @@ civiltools_tools = [
             "civil_restore_backups",
             "civil_delete_backups",
             "civiltools_settings",
+            ]
+
+civiltools_view = [
+            "civiltools_views",
             ]
 
 civiltools_define = [

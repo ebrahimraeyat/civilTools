@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="civiltools">
+    <file>images/eye.svg</file>
     <file>images/load_combinations.svg</file>
     <file>images/help.png</file>
     <file>images/shear.svg</file>
