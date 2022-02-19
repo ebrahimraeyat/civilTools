@@ -68,22 +68,21 @@ def add_wall_on_beams(
             ):
                 label = o.Label.split('_')[0]
                 labels.add(label)
-    print(labels)
     all_stories = get_all_stories()
     if stories is None:
         stories = [s.Label for s in all_stories[1:]]
-        print(stories)
     for label in labels:
         similar_label_in_stories = [f'{label}_{story}' for story in stories]
         similar_beams_in_stories = []
         for label_story in similar_label_in_stories:
             similar_beams_in_stories.extend(FreeCAD.ActiveDocument.getObjectsByLabel(label_story))
-        for i, beam in enumerate(similar_beams_in_stories):
+        for beam in similar_beams_in_stories:
             bases = FreeCAD.ActiveDocument.getObjectsByLabel(f'{beam.Label}_CenterLine')
             if not bases:
                 continue
             base = bases[0]
-            print(base.Label)
+            if has_wall(base):
+                continue
             wall = create_wall(base)
             wall.loadpat = loadpat
             wall.weight = mass_per_area
@@ -104,6 +103,7 @@ def add_wall_on_beams(
             FreeCAD.ActiveDocument.recompute()
             if opening_ratio:
                 create_window(wall, opening_ratio)
+    FreeCAD.ActiveDocument.recompute()
 
 def create_wall(base):
     wall = Arch.makeWall(base)
@@ -151,17 +151,34 @@ def create_window(wall, opening_ratio):
     # print(point)
     # pl.Base =  point.add(FreeCAD.Vector(0, 0, start * wall.Height.Value))
 
-    win = Arch.makeWindowPreset(window_type,width=width,height=height,h1=100.0,h2=100.0,h3=100.0,w1=200.0,w2=100.0,o1=0.0,o2=100.0,placement=pl)
+    win = Arch.makeWindowPreset(
+            window_type,
+            width=width,height=height,h1=100.0,h2=100.0,h3=100.0,w1=200.0,w2=100.0,o1=0.0,o2=100.0,
+            placement=pl)
+    win.setExpression('Height', f'{percent} * {wall.Name}.Height')
+    win.setExpression('Width', f'{percent} * {wall.Name}.Length')
     FreeCAD.ActiveDocument.recompute()
     v1 = wall.Shape.BoundBox.Center
-    v2  =win.Shape.BoundBox.Center
+    v2 = win.Shape.BoundBox.Center
     win.Placement.Base = v1.sub(v2)
     win.Hosts = [wall]
+
+def has_wall(base):
+    '''
+    check if base has wall in InList
+    '''
+    inlists = base.InList
+    if not inlists:
+        return False
+    for o in inlists:
+        if hasattr(o, 'IfcType') and o.IfcType == 'Wall':
+            return True
+    return False
 
 if __name__ == '__main__':
     add_wall_on_beams('Dead', 220,
         #  stories=('Story1', 'Story9'), 
-        #  opening_ratio=0.3,
+         opening_ratio=0.3,
         #  height=3000,
         )
 
