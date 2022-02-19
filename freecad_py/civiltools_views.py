@@ -27,7 +27,7 @@ import sys
 from pathlib import Path
 
 from PySide2.QtCore import Qt
-import FreeCAD
+import FreeCAD, Draft
 
 from CivilToolsTranslateUtils import *
 
@@ -189,6 +189,8 @@ class CivilToolsViews:
         show_arch_wall = vm.arch_wall.isChecked()
 
         for obj in FreeCAD.ActiveDocument.Objects:
+            if Draft.getType(obj) == "Sketcher::SketchObject":
+                continue
             inlists = obj.InList
             story = None
             if inlists:
