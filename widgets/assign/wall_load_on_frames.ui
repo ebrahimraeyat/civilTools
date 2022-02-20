@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>652</width>
-    <height>593</height>
+    <width>552</width>
+    <height>669</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,15 +29,15 @@
          </property>
         </widget>
        </item>
-       <item row="7" column="0" colspan="2">
-        <widget class="QListWidget" name="stories">
-         <property name="selectionMode">
-          <enum>QAbstractItemView::MultiSelection</enum>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="1">
         <widget class="QComboBox" name="loadpat"/>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Load Pattern</string>
+         </property>
+        </widget>
        </item>
        <item row="1" column="1">
         <widget class="QSpinBox" name="mass">
@@ -58,17 +58,10 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>Load Pattern</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="0">
-        <widget class="QLabel" name="label_5">
-         <property name="text">
-          <string>Load Type</string>
+       <item row="7" column="0" colspan="2">
+        <widget class="QListWidget" name="stories">
+         <property name="selectionMode">
+          <enum>QAbstractItemView::MultiSelection</enum>
          </property>
         </widget>
        </item>
@@ -84,6 +77,50 @@
            <string>Moment</string>
           </property>
          </item>
+        </widget>
+       </item>
+       <item row="9" column="0" colspan="2">
+        <widget class="QCheckBox" name="replace">
+         <property name="text">
+          <string>Replace</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QDoubleSpinBox" name="opening_ratio">
+         <property name="maximum">
+          <double>1.000000000000000</double>
+         </property>
+         <property name="singleStep">
+          <double>0.100000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0">
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>Load Type</string>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="0" colspan="2">
+        <widget class="QCheckBox" name="height_from_below">
+         <property name="text">
+          <string>Get Height From Below Story</string>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_9">
+         <property name="text">
+          <string>Opening Ratio</string>
+         </property>
         </widget>
        </item>
        <item row="4" column="0" colspan="2">
@@ -195,43 +232,6 @@
          </layout>
         </widget>
        </item>
-       <item row="9" column="0" colspan="2">
-        <widget class="QCheckBox" name="replace">
-         <property name="text">
-          <string>Replace</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="10" column="0" colspan="2">
-        <widget class="QCheckBox" name="height_from_below">
-         <property name="text">
-          <string>Get Height From Below Story</string>
-         </property>
-         <property name="checked">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1">
-        <widget class="QDoubleSpinBox" name="opening_ratio">
-         <property name="maximum">
-          <double>1.000000000000000</double>
-         </property>
-         <property name="singleStep">
-          <double>0.100000000000000</double>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="label_9">
-         <property name="text">
-          <string>Opening Ratio</string>
-         </property>
-        </widget>
-       </item>
       </layout>
      </item>
      <item>
@@ -290,8 +290,8 @@
         <widget class="QLabel" name="label_7">
          <property name="maximumSize">
           <size>
-           <width>400</width>
-           <height>400</height>
+           <width>300</width>
+           <height>300</height>
           </size>
          </property>
          <property name="frameShape">
@@ -311,27 +311,100 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="title">
+          <string>Apply To</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <widget class="QRadioButton" name="etabs_button">
+            <property name="text">
+             <string>ETABS Directly</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../../civiltools.qrc">
+              <normaloff>:/civiltools/images/etabs.png</normaloff>:/civiltools/images/etabs.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>36</width>
+              <height>36</height>
+             </size>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="freecad_button">
+            <property name="text">
+             <string>FreeCAD</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../../civiltools.qrc">
+              <normaloff>:/civiltools/images/freecad.svg</normaloff>:/civiltools/images/freecad.svg</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>36</width>
+              <height>36</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="etabs_from_freecad_button">
+            <property name="text">
+             <string>ETABS From FreeCAD</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../../civiltools.qrc">
+              <normaloff>:/civiltools/images/etabs.png</normaloff>:/civiltools/images/etabs.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>36</width>
+              <height>36</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
       </layout>
      </item>
     </layout>
    </item>
    <item>
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QPushButton" name="assign_button">
+       <property name="text">
+        <string>Assign</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
  <resources>
-  <include location="../../civiltools.qrc"/>
   <include location="../../civiltools.qrc"/>
  </resources>
  <connections/>

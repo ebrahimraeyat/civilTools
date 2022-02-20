@@ -167,6 +167,7 @@ def has_wall(base):
             return True
     return False
 
+
 if __name__ == '__main__':
     add_wall_on_beams('Dead', 220,
         # stories=('Story1', 'Story9'), 

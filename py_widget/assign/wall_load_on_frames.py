@@ -33,6 +33,7 @@ class Form(QtWidgets.QWidget):
         self.form.auto_height.clicked.connect(self.reset_widget)
         self.form.override_height.clicked.connect(self.reset_widget)
         self.form.relative.clicked.connect(self.set_dists_range)
+        self.form.assign_button.clicked.connect(self.assign)
 
     def set_dists_range(self):
         if self.form.relative.isChecked():
@@ -50,7 +51,7 @@ class Form(QtWidgets.QWidget):
             self.form.none_beam_h.setEnabled(False)
             self.form.user_height.setEnabled(True)
 
-    def accept(self):
+    def assign(self):
         loadpat = self.form.loadpat.currentText()
         mass_per_area = self.form.mass.value()
         if self.form.override_height.isChecked():
@@ -69,23 +70,46 @@ class Form(QtWidgets.QWidget):
         opening_ratio = self.form.opening_ratio.value()
         names = None
         item_type = 0
-        self.etabs.frame_obj.assign_gravity_load_to_selfs_and_above_beams(
-            loadpat,
-            mass_per_area,
-            dist1,
-            dist2,
-            names,
-            stories,
-            load_type,
-            relative,
-            replace,
-            item_type,
-            height,
-            none_beam_h,
-            parapet_wall_height,
-            height_from_below,
-            opening_ratio,
-        )
+        if self.form.etabs_button.isChecked():
+            self.etabs.frame_obj.assign_gravity_load_to_selfs_and_above_beams(
+                loadpat,
+                mass_per_area,
+                dist1,
+                dist2,
+                names,
+                stories,
+                load_type,
+                relative,
+                replace,
+                item_type,
+                height,
+                none_beam_h,
+                parapet_wall_height,
+                height_from_below,
+                opening_ratio,
+            )
+        elif self.form.freecad_button.isChecked():
+            from freecad_py.assign import wall_loads
+            wall_loads.add_wall_on_beams(
+                loadpat,
+                mass_per_area,
+                dist1,
+                dist2,
+                names,
+                stories,
+                load_type,
+                relative,
+                replace,
+                # item_type,
+                height,
+                none_beam_h,
+                parapet_wall_height,
+                # height_from_below,
+                opening_ratio,
+            )
+        elif self.form.etabs_from_freecad_button.isChecked():
+            pass
+
 
     def reject(self):
         Gui.Control.closeDialog()
