@@ -191,6 +191,8 @@ class CivilToolsViews:
         for obj in FreeCAD.ActiveDocument.Objects:
             if Draft.getType(obj) == "Sketcher::SketchObject":
                 continue
+            if hasattr(obj, 'Proxy') and hasattr(obj.Proxy, 'Type') and obj.Proxy.Type == 'Profile':
+                continue
             inlists = obj.InList
             story = None
             if inlists:

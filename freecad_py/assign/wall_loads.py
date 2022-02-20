@@ -1,9 +1,9 @@
 import math
 from typing import Iterable, Union
 import FreeCADGui as Gui
-import FreeCAD, Arch, Part
+import FreeCAD, Arch
 import WorkingPlane
-# parpet_height = '1100 mm'
+
 
 def get_all_stories():
     '''
@@ -28,7 +28,7 @@ def get_above_beam(beam, stories):
     i_story = stories.index(story)
     if i_story == len(stories) - 1:
         return None
-    label, _ = beam.Label.split('_')
+    label = beam.Label.split('_')[0]
     for i in range(i_story + 1, len(stories)):
         story_name = stories[i].Label
         ret_beam = FreeCAD.ActiveDocument.getObjectsByLabel(f'{label}_{story_name}')
@@ -38,11 +38,6 @@ def get_above_beam(beam, stories):
             return ret_beam[0]
     return None
 
-# stories = ('Story1', 'Story2', 'Story3', 'Story5')
-# story_elevations = {}
-# for story in stories:
-#     story_object = exec(f'FreeCAD.ActiveDocument.{story}')
-#     story_elevations[story] = story_object.Elevation.getValueAs('mm')
 def add_wall_on_beams(
         loadpat : str,
         mass_per_area : float,
@@ -69,6 +64,8 @@ def add_wall_on_beams(
                 label = o.Label.split('_')[0]
                 labels.add(label)
     all_stories = get_all_stories()
+    stories_objects = dict()
+    
     if stories is None:
         stories = [s.Label for s in all_stories[1:]]
     for label in labels:
@@ -87,12 +84,12 @@ def add_wall_on_beams(
             wall.loadpat = loadpat
             wall.weight = mass_per_area
             if height is None:
-                # if i == len(similar_beams_in_stories) - 1:
                 next_beam = get_above_beam(beam, all_stories)
-                # else:
-                #     next_beam = similar_beams_in_stories[i + 1]
                 if next_beam is None:
-                    wall.Height = parapet
+                    if parapet > 0:
+                        wall.Height = parapet
+                    else:
+                        continue
                 else:
                     # level_i = beam.InList[0].Elevation
                     # level_j = next_beam.InList[0].Elevation
@@ -100,19 +97,32 @@ def add_wall_on_beams(
                     wall.setExpression('Height', f'{next_beam.Name}.Shape.BoundBox.ZMin - {beam.Name}.Shape.BoundBox.ZMax')
             else:
                 wall.Height = height
-            FreeCAD.ActiveDocument.recompute()
-            if opening_ratio:
-                create_window(wall, opening_ratio)
-    FreeCAD.ActiveDocument.recompute()
+            wall.recompute()
+            story_label = beam.Label.split('_')[1]
+            story_objects = stories_objects.get(story_label, None)
+            if story_objects is None:
+                story_objects = [wall]
+                stories_objects[story_label] = story_objects
+            else:
+                story_objects.append(wall)
+            if opening_ratio and next_beam:
+                win = create_window(wall, opening_ratio)
+                story_objects.append(win)
+    for story_label, objects in stories_objects.items():
+        print(objects)
+        story = FreeCAD.ActiveDocument.getObjectsByLabel(story_label)[0]
+        current_objects = story.Group.copy()
+        story.Group = current_objects + objects
 
 def create_wall(base):
     wall = Arch.makeWall(base)
-    wall.ViewObject.Transparency = 40
-    wall.ViewObject.LineWidth = 1
-    wall.ViewObject.PointSize = 1
+    if FreeCAD.GuiUp:
+        wall.ViewObject.Transparency = 40
+        wall.ViewObject.LineWidth = 1
+        wall.ViewObject.PointSize = 1
+        wall.Base.ViewObject.show()
     wall.addProperty('App::PropertyInteger', 'weight', 'Wall')
     wall.addProperty('App::PropertyString', 'loadpat', 'Wall')
-    wall.Base.ViewObject.show()
     return wall
 
 def create_window(wall, opening_ratio):
@@ -131,37 +141,19 @@ def create_window(wall, opening_ratio):
     #     window_type = 'Sash 2-pane'
     # else:
     window_type = 'Fixed'
-    # line = wall.Base
-    # e = line.Shape.Edges[0]
-    # t = e.tangentAt(0)
-    # delta1 = t * e.Length * (percent / 2)
-    # # delta2 = t * e.Length * (1 - (percent) / 2)
-    # p1 = line.Start.add(delta1)
-    # p1 = p1.sub(FreeCAD.Vector(100, -100, 0))
-    # # p2 = line.Start.add(delta2)
-    # # line = Part.makeLine(p1, p2)
-    # # rec = line.extrude(FreeCAD.Vector(0, 0, percent * wall.Height.Value))
-    # p1 = p1.add(FreeCAD.Vector(0, 0, (1 - percent) / 2 * wall.Height.Value))
-    # pl.Base = p1
-    # obj = FreeCAD.ActiveDocument.addObject("Part::Part2DObject", 'Rec')
-    # obj.Shape = rec
-    # win = Arch.makeWindow(obj, width=200)
-
-    # point = wall.Base.Shape.Edges[0].valueAt(1 - start)
-    # print(point)
-    # pl.Base =  point.add(FreeCAD.Vector(0, 0, start * wall.Height.Value))
-
     win = Arch.makeWindowPreset(
             window_type,
             width=width,height=height,h1=100.0,h2=100.0,h3=100.0,w1=200.0,w2=100.0,o1=0.0,o2=100.0,
             placement=pl)
-    win.setExpression('Height', f'{percent} * {wall.Name}.Height')
-    win.setExpression('Width', f'{percent} * {wall.Name}.Length')
-    FreeCAD.ActiveDocument.recompute()
+    # win.setExpression('Height', f'{percent} * {wall.Name}.Height')
+    # win.setExpression('Width', f'{percent} * {wall.Name}.Length')
+    win.recompute()
     v1 = wall.Shape.BoundBox.Center
     v2 = win.Shape.BoundBox.Center
     win.Placement.Base = v1.sub(v2)
     win.Hosts = [wall]
+    win.recompute()
+    return win
 
 def has_wall(base):
     '''
@@ -177,8 +169,8 @@ def has_wall(base):
 
 if __name__ == '__main__':
     add_wall_on_beams('Dead', 220,
-        #  stories=('Story1', 'Story9'), 
-         opening_ratio=0.3,
+        # stories=('Story1', 'Story9'), 
+        opening_ratio=0.3,
         #  height=3000,
         )
 
