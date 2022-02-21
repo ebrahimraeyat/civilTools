@@ -45,7 +45,6 @@ def add_wall_on_beams(
         dist2 : float = 1,
         labels : Union[list, bool] = None,
         stories : Union[Iterable, bool] = None,
-        load_type : int = 1, # 1: Force per len , 2: Moment per len
         relative : bool = True,
         replace : bool = True,
         height : Union[float, bool] = None,
