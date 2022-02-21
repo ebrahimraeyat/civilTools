@@ -167,6 +167,47 @@ def has_wall(base):
             return True
     return False
 
+def assign_wall_loads_to_etabs(
+    etabs = None,
+    ):
+    for obj in FreeCAD.ActiveDocument.Objects:
+        if hasattr(obj, 'IfcType') and obj.IfcType == 'Wall' and \
+            hasattr(obj, 'loadpat'):
+            print(obj.Label)
+            name = obj.Base.Label2
+            if not name:
+                label, story, _ = obj.Base.Label.split('_')
+                name = etabs.SapModel.FrameObj.GetNameFromLabel(label, story)[0]
+            loadpat = obj.loadpat
+            height = equivalent_height_in_meter(obj)
+            load_value = math.ceil(height * obj.weight)
+            etabs.frame_obj.assign_gravity_load(
+                name=name,
+                loadpat=loadpat,
+                val1=load_value,
+                val2=load_value,
+            )
+
+def equivalent_height_in_meter(wall):
+    inlists = wall.InList
+    if not inlists:
+        return wall.Height.getValueAs('m') 
+    win = None
+    for o in inlists:
+        if hasattr(o, 'IfcType') and o.IfcType == 'Window':
+            win = o
+            break
+    if win is None:
+        return wall.Height.getValueAs('m')
+    area = (wall.Height * wall.Length) -  (win.Height * win.Width)
+    height = (area / wall.Length).getValueAs('m')
+    return height
+
+
+
+
+            
+
 
 if __name__ == '__main__':
     add_wall_on_beams('Dead', 220,

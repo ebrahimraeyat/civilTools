@@ -22,5 +22,12 @@ def test_add_wall_on_beams():
         #  height=3000,
         )
 
+def test_assign_wall_loads_to_etabs():
+    mod_path = civiltools_path.parent
+    sys.path.insert(0, str(mod_path))
+    import etabs_obj
+    etabs = etabs_obj.EtabsModel(backup=False)
+    wall_loads.assign_wall_loads_to_etabs(etabs)
+
 if __name__ == '__main__':
-    test_add_wall_on_beams()
+    test_assign_wall_loads_to_etabs()

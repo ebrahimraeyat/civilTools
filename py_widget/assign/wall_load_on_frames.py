@@ -91,24 +91,25 @@ class Form(QtWidgets.QWidget):
         elif self.form.freecad_button.isChecked():
             from freecad_py.assign import wall_loads
             wall_loads.add_wall_on_beams(
-                loadpat,
-                mass_per_area,
-                dist1,
-                dist2,
-                names,
-                stories,
-                load_type,
-                relative,
-                replace,
+                loadpat=loadpat,
+                mass_per_area=mass_per_area,
+                dist1=dist1,
+                dist2=dist2,
+                labels=names,
+                stories=stories,
+                load_type=load_type,
+                relative=relative,
+                replace=replace,
                 # item_type,
-                height,
-                none_beam_h,
-                parapet_wall_height,
+                height=height,
+                non_beam_h=none_beam_h,
+                parapet=f'{parapet_wall_height} m',
                 # height_from_below,
-                opening_ratio,
+                opening_ratio=opening_ratio,
             )
         elif self.form.etabs_from_freecad_button.isChecked():
-            pass
+            from freecad_py.assign import wall_loads
+            wall_loads.assign_wall_loads_to_etabs(self.etabs)
 
 
     def reject(self):
