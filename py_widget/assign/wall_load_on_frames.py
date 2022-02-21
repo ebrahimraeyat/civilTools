@@ -18,11 +18,12 @@ class Form(QtWidgets.QWidget):
         self.create_connections()
 
     def fill_widget(self):
-        stories = self.etabs.SapModel.Story.GetNameList()[1]
-        self.form.stories.addItems(stories)
-        self.select_all_stories()
-        load_patterns = self.etabs.load_patterns.get_load_patterns()
-        self.form.loadpat.addItems(load_patterns)
+        if hasattr(self.etabs, 'SapModel'):
+            stories = self.etabs.SapModel.Story.GetNameList()[1]
+            self.form.stories.addItems(stories)
+            self.select_all_stories()
+            load_patterns = self.etabs.load_patterns.get_load_patterns()
+            self.form.loadpat.addItems(load_patterns)
 
     def select_all_stories(self):
         for i in range(self.form.stories.count()):

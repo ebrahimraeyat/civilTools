@@ -28,8 +28,9 @@ class CivilWallLoadOnFrames:
         etabs = etabs_obj.EtabsModel(backup=False)
         if not etabs.success:
             from PySide2.QtWidgets import QMessageBox
-            QMessageBox.warning(None, 'ETABS', 'Please open etabs file!')
-            return False
+            ret = QMessageBox.question(None, 'ETABS', 'ETABS is not open or not recognized by civil Tools. If ETABS is open, please run both ETABS and FreeCAD with Administrator and restart both FreeCAD and ETABS. Do you want to continue?')
+            if ret == QMessageBox.StandardButton.Cancel:
+                return False
         from py_widget.assign import wall_load_on_frames
         win = wall_load_on_frames.Form(etabs)
         Gui.Control.showDialog(win)
