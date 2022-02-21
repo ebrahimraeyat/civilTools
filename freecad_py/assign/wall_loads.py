@@ -50,7 +50,7 @@ def add_wall_on_beams(
         replace : bool = True,
         height : Union[float, bool] = None,
         none_beam_h : float = 0,
-        parapet : float = 1100,
+        parapet : Union[float, str] = 1100,
         # height_from_below : bool = False,
         opening_ratio : float = 0,
     ):
@@ -68,6 +68,8 @@ def add_wall_on_beams(
     
     if stories is None:
         stories = [s.Label for s in all_stories[1:]]
+    if type(parapet) == str:
+        parapet = FreeCAD.Units.Quantity(parapet).Value
     for label in labels:
         similar_label_in_stories = [f'{label}_{story}' for story in stories]
         similar_beams_in_stories = []

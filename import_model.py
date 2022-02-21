@@ -203,6 +203,8 @@ def make_building(etabs):
         floors.append(f)
     building = Arch.makeBuilding(floors)
     building.Label = FreeCAD.ActiveDocument.Name
+    dead = etabs.load_patterns.get_special_load_pattern_names(1)
+    building.addProperty('App::PropertyStringList', 'Dead', 'Loads').Dead = dead
     # site = Arch.makeSite([building])
     # Arch.makeProject([site])
     return floors

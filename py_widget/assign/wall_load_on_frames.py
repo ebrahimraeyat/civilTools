@@ -3,6 +3,7 @@ from pathlib import Path
 
 from PySide2 import  QtWidgets
 import FreeCADGui as Gui
+import FreeCAD
 import civiltools_rc
 
 civiltools_path = Path(__file__).absolute().parent.parent.parent
@@ -18,11 +19,25 @@ class Form(QtWidgets.QWidget):
         self.create_connections()
 
     def fill_widget(self):
+        stories = None
+        load_patterns = None
         if hasattr(self.etabs, 'SapModel'):
             stories = self.etabs.SapModel.Story.GetNameList()[1]
+            load_patterns = self.etabs.load_patterns.get_load_patterns()
+        elif FreeCAD.ActiveDocument:
+            for obj in FreeCAD.ActiveDocument.Objects:
+                if hasattr(obj, 'IfcType') and obj.IfcType == 'Building':
+                    if hasattr(obj, 'Dead'):
+                        load_patterns = obj.Dead
+                    outlists = obj.OutList
+                    stories = []
+                    for o in outlists:
+                        if hasattr(o, 'IfcType') and o.IfcType == 'Building Storey':
+                            stories.append(o.Label)
+        if stories is not None:
             self.form.stories.addItems(stories)
             self.select_all_stories()
-            load_patterns = self.etabs.load_patterns.get_load_patterns()
+        if load_patterns is not None:
             self.form.loadpat.addItems(load_patterns)
 
     def select_all_stories(self):
@@ -103,7 +118,7 @@ class Form(QtWidgets.QWidget):
                 replace=replace,
                 # item_type,
                 height=height,
-                non_beam_h=none_beam_h,
+                none_beam_h=none_beam_h,
                 parapet=f'{parapet_wall_height} m',
                 # height_from_below,
                 opening_ratio=opening_ratio,
