@@ -34,6 +34,8 @@ class Form(QtWidgets.QWidget):
                     for o in outlists:
                         if hasattr(o, 'IfcType') and o.IfcType == 'Building Storey':
                             stories.append(o.Label)
+                    self.form.freecad_button.setChecked(True)
+                    self.form.etabs_button.setChecked(False)
         if stories is not None:
             self.form.stories.addItems(stories)
             self.select_all_stories()
@@ -55,9 +57,13 @@ class Form(QtWidgets.QWidget):
         if self.form.relative.isChecked():
             self.form.dist1.setRange(0, 1)
             self.form.dist2.setRange(0, 1)
+            self.form.dist1.setSuffix('')
+            self.form.dist2.setSuffix('')
         else:
             self.form.dist1.setRange(0, 30)
             self.form.dist2.setRange(0, 30)
+            self.form.dist1.setSuffix(' m')
+            self.form.dist2.setSuffix(' m')
 
     def reset_widget(self):
         if self.form.auto_height.isChecked():
@@ -113,7 +119,6 @@ class Form(QtWidgets.QWidget):
                 dist2=dist2,
                 labels=names,
                 stories=stories,
-                load_type=load_type,
                 relative=relative,
                 replace=replace,
                 # item_type,

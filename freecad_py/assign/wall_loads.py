@@ -81,7 +81,7 @@ def add_wall_on_beams(
             base = bases[0]
             if has_wall(base):
                 continue
-            wall = create_wall(base)
+            wall = create_wall(base, dist1, dist2, relative)
             wall.loadpat = loadpat
             wall.weight = mass_per_area
             if height is None:
@@ -107,23 +107,45 @@ def add_wall_on_beams(
             else:
                 story_objects.append(wall)
             if opening_ratio and next_beam:
+                FreeCAD.ActiveDocument.recompute()
                 win = create_window(wall, opening_ratio)
                 story_objects.append(win)
     for story_label, objects in stories_objects.items():
-        print(objects)
         story = FreeCAD.ActiveDocument.getObjectsByLabel(story_label)[0]
         current_objects = story.Group.copy()
         story.Group = current_objects + objects
+    FreeCAD.ActiveDocument.recompute()
 
-def create_wall(base):
+def create_wall(
+        base,
+        dist1 : float = 0,
+        dist2 : float = 0,
+        relative : bool = True,
+        ):
     wall = Arch.makeWall(base)
+    if relative:
+        d1 = dist1 * base.Length.Value
+        d2 = dist2 * base.Length.Value
+    else:
+        d1 = dist1 * 1000
+        d2 = dist2 * 1000
+    if dist1:
+        e = base.Shape.Edges[0]
+        start_p = e.valueAt(d1)
+        p1 = e.firstVertex().Point
+        wall.Placement.Base = start_p.sub(p1)
+    length = d2 - d1
+    max_length = base.Length.Value - d1
+    if length > max_length:
+        length = max_length
+    wall.Length = length
+    wall.addProperty('App::PropertyInteger', 'weight', 'Wall')
+    wall.addProperty('App::PropertyString', 'loadpat', 'Wall')
     if FreeCAD.GuiUp:
         wall.ViewObject.Transparency = 40
         wall.ViewObject.LineWidth = 1
         wall.ViewObject.PointSize = 1
         wall.Base.ViewObject.show()
-    wall.addProperty('App::PropertyInteger', 'weight', 'Wall')
-    wall.addProperty('App::PropertyString', 'loadpat', 'Wall')
     return wall
 
 def create_window(wall, opening_ratio):
