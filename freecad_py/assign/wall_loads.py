@@ -1,7 +1,7 @@
 import math
 from typing import Iterable, Union
 import FreeCADGui as Gui
-import FreeCAD, Arch
+import FreeCAD, Arch, Part
 import WorkingPlane
 
 
@@ -79,8 +79,7 @@ def add_wall_on_beams(
             if not bases:
                 continue
             base = bases[0]
-            if has_wall(base):
-                continue
+            remove_wall(base)
             wall = create_wall(base, dist1, dist2, relative)
             wall.loadpat = loadpat
             wall.weight = mass_per_area
@@ -122,31 +121,54 @@ def create_wall(
         dist2 : float = 0,
         relative : bool = True,
         ):
-    wall = Arch.makeWall(base)
+    label = base.Label + '_walltrace'
     if relative:
         d1 = dist1 * base.Length.Value
         d2 = dist2 * base.Length.Value
     else:
         d1 = dist1 * 1000
         d2 = dist2 * 1000
-    if dist1:
-        e = base.Shape.Edges[0]
-        start_p = e.valueAt(d1)
-        p1 = e.firstVertex().Point
-        wall.Placement.Base = start_p.sub(p1)
     length = d2 - d1
     max_length = base.Length.Value - d1
     if length > max_length:
-        length = max_length
+        d2 = max_length
+    e = base.Shape.Edges[0]
+    start_p = e.valueAt(d1)
+    end_p = e.valueAt(d2)
+    trace = Part.LineSegment(start_p, end_p)
+    wall_trace=FreeCAD.ActiveDocument.addObject("Sketcher::SketchObject","WallTrace")
+    wall_trace.Placement.Base.z = base.Start.z
+    wall_trace.Label = label
+    wall_trace.addGeometry(trace)
+    wall = Arch.makeWall(wall_trace)
     wall.Length = length
     wall.addProperty('App::PropertyInteger', 'weight', 'Wall')
     wall.addProperty('App::PropertyString', 'loadpat', 'Wall')
+    wall.addProperty('App::PropertyLink', 'base', 'Wall').base = base
     if FreeCAD.GuiUp:
         wall.ViewObject.Transparency = 40
         wall.ViewObject.LineWidth = 1
         wall.ViewObject.PointSize = 1
-        wall.Base.ViewObject.show()
+    wall.recompute()
     return wall
+
+def remove_wall(base):
+    # remove current trace_wall
+    label = base.Label + '_walltrace'
+    labels = FreeCAD.ActiveDocument.getObjectsByLabel(label)
+    if labels:
+        wall_trace = labels[0]
+        inlists = wall_trace.InList
+        if inlists:
+            wall = inlists[0]
+            # find window
+            inlists = wall.InList
+            if inlists:
+                for o in inlists:
+                    if hasattr(o, 'IfcType') and o.IfcType == 'Window':
+                        FreeCAD.ActiveDocument.removeObject(o.Name)
+            FreeCAD.ActiveDocument.removeObject(wall.Name)
+        FreeCAD.ActiveDocument.removeObject(wall_trace.Name)
 
 def create_window(wall, opening_ratio):
     faces = wall.Shape.Faces
@@ -196,10 +218,9 @@ def assign_wall_loads_to_etabs(
     for obj in FreeCAD.ActiveDocument.Objects:
         if hasattr(obj, 'IfcType') and obj.IfcType == 'Wall' and \
             hasattr(obj, 'loadpat'):
-            print(obj.Label)
             name = obj.Base.Label2
             if not name:
-                label, story, _ = obj.Base.Label.split('_')
+                label, story = obj.Base.Label.split('_')[:2]
                 name = etabs.SapModel.FrameObj.GetNameFromLabel(label, story)[0]
             loadpat = obj.loadpat
             height = equivalent_height_in_meter(obj)
