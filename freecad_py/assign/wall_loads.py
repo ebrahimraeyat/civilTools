@@ -218,19 +218,41 @@ def assign_wall_loads_to_etabs(
     for obj in FreeCAD.ActiveDocument.Objects:
         if hasattr(obj, 'IfcType') and obj.IfcType == 'Wall' and \
             hasattr(obj, 'loadpat'):
-            name = obj.Base.Label2
+            name = obj.base.Label2
             if not name:
-                label, story = obj.Base.Label.split('_')[:2]
+                label, story = obj.base.Label.split('_')[:2]
                 name = etabs.SapModel.FrameObj.GetNameFromLabel(label, story)[0]
             loadpat = obj.loadpat
             height = equivalent_height_in_meter(obj)
             load_value = math.ceil(height * obj.weight)
+            dist1, dist2 = get_relative_dists(obj)
+            etabs.unlock_model()
+            etabs.set_current_unit('kgf', 'm')
             etabs.frame_obj.assign_gravity_load(
                 name=name,
                 loadpat=loadpat,
                 val1=load_value,
                 val2=load_value,
+                dist1=dist1,
+                dist2=dist2,
+                relative=True,
             )
+
+def get_relative_dists(wall):
+    wall_trace = wall.Base
+    base = wall.base
+    e1 = wall_trace.Shape.Edges[0]
+    e2 = base.Shape.Edges[0]
+    p1 = e2.firstVertex().Point
+    p2 = e1.firstVertex().Point
+    p3 = e1.lastVertex().Point
+    v1 = p2.sub(p1)
+    v2 = p3.sub(p1)
+    dist1 = (v1.Length / base.Length).Value
+    dist2 = (v2.Length / base.Length).Value
+    assert max(dist1, dist2) <= 1
+    return dist1, dist2
+
 
 def equivalent_height_in_meter(wall):
     inlists = wall.InList
