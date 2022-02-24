@@ -41,6 +41,9 @@ from gui_civiltools import (
 from gui_civiltools.define import (
     gui_create_load_combinations, 
 )
+from gui_civiltools.control import (
+    gui_get_weakness_torsion, 
+)
 
 from freecad_py import civiltools_views
 
@@ -141,6 +144,7 @@ Gui.addCommand('civil_irregurality_of_mass', gui_irregurality_of_mass.CivilIrreg
 Gui.addCommand('civil_explod_load_patterns', gui_explod_load_patterns.CivilExplodLoadPatterns())
 Gui.addCommand('civil_story_stiffness', gui_story_stiffness.CivilStoryStiffness())
 Gui.addCommand('civil_get_weakness', gui_get_weakness.CivilGetWeakness())
+Gui.addCommand('civil_get_weakness_torsion', gui_get_weakness_torsion.CivilGetWeaknessTorsion())
 Gui.addCommand('civil_show_torsion', gui_show_torsion.CivilShowTorsion())
 Gui.addCommand('civil_create_period_file', gui_create_period_file.CivilCreatePeriodFile())
 Gui.addCommand('civil_automatic_drift', gui_automatic_drift.CivilAutomaticDrift())
@@ -172,6 +176,7 @@ civiltools_list = [
             "civil_irregurality_of_mass",
             "civil_story_stiffness",
             "civil_get_weakness",
+            "civil_get_weakness_torsion",
             "civil_show_torsion",
             "civil_create_period_file",
             "civil_show_story_forces",
