@@ -28,15 +28,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="2.8284271"
-     inkscape:cx="120.20815"
-     inkscape:cy="50.027805"
+     inkscape:cx="121.62237"
+     inkscape:cy="26.339728"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1920"
      inkscape:window-height="1001"
      inkscape:window-x="-9"
-     inkscape:window-y="1341"
+     inkscape:window-y="-9"
      inkscape:window-maximized="1"
      inkscape:grid-bbox="true"
      inkscape:snap-text-baseline="true"
@@ -45,39 +45,15 @@
      id="defs2352">
     <linearGradient
        inkscape:collect="always"
-       id="linearGradient22791">
+       id="linearGradient18019">
       <stop
-         style="stop-color:#000000;stop-opacity:1;"
+         style="stop-color:#d4085d;stop-opacity:1;"
          offset="0"
-         id="stop22787" />
+         id="stop18015" />
       <stop
-         style="stop-color:#000000;stop-opacity:0;"
+         style="stop-color:#ff6f0f;stop-opacity:1;"
          offset="1"
-         id="stop22789" />
-    </linearGradient>
-    <linearGradient
-       inkscape:collect="always"
-       id="linearGradient19565">
-      <stop
-         style="stop-color:#f1d37e;stop-opacity:1;"
-         offset="0"
-         id="stop19561" />
-      <stop
-         style="stop-color:#000000;stop-opacity:0;"
-         offset="1"
-         id="stop19563" />
-    </linearGradient>
-    <linearGradient
-       inkscape:collect="always"
-       id="linearGradient19555">
-      <stop
-         style="stop-color:#47d96b;stop-opacity:0.89944136;"
-         offset="0"
-         id="stop19551" />
-      <stop
-         style="stop-color:#000000;stop-opacity:0;"
-         offset="1"
-         id="stop19553" />
+         id="stop18017" />
     </linearGradient>
     <rect
        x="6.7175145"
@@ -91,61 +67,28 @@
        width="113.13709"
        height="68.942909"
        id="rect4637-4" />
-    <linearGradient
+    <radialGradient
        inkscape:collect="always"
-       xlink:href="#linearGradient19565"
-       id="linearGradient19559"
-       x1="0"
-       y1="24"
-       x2="64"
-       y2="24"
-       gradientUnits="userSpaceOnUse" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient19555"
-       id="linearGradient19569"
-       x1="0"
-       y1="26"
-       x2="102"
-       y2="26"
+       xlink:href="#linearGradient18019"
+       id="radialGradient18023"
+       cx="62.261745"
+       cy="32.149117"
+       fx="62.261745"
+       fy="32.149117"
+       r="60.930099"
+       gradientTransform="matrix(1,0,0,0.35486178,0,20.740625)"
        gradientUnits="userSpaceOnUse" />
     <radialGradient
        inkscape:collect="always"
-       xlink:href="#linearGradient22791"
-       id="radialGradient22793"
-       cx="51.599609"
-       cy="32.206103"
-       fx="51.599609"
-       fy="32.206103"
-       r="40.976562"
-       gradientTransform="matrix(1,0,0,0.35486177,0,20.777388)"
+       xlink:href="#linearGradient18019"
+       id="radialGradient35931"
+       cx="68.380241"
+       cy="93.484375"
+       fx="68.380241"
+       fy="93.484375"
+       r="41.359375"
+       gradientTransform="matrix(1,0,0,0.56252361,0,40.897207)"
        gradientUnits="userSpaceOnUse" />
-    <filter
-       inkscape:collect="always"
-       style="color-interpolation-filters:sRGB"
-       id="filter22900"
-       x="-0.083735379"
-       y="-0.23596619"
-       width="1.1674708"
-       height="1.4719324">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="2.6509901"
-         id="feGaussianBlur22902" />
-    </filter>
-    <filter
-       inkscape:collect="always"
-       style="color-interpolation-filters:sRGB"
-       id="filter25954"
-       x="-0.1174897"
-       y="-0.15665294"
-       width="1.2349794"
-       height="1.3133059">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="3.1330589"
-         id="feGaussianBlur25956" />
-    </filter>
   </defs>
   <metadata
      id="metadata2355">
@@ -165,63 +108,26 @@
      inkscape:label="Layer 1">
     <text
        xml:space="preserve"
-       id="text4635"
-       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;white-space:pre;shape-inside:url(#rect4637);fill:url(#radialGradient22793);fill-opacity:1;stroke:#f8e0d6;filter:url(#filter22900);opacity:1;stroke-opacity:1"
-       transform="matrix(1.2243328,0,0,1.7537407,3.8699498,-26.635739)"><tspan
-         x="6.7167969"
-         y="46.747119"
-         id="tspan31672"><tspan
-           style="font-size:medium"
-           id="tspan31670">D+L</tspan></tspan></text>
-    <image
-       xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGYAAAA0CAYAAAB4mU2eAAAABHNCSVQICAgIfAhkiAAAA7hJREFU
-eJzt3EuoVVUcx/HPVYOrWU4UNO1i0SAhsIcRRWVRRkSRUKNegyiyCKJBSEQUUdCgoAY1KSqopAdU
-0KCg5yiCuhSFQgVJdRORyhQ0i7q3wTrC9Zy1z3Otpfuc84U9OP99zv+32L/DWmuv9d97AivwjM78
-gwM4hN2YwXbsaMRGjXNxX1PsBbyfSmAt5gY4/sJ7uBHHpWpUDdis9VrcnSr5ggQ5JnElXsFObMWS
-BHlHmhTGzGc1Hse3uDBx7pEitTGHORUf45ZM+YeeXMYQxpsXcVNGjaFlUUX8HTwaiZ/QONbgbGFm
-sr5N/gWCOTP4tO9WjiBVxvyG6S5zrMPtjWNphcarOAt7em1gjyzFDfM+78PrmTWzsVbrtO+5PvKc
-IowrVdPqNxO0tRNTTZrfZdQ65qfLh9mJy/BIxfnrsTGh3lCTevCfw0N4sOL8k4n1hpZcs7LH8EYk
-fg4uyaQ5VOQyZg5bhElEM/dk0hwqct7H7MXDkfg1WJ5RdyjIaQw8r3WKvFAwZ0wbchvzN16KxDdn
-1q09uY2BtyKxjZgooF1bShjzhdbubBlOK6BdW0oYM4vPI/ENBbRrSwlj4OtI7PRC2rWklDHbI7GT
-C2nXklLG/BqJTRXSriWljNkVia0spF1LShnzZyQ2LthoQyljYnVniwtp15KSxsw1xcbGtKFqazk1
-C7Xe6c92+M0aoV6gFyYjOT7oMcceoXjxqFLKmOYLRii3bcfxuHxA3SV95Ph5QM0klOrKYt3WwULa
-taSUMbH9l32FtGtJKWNOisR+KqRdS0qNMbHll07GHMCHPepMOrJm+iA+6zFH7tq3rihlzBmR2I8d
-fjODTT3qTDnS8H5yHBOU6srOjMS+LKRdS0oYM4nzm2KHxLcCxjQoYczFWtfFpoVHB8dUUMKYmyOx
-dwvo1prcxizHdZH425l1a09uY+7Xetf/Db7PrFt7chqzDndF4s9m1BwachkziW1aFy/34uVMmkNF
-DmMW4TXxe5enjRcvuyK1MScKA/u1kXO78ERivaElpTGb8BWurji/Vec9mDENBl0rW4krcBsuavO9
-bcKbM8Z0SZUx64V/+HwWC13VMqwSxpBVXWjswJ39NrBm3CqsdAzKAwz+kp92xw/iezG5ONpPLac6
-zst5HzONS8WL/cZ0IIcx/+EpYcNqJkP+kSClMbPCq0424F6j+XK5ZAw6K9stdFmfCI+P/zJwiwbj
-D9wx73NtCz4mhPqtq7r47r/YL9Qh78fvwoUYVVbjgky5P/of6UTV7p+nF6wAAAAASUVORK5CYII=
-"
-       width="102"
-       height="52"
-       transform="translate(16,4)"
-       id="image19270"
-       style="fill-opacity:1;fill:url(#linearGradient19569);stroke:#f8d6d6;stroke-opacity:1" />
+       style="font-style:normal;font-weight:normal;font-size:59.478px;line-height:1.25;font-family:sans-serif;fill:url(#radialGradient18023);fill-opacity:1;stroke:none;stroke-width:0.929344"
+       x="-4.4767504"
+       y="53.770882"
+       id="text4357"
+       transform="scale(1.0288426,0.97196598)"><tspan
+         sodipodi:role="line"
+         id="tspan4355"
+         x="-4.4767504"
+         y="53.770882"
+         style="font-size:59.478px;stroke-width:0.929344;fill-opacity:1;fill:url(#radialGradient18023)">D+L</tspan></text>
     <text
        xml:space="preserve"
-       id="text4635-0"
-       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;white-space:pre;shape-inside:url(#rect4637-4);fill:#000000;fill-opacity:1;stroke:none"
-       transform="matrix(4.0408075,0,0,5.4170826,2.762724,-129.74402)"><tspan
-         x="6.7167969"
-         y="46.747119"
-         id="tspan31676"><tspan
-           style="font-size:medium"
-           id="tspan31674">+E</tspan></tspan></text>
-    <image
-       xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAwCAYAAAChS3wfAAAABHNCSVQICAgIfAhkiAAAAU9JREFU
-aIHtmjFLQlEYhh/lLi2uOboItTpYQkM/Ipz6O9kg/YSmQJpqc42WGsOpsSWXWl2CsBaDWzjcc/uO
-r4fzPXCHA57XlwfPJx5ssP2MgONI2ZMiUrAle8AgUvZDM1JwMrgAdQE1KcyAdcyMcuZ1BTSBndL6
-E/j4f5/K9IClRVDdI9AHFqXn1qKMguxngAtQF1DjAtQF1LgAdQE1LkBdQE32AlL9MXQEfBnkvKYq
-4N4o5yL7I+AC1AXUZC+gAHaB68B9rT/rA+AuMGMKjAP3/HCKzbfAM0BnFbbp57JiyZs1e80+udkf
-ARegLqCmAN6AYeC+LnBWWj8B54EZL4Gv3yoO+T2UphHfy4dgTFyAuoAaF6AuoMYFqAuocQHqAmqy
-F5DqrXAbmwuRRaoC5kY5fi3uAtQF1NSdAe/AVWlt9cfFjdNQF6jACbAfKfvxGwvCSm5D38VAAAAA
-AElFTkSuQmCC
-"
-       width="64"
-       height="48"
-       transform="translate(34,76)"
-       id="image19322"
-       style="fill-opacity:1;fill:url(#linearGradient19559);filter:url(#filter25954);stroke:#f8e0d6;stroke-opacity:1" />
+       style="font-style:normal;font-weight:normal;font-size:64px;line-height:1.25;font-family:sans-serif;fill:url(#radialGradient35931);fill-opacity:1;stroke:none"
+       x="20.458368"
+       y="116.75"
+       id="text21199"><tspan
+         sodipodi:role="line"
+         id="tspan21197"
+         x="20.458368"
+         y="116.75"
+         style="font-size:64px;fill-opacity:1;fill:url(#radialGradient35931)">+E</tspan></text>
   </g>
 </svg>

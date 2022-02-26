@@ -1,7 +1,65 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Svg Vector Icons : http://www.onlinewebfonts.com/icon -->
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 1000 1000" enable-background="new 0 0 1000 1000" xml:space="preserve">
-<metadata> Svg Vector Icons : http://www.onlinewebfonts.com/icon </metadata>
-<g><path d="M990,922.2H10l223.4-707.4h154.1c-1.4-7.2-2.1-14.7-2.1-22.2c0-63.2,51.5-114.7,114.7-114.7c63.2,0,114.6,51.5,114.6,114.7c0,7.5-0.7,15-2.1,22.2h154.2L990,922.2z M84.1,867.8h831.7l-189-598.7H520.5l29.2-42.6c6.8-10.1,10.5-21.9,10.5-34.1c0-33.3-27-60.3-60.3-60.3s-60.4,27-60.4,60.3c0,12.2,3.7,24,10.6,34l29.4,42.6H273.2L84.1,867.8z"/><path d="M329.6,420.3h43v153l77.6-78.8H503l-74.6,71.6l81.8,123.3h-52.4l-59.6-94.6l-25.6,24.9v69.7h-43L329.6,420.3L329.6,420.3z"/><path d="M692.2,679.3c0,58.8-33.9,87.4-95.7,87.4c-39.2,0-82.9-15.1-87.1-60.7h43c5.3,24.5,24.9,28.6,46.7,28.6c34.7,0,50.1-17.7,50.1-49.8v-29.8h-0.8c-12.1,21.5-34.3,34.3-58.4,34.3c-61.8,0-87.4-46.7-87.4-102.5c0-52.4,32.8-97.6,88.2-97.6c24.5,0,46.7,9.8,57.7,32h0.8v-26.8h43V679.3L692.2,679.3z M649.3,587.7c0-33.5-15.1-64.5-52.4-64.5c-38.1,0-51.3,35.4-51.3,67.8c0,31.7,15.5,64.5,51.3,64.5C634.9,655.5,649.3,621.2,649.3,587.7z"/></g>
+
+<svg
+   version="1.1"
+   x="0px"
+   y="0px"
+   viewBox="0 0 1000 1000"
+   enable-background="new 0 0 1000 1000"
+   xml:space="preserve"
+   id="svg12"
+   sodipodi:docname="mass.svg"
+   inkscape:version="1.2-dev (8a200a5f, 2021-09-02)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs16"><linearGradient
+     inkscape:collect="always"
+     id="linearGradient851"><stop
+       style="stop-color:#ff6e0f;stop-opacity:1;"
+       offset="0"
+       id="stop847" /><stop
+       style="stop-color:#d4075c;stop-opacity:1;"
+       offset="1"
+       id="stop849" /></linearGradient><linearGradient
+     inkscape:collect="always"
+     xlink:href="#linearGradient851"
+     id="linearGradient853"
+     x1="6.9299074"
+     y1="500.05"
+     x2="993.06927"
+     y2="500.05"
+     gradientUnits="userSpaceOnUse" /></defs><sodipodi:namedview
+   id="namedview14"
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1.0"
+   inkscape:pageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="0"
+   showgrid="false"
+   inkscape:zoom="0.57841335"
+   inkscape:cx="340.58688"
+   inkscape:cy="490.13392"
+   inkscape:window-width="1920"
+   inkscape:window-height="1001"
+   inkscape:window-x="-9"
+   inkscape:window-y="-9"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="svg12" />
+<metadata
+   id="metadata2"> Svg Vector Icons : http://www.onlinewebfonts.com/icon </metadata>
+<path
+   d="M 990,922.2 H 10 L 233.4,214.8 h 154.1 c -1.4,-7.2 -2.1,-14.7 -2.1,-22.2 0,-63.2 51.5,-114.7 114.7,-114.7 63.2,0 114.6,51.5 114.6,114.7 0,7.5 -0.7,15 -2.1,22.2 H 766.8 Z M 84.1,867.8 H 915.8 L 726.8,269.1 H 520.5 l 29.2,-42.6 c 6.8,-10.1 10.5,-21.9 10.5,-34.1 0,-33.3 -27,-60.3 -60.3,-60.3 -33.3,0 -60.4,27 -60.4,60.3 0,12.2 3.7,24 10.6,34 L 479.5,269 H 273.2 Z"
+   id="path4"
+   style="stroke:#fc0c0c;stroke-width:4.5;stroke-miterlimit:4;stroke-dasharray:none;fill-opacity:1;fill:url(#linearGradient853);stroke-opacity:1" /><path
+   d="m 255.27178,411.8603 h 67.68785 V 633.68683 L 445.11258,519.43892 h 83.11438 L 410.79641,623.24794 539.56074,802.01403 h -82.48473 l -93.8185,-137.15549 -40.29788,36.10118 v 101.05431 h -67.68785 z"
+   id="path6"
+   style="fill:#f9f603;fill-opacity:0.88;stroke:#fc440c;stroke-width:7.17089415;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" /><path
+   d="m 783.45429,745.26313 c 0,67.86847 -39.21647,100.87933 -110.70844,100.87933 -45.34767,0 -95.90105,-17.42881 -100.75973,-70.0615 h 49.74361 c 6.13119,28.27853 28.80502,33.01085 54.02387,33.01085 40.14193,0 57.95709,-20.42979 57.95709,-57.48044 v -34.39593 h -0.92547 c -13.99762,24.81585 -39.6792,39.58994 -67.55876,39.58994 -71.49197,0 -101.10677,-53.90234 -101.10677,-118.30814 0,-60.48143 37.94396,-112.65243 102.03224,-112.65243 28.34228,0 54.02387,11.31141 66.74898,36.93522 h 0.92546 v -30.93325 h 49.74361 V 745.26313 Z M 733.82637,639.53605 c 0,-38.66657 -17.46811,-74.44757 -60.61779,-74.44757 -44.07515,0 -59.34528,40.8596 -59.34528,78.25651 0,36.58896 17.93083,74.44756 59.34528,74.44756 43.95946,0 60.61779,-39.58994 60.61779,-78.2565 z"
+   id="path8"
+   style="fill:#f9f603;fill-opacity:0.88;stroke:#fc440c;stroke-width:5.48492622;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
 </svg>
