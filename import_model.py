@@ -1,6 +1,6 @@
 # import math
 
-# import DraftVecUtils
+import DraftVecUtils
 import FreeCAD
 # import Part
 import Arch
@@ -65,6 +65,8 @@ def import_model(
                 color = (1.0, 1.0, 0.0, 0.0)
             v1 = FreeCAD.Vector(frames[6][i], frames[7][i], frames[8][i])
             v2 = FreeCAD.Vector(frames[9][i], frames[10][i], frames[11][i])
+            if DraftVecUtils.equals(v1, v2):
+                continue
             section_name = frames[2][i]
             if section_name:
                 section_index = frame_props[1].index(section_name)
