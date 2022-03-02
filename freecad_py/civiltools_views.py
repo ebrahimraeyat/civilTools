@@ -204,20 +204,31 @@ class CivilToolsViews:
                         story = o
                         break
             show_story = False
-            show_obj = True
+            show_obj = False
             if story is None or story.Name in selected_stories:
                 show_story = True
 
-            if hasattr(obj, 'IfcType') and obj.IfcType == 'Beam':
-                show_obj = show_beam and not wireframe
-            if hasattr(obj, 'IfcType') and obj.IfcType == 'Column':
-                show_obj = show_column and not wireframe
-            if hasattr(obj, 'IfcType') and obj.IfcType == 'Wall':
-                show_obj = show_arch_wall
+            if hasattr(obj, 'IfcType'):
+                if obj.IfcType == 'Beam':
+                    show_obj = show_beam and not wireframe
+                elif obj.IfcType == 'Column':
+                    show_obj = show_column and not wireframe
+                elif obj.IfcType in ('Wall', 'Window'):
+                    show_obj = show_arch_wall
+                elif obj.IfcType == 'Building Storey':
+                    show_obj = show_story
+                elif obj.IfcType == 'Building':
+                    show_obj = True
             if obj.Label.startswith('W') and hasattr(obj,'MakeFace'):
                 show_obj = show_shear_wall
-            if obj.Label.startswith('F') and hasattr(obj,'MakeFace'):
+            elif obj.Label.startswith('F') and hasattr(obj,'MakeFace'):
                 show_obj = show_floor
+            if obj.Label.endswith('CenterLine'):
+                if obj.Label.startswith('B'):
+                    show_obj = show_beam and wireframe
+                elif obj.Label.startswith('C'):
+                    show_obj = show_column and wireframe
+            
             show = show_story and show_obj
             show_object(obj, show)
         FreeCAD.ActiveDocument.recompute()
