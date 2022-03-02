@@ -31,6 +31,7 @@ def import_model(
         section_types_map = {
             1 : ['H', 'IPE'],
             2 : ['U', 'UNP'],
+            6 : ['RH', 'BOX'],
             8 : ['R', 'REC'],
             9 : ['C', 'CIRCLE'],
         }
