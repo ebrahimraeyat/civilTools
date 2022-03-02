@@ -84,6 +84,7 @@ class CivilToolsViews:
             vm.shear_wall = dialog.shear_wall
             vm.arch_wall = dialog.arch_wall
             vm.floor = dialog.floor
+            vm.wireframe = dialog.wireframe
 
             # set button sizes
             size = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/General").GetInt("ToolbarIconSize",24)
@@ -104,6 +105,7 @@ class CivilToolsViews:
             dialog.shear_wall.stateChanged.connect(self.view_objects)
             dialog.arch_wall.stateChanged.connect(self.view_objects)
             dialog.floor.stateChanged.connect(self.view_objects)
+            dialog.wireframe.stateChanged.connect(self.view_objects)
             dialog.button_refresh.clicked.connect(self.update)
 
             # connect signals
@@ -187,6 +189,7 @@ class CivilToolsViews:
         show_floor = vm.floor.isChecked()
         show_shear_wall = vm.shear_wall.isChecked()
         show_arch_wall = vm.arch_wall.isChecked()
+        wireframe = vm.wireframe.isChecked()
 
         for obj in FreeCAD.ActiveDocument.Objects:
             if Draft.getType(obj) == "Sketcher::SketchObject":
@@ -206,9 +209,9 @@ class CivilToolsViews:
                 show_story = True
 
             if hasattr(obj, 'IfcType') and obj.IfcType == 'Beam':
-                show_obj = show_beam
+                show_obj = show_beam and not wireframe
             if hasattr(obj, 'IfcType') and obj.IfcType == 'Column':
-                show_obj = show_column
+                show_obj = show_column and not wireframe
             if hasattr(obj, 'IfcType') and obj.IfcType == 'Wall':
                 show_obj = show_arch_wall
             if obj.Label.startswith('W') and hasattr(obj,'MakeFace'):

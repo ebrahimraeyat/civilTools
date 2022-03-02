@@ -131,6 +131,13 @@
     </widget>
    </item>
    <item>
+    <widget class="QCheckBox" name="wireframe">
+     <property name="text">
+      <string>WireFrame</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QPushButton" name="buttonToggle">
