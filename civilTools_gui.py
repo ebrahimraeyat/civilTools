@@ -44,6 +44,9 @@ from gui_civiltools.define import (
 from gui_civiltools.control import (
     gui_get_weakness_torsion, 
 )
+from gui_civiltools.tools import (
+    gui_discretize, 
+)
 
 from freecad_py import civiltools_views
 
@@ -169,6 +172,8 @@ Gui.addCommand('civiltools_100_30', gui_100_30_columns.CivilTools100_30Columns()
 Gui.addCommand('civiltools_import_model', gui_import_model.CivilToolsImportModel())
 Gui.addCommand('civiltools_create_load_combinations', gui_create_load_combinations.CivilToolsCreateLoadCombinations())
 Gui.addCommand('civiltools_views',civiltools_views.CivilToolsViews())
+Gui.addCommand('civiltools_discretize',gui_discretize.CivilToolsDiscretize())
+
 civiltools_list = [
             "civiltools_import_model",
             "civil_automatic_drift",
@@ -202,6 +207,7 @@ civiltools_tools = [
             "civil_restore_backups",
             "civil_delete_backups",
             "civiltools_settings",
+            "civiltools_discretize",
             ]
 
 civiltools_view = [
