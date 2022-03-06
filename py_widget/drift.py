@@ -25,6 +25,8 @@ class Form(QtWidgets.QWidget):
         no_of_stories = d['no_of_story_x']
         cdx = d['cdx']
         cdy = d['cdy']
+        bot_story = d["bot_x_combo"]
+        top_story = d["top_x_combo"]
         create_t_file = self.form.create_t_file_box.isChecked()
         loadcases = []
         for lw in (self.form.x_loadcase_list, self.form.y_loadcase_list):
@@ -36,7 +38,7 @@ class Form(QtWidgets.QWidget):
             tx, ty, _ = self.etabs.get_drift_periods()
             config.save_analytical_periods(self.json_file, tx, ty)
             building = self.current_building(tx, ty)
-            self.etabs.apply_cfactor_to_edb(building)
+            self.etabs.apply_cfactor_to_edb(building, bot_story, top_story)
         drifts, headers = self.etabs.get_drifts(no_of_stories, cdx, cdy, loadcases)
         import table_model
         table_model.show_results(drifts, headers, table_model.DriftModel)

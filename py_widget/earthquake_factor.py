@@ -178,7 +178,14 @@ class Form(QtWidgets.QWidget):
             QMessageBox.critical(self, title % direction, str(err))
 
     def apply_factors_to_etabs(self):
-        ret = self.etabs.apply_cfactor_to_edb(self.final_building)
+        d = config.load(self.json_file)
+        bot_story = d.get("bot_x_combo", '')
+        top_story = d.get("top_x_combo", '')
+        ret = self.etabs.apply_cfactor_to_edb(
+                self.final_building,
+                bot_story,
+                top_story,
+                )
         if ret == 1:
             msg = "Data can not be written to your Etabs file,\n If you want to correct this problem, try Run analysis."
             title = "Remove Error?"
