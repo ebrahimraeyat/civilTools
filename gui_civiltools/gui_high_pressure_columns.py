@@ -37,12 +37,13 @@ class CivilHighPressureColumns:
             )
         if not allow:
             return
-        import etabs_obj
-        etabs = etabs_obj.EtabsModel(backup=False)
-        if not etabs.success:
-            from PySide2.QtWidgets import QMessageBox
-            QMessageBox.warning(None, 'ETABS', 'Please open etabs file!')
-            return False
+        from gui_civiltools import open_etabs
+        etabs, filename = open_etabs.find_etabs(run=False, backup=False)
+        if (
+            etabs is None or
+            filename is None
+            ):
+            return
         from py_widget.control import high_pressure_columns
         win = high_pressure_columns.Form(etabs)
         Gui.Control.showDialog(win)

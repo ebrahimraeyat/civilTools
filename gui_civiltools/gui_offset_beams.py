@@ -24,12 +24,13 @@ class CivilOffsetBeam:
                 'ToolTip': tooltip}
     
     def Activated(self):
-        import etabs_obj
-        etabs = etabs_obj.EtabsModel(backup=False)
-        if not etabs.success:
-            from PySide2.QtWidgets import QMessageBox
-            QMessageBox.warning(None, 'ETABS', 'Please open etabs file!')
-            return False
+        from gui_civiltools import open_etabs
+        etabs, filename = open_etabs.find_etabs(run=False, backup=False)
+        if (
+            etabs is None or
+            filename is None
+            ):
+            return
         from py_widget.tools import offset
         win = offset.Form(etabs)
         Gui.Control.showDialog(win)

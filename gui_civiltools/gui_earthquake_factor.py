@@ -36,13 +36,15 @@ class CivilEarthquakeFactor:
             )
         if not allow:
             return
-        import etabs_obj
-        etabs = etabs_obj.EtabsModel()
-        if not etabs.success:
-            QMessageBox.warning(None, 'ETABS', 'Please open etabs file!')
-            return False
-        etabs_filename = etabs.get_filename()
-        json_file = etabs_filename.with_suffix('.json')
+        from gui_civiltools import open_etabs
+        etabs, filename = open_etabs.find_etabs(run=False, backup=False)
+        if (
+            etabs is None or
+            filename is None
+            ):
+            return
+        # filename = etabs.get_filename()
+        json_file = filename.with_suffix('.json')
         if not json_file.exists():
             QMessageBox.warning(None, 'Settings', 'Please Set Options First!')
             Gui.runCommand("civiltools_settings")

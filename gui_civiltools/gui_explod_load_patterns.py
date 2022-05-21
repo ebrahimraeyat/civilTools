@@ -38,9 +38,14 @@ class CivilExplodLoadPatterns:
             )
         if not allow:
             return
-        import etabs_obj
+        from gui_civiltools import open_etabs
+        etabs, filename = open_etabs.find_etabs(run=False, backup=False)
+        if (
+            etabs is None or
+            filename is None
+            ):
+            return
         from py_widget import explode_seismic_load_patterns
-        etabs = etabs_obj.EtabsModel()
         panel = explode_seismic_load_patterns.Form(etabs)
         Gui.Control.showDialog(panel)
         show_warning_about_number_of_use(check)

@@ -41,14 +41,14 @@ class CivilToolsWorkbench(Workbench):
         # self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Export")), export_list)
         # self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Draw")), draw_list)
 
-        # pref_visual_ui_abs_path = str(Path(civilTools_gui.__file__).parent.absolute() / 'widgets' / 'civiltools_preferences.ui')
-        # Gui.addPreferencePage(pref_visual_ui_abs_path, "CivilTools")
-        # Gui.addIconPath(
-        #     str(
-        #         Path(civilTools_gui.__file__).parent.absolute()
-        #         / "images"
-        #         )
-        #     )
+        pref_visual_ui_abs_path = str(Path(civilTools_gui.__file__).parent.absolute() / 'widgets' / 'preferences-civiltools_visual.ui')
+        Gui.addPreferencePage(pref_visual_ui_abs_path, "civilTools")
+        Gui.addIconPath(
+            str(
+                Path(civilTools_gui.__file__).parent.absolute()
+                / "images"
+                )
+            )
 
     def Activated(self):
         
@@ -69,6 +69,9 @@ class CivilToolsWorkbench(Workbench):
                 FreeCADGui.runCommand("civiltools_views")
             else:
                 w.show()
+
+        if FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools").GetBool("show_at_startup", True):
+            Gui.showPreferences("civilTools", 0)
 
     def Deactivated(self):
 

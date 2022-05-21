@@ -38,11 +38,13 @@ class CivilTools100_30Columns:
             )
         if not allow:
             return
-        import etabs_obj
-        etabs = etabs_obj.EtabsModel(backup=False)
-        if not etabs.success:
-            QMessageBox.warning(None, 'ETABS', 'Please open etabs file!')
-            return False
+        from gui_civiltools import open_etabs
+        etabs, filename = open_etabs.find_etabs(run=False, backup=False)
+        if (
+            etabs is None or
+            filename is None
+            ):
+            return
         ex, ey = etabs.load_patterns.get_EX_EY_load_pattern()
         if ex is None or ey is None:
             QMessageBox.warning(None, 'ETABS', 'Please Define EX and EY in ETABS Model.')
