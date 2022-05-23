@@ -72,6 +72,8 @@ class CivilToolsWorkbench(Workbench):
 
         if FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools").GetBool("show_at_startup", True):
             Gui.showPreferences("civilTools", 0)
+        
+        FreeCAD.addImportType("CSI ETABS (*.edb *.EDB)", "gui_civiltools.open_etabs")
 
     def Deactivated(self):
 

@@ -24,8 +24,8 @@ class CivilRestoreBackups:
                 'ToolTip': tooltip}
     
     def Activated(self):
-        from gui_civiltools import open_etabs
-        etabs, filename = open_etabs.find_etabs(run=False, backup=False)
+        import find_etabs
+        etabs, filename = find_etabs.find_etabs(run=False, backup=False)
         if (
             etabs is None or
             filename is None
