@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from PySide2.QtWidgets import QMessageBox
+from numpy import isin
 
 import FreeCAD
 
@@ -63,13 +64,22 @@ def find_etabs(
     etabs = None
     filename = None
     com_error = False
+    import _ctypes
     if (
         hasattr(FreeCAD.Base, 'etabs') and
-        hasattr(FreeCAD.Base.etabs, 'success') and 
-        FreeCAD.Base.etabs.success
+        hasattr(FreeCAD.Base.etabs, 'SapModel')
+        # FreeCAD.Base.etabs.success
         ):
-        etabs = FreeCAD.Base.etabs
-    else:
+        try:
+            FreeCAD.Base.etabs.SapModel.Story
+            FreeCAD.Base.etabs.SapModel.GetModelFilename()
+            FreeCAD.Base.etabs.SapModel.FrameObj.GetNameList()
+            etabs = FreeCAD.Base.etabs
+        except _ctypes.COMError:
+            FreeCAD.Base.etabs = None
+            QMessageBox.warning(None, 'ETABS', 'Please Close ETABS and FreeCAD and try again.')
+            com_error = True
+    if etabs is None and not com_error:
         etabs = etabs_obj.EtabsModel(backup=False)
         if not etabs.success:
             param = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools")
@@ -81,20 +91,14 @@ def find_etabs(
                     model_path = None,
                     software_exe_path=etabs_exe,
                     )
-    if (
-        etabs is not None and
-        hasattr(etabs, 'SapModel')
-        ):
-        import _ctypes
+    if etabs and hasattr(etabs, 'SapModel'):
         try:
-            etabs.SapModel.Story
-            filename = etabs.SapModel.GetModelFilename()
-        except _ctypes.COMError:
-            QMessageBox.warning(None, 'ETABS', 'Please Close ETABS and FreeCAD and try again.')
-            com_error = True
-    else:
-        etabs = None
-    if etabs is None:
+            name = FreeCAD.Base.etabs.SapModel.GetModelFilename()
+            if name.upper().endswith('.EDB'):
+                filename = name
+        except:
+            filename = None
+    if etabs is None and not com_error:
         if (QMessageBox.question(
             None,
             'ETABS',
@@ -131,13 +135,12 @@ Do you want to specify ETABS.exe path?''',
         etabs.run_analysis()
         progressbar.stop()
     if (
-        not hasattr(FreeCAD.Base, 'etabs') or
-        not hasattr(FreeCAD.Base.etabs, 'success') or
-        not FreeCAD.Base.etabs.success
+        etabs is not None and
+        not com_error
         ):
         FreeCAD.Base.etabs = etabs
         if backup:
             FreeCAD.Base.etabs.backup_model()
-    if type(filename) == str and Path(filename).exists():
+    if isinstance(filename, str) and Path(filename).exists():
         filename = Path(filename)
     return FreeCAD.Base.etabs, filename
