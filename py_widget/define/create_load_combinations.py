@@ -25,12 +25,17 @@ class Form(QtWidgets.QWidget):
         rho_y = float(self.form.rhoy_combobox.currentText())
         prefix = self.form.prefix.text()
         suffix = self.form.suffix.text()
+        if self.form.lrfd.isChecked():
+            design_type = "LRFD"
+        elif self.form.asd.isChecked():
+            design_type = "ASD"
         data = self.etabs.load_combinations.generate_concrete_load_combinations(
             equivalent_loads=equivalent_loads,
             prefix = prefix,
             suffix = suffix,
             rho_x=rho_x,
             rho_y=rho_y,
+            design_type=design_type,
         )
         progressbar = FreeCAD.Base.ProgressIndicator()
         n = int(len(data) / 4)
