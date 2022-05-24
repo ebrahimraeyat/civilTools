@@ -9,6 +9,7 @@ import FreeCAD
 
 
 civiltools_path = Path(__file__).absolute().parent.parent.parent
+from load_combinations import generate_concrete_load_combinations
 
 
 class Form(QtWidgets.QWidget):
@@ -29,7 +30,7 @@ class Form(QtWidgets.QWidget):
             design_type = "LRFD"
         elif self.form.asd.isChecked():
             design_type = "ASD"
-        data = self.etabs.load_combinations.generate_concrete_load_combinations(
+        data = generate_concrete_load_combinations(
             equivalent_loads=equivalent_loads,
             prefix = prefix,
             suffix = suffix,
