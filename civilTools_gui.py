@@ -170,7 +170,6 @@ Gui.addCommand('civil_help', gui_help.CivilToolsHelp())
 Gui.addCommand('civil_registe', gui_check_legal.CivilToolsRegister())
 Gui.addCommand('civiltools_100_30', gui_100_30_columns.CivilTools100_30Columns())
 Gui.addCommand('civiltools_import_model', gui_import_model.CivilToolsImportModel())
-Gui.addCommand('civiltools_create_load_combinations', gui_create_load_combinations.CivilToolsCreateLoadCombinations())
 Gui.addCommand('civiltools_views',civiltools_views.CivilToolsViews())
 Gui.addCommand('civiltools_discretize',gui_discretize.CivilToolsDiscretize())
 
@@ -215,7 +214,7 @@ civiltools_view = [
             ]
 
 civiltools_define = [
-            "civiltools_create_load_combinations",
+            "civiltools_load_combinations",
             "civil_create_section_cuts",
             ]
 
