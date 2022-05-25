@@ -37,24 +37,42 @@ class Form(QtWidgets.QWidget):
         QMessageBox.information(None, 'Successfull','Successfully written to etabs file.')
 
     def fill_load_combinations(self):
-        map_radio_to_type = {
-            self.form.concrete : 'concrete',
-            self.form.steel : 'steel',
-            self.form.shearwall : 'shearwall',
-            self.form.slab : 'slab',
+        map_radio_to_load_type = {
+            self.form.all_load_type : 'ALL',
+            self.form.seismic_load_type : 'SEISMIC',
+            self.form.gravity_load_type : 'GRAVITY',
         }
-        for radio in map_radio_to_type.keys():
+        for radio in map_radio_to_load_type.keys():
             if radio.isChecked():
-                type_ = map_radio_to_type[radio]
-        load_combinations = self.etabs.database.get_design_load_combinations(type_=type_)
+                load_type = map_radio_to_load_type[radio]
+        load_combinations = self.etabs.load_combinations.get_load_combinations_of_type(load_type)
+        if self.form.design_type_group.isChecked():
+            map_radio_to_design_type = {
+                self.form.concrete_design_type : 'concrete',
+                self.form.steel_design_type : 'steel',
+                self.form.shearwall_design_type : 'shearwall',
+                self.form.slab_design_type : 'slab',
+            }
+            for radio in map_radio_to_design_type.keys():
+                if radio.isChecked():
+                    type_ = map_radio_to_design_type[radio]
+            load_combinations_from_design_type = self.etabs.database.get_design_load_combinations(type_=type_)
+            if load_combinations_from_design_type is None:
+                load_combinations_from_design_type = []
+            load_combinations = set(load_combinations).intersection(load_combinations_from_design_type)
         self.form.load_combinations_list.clear()
         if load_combinations:
             self.form.load_combinations_list.addItems(load_combinations)
             
     def create_connections(self):
-        self.form.concrete.clicked.connect(self.fill_load_combinations)
-        self.form.steel.clicked.connect(self.fill_load_combinations)
-        self.form.shearwall.clicked.connect(self.fill_load_combinations)
-        self.form.slab.clicked.connect(self.fill_load_combinations)
+        self.form.concrete_design_type.clicked.connect(self.fill_load_combinations)
+        self.form.steel_design_type.clicked.connect(self.fill_load_combinations)
+        self.form.shearwall_design_type.clicked.connect(self.fill_load_combinations)
+        self.form.slab_design_type.clicked.connect(self.fill_load_combinations)
+        self.form.design_type_group.clicked.connect(self.fill_load_combinations)
+
+        self.form.all_load_type.clicked.connect(self.fill_load_combinations)
+        self.form.seismic_load_type.clicked.connect(self.fill_load_combinations)
+        self.form.gravity_load_type.clicked.connect(self.fill_load_combinations)
         self.form.create_button.clicked.connect(self.create)
     
