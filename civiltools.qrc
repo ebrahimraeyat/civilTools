@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="civiltools">
+    <file>images/load_combinations_to_f2k.svg</file>
     <file>images/freecad.svg</file>
     <file>images/eye.svg</file>
     <file>images/load_combinations.svg</file>

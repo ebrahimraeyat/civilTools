@@ -2,7 +2,7 @@
 from pathlib import Path
 
 from PySide2 import QtCore
-from PySide2.QtWidgets import QMessageBox
+# from PySide2.QtWidgets import QMessageBox
 
 import FreeCADGui as Gui
 
@@ -87,12 +87,46 @@ class CivilToolsCreatePushLoadCombination:
         return True
 
 
+class CivilToolsAddLoadCombinationsToF2k:
+
+    def GetResources(self):
+        menu_text = QtCore.QT_TRANSLATE_NOOP(
+            "civiltools",
+            "Add to F2K")
+        tooltip = QtCore.QT_TRANSLATE_NOOP(
+            "civiltools",
+            "Add Load Combinations to F2K file")
+        path = str(
+                   Path(__file__).parent.absolute().parent.parent / "images" / "load_combinations_to_f2k.svg"
+                   )
+        return {'Pixmap': path,
+                'MenuText': menu_text,
+                'ToolTip': tooltip}
+    
+    def Activated(self):
+        import find_etabs
+        etabs, filename = find_etabs.find_etabs(run=False, backup=False)
+        if (
+            etabs is None or
+            filename is None
+            ):
+            return
+        from py_widget.define import load_combinations_to_f2k
+        win = load_combinations_to_f2k.Form(etabs)
+        Gui.Control.showDialog(win)
+        # show_warning_about_number_of_use(check)
+        
+    def IsActive(self):
+        return True
+
+
 class CivilToolsLoadCombinationGroupCommand:
 
     def GetCommands(self):
         return (
             "civilTools_create_load_combinations",
             "civilTools_create_push_load_combinations",
+            "civiltools_load_combinations_to_f2k",
         )  # a tuple of command names that you want to group
 
     # def Activated(self, index):
@@ -114,4 +148,5 @@ class CivilToolsLoadCombinationGroupCommand:
         
 Gui.addCommand("civilTools_create_load_combinations", CivilToolsCreateLoadCombinations())
 Gui.addCommand("civilTools_create_push_load_combinations", CivilToolsCreatePushLoadCombination())
+Gui.addCommand('civiltools_load_combinations_to_f2k', CivilToolsAddLoadCombinationsToF2k())
 Gui.addCommand('civiltools_load_combinations', CivilToolsLoadCombinationGroupCommand())
