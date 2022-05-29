@@ -79,7 +79,10 @@ def import_model(
             height = frame_props[3][section_index]
             profile = profiles.get(section_name, None)
             if profile is None:
-                profile = Arch.makeProfile(
+                if section_type == 'C':
+                    profile = Draft.make_circle(width / 2)
+                else:
+                    profile = Arch.makeProfile(
                     profile=[
                             0,
                             category,
