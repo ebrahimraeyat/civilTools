@@ -167,8 +167,7 @@ def import_model(
             elif design_type == 4:
                 if not import_openings:
                     continue
-                if FreeCAD.GuiUp:
-                    area.ViewObject.DisplayMode = "Wireframe"
+                color = (1.00,0.33,1.00)
             area = Draft.make_wire([FreeCAD.Vector(x, y, z) for x, y, z in zip(xs, ys, zs)],
                 closed=True, face=True)
             # View Object
