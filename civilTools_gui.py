@@ -25,7 +25,6 @@ from gui_civiltools import (
     gui_show_aj,
     gui_scale_response_spec,
     gui_high_pressure_columns,
-    gui_assign_frame_sections,
     gui_offset_beams,
     gui_wall_load_on_frames,
     gui_connect_beam,
@@ -39,7 +38,8 @@ from gui_civiltools import (
     gui_import_model,
     )
 from gui_civiltools.define import (
-    gui_create_load_combinations, 
+    gui_create_load_combinations,
+    gui_frame_sections,
 )
 from gui_civiltools.control import (
     gui_get_weakness_torsion, 
@@ -158,7 +158,6 @@ Gui.addCommand('civil_show_weakness', gui_show_weakness.CivilShowWeakness())
 Gui.addCommand('civil_show_aj', gui_show_aj.CivilShowAj())
 Gui.addCommand('civil_scale_response_spec', gui_scale_response_spec.CivilScaleResponseSpec())
 Gui.addCommand('civil_high_pressure_columns', gui_high_pressure_columns.CivilHighPressureColumns())
-Gui.addCommand('civil_assign_frame_sections', gui_assign_frame_sections.CivilAssignFrameSections())
 Gui.addCommand('civil_offset_beams', gui_offset_beams.CivilOffsetBeam())
 Gui.addCommand('civil_wall_load_on_frames', gui_wall_load_on_frames.CivilWallLoadOnFrames())
 Gui.addCommand('civil_connect_beam', gui_connect_beam.CivilConnectBeam())
@@ -193,7 +192,6 @@ civiltools_list = [
             "civil_earthquake_factor",
             ]
 civiltools_assign = [
-            "civil_assign_frame_sections",
             "civil_wall_load_on_frames",
             ]
 
@@ -215,6 +213,7 @@ civiltools_view = [
 
 civiltools_define = [
             "civiltools_load_combinations",
+            "civiltools_frame_sections",
             "civil_create_section_cuts",
             ]
 
