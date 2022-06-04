@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1018</width>
-    <height>721</height>
+    <width>1103</width>
+    <height>743</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -103,19 +103,28 @@
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_5">
              <item>
-              <widget class="QRadioButton" name="single">
-               <property name="text">
-                <string>Single</string>
+              <widget class="QPushButton" name="run">
+               <property name="minimumSize">
+                <size>
+                 <width>50</width>
+                 <height>50</height>
+                </size>
                </property>
-               <property name="checked">
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../../civiltools.qrc">
+                 <normaloff>:/civiltools/images/run.svg</normaloff>:/civiltools/images/run.svg</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>50</width>
+                 <height>50</height>
+                </size>
+               </property>
+               <property name="flat">
                 <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="multiple">
-               <property name="text">
-                <string>Multiple</string>
                </property>
               </widget>
              </item>
@@ -133,6 +142,17 @@
               </spacer>
              </item>
             </layout>
+           </widget>
+          </item>
+          <item row="2" column="2">
+           <widget class="QPushButton" name="height_add_button">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../../civiltools.qrc">
+              <normaloff>:/civiltools/images/down.svg</normaloff>:/civiltools/images/down.svg</iconset>
+            </property>
            </widget>
           </item>
           <item row="2" column="1">
@@ -157,8 +177,8 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="2">
-           <widget class="QPushButton" name="height_add_button">
+          <item row="2" column="0">
+           <widget class="QPushButton" name="width_add_button">
             <property name="text">
              <string/>
             </property>
@@ -166,6 +186,152 @@
              <iconset resource="../../civiltools.qrc">
               <normaloff>:/civiltools/images/down.svg</normaloff>:/civiltools/images/down.svg</iconset>
             </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QListWidget" name="width_list">
+            <property name="selectionMode">
+             <enum>QAbstractItemView::ExtendedSelection</enum>
+            </property>
+            <property name="selectionRectVisible">
+             <bool>false</bool>
+            </property>
+            <property name="currentRow">
+             <number>3</number>
+            </property>
+            <property name="sortingEnabled">
+             <bool>false</bool>
+            </property>
+            <item>
+             <property name="text">
+              <string>25</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>30</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>35</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>40</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>45</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>50</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>55</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>60</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>65</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>70</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>75</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>80</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>85</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>90</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>95</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>100</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>105</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>110</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>115</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>120</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>125</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>130</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>135</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>140</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>145</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>150</string>
+             </property>
+            </item>
            </widget>
           </item>
           <item row="1" column="2">
@@ -188,336 +354,191 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
-           <widget class="QPushButton" name="width_add_button">
+          <item row="3" column="2">
+           <widget class="QListWidget" name="height_list">
+            <property name="selectionMode">
+             <enum>QAbstractItemView::ExtendedSelection</enum>
+            </property>
+            <property name="selectionRectVisible">
+             <bool>false</bool>
+            </property>
+            <property name="currentRow">
+             <number>3</number>
+            </property>
+            <property name="sortingEnabled">
+             <bool>false</bool>
+            </property>
+            <item>
+             <property name="text">
+              <string>25</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>30</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>35</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>40</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>45</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>50</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>55</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>60</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>65</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>70</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>75</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>80</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>85</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>90</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>95</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>100</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>105</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>110</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>115</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>120</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>125</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>130</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>135</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>140</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>145</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>150</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="0" column="3" rowspan="4">
+           <widget class="QPushButton" name="pushButton">
+            <property name="minimumSize">
+             <size>
+              <width>250</width>
+              <height>250</height>
+             </size>
+            </property>
+            <property name="autoFillBackground">
+             <bool>false</bool>
+            </property>
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
             <property name="text">
              <string/>
             </property>
             <property name="icon">
              <iconset resource="../../civiltools.qrc">
-              <normaloff>:/civiltools/images/down.svg</normaloff>:/civiltools/images/down.svg</iconset>
+              <normaloff>:/civiltools/images/create_frame_sections.svg</normaloff>:/civiltools/images/create_frame_sections.svg</iconset>
             </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QListWidget" name="width_list">
-            <property name="selectionRectVisible">
+            <property name="iconSize">
+             <size>
+              <width>250</width>
+              <height>250</height>
+             </size>
+            </property>
+            <property name="autoExclusive">
              <bool>false</bool>
             </property>
-            <property name="currentRow">
-             <number>3</number>
+            <property name="autoDefault">
+             <bool>true</bool>
             </property>
-            <property name="sortingEnabled">
-             <bool>false</bool>
+            <property name="flat">
+             <bool>true</bool>
             </property>
-            <item>
-             <property name="text">
-              <string>25</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>30</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>35</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>40</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>45</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>50</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>55</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>60</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>65</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>70</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>75</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>80</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>85</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>90</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>95</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>100</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>105</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>110</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>115</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>120</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>125</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>130</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>135</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>140</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>145</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>150</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item row="3" column="2">
-           <widget class="QListWidget" name="height_list">
-            <property name="selectionRectVisible">
-             <bool>false</bool>
-            </property>
-            <property name="currentRow">
-             <number>3</number>
-            </property>
-            <property name="sortingEnabled">
-             <bool>false</bool>
-            </property>
-            <item>
-             <property name="text">
-              <string>25</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>30</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>35</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>40</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>45</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>50</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>55</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>60</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>65</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>70</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>75</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>80</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>85</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>90</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>95</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>100</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>105</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>110</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>115</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>120</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>125</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>130</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>135</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>140</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>145</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>150</string>
-             </property>
-            </item>
            </widget>
           </item>
          </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton">
-         <property name="autoFillBackground">
-          <bool>false</bool>
-         </property>
-         <property name="styleSheet">
-          <string notr="true"/>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="../../civiltools.qrc">
-           <normaloff>:/civiltools/images/create_frame_sections.svg</normaloff>:/civiltools/images/create_frame_sections.svg</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>250</width>
-           <height>250</height>
-          </size>
-         </property>
-         <property name="autoExclusive">
-          <bool>false</bool>
-         </property>
-         <property name="autoDefault">
-          <bool>true</bool>
-         </property>
-         <property name="flat">
-          <bool>true</bool>
-         </property>
         </widget>
        </item>
       </layout>
@@ -549,6 +570,9 @@
               </item>
               <item>
                <widget class="QListWidget" name="main_rebar_size_list">
+                <property name="selectionMode">
+                 <enum>QAbstractItemView::ExtendedSelection</enum>
+                </property>
                 <property name="currentRow">
                  <number>-1</number>
                 </property>
@@ -589,6 +613,9 @@
               </item>
               <item row="2" column="0">
                <widget class="QListWidget" name="x_rebar_list">
+                <property name="selectionMode">
+                 <enum>QAbstractItemView::ExtendedSelection</enum>
+                </property>
                 <property name="currentRow">
                  <number>0</number>
                 </property>
@@ -656,6 +683,9 @@
               </item>
               <item row="2" column="1">
                <widget class="QListWidget" name="y_rebar_list">
+                <property name="selectionMode">
+                 <enum>QAbstractItemView::ExtendedSelection</enum>
+                </property>
                 <property name="currentRow">
                  <number>1</number>
                 </property>
@@ -750,10 +780,10 @@
                     <string> %</string>
                    </property>
                    <property name="decimals">
-                    <number>1</number>
+                    <number>2</number>
                    </property>
                    <property name="minimum">
-                    <double>1.000000000000000</double>
+                    <double>0.980000000000000</double>
                    </property>
                    <property name="maximum">
                     <double>3.000000000000000</double>
@@ -782,7 +812,7 @@
                     <double>1.000000000000000</double>
                    </property>
                    <property name="maximum">
-                    <double>6.000000000000000</double>
+                    <double>8.000000000000000</double>
                    </property>
                    <property name="singleStep">
                     <double>0.100000000000000</double>
@@ -852,7 +882,7 @@
                     <number>1</number>
                    </property>
                    <property name="minimum">
-                    <double>5.000000000000000</double>
+                    <double>3.000000000000000</double>
                    </property>
                    <property name="maximum">
                     <double>30.000000000000000</double>
@@ -1047,7 +1077,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="column_cover_2">
+            <widget class="QDoubleSpinBox" name="beam_cover">
              <property name="suffix">
               <string> Cm</string>
              </property>
@@ -1161,7 +1191,7 @@
        <item row="1" column="0" colspan="2">
         <widget class="QLineEdit" name="section_pattern_name">
          <property name="text">
-          <string>C$WidthX$Height_$TotalRebarsT$RebarSize</string>
+          <string>C$WidthX$Height_($NX$M)T$RebarSize</string>
          </property>
         </widget>
        </item>
@@ -1177,7 +1207,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="column_tab">
         <attribute name="title">

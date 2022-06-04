@@ -18,6 +18,16 @@ def make_column_section(
         main_diameter,
         tie_diameter,
         cover,
+        main_diameters: list=['14d', '16d', '18d', '20d', '22d', '25d', '28d', '30d'],
+        tie_diameters: list=['10d', '12d'],
+        pattern_name="C$WidthX$Height_($NX$M)T$RebarSize",
+        longitudinal_bar_name='',
+        tie_bar_name='',
+        tie_bar_space=100,
+        n=2,
+        m=2,
+        concrete_name='',
+        design_type: str='Check',
     ):
     doc = FreeCAD.ActiveDocument
     obj = doc.addObject("Part::FeaturePython", "Section")
@@ -26,9 +36,20 @@ def make_column_section(
     obj.H = height
     obj.N = N
     obj.M = M
+    obj.Diameter = main_diameters
+    obj.Tie_Bars_d = tie_diameters
     obj.Diameter = main_diameter
     obj.Tie_Bars_d = tie_diameter
     obj.cover = cover
+    obj.Pattern_Name = pattern_name
+    obj.Longitudinal_Rebar_Name = longitudinal_bar_name
+    obj.Tie_Bars_Name = tie_bar_name
+    obj.Tie_Bars_Space = tie_bar_space
+    obj.n = n
+    obj.m = m
+    obj.Concrete_Name = concrete_name
+    obj.Design_type = design_type
+
     if FreeCAD.GuiUp:
         ViewProviderConcreteColumnSection(obj.ViewObject)
     FreeCAD.ActiveDocument.recompute()
@@ -87,7 +108,7 @@ class ConcreteColumnSection(ArchComponent.Component):
             "App::PropertyEnumeration",
             "Diameter",
             "Rebars",
-            ).Diameter = ['20d', '25d']
+            ).Diameter = ['14d', '16d', '18d', '20d', '22d', '25d', '28d', '30d']
         if not hasattr(obj, "Rebar_Percentage"):
             obj.addProperty(
             "App::PropertyFloat",
@@ -96,10 +117,10 @@ class ConcreteColumnSection(ArchComponent.Component):
             "",
             8,
             )
-        if not hasattr(obj, "Longitudinal_Bars"):
+        if not hasattr(obj, "Longitudinal_Rebar_Name"):
             obj.addProperty(
             "App::PropertyString",
-            "Longitudinal_Bars",
+            "Longitudinal_Rebar_Name",
             "Rebars",
             "",
             8,
@@ -117,7 +138,7 @@ class ConcreteColumnSection(ArchComponent.Component):
             "App::PropertyEnumeration",
             "Tie_Bars_d",
             "Tie_Bars",
-            ).Tie_Bars_d = ['10d', '25d']
+            ).Tie_Bars_d = ['10d', '12d']
         if not hasattr(obj, "Tie_Bars_Space"):
             obj.addProperty(
             "App::PropertyFloat",
@@ -174,11 +195,15 @@ class ConcreteColumnSection(ArchComponent.Component):
             "",
             8,
             )
+        if not hasattr(obj, "Design_type"):
+            obj.addProperty(
+            "App::PropertyEnumeration",
+            "Design_type",
+            "",
+            ).Design_type = ['Check', 'Design']
         
     def onChanged(self, obj, prop):
-        print(f'on changed: prop = {prop}')
-        if prop in ('N', 'M'):
-            obj.Number = 2 * (obj.N + obj.M) - 4
+        # print(f'on changed: prop = {prop}')
 
         if (
             prop == "Pattern_Name" and
@@ -191,7 +216,7 @@ class ConcreteColumnSection(ArchComponent.Component):
         self.set_properties(obj)
 
     def execute(self, obj):
-        print('executed!')
+        # print('executed!')
         shape = freecad_funcs.column_shape(
             obj.B.Value,
             obj.H.Value,
@@ -202,6 +227,7 @@ class ConcreteColumnSection(ArchComponent.Component):
             obj.cover.Value,
         )
         obj.Shape = shape
+        obj.Number = 2 * (obj.N + obj.M) - 4
         obj.Section_Name = self.get_name(obj)
         obj.Rebar_Percentage = self.get_rebar_percentage(obj)
 
