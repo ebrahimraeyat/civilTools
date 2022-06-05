@@ -2,10 +2,11 @@ from pathlib import Path
 import math
 
 from PySide2 import  QtWidgets
-from PySide2.QtWidgets import QAbstractItemView
 
 import FreeCAD
 import FreeCADGui as Gui
+# from pivy.coin import SoInput, SoDB
+# from pivy.quarter import QuarterWidget
 
 import civiltools_rc
 
@@ -24,6 +25,7 @@ class Form(QtWidgets.QWidget):
         # self.other_names = self.etabs.frame_obj.other_sections(self.beam_names + self.column_names)
         # self.fill_sections()
         self.create_connections()
+        # self._firstwidget = None
 
     def fill_form(self):
         s340, s400 = self.etabs.material.get_S340_S400_rebars()
@@ -62,9 +64,24 @@ class Form(QtWidgets.QWidget):
         self.form.add_name_pattern_button.clicked.connect(self.add_pattern)
         self.form.section_pattern_name.textChanged.connect(self.update_section_name)
         self.form.run.clicked.connect(self.accept)
+        self.form.columns_tableview.clicked.connect(self.view_section)
+        # self.form.columns_tableview.itemSelectionChanged.connect(self.view_section)
         # self.form.beams.clicked.connect(self.fill_sections)
         # self.form.columns.clicked.connect(self.fill_sections)
         # self.form.filter_line.textChanged.connect(self.filter_sections)
+        # selection_model = self.form.columns_tableview.selectionModel()
+        # selection_model.selectionChanged.connect(self.on_selectionChanged)
+
+    # @QtCore.pyqtSlot('QItemSelection', 'QItemSelection')
+    def on_selectionChanged(self, selected, deselected):
+        print("selected: ")
+        for ix in selected.indexes():
+            print(ix.data())
+
+        print("deselected: ")
+        for ix in deselected.indexes():
+            print(ix.data())
+            print(ix.row())
 
     def change_design_type(self):
         if self.form.column_type.isChecked():
@@ -148,7 +165,26 @@ class Form(QtWidgets.QWidget):
             item = self.form.sections.item(i)
             item.setHidden(not (item.text().__contains__(text)))
 
+    def view_section(self):
+        row = self.form.columns_tableview.currentIndex().row()
+        section = self.model.sections[row]
+        for obj in FreeCAD.ActiveDocument.Objects:
+            if hasattr(obj, 'Proxy') and hasattr(obj.Proxy, 'Type') and obj.Proxy.Type == "ConcreteColumnSection":
+                if obj.Section_Name == section.Section_Name:
+                    # s = Gui.subgraphFromObject(obj)
+                    # child = self.createMdiChild()
+                    # child.show()
+                    # self._firstwidget.setSceneGraph(s)
+                   obj.ViewObject.show()
+                else:
+                    obj.ViewObject.hide()
+    # def createMdiChild(self):
+    #     self._firstwidget = QuarterWidget(None, None)
+    #     self.form.mdiArea.addSubWindow(self._firstwidget)
+    #     self._firstwidget.show()
+
     def accept(self):
+        # self.createMdiChild()
         from freecad_obj import sections
         is_column = self.form.column_type.isChecked()
         is_beam = self.form.beam_type.isChecked()
@@ -197,8 +233,14 @@ class Form(QtWidgets.QWidget):
         tie_diameters = []
         for i in range(self.form.tie_bar_size.count()):
             tie_diameters.append(self.form.tie_bar_size.itemText(i))
-        if not FreeCAD.ActiveDocument:
-            FreeCAD.newDocument('Sections')
+        all_sections = []
+        # self.createMdiChild()
+        # self.widget = MdiQuarterWidget(None, None)
+        # self.form.mdiArea.addSubWindow(self.widget)
+        # self._workspace.addWindow(widget)
+        # if not self._firstwidget:
+        #     self._firstwidget = widget
+        # widget.show()
         if is_column:
             for diameter in main_rebar_sizes:
                 for B in widths:
@@ -218,7 +260,7 @@ class Form(QtWidgets.QWidget):
                                 dist = min(dist_x, dist_y) / 10
                                 if check_rebar_dist and not (min_rebar_dist < dist < max_rebar_dist):
                                     continue
-                                sections.make_column_section(
+                                sec = sections.make_column_section(
                                     B * 10,
                                     H * 10,
                                     N,
@@ -237,8 +279,46 @@ class Form(QtWidgets.QWidget):
                                     concrete_name=concrete_mats,
                                     design_type=design_type,
                                 )
+                                all_sections.append(sec)
+        if all_sections:
+            from qt_models import table_models
+            self.model = table_models.ConcreteColumnSectionTableModel(sections=all_sections)
+            self.form.columns_tableview.setModel(self.model)
+            for column in (
+                table_models.NAME,
+                table_models.WIDTH,
+                table_models.HEIGHT,
+                table_models.N,
+                table_models.M,
+                table_models.TOTAL,
+                table_models.RHO,
+            ):
+                self.form.columns_tableview.resizeColumnToContents(column)
+        
 
     def reject(self):
         Gui.Control.closeDialog()
 
 
+
+ 
+# class MdiQuarterWidget(QuarterWidget):
+#     def __init__(self, parent, sharewidget):
+#         QuarterWidget.__init__(self, parent=parent, sharewidget=sharewidget)
+ 
+    # def loadFile(self, filename):
+    #     in_ = SoInput()
+    #     if (in_.openFile(str(filename.toLatin1()))):
+    #         root = SoDB.readAll(in_)
+    #     if (root):
+    #         self.setSceneGraph(root)
+    #         self.currentfile = filename
+    #         self.setWindowTitle(filename)
+    #         return True
+    #     return False
+ 
+    # def currentFile(self):
+    #     return self.currentfile
+ 
+    # def minimumSizeHint(self):
+    #     return QtCore.QSize(640, 480)

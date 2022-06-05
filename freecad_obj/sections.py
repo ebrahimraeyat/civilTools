@@ -262,6 +262,12 @@ class ViewProviderConcreteColumnSection:
         self.ViewObject = vobj
         self.Object = vobj.Object
 
+    def setEdit(self, vobj, mode=0):
+        for obj in FreeCAD.ActiveDocument.Objects:
+            obj.ViewObject.hide()
+        vobj.show()
+        return True
+
     # def claimChildren(self):
     #     children = [FreeCAD.ActiveDocument.getObject(self.Object.Base.Name)]
     #     return children
