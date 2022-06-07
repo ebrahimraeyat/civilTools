@@ -2,6 +2,7 @@ from pathlib import Path
 import math
 
 from PySide2 import  QtWidgets
+from PySide2.QtWidgets import QMessageBox
 
 import FreeCAD
 import FreeCADGui as Gui
@@ -64,7 +65,9 @@ class Form(QtWidgets.QWidget):
         self.form.add_name_pattern_button.clicked.connect(self.add_pattern)
         self.form.section_pattern_name.textChanged.connect(self.update_section_name)
         self.form.run.clicked.connect(self.accept)
-        self.form.columns_tableview.clicked.connect(self.view_section)
+        self.form.longitudinal_bars_mats.lineEdit().editingFinished.connect(self.create_AIII_rebar)
+        self.form.tie_bars_mats.lineEdit().editingFinished.connect(self.create_AII_rebar)
+        # self.form.columns_tableview.clicked.connect(self.view_section)
         # self.form.columns_tableview.itemSelectionChanged.connect(self.view_section)
         # self.form.beams.clicked.connect(self.fill_sections)
         # self.form.columns.clicked.connect(self.fill_sections)
@@ -165,26 +168,21 @@ class Form(QtWidgets.QWidget):
             item = self.form.sections.item(i)
             item.setHidden(not (item.text().__contains__(text)))
 
-    def view_section(self):
-        row = self.form.columns_tableview.currentIndex().row()
-        section = self.model.sections[row]
-        for obj in FreeCAD.ActiveDocument.Objects:
-            if hasattr(obj, 'Proxy') and hasattr(obj.Proxy, 'Type') and obj.Proxy.Type == "ConcreteColumnSection":
-                if obj.Section_Name == section.Section_Name:
-                    # s = Gui.subgraphFromObject(obj)
-                    # child = self.createMdiChild()
-                    # child.show()
-                    # self._firstwidget.setSceneGraph(s)
-                   obj.ViewObject.show()
-                else:
-                    obj.ViewObject.hide()
-    # def createMdiChild(self):
-    #     self._firstwidget = QuarterWidget(None, None)
-    #     self.form.mdiArea.addSubWindow(self._firstwidget)
-    #     self._firstwidget.show()
+    def create_AIII_rebar(self):
+        name = self.form.longitudinal_bars_mats.lineEdit().text()
+        if QMessageBox.question(None, 'Create AIII Rebar',
+            f'Do you want to create {name} Rebar?') == QMessageBox.No:
+            return
+        self.etabs.material.add_AIII_rebar(name)
+    
+    def create_AII_rebar(self):
+        name = self.form.tie_bars_mats.lineEdit().text()
+        if QMessageBox.question(None, 'Create AII Rebar',
+            f'Do you want to create {name} Rebar?') == QMessageBox.No:
+            return
+        self.etabs.material.add_AII_rebar(name)
 
     def accept(self):
-        # self.createMdiChild()
         from freecad_obj import sections
         is_column = self.form.column_type.isChecked()
         is_beam = self.form.beam_type.isChecked()
@@ -241,6 +239,7 @@ class Form(QtWidgets.QWidget):
         # if not self._firstwidget:
         #     self._firstwidget = widget
         # widget.show()
+        FreeCAD.newDocument("Sections")
         if is_column:
             for diameter in main_rebar_sizes:
                 for B in widths:
@@ -280,10 +279,15 @@ class Form(QtWidgets.QWidget):
                                     design_type=design_type,
                                 )
                                 all_sections.append(sec)
+        Gui.SendMsgToActiveView("ViewFit")
+        Gui.activeDocument().activeView().viewTop()
         if all_sections:
+            from py_widget.define import view_frame_sections
+            win = view_frame_sections.Form()
             from qt_models import table_models
-            self.model = table_models.ConcreteColumnSectionTableModel(sections=all_sections)
-            self.form.columns_tableview.setModel(self.model)
+            win.model = table_models.ConcreteColumnSectionTableModel(sections=all_sections)
+            print(win.model.sections)
+            win.form.columns_tableview.setModel(win.model)
             for column in (
                 table_models.NAME,
                 table_models.WIDTH,
@@ -293,7 +297,8 @@ class Form(QtWidgets.QWidget):
                 table_models.TOTAL,
                 table_models.RHO,
             ):
-                self.form.columns_tableview.resizeColumnToContents(column)
+                win.form.columns_tableview.resizeColumnToContents(column)
+            Gui.Control.showDialog(win)
         
 
     def reject(self):

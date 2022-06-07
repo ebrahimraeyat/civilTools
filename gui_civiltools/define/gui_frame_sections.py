@@ -91,8 +91,6 @@ class CivilToolsCreateFrameSections:
             filename is None
             ):
             return
-        if not FreeCAD.ActiveDocument:
-            FreeCAD.newDocument('Sections')
         from py_widget.define import define_frame_sections
         win = define_frame_sections.Form(etabs)
         find_etabs.show_win(win, in_mdi=True)

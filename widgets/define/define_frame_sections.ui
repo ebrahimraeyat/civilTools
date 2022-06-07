@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1708</width>
+    <width>1765</width>
     <height>865</height>
    </rect>
   </property>
@@ -71,7 +71,11 @@
                </widget>
               </item>
               <item row="0" column="1">
-               <widget class="QComboBox" name="longitudinal_bars_mats"/>
+               <widget class="QComboBox" name="longitudinal_bars_mats">
+                <property name="editable">
+                 <bool>true</bool>
+                </property>
+               </widget>
               </item>
               <item row="1" column="0">
                <widget class="QLabel" name="label_2">
@@ -88,7 +92,11 @@
                </widget>
               </item>
               <item row="1" column="1">
-               <widget class="QComboBox" name="tie_bars_mats"/>
+               <widget class="QComboBox" name="tie_bars_mats">
+                <property name="editable">
+                 <bool>true</bool>
+                </property>
+               </widget>
               </item>
              </layout>
             </widget>
@@ -110,32 +118,6 @@
                <enum>QFrame::Raised</enum>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_5">
-               <item>
-                <widget class="QPushButton" name="run">
-                 <property name="minimumSize">
-                  <size>
-                   <width>50</width>
-                   <height>50</height>
-                  </size>
-                 </property>
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="icon">
-                  <iconset resource="../../civiltools.qrc">
-                   <normaloff>:/civiltools/images/run.svg</normaloff>:/civiltools/images/run.svg</iconset>
-                 </property>
-                 <property name="iconSize">
-                  <size>
-                   <width>50</width>
-                   <height>50</height>
-                  </size>
-                 </property>
-                 <property name="flat">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
                <item>
                 <spacer name="verticalSpacer_2">
                  <property name="orientation">
@@ -198,6 +180,12 @@
             </item>
             <item row="3" column="0">
              <widget class="QListWidget" name="width_list">
+              <property name="maximumSize">
+               <size>
+                <width>200</width>
+                <height>16777215</height>
+               </size>
+              </property>
               <property name="selectionMode">
                <enum>QAbstractItemView::ExtendedSelection</enum>
               </property>
@@ -364,6 +352,12 @@
             </item>
             <item row="3" column="2">
              <widget class="QListWidget" name="height_list">
+              <property name="maximumSize">
+               <size>
+                <width>200</width>
+                <height>16777215</height>
+               </size>
+              </property>
               <property name="selectionMode">
                <enum>QAbstractItemView::ExtendedSelection</enum>
               </property>
@@ -506,44 +500,6 @@
                 <string>150</string>
                </property>
               </item>
-             </widget>
-            </item>
-            <item row="0" column="3" rowspan="4">
-             <widget class="QPushButton" name="pushButton">
-              <property name="minimumSize">
-               <size>
-                <width>250</width>
-                <height>250</height>
-               </size>
-              </property>
-              <property name="autoFillBackground">
-               <bool>false</bool>
-              </property>
-              <property name="styleSheet">
-               <string notr="true"/>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="icon">
-               <iconset resource="../../civiltools.qrc">
-                <normaloff>:/civiltools/images/create_frame_sections.svg</normaloff>:/civiltools/images/create_frame_sections.svg</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>250</width>
-                <height>250</height>
-               </size>
-              </property>
-              <property name="autoExclusive">
-               <bool>false</bool>
-              </property>
-              <property name="autoDefault">
-               <bool>true</bool>
-              </property>
-              <property name="flat">
-               <bool>true</bool>
-              </property>
              </widget>
             </item>
            </layout>
@@ -901,6 +857,9 @@
                      <property name="singleStep">
                       <double>1.000000000000000</double>
                      </property>
+                     <property name="value">
+                      <double>5.000000000000000</double>
+                     </property>
                     </widget>
                    </item>
                   </layout>
@@ -1141,108 +1100,152 @@
       </layout>
      </widget>
      <widget class="QWidget" name="widget_3" native="true">
-      <layout class="QVBoxLayout" name="verticalLayout_9">
-       <item>
-        <layout class="QGridLayout" name="gridLayout_8">
-         <item row="0" column="1">
-          <widget class="QPushButton" name="add_name_pattern_button">
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="../../civiltools.qrc">
-             <normaloff>:/civiltools/images/add.svg</normaloff>:/civiltools/images/add.svg</iconset>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0" colspan="2">
-          <widget class="QLineEdit" name="section_pattern_name">
-           <property name="text">
-            <string>C$WidthX$Height_($NX$M)T$RebarSize</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0">
-          <widget class="QComboBox" name="name_pattern_box">
-           <item>
-            <property name="text">
-             <string>$Width</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>$Height</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>$TotalRebars</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>$RebarSize</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>$N</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>$M</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>$Fc</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>$RebarPercentage</string>
-            </property>
-           </item>
-          </widget>
-         </item>
-         <item row="2" column="0" colspan="2">
-          <widget class="QLineEdit" name="section_name">
-           <property name="readOnly">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QTabWidget" name="tabWidget">
-         <property name="currentIndex">
-          <number>0</number>
+      <layout class="QGridLayout" name="gridLayout_9">
+       <item row="1" column="0" colspan="2">
+        <widget class="QLineEdit" name="section_pattern_name">
+         <property name="text">
+          <string>C$WidthX$Height_($NX$M)T$RebarSize</string>
          </property>
-         <widget class="QWidget" name="column_tab">
-          <attribute name="title">
-           <string>Column</string>
-          </attribute>
-          <layout class="QVBoxLayout" name="verticalLayout_11">
-           <item>
-            <widget class="QTableView" name="columns_tableview">
-             <property name="selectionMode">
-              <enum>QAbstractItemView::SingleSelection</enum>
-             </property>
-             <property name="selectionBehavior">
-              <enum>QAbstractItemView::SelectRows</enum>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-         <widget class="QWidget" name="beam_tab">
-          <attribute name="title">
-           <string>Beam</string>
-          </attribute>
-         </widget>
         </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QPushButton" name="add_name_pattern_button">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="../../civiltools.qrc">
+           <normaloff>:/civiltools/images/add.svg</normaloff>:/civiltools/images/add.svg</iconset>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0" colspan="2">
+        <widget class="QLineEdit" name="section_name">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QComboBox" name="name_pattern_box">
+         <item>
+          <property name="text">
+           <string>$Width</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>$Height</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>$TotalRebars</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>$RebarSize</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>$N</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>$M</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>$Fc</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>$RebarPercentage</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="3" column="0" colspan="2">
+        <widget class="QPushButton" name="pushButton">
+         <property name="minimumSize">
+          <size>
+           <width>350</width>
+           <height>350</height>
+          </size>
+         </property>
+         <property name="autoFillBackground">
+          <bool>false</bool>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="../../civiltools.qrc">
+           <normaloff>:/civiltools/images/create_frame_sections.svg</normaloff>:/civiltools/images/create_frame_sections.svg</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>350</width>
+           <height>350</height>
+          </size>
+         </property>
+         <property name="autoExclusive">
+          <bool>false</bool>
+         </property>
+         <property name="autoDefault">
+          <bool>true</bool>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0" colspan="2">
+        <widget class="QPushButton" name="run">
+         <property name="minimumSize">
+          <size>
+           <width>100</width>
+           <height>100</height>
+          </size>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="../../civiltools.qrc">
+           <normaloff>:/civiltools/images/run.svg</normaloff>:/civiltools/images/run.svg</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>100</width>
+           <height>100</height>
+          </size>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0" colspan="2">
+        <spacer name="verticalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>

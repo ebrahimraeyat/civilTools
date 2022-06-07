@@ -20,9 +20,9 @@
     <file>images/wall_load.svg</file>
     <file>images/torsion.svg</file>
     <file>images/clear.png</file>
-    <file>images/run.svg</file>
     <file>images/calculate_center_of_rigidity.jpeg</file>
     <file>images/xlsx.png</file>
+    <file>images/run.svg</file>
     <file>images/cancel.svg</file>
     <file>images/Register.png</file>
   </qresource>
