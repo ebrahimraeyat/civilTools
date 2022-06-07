@@ -1,13 +1,10 @@
 from pathlib import Path
 import math
-# import Part
-import FreeCAD
-# import Draft
-# import Sketcher
-import ArchComponent
-import freecad_funcs
 
-# from safe.punch import punch_funcs
+import FreeCAD
+import ArchComponent
+
+import freecad_funcs
 
 
 def make_column_section(
@@ -27,6 +24,7 @@ def make_column_section(
         n=2,
         m=2,
         concrete_name='',
+        fc: str = '25 MPa',
         design_type: str='Check',
     ):
     doc = FreeCAD.ActiveDocument
@@ -48,6 +46,7 @@ def make_column_section(
     obj.n = n
     obj.m = m
     obj.Concrete_Name = concrete_name
+    obj.fc = fc
     obj.Design_type = design_type
 
     if FreeCAD.GuiUp:
@@ -268,15 +267,8 @@ class ViewProviderConcreteColumnSection:
         vobj.show()
         return True
 
-    # def claimChildren(self):
-    #     children = [FreeCAD.ActiveDocument.getObject(self.Object.Base.Name)]
-    #     return children
-
-    # def onDelete(self, vobj, subelements):
-    #     FreeCAD.ActiveDocument.removeObject(self.Object.Base.Name)
-
     def getIcon(self):
-        return str(Path(__file__).parent.parent / "images" / "create_frame_sections.svg")
+        return str(Path(__file__).parent.parent / "images" / "frame_sections.svg")
 
     def __getstate__(self):
         return None

@@ -224,7 +224,8 @@ class Form(QtWidgets.QWidget):
         #     'ETABS Model did not contain AII rebars, Do you want to add it?')
         #     if ret == QMessageBox.Yes:
         #         pass
-        concrete_mats = self.form.concrete_mats.currentText()
+        concrete_mat = self.form.concrete_mats.currentText()
+        fc = self.etabs.material.get_fc(concrete_mat)
         widths = [int(item.text()) for item in self.form.width_list.selectedItems()]
         heights = [int(item.text()) for item in self.form.height_list.selectedItems()]
         main_rebar_sizes = [item.text() for item in self.form.main_rebar_size_list.selectedItems()]
@@ -296,7 +297,8 @@ class Form(QtWidgets.QWidget):
                                     tie_bar_space=tie_space,
                                     n=n,
                                     m=m,
-                                    concrete_name=concrete_mats,
+                                    concrete_name=concrete_mat,
+                                    fc=f'{fc} MPa',
                                     design_type=design_type,
                                 )
                                 all_sections.append(sec)
