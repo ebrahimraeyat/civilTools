@@ -89,8 +89,29 @@ class Form(QtWidgets.QWidget):
     def change_design_type(self):
         if self.form.column_type.isChecked():
             self.form.beam_column_stacked.setCurrentIndex(0)
+            self.form.section_pattern_name.setText("C$WidthX$Height_($NX$M)T$RebarSize")
+            self.form.name_pattern_box.clear()
+            self.form.name_pattern_box.addItems(
+                (
+                    "$Width",
+                    "$Height",
+                    "$TotalRebars",
+                    "$RebarSize",
+                    "N",
+                    "M",
+                    "Fc",
+                    "RebarPercentage",
+                    ))
         elif self.form.beam_type.isChecked():
             self.form.beam_column_stacked.setCurrentIndex(1)
+            self.form.section_pattern_name.setText("B$WidthX$Height")
+            self.form.name_pattern_box.clear()
+            self.form.name_pattern_box.addItems(
+                (
+                    "$Width",
+                    "$Height",
+                    "Fc",
+                    ))
 
     # def change_selection_behavior(self):
     #     if self.form.single.isChecked():
