@@ -64,7 +64,7 @@ class CivilToolsCreateFrameSections:
             "civiltools_create_frame_sections",
             "Create Frame Sections For Beams and Columns")
         path = str(
-                   Path(__file__).parent.parent.parent / "images" / "create_frame_sections.svg"
+                   Path(__file__).parent.parent.parent / "images" / "frame_sections.svg"
                    )
         return {'Pixmap': path,
                 'MenuText': menu_text,

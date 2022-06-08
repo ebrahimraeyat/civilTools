@@ -21,6 +21,7 @@ class Form(QtWidgets.QWidget):
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'define' / 'define_frame_sections.ui'))
         self.etabs = etabs_model
         self.fill_form()
+        self.task_dialog = None
         # self.beam_names = self.etabs.frame_obj.concrete_section_names('Beam')
         # self.column_names = self.etabs.frame_obj.concrete_section_names('Column')
         # self.other_names = self.etabs.frame_obj.other_sections(self.beam_names + self.column_names)
@@ -97,10 +98,10 @@ class Form(QtWidgets.QWidget):
                     "$Height",
                     "$TotalRebars",
                     "$RebarSize",
-                    "N",
-                    "M",
-                    "Fc",
-                    "RebarPercentage",
+                    "$N",
+                    "$M",
+                    "$Fc",
+                    "$RebarPercentage",
                     ))
         elif self.form.beam_type.isChecked():
             self.form.beam_column_stacked.setCurrentIndex(1)
@@ -110,7 +111,7 @@ class Form(QtWidgets.QWidget):
                 (
                     "$Width",
                     "$Height",
-                    "Fc",
+                    "$Fc",
                     ))
 
     # def change_selection_behavior(self):
@@ -204,7 +205,6 @@ class Form(QtWidgets.QWidget):
         self.etabs.material.add_AII_rebar(name)
 
     def accept(self):
-        from freecad_obj import sections
         is_column = self.form.column_type.isChecked()
         is_beam = self.form.beam_type.isChecked()
         if is_column:
@@ -253,21 +253,31 @@ class Form(QtWidgets.QWidget):
         tie_diameters = []
         for i in range(self.form.tie_bar_size.count()):
             tie_diameters.append(self.form.tie_bar_size.itemText(i))
-        all_sections = []
-        # self.createMdiChild()
-        # self.widget = MdiQuarterWidget(None, None)
-        # self.form.mdiArea.addSubWindow(self.widget)
-        # self._workspace.addWindow(widget)
-        # if not self._firstwidget:
-        #     self._firstwidget = widget
-        # widget.show()
-        FreeCAD.newDocument("Sections")
+        column_sections = []
+        beam_sections = []
+        current_column_sections = []
+        current_beam_sections = []
+        current_columns_name = []
+        current_beams_name = []
+        if not FreeCAD.ActiveDocument:
+            FreeCAD.newDocument("Sections")
+        for obj in FreeCAD.ActiveDocument.Objects:
+            if hasattr(obj, 'Proxy') and obj.Proxy:
+                if obj.Proxy.Type == 'ConcreteColumnSection':
+                    current_column_sections.append(obj)
+                    current_columns_name.append(obj.Label)
+                elif obj.Proxy.Type == 'ConcreteBeamSection':
+                    current_beam_sections.append(obj)
+                    current_beams_name.append(obj.Label)
         if is_column:
+            from freecad_obj import sections
             for diameter in main_rebar_sizes:
                 for B in widths:
                     for H in heights:
                         for N in x_rebar_numbers:
                             for M in y_rebar_numbers:
+                                if B / H < 0.3 or H / B < 0.3:
+                                    continue
                                 d = int(diameter.rstrip('d'))
                                 rebar_area = math.pi * d ** 2 / 4
                                 number = 2 * (N + M) - 4
@@ -280,6 +290,18 @@ class Form(QtWidgets.QWidget):
                                 dist_y = (H * 10 - 2 * c) / (M - 1) - d
                                 dist = min(dist_x, dist_y) / 10
                                 if check_rebar_dist and not (min_rebar_dist < dist < max_rebar_dist):
+                                    continue
+                                new_text = pattern_name.replace(
+                                    '$Width', str(B)).replace(
+                                        '$Height', str(H)).replace(
+                                            '$RebarSize', diameter.rstrip('d')).replace(
+                                                '$TotalRebars', str(number)).replace(
+                                                    '$N', str(N)).replace(
+                                                        '$M', str(M)).replace(
+                                                            '$Fc', str(fc)).replace(
+                                                                '$RebarPercentage', f"{p:.1f}"
+                                                            )
+                                if new_text in current_columns_name:
                                     continue
                                 sec = sections.make_column_section(
                                     B * 10,
@@ -301,28 +323,70 @@ class Form(QtWidgets.QWidget):
                                     fc=f'{fc} MPa',
                                     design_type=design_type,
                                 )
-                                all_sections.append(sec)
+                                column_sections.append(sec)
+        elif is_beam:
+            from freecad_obj import concrete_beam_section
+            for B in widths:
+                for H in heights:
+                    if B < H / 4:
+                        continue
+                    new_text = pattern_name.replace(
+                        '$Width', str(B)).replace(
+                            '$Height', str(H))
+                    if new_text in current_beams_name:
+                        continue
+                    sec = concrete_beam_section.make_beam_section(
+                        B * 10,
+                        H * 10,
+                        cover * 10,
+                        pattern_name=pattern_name,
+                        longitudinal_bar_name=longitudinal_bars_mats,
+                        tie_bar_name=tie_bars_mats,
+                        concrete_name=concrete_mat,
+                        fc=f'{fc} MPa',
+                    )
+                    beam_sections.append(sec)
+        
+        column_sections.extend(current_column_sections)
+        beam_sections.extend(current_beam_sections)
         Gui.SendMsgToActiveView("ViewFit")
         Gui.activeDocument().activeView().viewTop()
-        if all_sections:
+        if not Gui.Control.activeDialog():
             from py_widget.define import view_frame_sections
-            win = view_frame_sections.Form()
+            self.task_dialog = view_frame_sections.Form()
             from qt_models import table_models
-            win.model = table_models.ConcreteColumnSectionTableModel(sections=all_sections)
-            print(win.model.sections)
-            win.form.columns_tableview.setModel(win.model)
-            for column in (
-                table_models.NAME,
-                table_models.WIDTH,
-                table_models.HEIGHT,
-                table_models.N,
-                table_models.M,
-                table_models.TOTAL,
-                table_models.RHO,
-            ):
-                win.form.columns_tableview.resizeColumnToContents(column)
-            Gui.Control.showDialog(win)
+            self.task_dialog.column_model = table_models.ConcreteColumnSectionTableModel(sections=column_sections)
+            self.task_dialog.form.columns_tableview.setModel(self.task_dialog.column_model)
+
+            self.task_dialog.beam_model = table_models.ConcreteBeamSectionTableModel(sections=beam_sections)
+            self.task_dialog.form.beams_tableview.setModel(self.task_dialog.beam_model)
+            # from freecad_funcs import add_dock_widget
+            # add_dock_widget(self.task_dialog.form, 'civiltools_concrete_sections', 'sections')
+            Gui.Control.showDialog(self.task_dialog)
+        else:
+            self.task_dialog.column_model.beginResetModel()
+            self.task_dialog.column_model.sections=column_sections
+            self.task_dialog.column_model.endResetModel()
+            self.task_dialog.beam_model.beginResetModel()
+            self.task_dialog.beam_model.sections=beam_sections
+            self.task_dialog.beam_model.endResetModel()
         
+        for column in (
+            table_models.NAME,
+            table_models.WIDTH,
+            table_models.HEIGHT,
+            table_models.N,
+            table_models.M,
+            table_models.TOTAL,
+            table_models.RHO,
+        ):
+            self.task_dialog.form.columns_tableview.resizeColumnToContents(column)
+        for column in (
+            table_models.NAME,
+            table_models.WIDTH,
+            table_models.HEIGHT,
+        ):
+            self.task_dialog.form.beams_tableview.resizeColumnToContents(column)
 
     def reject(self):
         Gui.Control.closeDialog()

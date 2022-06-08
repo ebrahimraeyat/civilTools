@@ -13,6 +13,7 @@ def make_beam_section(
         longitudinal_bar_name='',
         tie_bar_name='',
         concrete_name='',
+        fc: str = '25 MPa',
     ):
     doc = FreeCAD.ActiveDocument
     obj = doc.addObject("Part::FeaturePython", "Section")
@@ -24,6 +25,7 @@ def make_beam_section(
     obj.Longitudinal_Rebar_Name = longitudinal_bar_name
     obj.Tie_Bars_Name = tie_bar_name
     obj.Concrete_Name = concrete_name
+    obj.fc = fc
 
     if FreeCAD.GuiUp:
         ViewProviderConcreteBeamSection(obj.ViewObject)
@@ -128,12 +130,7 @@ class ConcreteBeamSection:
         new_text = text.replace(
             '$Width', str(int(obj.B.Value / 10))).replace(
                 '$Height', str(int(obj.H.Value / 10))).replace(
-                    '$RebarSize', '').replace(
-                        '$TotalRebars', '').replace(
-                            '$N', '').replace(
-                                '$M','').replace(
-                                    '$Fc', str(obj.fc.getValueAs('MPa'))).replace(
-                                        '$RebarPercentage', ''
+                                    '$Fc', str(obj.fc.getValueAs('MPa'))
                                     )
         obj.Label = new_text
         return new_text

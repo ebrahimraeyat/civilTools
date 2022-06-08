@@ -19,8 +19,9 @@ high = 'red'
 
 
 
-column_count = 7
-NAME, WIDTH, HEIGHT, N, M, TOTAL, RHO = range(column_count)
+column_column_count = 7
+beam_column_count = 3
+NAME, WIDTH, HEIGHT, N, M, TOTAL, RHO = range(column_column_count)
 
 
 class ConcreteColumnSectionTableModel(QAbstractTableModel):
@@ -144,7 +145,106 @@ class ConcreteColumnSectionTableModel(QAbstractTableModel):
         return len(self.sections)
 
     def columnCount(self, index=QModelIndex()):
-        return column_count
+        return column_column_count
+
+
+class ConcreteBeamSectionTableModel(QAbstractTableModel):
+
+    def __init__(
+        self,
+        sections: list,
+        ):
+        super(ConcreteBeamSectionTableModel, self).__init__()
+        self.sections = sections
+        self.names = set()
+        # self.type_ = type_
+
+    def sortByName(self):
+        self.beginResetModel()
+        self.sections = sorted(self.sections)
+        self.endResetModel()
+
+    def sortByArea(self):
+        def compare(a, b):
+            if a.area > b.area:
+                return 1
+            else:
+                return -1
+        self.sections = sorted(self.sections, key=compare)
+        self.reset()
+
+    def flags(self, index):
+        if not index.isValid():
+            return Qt.ItemIsEnabled
+        return Qt.ItemFlags(
+            QAbstractTableModel.flags(self, index) |
+            Qt.ItemIsEditable)
+
+    def data(self, index, role=Qt.DisplayRole):
+        if (not index.isValid() or
+                not (0 <= index.row() < len(self.sections))):
+            return
+        section = self.sections[index.row()]
+        column = index.column()
+        if role == Qt.DisplayRole:
+            if column == NAME:
+                return section.Section_Name
+            elif column == WIDTH:
+                return str(int(section.B.getValueAs('cm')))
+            elif column == HEIGHT:
+                return str(int(section.H.getValueAs('cm')))
+
+        elif role == Qt.TextAlignmentRole:
+            if column == NAME:
+                return int(Qt.AlignLeft | Qt.AlignVCenter)
+            return int(Qt.AlignCenter | Qt.AlignVCenter)
+        elif role == Qt.BackgroundColorRole:
+            if section.B.Value == 350:
+                return QColor(150, 200, 150)
+            elif section.B.Value == 400:
+                return QColor(150, 200, 250)
+            elif section.B.Value == 450:
+                return QColor(250, 200, 250)
+            elif section.B.Value == 500:
+                return QColor(250, 250, 130)
+            elif section.B.Value == 550:
+                return QColor(10, 250, 250)
+            elif section.B.Value == 600:
+                return QColor(210, 230, 230)
+            elif section.B.Value == 650:
+                return QColor(110, 230, 230)
+            elif section.B.Value == 700:
+                return QColor(210, 130, 230)
+            else:
+                return QColor(150, 150, 250)
+        # elif role == Qt.TextColorRole:
+            # if column == SLENDER:
+            # return Qt.red)
+
+        return
+
+    def headerData(self, section, orientation, role=Qt.DisplayRole):
+        if role == Qt.TextAlignmentRole:
+            if orientation == Qt.Horizontal:
+                return int(Qt.AlignLeft | Qt.AlignVCenter)
+            return int(Qt.AlignRight | Qt.AlignVCenter)
+        if role != Qt.DisplayRole:
+            return
+        if orientation == Qt.Horizontal:
+            if section == NAME:
+                return "Name"
+            elif section == WIDTH:
+                return 'B (Cm)'
+            elif section == HEIGHT:
+                return 'H (Cm)'
+
+        return int(section + 1)
+
+    def rowCount(self, index=QModelIndex()):
+        return len(self.sections)
+
+    def columnCount(self, index=QModelIndex()):
+        return beam_column_count
 
     # def setData(self, index, value, role=Qt.EditRole):
     #     if index.isValid() and 0 <= index.row() < len(self.sections):
