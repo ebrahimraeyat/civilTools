@@ -8,6 +8,7 @@ import FreeCAD
 import FreeCADGui as Gui
 # from pivy.coin import SoInput, SoDB
 # from pivy.quarter import QuarterWidget
+from qt_models import table_models
 
 import civiltools_rc
 
@@ -354,7 +355,6 @@ class Form(QtWidgets.QWidget):
         if not Gui.Control.activeDialog():
             from py_widget.define import view_frame_sections
             self.task_dialog = view_frame_sections.Form()
-            from qt_models import table_models
             column_model = table_models.ConcreteColumnSectionTableModel(sections=column_sections)
             self.task_dialog.form.columns_tableview.setModel(column_model)
 

@@ -1,15 +1,10 @@
 from pathlib import Path
-import pandas as pd
 from PySide2.QtCore import QAbstractTableModel, Qt 
 from PySide2.QtGui import QColor #, QIcon
 from PySide2.QtCore import QModelIndex #, QIcon
-# from PySide2 import QtCore, QtWidgets
 
-# import civiltools_rc
-# import matplotlib.cm as cm
-# from matplotlib.colors import Normalize
-# import matplotlib
-# import FreeCADGui as Gui
+from qt_models import table_models
+
 
 civiltools_path = Path(__file__).absolute().parent
 
@@ -39,19 +34,20 @@ class ConcreteColumnSectionTableModel(QAbstractTableModel):
         self.names = set()
         # self.type_ = type_
 
-    def sortByName(self):
-        self.beginResetModel()
-        self.sections = sorted(self.sections)
-        self.endResetModel()
-
-    def sortByArea(self):
-        def compare(a, b):
-            if a.area > b.area:
-                return 1
-            else:
-                return -1
-        self.sections = sorted(self.sections, key=compare)
-        self.reset()
+    def sort(self, col, order):
+        """Sort table by given column number."""
+        self.layoutAboutToBeChanged.emit()
+        if col == table_models.WIDTH:
+            self.sections.sort(key=lambda x: x.B.Value, reverse= order == Qt.AscendingOrder)
+        elif col == table_models.HEIGHT:
+            self.sections.sort(key=lambda x: x.H.Value, reverse= order == Qt.AscendingOrder)
+        elif col == table_models.N:
+            self.sections.sort(key=lambda x: x.N, reverse= order == Qt.AscendingOrder)
+        elif col == table_models.M:
+            self.sections.sort(key=lambda x: x.M, reverse= order == Qt.AscendingOrder)
+        elif col == table_models.RHO:
+            self.sections.sort(key=lambda x: x.Rebar_Percentage, reverse= order == Qt.AscendingOrder)
+        self.layoutChanged.emit()
 
     def flags(self, index):
         if not index.isValid():
@@ -157,21 +153,15 @@ class ConcreteBeamSectionTableModel(QAbstractTableModel):
         super(ConcreteBeamSectionTableModel, self).__init__()
         self.sections = sections
         self.names = set()
-        # self.type_ = type_
 
-    def sortByName(self):
-        self.beginResetModel()
-        self.sections = sorted(self.sections)
-        self.endResetModel()
-
-    def sortByArea(self):
-        def compare(a, b):
-            if a.area > b.area:
-                return 1
-            else:
-                return -1
-        self.sections = sorted(self.sections, key=compare)
-        self.reset()
+    def sort(self, col, order):
+        """Sort table by given column number."""
+        self.layoutAboutToBeChanged.emit()
+        if col == table_models.WIDTH:
+            self.sections.sort(key=lambda x: x.B.Value, reverse= order == Qt.AscendingOrder)
+        elif col == table_models.HEIGHT:
+            self.sections.sort(key=lambda x: x.H.Value, reverse= order == Qt.AscendingOrder)
+        self.layoutChanged.emit()
 
     def flags(self, index):
         if not index.isValid():

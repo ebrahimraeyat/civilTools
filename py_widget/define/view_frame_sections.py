@@ -5,6 +5,7 @@ from PySide2 import  QtWidgets
 import FreeCAD
 import FreeCADGui as Gui
 
+from qt_models import table_models
 import civiltools_rc
 
 
@@ -48,6 +49,18 @@ class Form(QtWidgets.QWidget):
                 obj.ViewObject.show()
             else:
                 obj.ViewObject.hide()
+
+    def resize_columns(self, view):
+        for column in (
+            table_models.NAME,
+            table_models.WIDTH,
+            table_models.HEIGHT,
+            table_models.N,
+            table_models.M,
+            table_models.TOTAL,
+            table_models.RHO,
+        ):
+            view.resizeColumnToContents(column)
         
     def reject(self):
         Gui.Control.closeDialog()
