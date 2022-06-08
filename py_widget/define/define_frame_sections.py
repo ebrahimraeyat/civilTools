@@ -355,21 +355,21 @@ class Form(QtWidgets.QWidget):
             from py_widget.define import view_frame_sections
             self.task_dialog = view_frame_sections.Form()
             from qt_models import table_models
-            self.task_dialog.column_model = table_models.ConcreteColumnSectionTableModel(sections=column_sections)
-            self.task_dialog.form.columns_tableview.setModel(self.task_dialog.column_model)
+            column_model = table_models.ConcreteColumnSectionTableModel(sections=column_sections)
+            self.task_dialog.form.columns_tableview.setModel(column_model)
 
-            self.task_dialog.beam_model = table_models.ConcreteBeamSectionTableModel(sections=beam_sections)
-            self.task_dialog.form.beams_tableview.setModel(self.task_dialog.beam_model)
+            beam_model = table_models.ConcreteBeamSectionTableModel(sections=beam_sections)
+            self.task_dialog.form.beams_tableview.setModel(beam_model)
             # from freecad_funcs import add_dock_widget
             # add_dock_widget(self.task_dialog.form, 'civiltools_concrete_sections', 'sections')
             Gui.Control.showDialog(self.task_dialog)
         else:
-            self.task_dialog.column_model.beginResetModel()
-            self.task_dialog.column_model.sections=column_sections
-            self.task_dialog.column_model.endResetModel()
-            self.task_dialog.beam_model.beginResetModel()
-            self.task_dialog.beam_model.sections=beam_sections
-            self.task_dialog.beam_model.endResetModel()
+            self.task_dialog.form.columns_tableview.model().beginResetModel()
+            self.task_dialog.form.columns_tableview.model().sections=column_sections
+            self.task_dialog.form.columns_tableview.model().endResetModel()
+            self.task_dialog.form.beams_tableview.model().beginResetModel()
+            self.task_dialog.form.beams_tableview.model().sections=beam_sections
+            self.task_dialog.form.beams_tableview.model().endResetModel()
         
         for column in (
             table_models.NAME,

@@ -23,7 +23,7 @@ class Form(QtWidgets.QWidget):
 
     def view_column_section(self):
         row = self.form.columns_tableview.currentIndex().row()
-        section = self.column_model.sections[row]
+        section = self.form.columns_tableview.model().sections[row]
         for obj in FreeCAD.ActiveDocument.Objects:
             if (
                 hasattr(obj, 'Proxy') and
@@ -37,7 +37,7 @@ class Form(QtWidgets.QWidget):
     
     def view_beam_section(self):
         row = self.form.beams_tableview.currentIndex().row()
-        section = self.beam_model.sections[row]
+        section = self.form.beams_tableview.model().sections[row]
         for obj in FreeCAD.ActiveDocument.Objects:
             if (
                 hasattr(obj, 'Proxy') and
