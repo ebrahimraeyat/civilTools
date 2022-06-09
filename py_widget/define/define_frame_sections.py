@@ -354,7 +354,7 @@ class Form(QtWidgets.QWidget):
         Gui.activeDocument().activeView().viewTop()
         if not Gui.Control.activeDialog():
             from py_widget.define import view_frame_sections
-            self.task_dialog = view_frame_sections.Form()
+            self.task_dialog = view_frame_sections.Form(self.etabs)
             column_model = table_models.ConcreteColumnSectionTableModel(sections=column_sections)
             self.task_dialog.form.columns_tableview.setModel(column_model)
 
