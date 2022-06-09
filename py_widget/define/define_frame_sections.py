@@ -179,7 +179,7 @@ class Form(QtWidgets.QWidget):
                             '$N', str(N)).replace(
                                 '$M', str(M)).replace(
                                     '$Fc', str(fc)).replace(
-                                        '$RebarPercentage', f"{rebar_percentage:.1f}"
+                                        '$RebarPercentage', f"{rebar_percentage:.2f}"
                                     )
         self.form.section_name.setText(new_text)
 
@@ -300,7 +300,7 @@ class Form(QtWidgets.QWidget):
                                                     '$N', str(N)).replace(
                                                         '$M', str(M)).replace(
                                                             '$Fc', str(fc)).replace(
-                                                                '$RebarPercentage', f"{p:.1f}"
+                                                                '$RebarPercentage', f"{p:.2f}"
                                                             )
                                 if new_text in current_columns_name:
                                     continue

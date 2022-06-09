@@ -45,8 +45,12 @@ class ConcreteColumnSectionTableModel(QAbstractTableModel):
             self.sections.sort(key=lambda x: x.N, reverse= order == Qt.AscendingOrder)
         elif col == table_models.M:
             self.sections.sort(key=lambda x: x.M, reverse= order == Qt.AscendingOrder)
+        elif col == table_models.TOTAL:
+            self.sections.sort(key=lambda x: x.Number, reverse= order == Qt.AscendingOrder)
         elif col == table_models.RHO:
             self.sections.sort(key=lambda x: x.Rebar_Percentage, reverse= order == Qt.AscendingOrder)
+        elif col == table_models.NAME:
+            self.sections.sort(key=lambda x: x.Section_Name, reverse= order == Qt.AscendingOrder)
         self.layoutChanged.emit()
 
     def flags(self, index):
@@ -161,6 +165,8 @@ class ConcreteBeamSectionTableModel(QAbstractTableModel):
             self.sections.sort(key=lambda x: x.B.Value, reverse= order == Qt.AscendingOrder)
         elif col == table_models.HEIGHT:
             self.sections.sort(key=lambda x: x.H.Value, reverse= order == Qt.AscendingOrder)
+        elif col == table_models.NAME:
+            self.sections.sort(key=lambda x: x.Section_Name, reverse= order == Qt.AscendingOrder)
         self.layoutChanged.emit()
 
     def flags(self, index):

@@ -227,8 +227,8 @@ class ConcreteColumnSection(ArchComponent.Component):
         )
         obj.Shape = shape
         obj.Number = 2 * (obj.N + obj.M) - 4
-        obj.Section_Name = self.get_name(obj)
         obj.Rebar_Percentage = self.get_rebar_percentage(obj)
+        obj.Section_Name = self.get_name(obj)
 
     def get_name(self, obj):
         text = obj.Pattern_Name
@@ -240,7 +240,7 @@ class ConcreteColumnSection(ArchComponent.Component):
                             '$N', str(obj.N)).replace(
                                 '$M', str(obj.M)).replace(
                                     '$Fc', str(obj.fc.getValueAs('MPa'))).replace(
-                                        '$RebarPercentage', f"{obj.Rebar_Percentage:.1f}"
+                                        '$RebarPercentage', f"{obj.Rebar_Percentage:.2f}"
                                     )
         obj.Label = new_text
         return new_text
