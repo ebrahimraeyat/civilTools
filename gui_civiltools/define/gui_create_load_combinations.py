@@ -47,7 +47,8 @@ class CivilToolsCreateLoadCombinations:
             return
         from py_widget.define import create_load_combinations
         win = create_load_combinations.Form(etabs)
-        Gui.Control.showDialog(win)
+        find_etabs.show_win(win)
+        # Gui.Control.showDialog(win)
         # show_warning_about_number_of_use(check)
         
     def IsActive(self):
