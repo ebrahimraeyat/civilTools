@@ -112,7 +112,13 @@ class CustomModel(QtCore.QAbstractItemModel):
             role == Qt.DisplayRole):
             assert 0 <= section <= len(self.headers)
             return self.headers[section]
-        return 
+        return
+
+    # def asRecord(self, index):
+    #     leaf = self.nodeFromIndex(index)
+    #     if leaf is not None and isinstance(leaf, LeafNode):
+    #         return leaf.asRecord()
+    #     return []
 
 
 class MyTree():

@@ -3,10 +3,11 @@ from pathlib import Path
 from PySide2 import  QtWidgets
 from PySide2.QtWidgets import QMessageBox
 from PySide2.QtCore import QModelIndex
-
+from PySide2.QtCore import Signal, Qt
 
 import FreeCADGui as Gui
 import FreeCAD
+import freecad_funcs
 
 
 
@@ -18,9 +19,11 @@ class Form(QtWidgets.QWidget):
     def __init__(self, etabs_model):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'define' / 'create_load_combinations.ui'))
+        self.form.load_combinations_view.index_activated = Signal(list)
         self.etabs = etabs_model
         self.fill_load_cases()
         self.create_connections()
+        self.data = None
     
     def create(self):
         equivalent_loads = self.get_equivalent_loads()
@@ -32,7 +35,7 @@ class Form(QtWidgets.QWidget):
             design_type = "LRFD"
         elif self.form.asd.isChecked():
             design_type = "ASD"
-        data = generate_concrete_load_combinations(
+        self.data = generate_concrete_load_combinations(
             equivalent_loads=equivalent_loads,
             prefix = prefix,
             suffix = suffix,
@@ -40,33 +43,51 @@ class Form(QtWidgets.QWidget):
             rho_y=rho_y,
             design_type=design_type,
         )
-        # progressbar = FreeCAD.Base.ProgressIndicator()
-        # n = int(len(data) / 4)
-        # progressbar.start(
-        #     "Creating Load Combinations...", n)
         items=  {}
-        for i in range(0, len(data), 4):
-            comb = data[i: i+4]
+        for i in range(0, len(self.data), 4):
+            comb = self.data[i: i+4]
             name = comb[0]
             root = items.get(name, None)
             if root is None:
                 root = treeview.CustomNode(name)
                 items[name] = root
             root.addChild(treeview.CustomNode(comb[2:]))
-            # self.etabs.SapModel.RespCombo.add(comb[0], 0)
-            # self.etabs.SapModel.RespCombo.SetCaseList(
-            #     comb[0],
-            #     0, # loadcase=0, loadcombo=1
-            #     comb[2],    # cname
-            #     comb[3],    # sf
-            #     )
         model = treeview.CustomModel(list(items.values()), headers=('Combo/Case', 'SF'))
         self.form.load_combinations_view.setModel(model)
-        #     progressbar.next(True)
-        # progressbar.stop()
+        freecad_funcs.show_status_message(f'Created {len(items)} Load Combinations')
 
 
-        QMessageBox.information(None, 'Successfull','Successfully written to etabs file.')
+    def export_to_etabs(self):
+        selected_combos = set()
+        for ix in self.form.load_combinations_view.selectedIndexes():
+            text = ix.data(Qt.DisplayRole)
+            selected_combos.add(text)
+        progressbar = FreeCAD.Base.ProgressIndicator()
+        n = int(len(self.data) / 4)
+        progressbar.start(
+            "Creating Load Combinations...",
+            n,
+            )
+        numbers = set()
+        for i in range(0, len(self.data), 4):
+            progressbar.next(True)
+            comb = self.data[i: i+4]
+            name = comb[0]
+            if name in selected_combos:
+                self.etabs.SapModel.RespCombo.add(name, 0)
+                self.etabs.SapModel.RespCombo.SetCaseList(
+                    name,
+                    0, # loadcase=0, loadcombo=1
+                    comb[2],    # cname
+                    comb[3],    # sf
+                    )
+                numbers.add(name)
+        progressbar.stop()
+        QMessageBox.information(
+            None,
+            'Successfull',
+            f'Successfully written {len(numbers)} Load Combinations to {self.etabs.get_filename()} Model.',
+        )
 
     def fill_load_cases(self):
         load_patterns = self.etabs.load_patterns.get_load_patterns()
@@ -112,9 +133,10 @@ class Form(QtWidgets.QWidget):
             
     def create_connections(self):
         self.form.create_button.clicked.connect(self.create)
+        self.form.export_to_etabs_button.clicked.connect(self.export_to_etabs)
         self.form.partition_dead_checkbox.stateChanged.connect(self.partition_dead_clicked)
         self.form.partition_live_checkbox.stateChanged.connect(self.partition_live_clicked)
-        # self.form.load_combinations_view.activated.connect(self.indexActivated)
+        self.form.load_combinations_view.activated.connect(self.indexActivated)
         self.form.load_combinations_view.expanded.connect(self.treeExpanded)
 
     def partition_dead_clicked(self):
@@ -129,8 +151,11 @@ class Form(QtWidgets.QWidget):
         else:
             self.form.partition_dead_checkbox.setChecked(True)
     
-    # def indexActivated(self, index):
-    #     self.form.load_combinations_view.index_activated.emit(self.form.load_combinations_view.model().asRecord(index))
+    def indexActivated(self, index):
+        # self.form.load_combinations_view.index_activated.emit(self.form.load_combinations_view.model().asRecord(index))
+        for ix in self.form.load_combinations_view.selectedIndexes():
+            text = ix.data(Qt.DisplayRole) # or ix.data()
+            print(text)
 
 
     def treeExpanded(self):
