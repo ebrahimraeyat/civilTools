@@ -15,8 +15,9 @@ def make_column_section(
         main_diameter,
         tie_diameter,
         cover,
-        main_diameters: list=['14d', '16d', '18d', '20d', '22d', '25d', '28d', '30d'],
-        tie_diameters: list=['10d', '12d'],
+        main_diameters: list=['14', '16', '18', '20', '22', '25', '28', '30'],
+        tie_diameters: list=['10', '12'],
+        rebar_diameters_names={},
         pattern_name="C$WidthX$Height_($NX$M)T$RebarSize",
         longitudinal_bar_name='',
         tie_bar_name='',
@@ -30,17 +31,18 @@ def make_column_section(
     doc = FreeCAD.ActiveDocument
     obj = doc.addObject("Part::FeaturePython", "Section")
     ConcreteColumnSection(obj)
+    obj.rebar_diameters_names = rebar_diameters_names
     obj.B = width
     obj.H = height
     obj.N = N
     obj.M = M
+    obj.Longitudinal_Rebar_Name = longitudinal_bar_name
     obj.Diameter = main_diameters
     obj.Tie_Bars_d = tie_diameters
     obj.Diameter = main_diameter
     obj.Tie_Bars_d = tie_diameter
     obj.cover = cover
     obj.Pattern_Name = pattern_name
-    obj.Longitudinal_Rebar_Name = longitudinal_bar_name
     obj.Tie_Bars_Name = tie_bar_name
     obj.Tie_Bars_Space = tie_bar_space
     obj.n = n
@@ -56,7 +58,8 @@ def make_column_section(
 
 
 class ConcreteColumnSection(ArchComponent.Component):
-    def __init__(self, obj):
+    def __init__(self,obj,
+        ):
         super().__init__(obj)
         obj.IfcType = "Column"
         self.set_properties(obj)
@@ -107,7 +110,7 @@ class ConcreteColumnSection(ArchComponent.Component):
             "App::PropertyEnumeration",
             "Diameter",
             "Rebars",
-            ).Diameter = ['14d', '16d', '18d', '20d', '22d', '25d', '28d', '30d']
+            )
         if not hasattr(obj, "Rebar_Percentage"):
             obj.addProperty(
             "App::PropertyFloat",
@@ -137,7 +140,7 @@ class ConcreteColumnSection(ArchComponent.Component):
             "App::PropertyEnumeration",
             "Tie_Bars_d",
             "Tie_Bars",
-            ).Tie_Bars_d = ['10d', '12d']
+            ).Tie_Bars_d = ['10', '12']
         if not hasattr(obj, "Tie_Bars_Space"):
             obj.addProperty(
             "App::PropertyFloat",
@@ -200,6 +203,12 @@ class ConcreteColumnSection(ArchComponent.Component):
             "Design_type",
             "",
             ).Design_type = ['Check', 'Design']
+        if not hasattr(obj, "rebar_diameters_names"):
+            obj.addProperty(
+            "App::PropertyMap",
+            "rebar_diameters_names",
+            "",
+            )
         
     def onChanged(self, obj, prop):
         # print(f'on changed: prop = {prop}')
@@ -221,8 +230,8 @@ class ConcreteColumnSection(ArchComponent.Component):
             obj.H.Value,
             obj.N,
             obj.M,
-            int(obj.Diameter.rstrip('d')),
-            int(obj.Tie_Bars_d.rstrip('d')),
+            int(obj.Diameter),
+            int(obj.Tie_Bars_d),
             obj.cover.Value,
         )
         obj.Shape = shape
@@ -235,7 +244,7 @@ class ConcreteColumnSection(ArchComponent.Component):
         new_text = text.replace(
             '$Width', str(int(obj.B.Value / 10))).replace(
                 '$Height', str(int(obj.H.Value / 10))).replace(
-                    '$RebarSize', str(obj.Diameter.rstrip('d'))).replace(
+                    '$RebarSize', obj.Diameter).replace(
                         '$TotalRebars', str(obj.Number)).replace(
                             '$N', str(obj.N)).replace(
                                 '$M', str(obj.M)).replace(
@@ -246,7 +255,7 @@ class ConcreteColumnSection(ArchComponent.Component):
         return new_text
 
     def get_rebar_percentage(self, obj):
-        diameter = int(obj.Diameter.rstrip('d'))
+        diameter = int(obj.Diameter)
         rebar_area = math.pi * int(diameter) ** 2 / 4
         rebar_percentage = rebar_area * obj.Number / (obj.B * obj.H).Value * 100
         return rebar_percentage
@@ -284,7 +293,8 @@ if __name__ == "__main__":
         500,
         4,
         6,
-        '25d',
-        '10d',
+        '25',
+        '10',
         40,
+        rebar_diameters_names={'10': '10d', '25': '25d'},
     )

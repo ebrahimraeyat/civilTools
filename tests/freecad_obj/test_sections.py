@@ -19,9 +19,10 @@ def test_make_column_section():
         500,
         4,
         6,
-        '25d',
-        '10d',
+        '25',
+        '10',
         40,
+        rebar_diameters_names={'10': '10d', '25': '25d'},
     )
 
 

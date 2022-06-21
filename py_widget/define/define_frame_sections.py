@@ -21,6 +21,7 @@ class Form(QtWidgets.QWidget):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'define' / 'define_frame_sections.ui'))
         self.etabs = etabs_model
+        self.rebar_diameters_names = {}
         self.fill_form()
         self.task_dialog = None
         # self.beam_names = self.etabs.frame_obj.concrete_section_names('Beam')
@@ -39,12 +40,13 @@ class Form(QtWidgets.QWidget):
         concretes = self.etabs.material.get_material_of_type(2)
         if concretes:
             self.form.concrete_mats.addItems(concretes)
-        tie_rebars, main_rebars = self.etabs.material.get_tie_main_rebars()
-        if main_rebars:
-            self.form.main_rebar_size_list.addItems(main_rebars)
+        tie_rebar_sizes, main_rebar_sizes, self.rebar_diameters_names = self.etabs.material.get_tie_main_rebar_all_sizes()
+        print(tie_rebar_sizes, main_rebar_sizes, self.rebar_diameters_names)
+        if tie_rebar_sizes:
+            self.form.tie_bar_size.addItems(tie_rebar_sizes)
+        if main_rebar_sizes:
+            self.form.main_rebar_size_list.addItems(main_rebar_sizes)
             self.form.main_rebar_size_list.setCurrentRow(0)
-        if tie_rebars:
-            self.form.tie_bar_size.addItems(tie_rebars)
         self.update_section_name()
 
     def fill_sections(self):
@@ -163,7 +165,7 @@ class Form(QtWidgets.QWidget):
             text = self.form.section_pattern_name.text()
         width = self.form.width_list.currentItem().text()
         height = self.form.height_list.currentItem().text()
-        main_rebar = self.form.main_rebar_size_list.currentItem().text().rstrip('d')
+        main_rebar = self.form.main_rebar_size_list.currentItem().text()
         N = self.form.x_rebar_list.currentItem().text()
         M = self.form.y_rebar_list.currentItem().text()
         conc = self.form.concrete_mats.currentText()
@@ -279,13 +281,13 @@ class Form(QtWidgets.QWidget):
                             for M in y_rebar_numbers:
                                 if B / H < 0.3 or H / B < 0.3:
                                     continue
-                                d = int(diameter.rstrip('d'))
+                                d = int(diameter)
                                 rebar_area = math.pi * d ** 2 / 4
                                 number = 2 * (N + M) - 4
                                 p = rebar_area * number / (B * H)
                                 if check_rebar_percentage and not (min_p < p < max_p):
                                     continue
-                                tie_diameter = int(tie_bar_size.rstrip('d'))
+                                tie_diameter = int(tie_bar_size)
                                 c = cover * 10 + tie_diameter + d / 2
                                 dist_x = (B * 10 - 2 * c) / (N - 1) - d
                                 dist_y = (H * 10 - 2 * c) / (M - 1) - d
@@ -295,7 +297,7 @@ class Form(QtWidgets.QWidget):
                                 new_text = pattern_name.replace(
                                     '$Width', str(B)).replace(
                                         '$Height', str(H)).replace(
-                                            '$RebarSize', diameter.rstrip('d')).replace(
+                                            '$RebarSize', diameter).replace(
                                                 '$TotalRebars', str(number)).replace(
                                                     '$N', str(N)).replace(
                                                         '$M', str(M)).replace(
@@ -314,6 +316,7 @@ class Form(QtWidgets.QWidget):
                                     cover * 10,
                                     main_diameters=main_diameters,
                                     tie_diameters=tie_diameters,
+                                    rebar_diameters_names=self.rebar_diameters_names,
                                     pattern_name=pattern_name,
                                     longitudinal_bar_name=longitudinal_bars_mats,
                                     tie_bar_name=tie_bars_mats,
