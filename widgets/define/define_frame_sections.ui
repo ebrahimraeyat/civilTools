@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1765</width>
-    <height>865</height>
+    <width>1157</width>
+    <height>864</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -147,6 +147,12 @@
             </item>
             <item row="2" column="1">
              <widget class="QSpinBox" name="dimension">
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>16777215</height>
+               </size>
+              </property>
               <property name="suffix">
                <string> Cm</string>
               </property>
@@ -358,6 +364,9 @@
                 <height>16777215</height>
                </size>
               </property>
+              <property name="alternatingRowColors">
+               <bool>false</bool>
+              </property>
               <property name="selectionMode">
                <enum>QAbstractItemView::ExtendedSelection</enum>
               </property>
@@ -500,6 +509,13 @@
                 <string>150</string>
                </property>
               </item>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QCheckBox" name="equal_checkbox">
+              <property name="text">
+               <string>Equal</string>
+              </property>
              </widget>
             </item>
            </layout>

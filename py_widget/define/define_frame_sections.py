@@ -71,6 +71,7 @@ class Form(QtWidgets.QWidget):
         self.form.run.clicked.connect(self.accept)
         self.form.longitudinal_bars_mats.lineEdit().editingFinished.connect(self.create_AIII_rebar)
         self.form.tie_bars_mats.lineEdit().editingFinished.connect(self.create_AII_rebar)
+        self.form.equal_checkbox.clicked.connect(self.set_equal_gui)
         # self.form.columns_tableview.clicked.connect(self.view_section)
         # self.form.columns_tableview.itemSelectionChanged.connect(self.view_section)
         # self.form.beams.clicked.connect(self.fill_sections)
@@ -89,6 +90,14 @@ class Form(QtWidgets.QWidget):
         for ix in deselected.indexes():
             print(ix.data())
             print(ix.row())
+
+    def set_equal_gui(self):
+        if self.form.equal_checkbox.isChecked():
+            self.form.height_list.setEnabled(False)
+            self.form.y_rebar_list.setEnabled(False)
+        else:
+            self.form.height_list.setEnabled(True)
+            self.form.y_rebar_list.setEnabled(True)
 
     def change_design_type(self):
         if self.form.column_type.isChecked():
@@ -163,11 +172,11 @@ class Form(QtWidgets.QWidget):
     def update_section_name(self, text=None):
         if text is None:
             text = self.form.section_pattern_name.text()
-        width = self.form.width_list.currentItem().text()
-        height = self.form.height_list.currentItem().text()
+        width = '40'
+        height = '50'
         main_rebar = self.form.main_rebar_size_list.currentItem().text()
-        N = self.form.x_rebar_list.currentItem().text()
-        M = self.form.y_rebar_list.currentItem().text()
+        N = '3'
+        M = '4'
         conc = self.form.concrete_mats.currentText()
         fc = int(self.etabs.material.get_fc(conc))
         total_rebar = 2 * (int(N) + int(M)) - 4
@@ -234,6 +243,10 @@ class Form(QtWidgets.QWidget):
         main_rebar_sizes = [item.text() for item in self.form.main_rebar_size_list.selectedItems()]
         x_rebar_numbers = [int(item.text()) for item in self.form.x_rebar_list.selectedItems()]
         y_rebar_numbers = [int(item.text()) for item in self.form.y_rebar_list.selectedItems()]
+        equal = self.form.equal_checkbox.isChecked()
+        if equal:
+            heights = widths
+            y_rebar_numbers = x_rebar_numbers
         check_rebar_percentage = self.form.rebar_percentage.isChecked()
         min_p = self.form.min_p.value()
         max_p = self.form.max_p.value()
@@ -281,6 +294,9 @@ class Form(QtWidgets.QWidget):
                             for M in y_rebar_numbers:
                                 if B / H < 0.3 or H / B < 0.3:
                                     continue
+                                if equal:
+                                    if B != H or N != M:
+                                        continue
                                 d = int(diameter)
                                 rebar_area = math.pi * d ** 2 / 4
                                 number = 2 * (N + M) - 4
