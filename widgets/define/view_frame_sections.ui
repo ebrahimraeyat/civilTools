@@ -43,6 +43,24 @@
     </widget>
    </item>
    <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QCheckBox" name="concrete_checkbox">
+       <property name="text">
+        <string>Concrete</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="concrete_mats">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
       <number>0</number>
@@ -82,20 +100,6 @@
       </layout>
      </widget>
     </widget>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>Concrete</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="concrete_mats"/>
-     </item>
-    </layout>
    </item>
   </layout>
  </widget>
