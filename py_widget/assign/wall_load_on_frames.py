@@ -77,7 +77,7 @@ class Form(QtWidgets.QWidget):
         loadpat = self.form.loadpat.currentText()
         mass_per_area = self.form.mass.value()
         if self.form.override_height.isChecked():
-            height = self.form.user_height.value()
+            height = self.form.user_height.value() * 1000
         else:
             height = None
         stories = [item.text() for item in self.form.stories.selectedItems()]
