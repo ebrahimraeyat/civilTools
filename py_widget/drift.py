@@ -78,11 +78,8 @@ class Form(QtWidgets.QWidget):
 
 
     def fill_xy_loadcase_names(self):
-        x_names, y_names = self.etabs.load_patterns.get_load_patterns_in_XYdirection()
-        drift_load_patterns = self.etabs.load_patterns.get_drift_load_pattern_names()
-        all_load_case = self.etabs.SapModel.Analyze.GetCaseStatus()[1]
-        x_names = set(x_names).intersection(set(all_load_case))
-        y_names = set(y_names).intersection(set(all_load_case))
+        x_names, y_names = self.etabs.load_cases.get_xy_seismic_load_cases()
+        drift_load_cases = self.etabs.load_cases.get_seismic_drift_load_cases()
         self.form.x_loadcase_list.addItems(x_names)
         self.form.y_loadcase_list.addItems(y_names)
         for lw in (self.form.x_loadcase_list, self.form.y_loadcase_list):
@@ -90,7 +87,8 @@ class Form(QtWidgets.QWidget):
                 item = lw.item(i)
                 item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
                 item.setCheckState(Qt.Unchecked)
-        for name in drift_load_patterns:
+        for name in drift_load_cases:
+            matching_items = []
             if name in x_names:
                 matching_items = self.form.x_loadcase_list.findItems(name, Qt.MatchExactly)
             elif name in y_names:
