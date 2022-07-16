@@ -79,7 +79,8 @@ def add_wall_on_beams(
             if not bases:
                 continue
             base = bases[0]
-            remove_wall(base)
+            if replace:
+                remove_wall(base)
             wall = create_wall(base, dist1, dist2, relative)
             wall.loadpat = loadpat
             wall.weight = mass_per_area
@@ -215,9 +216,14 @@ def has_wall(base):
 def assign_wall_loads_to_etabs(
     etabs = None,
     ):
+    names = set()
+    etabs.set_current_unit('kgf', 'm')
     for obj in FreeCAD.ActiveDocument.Objects:
-        if hasattr(obj, 'IfcType') and obj.IfcType == 'Wall' and \
-            hasattr(obj, 'loadpat'):
+        if (
+            hasattr(obj, 'IfcType') and
+            obj.IfcType == 'Wall' and
+            hasattr(obj, 'loadpat')
+        ):
             name = obj.base.Label2
             if not name:
                 label, story = obj.base.Label.split('_')[:2]
@@ -227,7 +233,6 @@ def assign_wall_loads_to_etabs(
             load_value = math.ceil(height * obj.weight)
             dist1, dist2 = get_relative_dists(obj)
             etabs.unlock_model()
-            etabs.set_current_unit('kgf', 'm')
             etabs.frame_obj.assign_gravity_load(
                 name=name,
                 loadpat=loadpat,
@@ -236,7 +241,9 @@ def assign_wall_loads_to_etabs(
                 dist1=dist1,
                 dist2=dist2,
                 relative=True,
+                replace=name not in names,
             )
+            names.add(name)
 
 def get_relative_dists(wall):
     wall_trace = wall.Base
