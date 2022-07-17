@@ -79,6 +79,9 @@ class Form(QtWidgets.QWidget):
             view.resizeColumnToContents(column)
 
     def export_to_etabs(self):
+        import freecad_funcs
+        if freecad_funcs.ask_to_unlock(self.etabs) == 'NO':
+            return
         i = self.form.tabWidget.currentIndex()
         use_concrete_mat = self.form.concrete_checkbox.isChecked()
         concrete_mat = self.form.concrete_mats.currentText()
