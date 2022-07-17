@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Gui::Dialog::DlgSettingsCivilTools</class>
- <widget class="QWidget" name="Gui::Dialog::DlgSettingsCivilTools">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>710</width>
-    <height>659</height>
+    <width>1207</width>
+    <height>471</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Project Settings</string>
+   <string>Settings</string>
   </property>
-  <property name="layoutDirection">
-   <enum>Qt::LeftToRight</enum>
+  <property name="windowIcon">
+   <iconset resource="../civiltools.qrc">
+    <normaloff>:/civiltools/images/automatic.svg</normaloff>:/civiltools/images/automatic.svg</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_4">
    <item>
@@ -288,529 +289,565 @@
          </item>
         </layout>
        </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
       </layout>
      </widget>
-     <widget class="QTabWidget" name="tabWidget">
-      <property name="currentIndex">
-       <number>0</number>
-      </property>
-      <widget class="QWidget" name="tab">
-       <attribute name="title">
-        <string>X System</string>
-       </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout">
-        <item>
-         <widget class="QTreeWidget" name="x_treeWidget">
-          <property name="cursor" stdset="0">
-           <cursorShape>ArrowCursor</cursorShape>
-          </property>
-          <property name="layoutDirection">
-           <enum>Qt::RightToLeft</enum>
-          </property>
-          <property name="styleSheet">
-           <string notr="true"/>
-          </property>
-          <property name="alternatingRowColors">
-           <bool>false</bool>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>50</width>
-            <height>50</height>
-           </size>
-          </property>
-          <property name="animated">
-           <bool>false</bool>
-          </property>
-          <property name="headerHidden">
-           <bool>true</bool>
-          </property>
-          <column>
+     <widget class="QWidget" name="layoutWidget">
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <widget class="QLabel" name="label">
            <property name="text">
-            <string/>
+            <string>X System</string>
            </property>
-           <property name="font">
-            <font>
-             <weight>50</weight>
-             <italic>false</italic>
-             <bold>false</bold>
-             <strikeout>false</strikeout>
-            </font>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
            </property>
-           <property name="textAlignment">
-            <set>AlignCenter</set>
+          </widget>
+         </item>
+         <item>
+          <widget class="QTreeWidget" name="x_treeWidget">
+           <property name="cursor" stdset="0">
+            <cursorShape>ArrowCursor</cursorShape>
            </property>
-          </column>
-          <item>
+           <property name="layoutDirection">
+            <enum>Qt::RightToLeft</enum>
+           </property>
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
+           <property name="alternatingRowColors">
+            <bool>false</bool>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>50</width>
+             <height>50</height>
+            </size>
+           </property>
+           <property name="animated">
+            <bool>false</bool>
+           </property>
+           <property name="headerHidden">
+            <bool>true</bool>
+           </property>
+           <column>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="font">
+             <font>
+              <weight>50</weight>
+              <italic>false</italic>
+              <bold>false</bold>
+              <strikeout>false</strikeout>
+             </font>
+            </property>
+            <property name="textAlignment">
+             <set>AlignCenter</set>
+            </property>
+           </column>
+           <item>
+            <property name="text">
+             <string>سیستم قاب خمشی</string>
+            </property>
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <italic>false</italic>
+              <bold>true</bold>
+              <underline>false</underline>
+              <strikeout>false</strikeout>
+              <kerning>true</kerning>
+             </font>
+            </property>
+            <property name="icon">
+             <iconset>
+              <normaloff>basePlate.png</normaloff>basePlate.png</iconset>
+            </property>
+            <item>
+             <property name="text">
+              <string>قاب خمشی بتن آرمه ویژه</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>قاب خمشی بتن آرمه متوسط</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>قاب خمشی بتن آرمه معمولی</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>قاب خمشی فولادی ویژه</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>قاب خمشی فولادی متوسط</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>قاب خمشی فولادی معمولی</string>
+             </property>
+            </item>
+           </item>
+           <item>
+            <property name="text">
+             <string>سیستم دوگانه یا ترکیبی</string>
+            </property>
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <item>
+             <property name="text">
+              <string>قاب خمشی ویژه (فولادی یا بتنی) + دیوارهای برشی بتن آرمه ویژه</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>قاب خمشی بتن آرمه متوسط + دیواربرشی بتن آرمه ویژه</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>قاب خمشی بتن آرمه متوسط + دیواربرشی بتن آرمه متوسط</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>قاب خمشی فولادی متوسط + دیواربرشی بتن آرمه متوسط</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>قاب خمشی فولادی ویژه + مهاربندی واگرای ویژه فولادی</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>قاب خمشی فولادی متوسط + مهاربندی واگرای ویژه فولادی</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>قاب خمشی فولادی ویژه + مهاربندی همگرای ویژه فولادی</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>قاب خمشی فولادی متوسط + مهاربندی همگرای ویژه فولادی</string>
+             </property>
+            </item>
+           </item>
+           <item>
+            <property name="text">
+             <string>سیستم قاب ساختمانی</string>
+            </property>
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <item>
+             <property name="text">
+              <string>دیوارهای برشی بتن آرمه ویژه</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>دیوارهای برشی بتن آرمه متوسط</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>دیوارهای برشی بتن آرمه معمولی</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>دیوارهای برشی با مصالح بنایی مسلح</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>مهاربندی واگرای ویژه فولادی</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>مهاربندی کمانش تاب</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>مهاربندی همگرای معمولی فولادی</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>مهاربندی همگرای ویژه فولادی</string>
+             </property>
+            </item>
+           </item>
+           <item>
+            <property name="text">
+             <string>سیستم دیوارهای باربر</string>
+            </property>
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="flags">
+             <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+            </property>
+            <item>
+             <property name="text">
+              <string>دیوارهای برشی بتن آرمه ویژه</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>دیوارهای برشی بتن آرمه متوسط</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>دیوارهای برشی بتن آرمه معمولی</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>دیوارهای برشی با مصالح بنایی مسلح</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>دیوارهای متشکل از قاب فولادی سردنورد و مهارهای تسمه ای</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>دیوارهای متشکل از قاب فولادی سردنورد و صفحات پوشش فولادی</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>دیوارهای بتن پاششی سه بعدی</string>
+             </property>
+            </item>
+           </item>
+           <item>
+            <property name="text">
+             <string>سیستم کنسولی</string>
+            </property>
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <item>
+             <property name="text">
+              <string>سازه های فولادی یا بتن آرمه ویژه</string>
+             </property>
+            </item>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <widget class="QLabel" name="label_2">
            <property name="text">
-            <string>سیستم قاب خمشی</string>
+            <string>Y System</string>
            </property>
-           <property name="font">
-            <font>
-             <weight>75</weight>
-             <italic>false</italic>
-             <bold>true</bold>
-             <underline>false</underline>
-             <strikeout>false</strikeout>
-             <kerning>true</kerning>
-            </font>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
            </property>
-           <property name="icon">
-            <iconset>
-             <normaloff>basePlate.png</normaloff>basePlate.png</iconset>
+          </widget>
+         </item>
+         <item>
+          <widget class="QTreeWidget" name="y_treeWidget">
+           <property name="layoutDirection">
+            <enum>Qt::RightToLeft</enum>
            </property>
-           <item>
-            <property name="text">
-             <string>قاب خمشی بتن آرمه ویژه</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>قاب خمشی بتن آرمه متوسط</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>قاب خمشی بتن آرمه معمولی</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>قاب خمشی فولادی ویژه</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>قاب خمشی فولادی متوسط</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>قاب خمشی فولادی معمولی</string>
-            </property>
-           </item>
-          </item>
-          <item>
-           <property name="text">
-            <string>سیستم دوگانه یا ترکیبی</string>
+           <property name="styleSheet">
+            <string notr="true"/>
            </property>
-           <property name="font">
-            <font>
-             <weight>75</weight>
-             <bold>true</bold>
-            </font>
+           <property name="alternatingRowColors">
+            <bool>false</bool>
            </property>
-           <item>
-            <property name="text">
-             <string>قاب خمشی ویژه (فولادی یا بتنی) + دیوارهای برشی بتن آرمه ویژه</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>قاب خمشی بتن آرمه متوسط + دیواربرشی بتن آرمه ویژه</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>قاب خمشی بتن آرمه متوسط + دیواربرشی بتن آرمه متوسط</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>قاب خمشی فولادی متوسط + دیواربرشی بتن آرمه متوسط</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>قاب خمشی فولادی ویژه + مهاربندی واگرای ویژه فولادی</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>قاب خمشی فولادی متوسط + مهاربندی واگرای ویژه فولادی</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>قاب خمشی فولادی ویژه + مهاربندی همگرای ویژه فولادی</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>قاب خمشی فولادی متوسط + مهاربندی همگرای ویژه فولادی</string>
-            </property>
-           </item>
-          </item>
-          <item>
-           <property name="text">
-            <string>سیستم قاب ساختمانی</string>
+           <property name="animated">
+            <bool>false</bool>
            </property>
-           <property name="font">
-            <font>
-             <weight>75</weight>
-             <bold>true</bold>
-            </font>
+           <property name="headerHidden">
+            <bool>true</bool>
            </property>
+           <column>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="font">
+             <font>
+              <weight>50</weight>
+              <italic>false</italic>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="textAlignment">
+             <set>AlignCenter</set>
+            </property>
+           </column>
            <item>
             <property name="text">
-             <string>دیوارهای برشی بتن آرمه ویژه</string>
+             <string>سیستم قاب خمشی</string>
             </property>
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <item>
+             <property name="text">
+              <string>قاب خمشی بتن آرمه ویژه</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>قاب خمشی بتن آرمه متوسط</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>قاب خمشی بتن آرمه معمولی</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>قاب خمشی فولادی ویژه</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>قاب خمشی فولادی متوسط</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>قاب خمشی فولادی معمولی</string>
+             </property>
+            </item>
            </item>
            <item>
             <property name="text">
-             <string>دیوارهای برشی بتن آرمه متوسط</string>
+             <string>سیستم دوگانه یا ترکیبی</string>
             </property>
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <item>
+             <property name="text">
+              <string>قاب خمشی ویژه (فولادی یا بتنی) + دیوارهای برشی بتن آرمه ویژه</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>قاب خمشی بتن آرمه متوسط + دیواربرشی بتن آرمه ویژه</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>قاب خمشی بتن آرمه متوسط + دیواربرشی بتن آرمه متوسط</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>قاب خمشی فولادی متوسط + دیواربرشی بتن آرمه متوسط</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>قاب خمشی فولادی ویژه + مهاربندی واگرای ویژه فولادی</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>قاب خمشی فولادی متوسط + مهاربندی واگرای ویژه فولادی</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>قاب خمشی فولادی ویژه + مهاربندی همگرای ویژه فولادی</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>قاب خمشی فولادی متوسط + مهاربندی همگرای ویژه فولادی</string>
+             </property>
+            </item>
            </item>
            <item>
             <property name="text">
-             <string>دیوارهای برشی بتن آرمه معمولی</string>
+             <string>سیستم قاب ساختمانی</string>
             </property>
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <item>
+             <property name="text">
+              <string>دیوارهای برشی بتن آرمه ویژه</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>دیوارهای برشی بتن آرمه متوسط</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>دیوارهای برشی بتن آرمه معمولی</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>دیوارهای برشی با مصالح بنایی مسلح</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>مهاربندی واگرای ویژه فولادی</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>مهاربندی کمانش تاب</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>مهاربندی همگرای معمولی فولادی</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>مهاربندی همگرای ویژه فولادی</string>
+             </property>
+            </item>
            </item>
            <item>
             <property name="text">
-             <string>دیوارهای برشی با مصالح بنایی مسلح</string>
+             <string>سیستم دیوارهای باربر</string>
             </property>
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="flags">
+             <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+            </property>
+            <item>
+             <property name="text">
+              <string>دیوارهای برشی بتن آرمه ویژه</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>دیوارهای برشی بتن آرمه متوسط</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>دیوارهای برشی بتن آرمه معمولی</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>دیوارهای برشی با مصالح بنایی مسلح</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>دیوارهای متشکل از قاب فولادی سردنورد و مهارهای تسمه ای</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>دیوارهای متشکل از قاب فولادی سردنورد و صفحات پوشش فولادی</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>دیوارهای بتن پاششی سه بعدی</string>
+             </property>
+            </item>
            </item>
            <item>
             <property name="text">
-             <string>مهاربندی واگرای ویژه فولادی</string>
+             <string>سیستم کنسولی</string>
             </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>مهاربندی کمانش تاب</string>
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
             </property>
+            <item>
+             <property name="text">
+              <string>سازه های فولادی یا بتن آرمه ویژه</string>
+             </property>
+            </item>
            </item>
-           <item>
-            <property name="text">
-             <string>مهاربندی همگرای معمولی فولادی</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>مهاربندی همگرای ویژه فولادی</string>
-            </property>
-           </item>
-          </item>
-          <item>
-           <property name="text">
-            <string>سیستم دیوارهای باربر</string>
-           </property>
-           <property name="font">
-            <font>
-             <weight>75</weight>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="flags">
-            <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
-           </property>
-           <item>
-            <property name="text">
-             <string>دیوارهای برشی بتن آرمه ویژه</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>دیوارهای برشی بتن آرمه متوسط</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>دیوارهای برشی بتن آرمه معمولی</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>دیوارهای برشی با مصالح بنایی مسلح</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>دیوارهای متشکل از قاب فولادی سردنورد و مهارهای تسمه ای</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>دیوارهای متشکل از قاب فولادی سردنورد و صفحات پوشش فولادی</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>دیوارهای بتن پاششی سه بعدی</string>
-            </property>
-           </item>
-          </item>
-          <item>
-           <property name="text">
-            <string>سیستم کنسولی</string>
-           </property>
-           <property name="font">
-            <font>
-             <weight>75</weight>
-             <bold>true</bold>
-            </font>
-           </property>
-           <item>
-            <property name="text">
-             <string>سازه های فولادی یا بتن آرمه ویژه</string>
-            </property>
-           </item>
-          </item>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="tab_2">
-       <attribute name="title">
-        <string>Y System</string>
-       </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_3">
-        <item>
-         <widget class="QTreeWidget" name="y_treeWidget">
-          <property name="layoutDirection">
-           <enum>Qt::RightToLeft</enum>
-          </property>
-          <property name="styleSheet">
-           <string notr="true"/>
-          </property>
-          <property name="alternatingRowColors">
-           <bool>false</bool>
-          </property>
-          <property name="animated">
-           <bool>false</bool>
-          </property>
-          <property name="headerHidden">
-           <bool>true</bool>
-          </property>
-          <column>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="font">
-            <font>
-             <weight>50</weight>
-             <italic>false</italic>
-             <bold>false</bold>
-            </font>
-           </property>
-           <property name="textAlignment">
-            <set>AlignCenter</set>
-           </property>
-          </column>
-          <item>
-           <property name="text">
-            <string>سیستم قاب خمشی</string>
-           </property>
-           <property name="font">
-            <font>
-             <weight>75</weight>
-             <bold>true</bold>
-            </font>
-           </property>
-           <item>
-            <property name="text">
-             <string>قاب خمشی بتن آرمه ویژه</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>قاب خمشی بتن آرمه متوسط</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>قاب خمشی بتن آرمه معمولی</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>قاب خمشی فولادی ویژه</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>قاب خمشی فولادی متوسط</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>قاب خمشی فولادی معمولی</string>
-            </property>
-           </item>
-          </item>
-          <item>
-           <property name="text">
-            <string>سیستم دوگانه یا ترکیبی</string>
-           </property>
-           <property name="font">
-            <font>
-             <weight>75</weight>
-             <bold>true</bold>
-            </font>
-           </property>
-           <item>
-            <property name="text">
-             <string>قاب خمشی ویژه (فولادی یا بتنی) + دیوارهای برشی بتن آرمه ویژه</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>قاب خمشی بتن آرمه متوسط + دیواربرشی بتن آرمه ویژه</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>قاب خمشی بتن آرمه متوسط + دیواربرشی بتن آرمه متوسط</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>قاب خمشی فولادی متوسط + دیواربرشی بتن آرمه متوسط</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>قاب خمشی فولادی ویژه + مهاربندی واگرای ویژه فولادی</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>قاب خمشی فولادی متوسط + مهاربندی واگرای ویژه فولادی</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>قاب خمشی فولادی ویژه + مهاربندی همگرای ویژه فولادی</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>قاب خمشی فولادی متوسط + مهاربندی همگرای ویژه فولادی</string>
-            </property>
-           </item>
-          </item>
-          <item>
-           <property name="text">
-            <string>سیستم قاب ساختمانی</string>
-           </property>
-           <property name="font">
-            <font>
-             <weight>75</weight>
-             <bold>true</bold>
-            </font>
-           </property>
-           <item>
-            <property name="text">
-             <string>دیوارهای برشی بتن آرمه ویژه</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>دیوارهای برشی بتن آرمه متوسط</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>دیوارهای برشی بتن آرمه معمولی</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>دیوارهای برشی با مصالح بنایی مسلح</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>مهاربندی واگرای ویژه فولادی</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>مهاربندی کمانش تاب</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>مهاربندی همگرای معمولی فولادی</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>مهاربندی همگرای ویژه فولادی</string>
-            </property>
-           </item>
-          </item>
-          <item>
-           <property name="text">
-            <string>سیستم دیوارهای باربر</string>
-           </property>
-           <property name="font">
-            <font>
-             <weight>75</weight>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="flags">
-            <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
-           </property>
-           <item>
-            <property name="text">
-             <string>دیوارهای برشی بتن آرمه ویژه</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>دیوارهای برشی بتن آرمه متوسط</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>دیوارهای برشی بتن آرمه معمولی</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>دیوارهای برشی با مصالح بنایی مسلح</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>دیوارهای متشکل از قاب فولادی سردنورد و مهارهای تسمه ای</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>دیوارهای متشکل از قاب فولادی سردنورد و صفحات پوشش فولادی</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>دیوارهای بتن پاششی سه بعدی</string>
-            </property>
-           </item>
-          </item>
-          <item>
-           <property name="text">
-            <string>سیستم کنسولی</string>
-           </property>
-           <property name="font">
-            <font>
-             <weight>75</weight>
-             <bold>true</bold>
-            </font>
-           </property>
-           <item>
-            <property name="text">
-             <string>سازه های فولادی یا بتن آرمه ویژه</string>
-            </property>
-           </item>
-          </item>
-         </widget>
-        </item>
-       </layout>
-      </widget>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
      </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Save</set>
+     </property>
     </widget>
    </item>
    <item>
@@ -829,23 +866,8 @@
      </property>
     </widget>
    </item>
-   <item>
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11"/>
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
    <class>Gui::PrefCheckBox</class>
@@ -863,6 +885,41 @@
    <header>Gui/PrefWidgets.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
- <connections/>
+ <resources>
+  <include location="../civiltools.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>Dialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>Dialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

@@ -6,8 +6,6 @@ from PySide2 import QtCore
 
 import FreeCADGui as Gui
 
-from db import ostanha
-
 
 class CivilToolsSettings:
 
@@ -35,4 +33,4 @@ class CivilToolsSettings:
             return
         from py_widget import settings
         win = settings.Form(etabs)
-        Gui.Control.showDialog(win)
+        find_etabs.show_win(win, in_mdi=False)

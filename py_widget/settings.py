@@ -101,10 +101,10 @@ class Form(QtWidgets.QWidget):
         self.form.x_treeWidget.itemActivated.connect(self.xactivate)
         self.form.bot_x_combo.currentIndexChanged.connect(self.fill_height_and_no_of_stories)
         self.form.top_x_combo.currentIndexChanged.connect(self.fill_height_and_no_of_stories)
+        self.form.buttonBox.accepted.connect(self.save)
 
-    def accept(self):
+    def save(self):
         self.save_config()
-        Gui.Control.closeDialog()
 
     def load_config(self):
         etabs_filename = self.etabs.get_filename()

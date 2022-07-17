@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="civiltools">
+    <file>images/automatic.svg</file>
     <file>images/add.svg</file>
     <file>images/down.svg</file>
     <file>images/load_combinations_to_f2k.svg</file>
