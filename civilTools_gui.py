@@ -40,6 +40,7 @@ from gui_civiltools import (
 from gui_civiltools.define import (
     gui_create_load_combinations,
     gui_frame_sections,
+    gui_define_axes,
 )
 from gui_civiltools.control import (
     gui_get_weakness_torsion, 
@@ -215,6 +216,7 @@ civiltools_define = [
             "civiltools_load_combinations",
             "civiltools_frame_sections",
             "civil_create_section_cuts",
+            "civilTools_define_axis",
             ]
 
 civiltools_help = [

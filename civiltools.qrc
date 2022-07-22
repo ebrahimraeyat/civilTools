@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="civiltools">
+    <file>images/grid_lines.svg</file>
     <file>images/automatic.svg</file>
     <file>images/add.svg</file>
     <file>images/down.svg</file>
