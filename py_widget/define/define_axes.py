@@ -190,6 +190,7 @@ class Form(QtWidgets.QWidget):
         table_key = 'Grid Definitions - Grid Lines'
         fields = ['Name', 'Grid Line Type', 'ID', 'Ordinate', 'Angle', 'X1', 'Y1', 'X2', 'Y2', 'Bubble Location', 'Visible']
         self.etabs.database.apply_data(table_key, data, fields)
+        QMessageBox.information(None, 'Successful', f'{g1} Grid Line Modifided. ')
         
     def reject(self):
         Gui.Control.closeDialog()
