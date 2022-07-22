@@ -213,10 +213,10 @@ civiltools_view = [
             ]
 
 civiltools_define = [
+            "civilTools_define_axis",
             "civiltools_load_combinations",
             "civiltools_frame_sections",
             "civil_create_section_cuts",
-            "civilTools_define_axis",
             ]
 
 civiltools_help = [
