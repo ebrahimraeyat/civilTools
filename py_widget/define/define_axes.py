@@ -2,6 +2,7 @@ from pathlib import Path
 
 from PySide2 import  QtWidgets
 from PySide2.QtWidgets import QMessageBox
+from PySide2.QtCore import Qt
 
 import ezdxf
 
@@ -25,14 +26,29 @@ class Form(QtWidgets.QWidget):
         self.y_axis = None
         self.axis = None
         self.etabs = etabs
+        self.fill_levels()
         self.create_connections()
 
     def create_connections(self):
         self.form.browse.clicked.connect(self.browse)
         self.form.layer_checkbox.clicked.connect(self.layer_clicked)
         self.form.refresh.clicked.connect(self.update_gui)
+        self.form.refresh_levels.clicked.connect(self.fill_levels)
         self.form.create_axis.clicked.connect(self.create_axis)
         self.form.export_to_etabs.clicked.connect(self.export_to_etabs)
+        self.form.create_columns.clicked.connect(self.create_columns)
+
+    def fill_levels(self):
+        if self.etabs is None:
+            return
+        self.form.levels_list.clear()
+        levels_names = self.etabs.story.get_level_names()
+        self.form.levels_list.addItems(levels_names)
+        lw = self.form.levels_list
+        for i in range(lw.count() - 1):
+            item = lw.item(i)
+            item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
+            item.setCheckState(Qt.Checked)
 
     def layer_clicked(self):
         if self.form.layer_checkbox.isChecked():
@@ -66,7 +82,25 @@ class Form(QtWidgets.QWidget):
             Draft.make_line(tuple(line.dxf.start), tuple(line.dxf.end))
         self.freecad_doc.recompute()
         Gui.Selection.clearSelection()
-        Gui.SendMsgToActiveView("ViewFit") 
+        Gui.SendMsgToActiveView("ViewFit")
+
+    def create_columns(self):
+        if self.freecad_doc is None:
+            self.freecad_doc = FreeCAD.newDocument('Grids')
+        self.clear_columns()
+        block = self.form.column_block.currentText()
+        if block == '':
+            return
+        msp = self.ezdxf_doc.modelspace()
+        width = self.form.col_size.value()
+        for i in msp.query(f'INSERT[name=="{block}"]'):
+            center = tuple(i.dxf.insert)
+            rot = i.dxf.rotation
+            col = Arch.makeStructure(length=width, width=width, height = 8 * width)
+            col.Placement = FreeCAD.Placement(
+            FreeCAD.Vector(*center),
+            FreeCAD.Rotation(FreeCAD.Vector(0,0,1),rot))
+        FreeCAD.ActiveDocument.recompute()
 
     def create_axis(self):
         if self.freecad_doc is None:
@@ -138,6 +172,21 @@ class Form(QtWidgets.QWidget):
             return
         for obj in self.freecad_doc.Objects:
             self.freecad_doc.removeObject(obj.Name)
+    
+    def clear_columns(self):
+        if self.freecad_doc is None:
+            return
+        for obj in self.freecad_doc.Objects:
+            if hasattr(obj, 'IfcType') and obj.IfcType == 'Column':
+                self.freecad_doc.removeObject(obj.Name)
+
+    def get_blocks(self):
+        if self.ezdxf_doc is None:
+            return
+        blocks = set()
+        for block in self.ezdxf_doc.blocks:
+            blocks.add(block.name)
+        return blocks
 
     def browse(self):
         ext = '.dxf'
@@ -155,6 +204,9 @@ class Form(QtWidgets.QWidget):
             layers = self.get_layers()
             self.form.layer_combobox.clear()
             self.form.layer_combobox.addItems(layers)
+            blocks = self.get_blocks()
+            self.form.column_block.clear()
+            self.form.column_block.addItems(blocks)
             if self.freecad_doc is None:
                 self.freecad_doc = FreeCAD.newDocument('Grids')
         except IOError:
@@ -165,11 +217,19 @@ class Form(QtWidgets.QWidget):
 
     def export_to_etabs(self):
         if self.etabs is None:
-            import etabs_obj
-            self.etabs = etabs_obj.EtabsModel()
+            QMessageBox.Warning(None, 'Open ETABS', 'Please open ETABS and run this command again.')
+            return
+
         len_unit = self.form.unit.currentText()
         self.etabs.set_current_unit('N', len_unit)
         self.etabs.unlock_model()
+        tab = self.form.tabWidget.currentIndex()
+        if tab == 0:
+            self.export_axes_to_etabs()
+        elif tab == 1:
+            self.export_columns_to_etabs()
+
+    def export_axes_to_etabs(self):
         grids = self.etabs.SapModel.GridSys.GetNameList()[1]
         g1 = None
         if grids:
@@ -190,7 +250,39 @@ class Form(QtWidgets.QWidget):
         table_key = 'Grid Definitions - Grid Lines'
         fields = ['Name', 'Grid Line Type', 'ID', 'Ordinate', 'Angle', 'X1', 'Y1', 'X2', 'Y2', 'Bubble Location', 'Visible']
         self.etabs.database.apply_data(table_key, data, fields)
-        QMessageBox.information(None, 'Successful', f'{g1} Grid Line Modifided. ')
+        QMessageBox.information(None, 'Successful', f'{g1} Grid Line Modifided.')
+
+    def export_columns_to_etabs(self):
+        if self.freecad_doc is None:
+            return
+        import math
+        n = 0
+        level_names = []
+        all_level_names = []
+        lw = self.form.levels_list
+        for i in range(lw.count()):
+            item = lw.item(i)
+            all_level_names.append(item.text())
+            if item.checkState() == Qt.Checked:
+                level_names.append(item.text())
+        for obj in self.freecad_doc.Objects:
+            if hasattr(obj, 'IfcType') and obj.IfcType == 'Column':
+                x, y, _ = tuple(obj.Placement.Base)
+                rot = math.degrees(obj.Placement.Rotation.Angle)
+                for level_name in level_names:
+                    i = all_level_names.index(level_name)
+                    next_level_name = all_level_names[i + 1]
+                    level = self.etabs.SapModel.Story.GetElevation(level_name)[0]
+                    next_level = self.etabs.SapModel.Story.GetElevation(next_level_name)[0]
+                    name = self.etabs.SapModel.FrameObj.AddByCoord(x, y, level, x, y, next_level)[0]
+                    self.etabs.SapModel.FrameObj.SetLocalAxes(name, rot)
+                    n += 1
+        QMessageBox.information(None, 'Successful', f'{n} columns added to current model.')
+                    
+
+
+
+
         
     def reject(self):
         Gui.Control.closeDialog()

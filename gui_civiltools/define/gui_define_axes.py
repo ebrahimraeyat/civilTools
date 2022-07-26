@@ -32,7 +32,7 @@ class CivilToolsDefineAxis:
             ):
             return
         from py_widget.define import define_axes
-        win = define_axes.Form(etabs=None)
+        win = define_axes.Form(etabs)
         Gui.Control.showDialog(win)
         
     def IsActive(self):
