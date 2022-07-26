@@ -21,7 +21,6 @@ class Form(QtWidgets.QWidget):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'define' / 'create_axes_from_dxf.ui'))
         self.ezdxf_doc = None
-        self.freecad_doc = None
         self.x_axis = None
         self.y_axis = None
         self.axis = None
@@ -61,32 +60,38 @@ class Form(QtWidgets.QWidget):
             return
         msp = self.ezdxf_doc.modelspace()
         layers = set()
-        for e in msp:
-            if e.dxftype() == "LINE":
-                layers.add(e.dxf.layer)
+        for e in msp.query("LINE LWPOLYLINE"):
+            layers.add(e.dxf.layer)
         return layers
 
     def update_gui(self):
         if self.ezdxf_doc is None:
             return
         self.clear_all()
-        if self.freecad_doc is None:
-            self.freecad_doc = FreeCAD.newDocument('Grids')
+        if FreeCAD.ActiveDocument is None:
+            FreeCAD.newDocument('Grids')
         msp = self.ezdxf_doc.modelspace()
         if self.form.layer_checkbox.isChecked():
             layer = self.form.layer_combobox.currentText()
-            lines = msp.query(f'LINE[layer=="{layer}"]')
+            lines = msp.query(f'LINE LWPOLYLINE[layer=="{layer}"]')
         else:
-            lines = msp.query("LINE")
+            lines = msp.query("LINE LWPOLYLINE")
         for line in lines:
-            Draft.make_line(tuple(line.dxf.start), tuple(line.dxf.end))
-        self.freecad_doc.recompute()
+            if hasattr(line, 'dxf') and hasattr(line.dxf, 'first'):
+                Draft.make_line(tuple(line.dxf.start), tuple(line.dxf.end))
+            elif hasattr(line, 'get_points'):
+                points = line.get_points()
+                p1 = (points[0][0], points[0][1], 0)
+                p2 = (points[1][0], points[1][1], 0)
+                Draft.make_line(p1, p2)
+
+        FreeCAD.ActiveDocument.recompute()
         Gui.Selection.clearSelection()
         Gui.SendMsgToActiveView("ViewFit")
 
     def create_columns(self):
-        if self.freecad_doc is None:
-            self.freecad_doc = FreeCAD.newDocument('Grids')
+        if FreeCAD.ActiveDocument is None:
+            FreeCAD.newDocument('Grids')
         self.clear_columns()
         block = self.form.column_block.currentText()
         if block == '':
@@ -103,7 +108,7 @@ class Form(QtWidgets.QWidget):
         FreeCAD.ActiveDocument.recompute()
 
     def create_axis(self):
-        if self.freecad_doc is None:
+        if FreeCAD.ActiveDocument is None:
             return
         x_coordinates, y_coordinates = self.get_xy_coordinates()
         if max((len(x_coordinates), len(y_coordinates))) == 0:
@@ -153,7 +158,7 @@ class Form(QtWidgets.QWidget):
         if self.form.selections.isChecked():
             lines = Gui.Selection.getSelection()
         else:
-            lines = self.freecad_doc.Objects
+            lines = FreeCAD.ActiveDocument.Objects
         x_coordinates = set()
         y_coordinates = set()
         for line in lines:
@@ -168,17 +173,24 @@ class Form(QtWidgets.QWidget):
         return sorted(x_coordinates), sorted(y_coordinates)
 
     def clear_all(self):
-        if self.freecad_doc is None:
+        doc = FreeCAD.ActiveDocument
+        if doc is None:
             return
-        for obj in self.freecad_doc.Objects:
-            self.freecad_doc.removeObject(obj.Name)
+        for obj in doc.Objects:
+            if hasattr(obj, 'IfcType') and obj.IfcType == 'Column':
+                continue
+            doc.removeObject(obj.Name)
+        self.x_axis = None
+        self.y_axis = None
+        self.axis = None
     
     def clear_columns(self):
-        if self.freecad_doc is None:
+        doc = FreeCAD.ActiveDocument
+        if doc is None:
             return
-        for obj in self.freecad_doc.Objects:
+        for obj in doc.Objects:
             if hasattr(obj, 'IfcType') and obj.IfcType == 'Column':
-                self.freecad_doc.removeObject(obj.Name)
+                doc.removeObject(obj.Name)
 
     def get_blocks(self):
         if self.ezdxf_doc is None:
@@ -207,8 +219,8 @@ class Form(QtWidgets.QWidget):
             blocks = self.get_blocks()
             self.form.column_block.clear()
             self.form.column_block.addItems(blocks)
-            if self.freecad_doc is None:
-                self.freecad_doc = FreeCAD.newDocument('Grids')
+            if FreeCAD.ActiveDocument is None:
+                FreeCAD.newDocument('Grids')
         except IOError:
             print(f"Not a DXF file or a generic I/O error.")
         except ezdxf.DXFStructureError:
@@ -253,7 +265,8 @@ class Form(QtWidgets.QWidget):
         QMessageBox.information(None, 'Successful', f'{g1} Grid Line Modifided.')
 
     def export_columns_to_etabs(self):
-        if self.freecad_doc is None:
+        doc = FreeCAD.ActiveDocument
+        if doc is None:
             return
         import math
         n = 0
@@ -265,7 +278,7 @@ class Form(QtWidgets.QWidget):
             all_level_names.append(item.text())
             if item.checkState() == Qt.Checked:
                 level_names.append(item.text())
-        for obj in self.freecad_doc.Objects:
+        for obj in doc.Objects:
             if hasattr(obj, 'IfcType') and obj.IfcType == 'Column':
                 x, y, _ = tuple(obj.Placement.Base)
                 rot = math.degrees(obj.Placement.Rotation.Angle)
