@@ -55,7 +55,7 @@ class CivilToolsWorkbench(Workbench):
         from DraftGui import todo
         import CivilToolsStatusBar
 
-        todo.delay(CivilToolsStatusBar.setStatusIcons, True)
+        todo.delay(CivilToolsStatusBar.check_updates, 'alaki')
         if FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools").GetBool("FirstTime", True):
             from DraftGui import todo
             todo.delay(Gui.runCommand, "civiltools_settings")
@@ -75,21 +75,21 @@ class CivilToolsWorkbench(Workbench):
         
         FreeCAD.addImportType("CSI ETABS (*.edb *.EDB)", "gui_civiltools.open_etabs")
 
-    def Deactivated(self):
+    # def Deactivated(self):
 
-        from DraftGui import todo
-        import CivilToolsStatusBar
-        from freecad_py import civiltools_views
+    #     from DraftGui import todo
+    #     import CivilToolsStatusBar
+    #     from freecad_py import civiltools_views
 
-        todo.delay(CivilToolsStatusBar.setStatusIcons,False)
+    #     todo.delay(CivilToolsStatusBar.setStatusIcons,False)
 
-        # store views widget state and vertical size
+    #     # store views widget state and vertical size
 
-        w = civiltools_views.findWidget()
-        FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools").SetBool("RestoreCivilToolsViews",bool(w))
-        if w:
-            FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools").SetInt("civilToolsViewsSize",w.height())
-            w.hide()
+    #     w = civiltools_views.findWidget()
+    #     FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools").SetBool("RestoreCivilToolsViews",bool(w))
+    #     if w:
+    #         FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools").SetInt("civilToolsViewsSize",w.height())
+    #         w.hide()
 
 
 Gui.addWorkbench(CivilToolsWorkbench())
