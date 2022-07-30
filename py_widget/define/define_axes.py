@@ -77,7 +77,7 @@ class Form(QtWidgets.QWidget):
         else:
             lines = msp.query("LINE LWPOLYLINE")
         for line in lines:
-            if hasattr(line, 'dxf') and hasattr(line.dxf, 'first'):
+            if hasattr(line, 'dxf') and hasattr(line.dxf, 'start'):
                 Draft.make_line(tuple(line.dxf.start), tuple(line.dxf.end))
             elif hasattr(line, 'get_points'):
                 points = line.get_points()
