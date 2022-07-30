@@ -39,7 +39,11 @@ class Form(QtWidgets.QWidget):
             config.save_analytical_periods(self.json_file, tx, ty)
             building = self.current_building(tx, ty)
             self.etabs.apply_cfactor_to_edb(building, bot_story, top_story)
-        drifts, headers = self.etabs.get_drifts(no_of_stories, cdx, cdy, loadcases)
+        ret = self.etabs.get_drifts(no_of_stories, cdx, cdy, loadcases)
+        if ret is None:
+            QMessageBox.warning(None, 'Diphragm', 'Please Check that you assigned diaphragm to stories.')
+            return
+        drifts, headers = ret
         import table_model
         table_model.show_results(drifts, headers, table_model.DriftModel)
     
