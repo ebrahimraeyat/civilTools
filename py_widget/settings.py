@@ -53,19 +53,26 @@ class Form(QtWidgets.QWidget):
         for combo_box in (
             self.form.bot_x_combo,
             self.form.top_x_combo,
+            self.form.top_story_for_height,
             # self.form.bot_y_combo,
             # self.form.top_y_combo,
         ):
             combo_box.addItems(self.stories)
         n = len(self.stories)
         self.form.bot_x_combo.setCurrentIndex(0)
-        self.form.top_x_combo.setCurrentIndex(n - 2)
+        self.form.top_x_combo.setCurrentIndex(n - 1)
+        self.form.top_story_for_height.setCurrentIndex(n - 2)
         # self.form.bot_y_combo.setCurrentIndex(0)
         # self.form.top_y_combo.setCurrentIndex(n - 2)
 
     def fill_height_and_no_of_stories(self):
+        if self.form.top_story_for_height_checkbox.isChecked():
+            self.form.top_story_for_height.setEnabled(True)
+            top_story_x = top_story_y = self.form.top_story_for_height.currentText()
+        else:
+            self.form.top_story_for_height.setEnabled(False)
+            top_story_x = top_story_y = self.form.top_x_combo.currentText()
         bot_story_x = bot_story_y = self.form.bot_x_combo.currentText()
-        top_story_x = top_story_y = self.form.top_x_combo.currentText()
         # bot_story_y = self.form.bot_y_combo.currentText()
         # top_story_y = self.form.top_y_combo.currentText()
         bot_level_x, top_level_x, bot_level_y, top_level_y = self.etabs.story.get_top_bot_levels(
@@ -102,6 +109,8 @@ class Form(QtWidgets.QWidget):
         self.form.bot_x_combo.currentIndexChanged.connect(self.fill_height_and_no_of_stories)
         self.form.top_x_combo.currentIndexChanged.connect(self.fill_height_and_no_of_stories)
         self.form.buttonBox.accepted.connect(self.save)
+        self.form.top_story_for_height_checkbox.clicked.connect(self.fill_height_and_no_of_stories)
+        self.form.top_story_for_height.currentIndexChanged.connect(self.fill_height_and_no_of_stories)
 
     def save(self):
         self.save_config()

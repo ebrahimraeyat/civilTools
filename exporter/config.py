@@ -11,6 +11,8 @@ def save(json_file, widget):
 	d['importance_factor'] = widget.IBox.currentText()
 	d['bot_x_combo'] = widget.bot_x_combo.currentText()
 	d['top_x_combo'] = widget.top_x_combo.currentText()
+	d['top_story_for_height'] = widget.top_story_for_height.currentText()
+	d['top_story_for_height_checkbox'] = widget.top_story_for_height_checkbox.isChecked()
 	d['height_x'] = widget.height_x_spinbox.value()
 	d['no_of_story_x'] = widget.no_story_x_spinbox.value()
 	# d['t_an_x'] = widget.xTAnalaticalSpinBox.value()
@@ -76,6 +78,14 @@ def load(json_file, widget=None):
 	widget.bot_x_combo.setCurrentIndex(index)
 	index = widget.top_x_combo.findText(d['top_x_combo'])
 	widget.top_x_combo.setCurrentIndex(index)
+	text = d.get('top_story_for_height', None)
+	if text:
+		index = widget.top_story_for_height.findText(text)
+		widget.top_story_for_height.setCurrentIndex(index)
+	
+	checked = d.get('top_story_for_height_checkbox', True)
+	widget.top_story_for_height_checkbox.setChecked(checked)
+	widget.top_story_for_height.setEnabled(checked)
 	widget.height_x_spinbox.setValue(d['height_x'])
 	widget.no_story_x_spinbox.setValue(d['no_of_story_x'])
 	# widget.xTAnalaticalSpinBox.setValue(d['t_an_x'])
