@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Stories properties</string>
+   <string>Automatic Drift</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
