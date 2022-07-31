@@ -19,6 +19,46 @@ class Form(QtWidgets.QWidget):
         self.etabs = etabs_obj
         self.json_file = json_file
         self.fill_xy_loadcase_names()
+        self.fill_dynamic_xy_loadcase_names()
+        self.create_connections()
+    
+    def create_connections(self):
+        self.form.xy.clicked.connect(self.reset_widget)
+        # self.form.angular.clicked.connect(self.reset_widget)
+        # self.form.angular.clicked.connect(self.fill_angular_fields)
+
+    def fill_dynamic_xy_loadcase_names(self):
+        x_specs, y_specs = self.etabs.load_cases.get_response_spectrum_xy_loadcases_names()
+        self.form.dynamic_x_loadcase_list.addItems(x_specs)
+        self.form.dynamic_y_loadcase_list.addItems(y_specs)
+        for lw in (self.form.dynamic_x_loadcase_list, self.form.dynamic_y_loadcase_list):
+            for i in range(lw.count()):
+                item = lw.item(i)
+                item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
+                item.setCheckState(Qt.Checked)
+
+    def fill_angular_fields(self):
+        lw = self.form.angular_specs
+        if lw.count() > 0:
+            return
+        angles_spectral = self.etabs.load_cases.get_spectral_with_angles()
+        specs = list(angles_spectral.values())
+        lw.clear()
+        lw.addItems(specs)
+        for i in range(lw.count()):
+            item = lw.item(i)
+            item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
+            item.setCheckState(Qt.Checked)
+
+    def reset_widget(self):
+        if self.form.xy.isChecked():
+            self.form.angular_specs.setEnabled(False)
+            self.form.dynamic_x_loadcase_list.setEnabled(True)
+            self.form.dynamic_y_loadcase_list.setEnabled(True)
+        elif self.form.angular.isChecked():
+            self.form.angular_specs.setEnabled(True)
+            self.form.dynamic_x_loadcase_list.setEnabled(False)
+            self.form.dynamic_y_loadcase_list.setEnabled(False)
 
     def accept(self):
         d = config.load(self.json_file)
@@ -27,19 +67,55 @@ class Form(QtWidgets.QWidget):
         cdy = d['cdy']
         bot_story = d["bot_x_combo"]
         top_story = d["top_x_combo"]
-        create_t_file = self.form.create_t_file_box.isChecked()
-        loadcases = []
-        for lw in (self.form.x_loadcase_list, self.form.y_loadcase_list):
+        x_loadcases = []
+        y_loadcases = []
+
+        tab = self.form.tabWidget.currentIndex()
+        if tab == 0:
+            create_t_file = self.form.create_t_file_box.isChecked()
+            lw = self.form.x_loadcase_list
             for i in range(lw.count()):
                 item = lw.item(i)
                 if item.checkState() == Qt.Checked:
-                    loadcases.append(item.text())
-        if create_t_file:
-            tx, ty, _ = self.etabs.get_drift_periods()
-            config.save_analytical_periods(self.json_file, tx, ty)
-            building = self.current_building(tx, ty)
-            self.etabs.apply_cfactor_to_edb(building, bot_story, top_story)
-        ret = self.etabs.get_drifts(no_of_stories, cdx, cdy, loadcases)
+                    x_loadcases.append(item.text())
+            lw = self.form.y_loadcase_list
+            for i in range(lw.count()):
+                item = lw.item(i)
+                if item.checkState() == Qt.Checked:
+                    y_loadcases.append(item.text())
+            if create_t_file:
+                tx, ty, _ = self.etabs.get_drift_periods()
+                config.save_analytical_periods(self.json_file, tx, ty)
+                building = self.current_building(tx, ty)
+                self.etabs.apply_cfactor_to_edb(building, bot_story, top_story)
+        elif tab == 1:
+            if self.form.xy.isChecked():
+                lw = self.form.dynamic_x_loadcase_list
+                for i in range(lw.count()):
+                    item = lw.item(i)
+                    if item.checkState() == Qt.Checked:
+                        x_loadcases.append(item.text())
+                lw = self.form.dynamic_y_loadcase_list
+                for i in range(lw.count()):
+                    item = lw.item(i)
+                    if item.checkState() == Qt.Checked:
+                        y_loadcases.append(item.text())
+            elif self.form.angular.isChecked():
+                loadcases = []
+                lw = self.form.angular_specs
+                for i in range(lw.count()):
+                    item = lw.item(i)
+                    if item.checkState() == Qt.Checked:
+                        loadcases.append(item.text())
+        loadcases = x_loadcases + y_loadcases
+        ret = self.etabs.get_drifts(
+            no_of_stories,
+            cdx,
+            cdy,
+            loadcases,
+            x_loadcases,
+            y_loadcases,
+            )
         if ret is None:
             QMessageBox.warning(None, 'Diphragm', 'Please Check that you assigned diaphragm to stories.')
             return
