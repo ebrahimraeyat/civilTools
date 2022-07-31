@@ -22,6 +22,7 @@ class Form(QtWidgets.QWidget):
         self.form.combination.clicked.connect(self.reset_widget)
         self.form.angular.clicked.connect(self.reset_widget)
         self.form.angular.clicked.connect(self.fill_angular_fields)
+        self.form.run.clicked.connect(self.accept)
 
     def reset_widget(self):
         if self.form.combination.isChecked():
@@ -96,7 +97,7 @@ class Form(QtWidgets.QWidget):
 
     def fill_100_30_fields(self):
         ex_name, ey_name = self.etabs.load_patterns.get_EX_EY_load_pattern()
-        x_names, y_names = self.etabs.load_patterns.get_load_patterns_in_XYdirection()
+        x_names, y_names = self.etabs.load_cases.get_xy_seismic_load_cases()
         self.form.static_x.addItems(x_names)
         self.form.static_y.addItems(y_names)
         if ex_name is not None:

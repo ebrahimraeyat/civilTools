@@ -43,7 +43,7 @@ class CivilScaleResponseSpec:
         from py_widget import response_spectrum
         import FreeCADGui as Gui
         win = response_spectrum.Form(etabs)
-        Gui.Control.showDialog(win)
+        find_etabs.show_win(win, in_mdi=False)
         show_warning_about_number_of_use(check)
         
     def IsActive(self):

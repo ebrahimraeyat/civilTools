@@ -35,7 +35,7 @@ class Form(QtWidgets.QWidget):
             for i in range(lw.count()):
                 item = lw.item(i)
                 item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
-                item.setCheckState(Qt.Checked)
+                item.setCheckState(Qt.Unchecked)
 
     def fill_angular_fields(self):
         lw = self.form.angular_specs
@@ -72,7 +72,6 @@ class Form(QtWidgets.QWidget):
 
         tab = self.form.tabWidget.currentIndex()
         if tab == 0:
-            create_t_file = self.form.create_t_file_box.isChecked()
             lw = self.form.x_loadcase_list
             for i in range(lw.count()):
                 item = lw.item(i)
@@ -83,11 +82,6 @@ class Form(QtWidgets.QWidget):
                 item = lw.item(i)
                 if item.checkState() == Qt.Checked:
                     y_loadcases.append(item.text())
-            if create_t_file:
-                tx, ty, _ = self.etabs.get_drift_periods()
-                config.save_analytical_periods(self.json_file, tx, ty)
-                building = self.current_building(tx, ty)
-                self.etabs.apply_cfactor_to_edb(building, bot_story, top_story)
         elif tab == 1:
             if self.form.xy.isChecked():
                 lw = self.form.dynamic_x_loadcase_list
@@ -107,6 +101,13 @@ class Form(QtWidgets.QWidget):
                     item = lw.item(i)
                     if item.checkState() == Qt.Checked:
                         loadcases.append(item.text())
+        create_t_file = self.form.create_t_file_box.isChecked()
+        if create_t_file:
+            tx, ty, _ = self.etabs.get_drift_periods()
+            config.save_analytical_periods(self.json_file, tx, ty)
+            building = self.current_building(tx, ty)
+            self.etabs.apply_cfactor_to_edb(building, bot_story, top_story)
+            Gui.runCommand("civil_scale_response_spec")
         loadcases = x_loadcases + y_loadcases
         ret = self.etabs.get_drifts(
             no_of_stories,
