@@ -8,12 +8,13 @@ civiltools_path = Path(__file__).absolute().parent.parent
 
 
 class Form(QtWidgets.QWidget):
-    def __init__(self, etabs_obj):
+    def __init__(self, etabs_obj, show_message=True):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'response_spectrum.ui'))
         # self.setupUi(self)
         # self.form = self
         self.etabs = etabs_obj
+        self.show_message = show_message
         self.fill_100_30_fields()
         self.select_spect_loadcases()
         self.create_connections()
@@ -76,8 +77,9 @@ class Form(QtWidgets.QWidget):
                 reset,
                 analyze,
             )
-        msg = "Done Response Spectrum Analysis."
-        QMessageBox.information(None, 'Successful', str(msg))
+        if self.show_message:
+            msg = "Done Response Spectrum Analysis."
+            QMessageBox.information(None, 'Successful', str(msg))
 
     def reject(self):
         import FreeCADGui as Gui
