@@ -42,10 +42,6 @@ class Form(QtWidgets.QWidget):
     def accept(self):
         ex_name = self.form.static_x.currentText()
         ey_name = self.form.static_y.currentText()
-        x_specs = [item.text() for item in self.form.x_loadcase_list.selectedItems()]
-        y_specs = [item.text() for item in self.form.y_loadcase_list.selectedItems()]
-        angular_specs = [item.text() for item in self.form.angular_specs.selectedItems()]
-        section_cuts = [item.text() for item in self.form.section_cuts.selectedItems()]
         x_scale_factor = self.form.x_scalefactor.value()
         y_scale_factor = self.form.y_scalefactor.value()
         num_iteration = self.form.iteration.value()
@@ -53,6 +49,8 @@ class Form(QtWidgets.QWidget):
         reset = self.form.reset.isChecked()
         analyze = self.form.analyze.isChecked()
         if self.form.angular.isChecked():
+            angular_specs = [item.text() for item in self.form.angular_specs.selectedItems()]
+            section_cuts = [item.text() for item in self.form.section_cuts.selectedItems()]
             self.etabs.angles_response_spectrums_analysis(
                 ex_name,
                 ey_name,
@@ -65,6 +63,8 @@ class Form(QtWidgets.QWidget):
                 analyze,
             )
         else:
+            x_specs = [item.text() for item in self.form.x_loadcase_list.selectedItems()]
+            y_specs = [item.text() for item in self.form.y_loadcase_list.selectedItems()]
             self.etabs.scale_response_spectrums(
                 ex_name,
                 ey_name,
@@ -80,6 +80,7 @@ class Form(QtWidgets.QWidget):
         if self.show_message:
             msg = "Done Response Spectrum Analysis."
             QMessageBox.information(None, 'Successful', str(msg))
+        self.form.close()
 
     def reject(self):
         import FreeCADGui as Gui
