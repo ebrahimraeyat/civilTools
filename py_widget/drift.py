@@ -109,6 +109,7 @@ class Form(QtWidgets.QWidget):
             self.etabs.apply_cfactor_to_edb(building, bot_story, top_story)
             # execute scale response spectrum
             import find_etabs
+            
             from py_widget import response_spectrum
             win = response_spectrum.Form(self.etabs, show_message=False)
             find_etabs.show_win(win, in_mdi=False)
