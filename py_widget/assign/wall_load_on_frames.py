@@ -123,7 +123,7 @@ class Form(QtWidgets.QWidget):
                 replace=replace,
                 # item_type,
                 height=height,
-                none_beam_h=none_beam_h,
+                none_beam_h=none_beam_h * 1000,
                 parapet=f'{parapet_wall_height} m',
                 # height_from_below,
                 opening_ratio=opening_ratio,

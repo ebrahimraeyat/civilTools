@@ -58,7 +58,7 @@ def add_wall_on_beams(
         labels = set()
         for o in sel:
             if (hasattr(o, 'IfcType') and o.IfcType == 'Beam') or (
-                o.Label.startswith('B') and o.Label.endswith('CenterLine')
+                o.Label.startswith('L') and o.Label.endswith('CenterLine')
             ):
                 label = o.Label.split('_')[0]
                 labels.add(label)
@@ -67,7 +67,7 @@ def add_wall_on_beams(
     
     if stories is None:
         stories = [s.Label for s in all_stories[1:]]
-    if type(parapet) == str:
+    if isinstance(parapet, str):
         parapet = FreeCAD.Units.Quantity(parapet).Value
     for label in labels:
         similar_label_in_stories = [f'{label}_{story}' for story in stories]
@@ -92,10 +92,16 @@ def add_wall_on_beams(
                     else:
                         continue
                 else:
-                    # level_i = beam.InList[0].Elevation
-                    # level_j = next_beam.InList[0].Elevation
-                    # height = (level_j - level_i)
-                    wall.setExpression('Height', f'{next_beam.Name}.Shape.BoundBox.ZMin - {beam.Name}.Shape.BoundBox.ZMax')
+                    if next_beam.Shape.isNull():
+                        next_experssion = f'{next_beam.InList[0].Elevation} - {none_beam_h} mm'
+                    else:
+                        next_experssion = f'{next_beam.Name}.Shape.BoundBox.ZMin'
+                    if beam.Shape.isNull():
+                        experssion = f'{beam.InList[0].Elevation}'
+                    else:
+                        experssion = f'{beam.Name}.Shape.BoundBox.ZMax'
+                    print(f'{next_experssion} - {experssion}')
+                    wall.setExpression('Height', f'{next_experssion} - {experssion}')
             else:
                 wall.Height = height
             wall.recompute()

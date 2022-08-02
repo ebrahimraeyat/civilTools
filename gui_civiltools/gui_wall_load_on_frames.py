@@ -33,7 +33,7 @@ class CivilWallLoadOnFrames:
             return
         from py_widget.assign import wall_load_on_frames
         win = wall_load_on_frames.Form(etabs)
-        win.form.show()
+        Gui.Control.showDialog(win)
         
     def IsActive(self):
         return True
