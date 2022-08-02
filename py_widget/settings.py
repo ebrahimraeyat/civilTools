@@ -22,8 +22,8 @@ class Form(QtWidgets.QWidget):
         self.create_widgets()
         self.create_connections()
         self.fill_top_bot_stories()
-        self.fill_height_and_no_of_stories()
         self.load_config()
+        self.fill_height_and_no_of_stories()
 
     def create_widgets(self):
         ostans = ostanha.ostans.keys()
