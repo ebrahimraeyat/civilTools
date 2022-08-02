@@ -16,6 +16,7 @@ def import_model(
         import_walls : bool = True,
         import_openings : bool = True,
         new_model : bool = True,
+        selected_only : bool = False,
         ):
     if etabs is None:
         import etabs_obj
@@ -25,6 +26,12 @@ def import_model(
         FreeCAD.newDocument(name)
     stories_objects = {}
     etabs.set_current_unit('kgf', 'mm')
+    building = None
+    if selected_only:
+        for obj in FreeCAD.ActiveDocument.Objects:
+            if hasattr(obj, 'IfcType') and obj.IfcType == 'Building':
+                building = obj
+                break
     if import_beams or import_columns or import_braces:
         profiles = {}
         frame_props = etabs.SapModel.PropFrame.GetAllFrameProperties()
@@ -36,12 +43,16 @@ def import_model(
             9 : ['C', 'CIRCLE'],
         }
         frames = etabs.SapModel.FrameObj.GetAllFrames()
+        if selected_only:
+            selected_frames = etabs.select_obj.get_selected_obj_type(2)
         progressbar = FreeCAD.Base.ProgressIndicator()
         frames_count = frames[0]
         progressbar.start("Importing "+str(frames_count)+" Frame Elements...", frames_count)
         for i in range(frames[0]):
             progressbar.next(True)
             frame_name = frames[1][i]
+            if selected_only and frame_name not in selected_frames:
+                continue
             is_beam = is_column = is_brace = color = None
             if etabs.frame_obj.is_beam(frame_name):
                 if not import_beams:
@@ -142,6 +153,8 @@ def import_model(
     if import_floors or import_walls:
         (n, names, design, _, delim, _,
         x_coords, y_coords, z_coords, _) = etabs.SapModel.AreaObj.GetAllAreas()
+        if selected_only:
+            selected_areas = etabs.select_obj.get_selected_obj_type(5)
         i = 0
         progressbar = FreeCAD.Base.ProgressIndicator()
         progressbar.start("Importing "+str(n)+" Floors and Walls Elements...", n)
@@ -151,6 +164,8 @@ def import_model(
             zs = z_coords[i: j + 1]
             i = j + 1
             progressbar.next(True)
+            if selected_only and names[count] not in selected_areas:
+                continue
             design_type = design[count]
             if design_type == 1:  # wall
                 if not import_walls:
@@ -189,10 +204,16 @@ def import_model(
                 area.ViewObject.Transparency = 40
         progressbar.stop()
     # create IFC objects
-    floors = make_building(etabs)
+    if building is None:
+        floors = make_building(etabs)
+    else:
+        floors = building.Group
     for f in floors:
         name = f.Label
-        f.Group = stories_objects.get(name, [])
+        group = f.Group
+        new_group = stories_objects.get(name, [])
+        group.extend(new_group)
+        f.Group = group
     FreeCAD.ActiveDocument.recompute()
 
 def make_building(etabs):

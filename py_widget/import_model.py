@@ -24,6 +24,7 @@ class Form(QtWidgets.QWidget):
         import_walls = self.form.walls.isChecked()
         import_openings = self.form.openings.isChecked()
         new_model = self.form.new_model.isChecked()
+        selected_only = self.form.selections.isChecked()
         import import_model
         import_model.import_model(
             etabs=self.etabs,
@@ -34,6 +35,7 @@ class Form(QtWidgets.QWidget):
             import_walls=import_walls,
             import_openings=import_openings,
             new_model=new_model,
+            selected_only=selected_only,
             )
         Gui.SendMsgToActiveView("ViewFit")
         Gui.activeDocument().activeView().viewIsometric()
