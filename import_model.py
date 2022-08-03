@@ -74,6 +74,8 @@ def import_model(
                 # is_brace = True
                 color = (.0, 1.0, 0.0, 0.0)
             else:
+                ifc_type = 'Beam'
+                predefined_type = 'BEAM'
                 color = (1.0, 1.0, 0.0, 0.0)
             v1 = FreeCAD.Vector(frames[6][i], frames[7][i], frames[8][i])
             v2 = FreeCAD.Vector(frames[9][i], frames[10][i], frames[11][i])
@@ -86,8 +88,14 @@ def import_model(
                 section_type, category = section_types_map.get(section_type_num, ('G', 'Genaral'))
             else:
                 section_type, category = 'None', 'None'
-            width = frame_props[4][section_index]
-            height = frame_props[3][section_index]
+                section_index = None
+                section_name = 'None'
+            if section_index is None:
+                width = 10
+                height = 10
+            else:
+                width = frame_props[4][section_index]
+                height = frame_props[3][section_index]
             profile = profiles.get(section_name, None)
             if profile is None:
                 if section_type == 'C':
@@ -101,8 +109,8 @@ def import_model(
                             section_type,
                             width, # T3
                             height, # height
-                            frame_props[6][section_index], # TW
-                            frame_props[5][section_index], # TF
+                            frame_props[6][section_index] if section_index else 10, # TW
+                            frame_props[5][section_index] if section_index else 10, # TF
                             # frame_props[7][section_index], # heightB
                             # frame_props[8][section_index], # TFB
                             ])
