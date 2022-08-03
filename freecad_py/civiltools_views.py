@@ -226,6 +226,8 @@ class CivilToolsViews:
             if obj.Label.endswith('CenterLine'):
                 if obj.Label.startswith('B'):
                     show_obj = show_beam and wireframe
+                elif obj.Label.startswith('L'):
+                    show_obj = show_beam
                 elif obj.Label.startswith('C'):
                     show_obj = show_column and wireframe
             
