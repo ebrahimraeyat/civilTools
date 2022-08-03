@@ -257,8 +257,8 @@ def get_relative_dists(wall):
     e1 = wall_trace.Shape.Edges[0]
     e2 = base.Shape.Edges[0]
     p1 = e2.firstVertex().Point
-    p2 = e1.firstVertex().Point
-    p3 = e1.lastVertex().Point
+    p2 = e1.firstVertex().Point + wall.Placement.Base
+    p3 = e1.lastVertex().Point + wall.Placement.Base
     v1 = p2.sub(p1)
     v2 = p3.sub(p1)
     dist1 = (v1.Length / base.Length).Value
