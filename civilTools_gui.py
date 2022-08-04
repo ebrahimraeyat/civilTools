@@ -206,6 +206,8 @@ civiltools_tools = [
             "civil_delete_backups",
             "civiltools_settings",
             "civiltools_discretize",
+            "Draft_Move",
+            "Draft_SelectPlane",
             ]
 
 civiltools_view = [
