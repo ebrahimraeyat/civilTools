@@ -37,6 +37,10 @@ from gui_civiltools import (
     gui_100_30_columns,
     gui_import_model,
     )
+
+from gui_civiltools.assign import (
+    gui_assign_ev,
+)
 from gui_civiltools.define import (
     gui_create_load_combinations,
     gui_frame_sections,
@@ -194,6 +198,7 @@ civiltools_list = [
             ]
 civiltools_assign = [
             "civil_wall_load_on_frames",
+            "civilTools_assign_ev",
             ]
 
 civiltools_tools = [
