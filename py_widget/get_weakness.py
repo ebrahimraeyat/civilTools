@@ -41,10 +41,7 @@ class Form(QtWidgets.QWidget):
         data, headers, data2, headers2 = ret
         table_model.show_results(data, headers, table_model.ColumnsRatioModel)
         table_model.show_results(data2, headers2, table_model.BeamsRebarsModel)
-
-    def reject(self):
-        import FreeCADGui as Gui
-        Gui.Control.closeDialog()
+        self.form.close()
 
     def fill_selected_beams(self):
         self.form.beams_list.clear()
@@ -75,6 +72,7 @@ class Form(QtWidgets.QWidget):
         self.form.refresh_button.clicked.connect(self.fill_selected_beams)
         self.form.x_radio_button.toggled.connect(self.set_filenames)
         self.form.y_radio_button.toggled.connect(self.set_filenames)
+        self.form.run.clicked.connect(self.accept)
 
     def beam_changed(self, item):
         beam_name = item.text()

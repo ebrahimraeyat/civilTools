@@ -14,6 +14,7 @@ class Form(QtWidgets.QWidget):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'get_siffness_story_way.ui'))
         self.etabs = etabs_obj
+        self.form.run.clicked.connect(self.accept)
 
     def accept(self):
         if self.form.radio_button_2800.isChecked():
@@ -30,7 +31,4 @@ class Form(QtWidgets.QWidget):
         data, headers = ret
         import table_model
         table_model.show_results(data, headers, table_model.StoryStiffnessModel)
-
-    def reject(self):
-        import FreeCADGui as Gui
-        Gui.Control.closeDialog()
+        self.form.close()

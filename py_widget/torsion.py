@@ -15,6 +15,7 @@ class Form(QtWidgets.QWidget):
         # self.form = self
         self.etabs = etabs_obj
         self.fill_xy_loadcase_names()
+        self.form.run.clicked.connect(self.accept)
 
     def fill_xy_loadcase_names(self):
         x_names, y_names = self.etabs.load_patterns.get_load_patterns_in_XYdirection()
@@ -48,9 +49,6 @@ class Form(QtWidgets.QWidget):
         df = self.etabs.get_diaphragm_max_over_avg_drifts(loadcases=loadcases)
         data, headers = df.values, list(df.columns)
         table_model.show_results(data, headers, table_model.TorsionModel, self.etabs.view.show_point)
-
-    def reject(self):
-        import FreeCADGui as Gui
-        Gui.Control.closeDialog()
+        self.form.close()
 
     

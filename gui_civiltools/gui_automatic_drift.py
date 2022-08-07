@@ -48,10 +48,9 @@ class CivilAutomaticDrift:
         if not json_file.exists():
             QMessageBox.warning(None, 'Settings', 'Please Set Options First!')
             Gui.runCommand("civiltools_settings")
-            return
         from py_widget import drift
         win = drift.Form(etabs, json_file)
-        Gui.Control.showDialog(win)
+        find_etabs.show_win(win, in_mdi=False)
         show_warning_about_number_of_use(check)
         
     def IsActive(self):

@@ -50,6 +50,7 @@ class Form(QtWidgets.QWidget):
             )
         import table_model
         table_model.show_results(df, None, table_model.BeamsJModel, self.etabs.view.show_frame)
+        self.form.close()
 
     def reject(self):
         import FreeCADGui as Gui
@@ -57,6 +58,7 @@ class Form(QtWidgets.QWidget):
 
     def create_connections(self):
         self.form.initial_checkbox.stateChanged.connect(self.set_initial_j)
+        self.form.run.clicked.connect(self.accept)
 
     def set_initial_j(self):
         if self.form.initial_checkbox.isChecked():

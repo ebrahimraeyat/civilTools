@@ -47,7 +47,7 @@ class CivilToolsCreateLoadCombinations:
             return
         from py_widget.define import create_load_combinations
         win = create_load_combinations.Form(etabs)
-        find_etabs.show_win(win)
+        find_etabs.show_win(win, in_mdi=False)
         # Gui.Control.showDialog(win)
         # show_warning_about_number_of_use(check)
         
@@ -81,7 +81,7 @@ class CivilToolsCreatePushLoadCombination:
             return
         from py_widget.define import create_load_combination
         win = create_load_combination.Form(etabs)
-        Gui.Control.showDialog(win)
+        find_etabs.show_win(win, in_mdi=False)
         # show_warning_about_number_of_use(check)
         
     def IsActive(self):
@@ -114,7 +114,7 @@ class CivilToolsAddLoadCombinationsToF2k:
             return
         from py_widget.define import load_combinations_to_f2k
         win = load_combinations_to_f2k.Form(etabs)
-        Gui.Control.showDialog(win)
+        find_etabs.show_win(win, in_mdi=False)
         # show_warning_about_number_of_use(check)
         
     def IsActive(self):

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>547</width>
-    <height>709</height>
+    <width>478</width>
+    <height>510</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -218,8 +218,27 @@
      </layout>
     </widget>
    </item>
+   <item>
+    <widget class="QPushButton" name="run">
+     <property name="text">
+      <string>Run</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../civiltools.qrc">
+       <normaloff>:/civiltools/images/run.svg</normaloff>:/civiltools/images/run.svg</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>60</width>
+       <height>60</height>
+      </size>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../civiltools.qrc"/>
+ </resources>
  <connections/>
 </ui>

@@ -45,7 +45,7 @@ class CivilGetWeakness:
             return
         from py_widget import get_weakness
         win = get_weakness.Form(etabs)
-        Gui.Control.showDialog(win)
+        find_etabs.show_win(win, in_mdi=False)
         show_warning_about_number_of_use(check)
         
     def IsActive(self):

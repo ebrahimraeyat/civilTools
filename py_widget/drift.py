@@ -24,6 +24,7 @@ class Form(QtWidgets.QWidget):
     
     def create_connections(self):
         self.form.xy.clicked.connect(self.reset_widget)
+        self.form.run.clicked.connect(self.accept)
         # self.form.angular.clicked.connect(self.reset_widget)
         # self.form.angular.clicked.connect(self.fill_angular_fields)
 
@@ -128,6 +129,7 @@ class Form(QtWidgets.QWidget):
         drifts, headers = ret
         import table_model
         table_model.show_results(drifts, headers, table_model.DriftModel)
+        self.form.close()
     
     def reject(self):
         Gui.Control.closeDialog()

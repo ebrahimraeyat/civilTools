@@ -44,12 +44,9 @@ class Form(QtWidgets.QWidget):
             self.etabs.add_prefix_suffix_name(suffix=f'_weakness_torsion_{dir_}', open=True)
             self.etabs.lock_and_unlock_model()
             self.etabs.frame_obj.set_end_release_frame(name)
-        Gui.Control.closeDialog()
+        self.form.close()
         from PySide2 import QtCore
         QtCore.QTimer.singleShot(1, lambda : Gui.runCommand("civil_show_torsion"))
-
-    def reject(self):
-        Gui.Control.closeDialog()
 
     # def getStandardButtons(self):
     #     return int(QtGui.QDialogButtonBox.Ok) | int(QtGui.QDialogButtonBox.Cancel)| int(QtGui.QDialogButtonBox.Apply)
@@ -84,6 +81,7 @@ class Form(QtWidgets.QWidget):
         self.form.refresh_button.clicked.connect(self.fill_selected_beams)
         self.form.x_radio_button.toggled.connect(self.set_filenames)
         self.form.y_radio_button.toggled.connect(self.set_filenames)
+        self.form.run.clicked.connect(self.accept)
 
     def beam_changed(self, item):
         beam_name = item.text()

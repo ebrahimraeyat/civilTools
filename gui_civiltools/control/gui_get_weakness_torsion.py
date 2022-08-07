@@ -32,7 +32,7 @@ class CivilGetWeaknessTorsion:
             return
         from py_widget.control import get_weakness_torsion
         win = get_weakness_torsion.Form(etabs)
-        Gui.Control.showDialog(win)
+        find_etabs.show_win(win, in_mdi=False)
         
     def IsActive(self):
         return True

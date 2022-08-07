@@ -333,7 +333,7 @@
              </size>
             </property>
             <property name="checked">
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
            </widget>
           </item>
@@ -351,6 +351,9 @@
               <width>36</width>
               <height>36</height>
              </size>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -385,20 +388,17 @@
        <property name="text">
         <string>Assign</string>
        </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+       <property name="icon">
+        <iconset resource="../../civiltools.qrc">
+         <normaloff>:/civiltools/images/run.svg</normaloff>:/civiltools/images/run.svg</iconset>
        </property>
-       <property name="sizeHint" stdset="0">
+       <property name="iconSize">
         <size>
-         <width>40</width>
-         <height>20</height>
+         <width>60</width>
+         <height>60</height>
         </size>
        </property>
-      </spacer>
+      </widget>
      </item>
     </layout>
    </item>

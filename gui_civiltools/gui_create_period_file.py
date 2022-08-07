@@ -38,7 +38,6 @@ class CivilCreatePeriodFile:
         if not json_file.exists():
             QMessageBox.warning(None, 'Settings', 'Please Set Options First!')
             Gui.runCommand("civiltools_settings")
-            return
         tx, ty, _ = etabs.get_drift_periods()
         config.save_analytical_periods(json_file, tx, ty)
         t_file = etabs.get_filepath() / 'T.EDB'

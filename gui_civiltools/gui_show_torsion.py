@@ -45,7 +45,7 @@ class CivilShowTorsion:
             return
         from py_widget import torsion
         win = torsion.Form(etabs)
-        Gui.Control.showDialog(win)
+        find_etabs.show_win(win, in_mdi=False)
         show_warning_about_number_of_use(check)
         
     def IsActive(self):

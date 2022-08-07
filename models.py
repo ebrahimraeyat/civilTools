@@ -1,7 +1,8 @@
-# -*- coding: utf-8 -*-
-# from PySide2.QtCo
-from PySide2.QtCore import *
-from PySide2.QtGui import *
+from PySide2.QtCore import QAbstractTableModel, Qt, QSettings, QModelIndex
+from PySide2.QtWidgets import QDoubleSpinBox, QItemDelegate, QComboBox, QMessageBox
+from PySide2.QtGui import QFont, QColor
+from PySide2 import  QtWidgets
+
 
 X, Y = range(2)
 CFACTOR, K, TAN, CDRIFT, KDRIFT, TEXP125, TEXP, SYSTEM, LATERAL, RU, HMAX, OMEGA0, CD = range(13)
@@ -14,7 +15,8 @@ QVariant = str
 class StructureModel(QAbstractTableModel):
 
     def __init__(self, build):
-        super(StructureModel, self).__init__()
+        # super(StructureModel, self).__init__()
+        QAbstractTableModel.__init__(self)
         #self.filename = filename
         self.dirty = False
         self.build = build
@@ -28,7 +30,7 @@ class StructureModel(QAbstractTableModel):
 
     def data(self, index, role=Qt.DisplayRole):
         if not index.isValid():
-            return QVariant()
+            return ''
         row = index.row()
         column = index.column()
         system = self.build.x_system
@@ -55,17 +57,17 @@ class StructureModel(QAbstractTableModel):
                 c_drift = self.build.results_drift[2]
         if role == Qt.DisplayRole:
             if row == SYSTEM:
-                return QVariant(system.systemType)
+                return system.systemType
             if row == LATERAL:
-                return QVariant(system.lateralType)
+                return system.lateralType
             if row == HMAX:
-                return QVariant(system.maxHeight)
+                return str(system.maxHeight)
             if row == RU:
-                return QVariant(system.Ru)
+                return str(system.Ru)
             if row == OMEGA0:
-                return QVariant(system.phi0)
+                return str(system.phi0)
             if row == CD:
-                return QVariant(system.cd)
+                return str(system.cd)
             if row == TEXP:
                 return '{0:.4f}'.format(Texp)
             if row == TEXP125:
@@ -88,15 +90,15 @@ class StructureModel(QAbstractTableModel):
                     pass
         if role == Qt.BackgroundColorRole:
             # if row == HMAX:
-            #     return QVariant(QColor(255, 140, 140))
+            #     return QColor(255, 140, 140)
             if row in (K, CFACTOR):
-                return QVariant(QColor(100, 255, 100))
+                return QColor(100, 255, 100)
             if row in (KDRIFT, CDRIFT):
-                return QVariant(QColor(100, 100, 255))
+                return QColor(100, 100, 255)
             if row == TAN:
-                return QVariant(QColor(255, 255, 20))
+                return QColor(255, 255, 20)
             else:
-                return QVariant(QColor(230, 230, 250))
+                return QColor(230, 230, 250)
         if role == Qt.FontRole:
             if row in (K, CFACTOR, KDRIFT, CDRIFT):
                 font = QFont()
@@ -112,67 +114,67 @@ class StructureModel(QAbstractTableModel):
             if orientation == Qt.Horizontal:
                 return QVariant(int(Qt.AlignCenter | Qt.AlignVCenter))
             return QVariant(int(Qt.AlignLeft | Qt.AlignVCenter))
-        if role == Qt.BackgroundColorRole:
+        elif role == Qt.BackgroundColorRole:
+            print(role, orientation, section)
             if orientation == Qt.Vertical:
                 # if section == HMAX:
-                #     return QVariant(QColor(255, 80, 80))
+                #     return QColor(255, 80, 80)
                 if section in (K, CFACTOR):
-                    return QVariant(QColor(120, 255, 120))
-                if section in (KDRIFT, CDRIFT):
-                    return QVariant(QColor(120, 120, 255))
-                if section == TAN:
-                    return QVariant(QColor(250, 250, 100))
+                    return QColor(120, 255, 120)
+                elif section in (KDRIFT, CDRIFT):
+                    return QColor(120, 120, 255)
+                elif section == TAN:
+                    return QColor(250, 250, 100)
                 else:
-                    return QVariant(QColor(230, 230, 250))
-        if role == Qt.ToolTipRole:
+                    return QColor(230, 230, 250)
+        elif role == Qt.ToolTipRole:
             if section == TEXP125:
-                return QVariant(u'مقدار حداکثر زمان تناوب تحلیلی که در محاسبه نیروی زلزله میتوان استفاده کرد.')
-            if section == HMAX:
-                return QVariant(u'حداکثر ارتفاع مجاز سیستم مقاوم نیروی جانبی')
-        if role == Qt.WhatsThisRole:
+                return 'مقدار حداکثر زمان تناوب تحلیلی که در محاسبه نیروی زلزله میتوان استفاده کرد.'
+            elif section == HMAX:
+                return 'حداکثر ارتفاع مجاز سیستم مقاوم نیروی جانبی'
+        elif role == Qt.WhatsThisRole:
             if section == TEXP125:
-                return QVariant(u'حداکثر زمان تناوبی که میتوان برای ')
-        if role == Qt.FontRole:
+                return 'حداکثر زمان تناوبی که میتوان برای '
+        elif role == Qt.FontRole:
             if orientation == Qt.Vertical:
                 if section in (K, CFACTOR, KDRIFT, CDRIFT):
                     font = QFont()
                     font.setBold(True)
                     font.setPointSize(12)
                     return font
-        if role != Qt.DisplayRole:
-            return QVariant()
-        if orientation == Qt.Vertical:
-            if section == SYSTEM:
-                return QVariant(u"سیستم سازه")
-            if section == LATERAL:
-                return QVariant(u'سیستم جانبی')
-            if section == HMAX:
-                return QVariant('H_max')
-            if section == RU:
-                return QVariant('Ru')
-            if section == CD:
-                return QVariant('Cd')
-            if section == TEXP:
-                return QVariant(u'زمان تناوب تجربی')
-            if section == TEXP125:
-                return QVariant(u'۱.۲۵ * زمان تناوب تجربی')
-            if section == TAN:
-                return QVariant(u'زمان تناوب تحلیلی')
-            if section == K:
-                return QVariant(u'K')
-            if section == CFACTOR:
-                return QVariant(u'C')
-            if section == OMEGA0:
-                return QVariant(u'omega_0')
-            if section == KDRIFT:
-                return QVariant(u'K_drift')
-            if section == CDRIFT:
-                return QVariant(u'C_drift')
-        elif orientation == Qt.Horizontal:
-            if section == X:
-                return QVariant(u'X راستای')
-            if section == Y:
-                return QVariant(u'Y راستای')
+        elif role == Qt.DisplayRole:
+            if orientation == Qt.Vertical:
+                if section == SYSTEM:
+                    return "سیستم سازه"
+                elif section == LATERAL:
+                    return 'سیستم جانبی'
+                elif section == HMAX:
+                    return 'H_max'
+                elif section == RU:
+                    return 'Ru'
+                elif section == CD:
+                    return 'Cd'
+                elif section == TEXP:
+                    return 'زمان تناوب تجربی'
+                elif section == TEXP125:
+                    return '۱.۲۵ * زمان تناوب تجربی'
+                elif section == TAN:
+                    return 'زمان تناوب تحلیلی'
+                elif section == K:
+                    return 'K'
+                elif section == CFACTOR:
+                    return 'C'
+                elif section == OMEGA0:
+                    return 'omega_0'
+                elif section == KDRIFT:
+                    return 'K_drift'
+                elif section == CDRIFT:
+                    return 'C_drift'
+            elif orientation == Qt.Horizontal:
+                if section == X:
+                    return 'X راستای'
+                elif section == Y:
+                    return 'Y راستای'
 
     def rowCount(self, index=QModelIndex()):
         return 13

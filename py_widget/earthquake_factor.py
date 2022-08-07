@@ -139,8 +139,8 @@ class Form(QtWidgets.QWidget):
             self.form.importance_factor.setText(str(self.importance_factor))
             self.form.rx.setText(str(self.final_building.x_system.Ru))
             self.form.ry.setText(str(self.final_building.y_system.Ru))
-            self.form.bx.setText(str(self.final_building.Bx))
-            self.form.by.setText(str(self.final_building.By))
+            self.form.bx.setText(f'{self.final_building.Bx:.4f}')
+            self.form.by.setText(f'{self.final_building.By:.4f}')
 
 
 

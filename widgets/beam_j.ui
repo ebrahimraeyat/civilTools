@@ -229,6 +229,23 @@
     </widget>
    </item>
    <item>
+    <widget class="QPushButton" name="run">
+     <property name="text">
+      <string>Run</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../civiltools.qrc">
+       <normaloff>:/civiltools/images/run.svg</normaloff>:/civiltools/images/run.svg</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>60</width>
+       <height>60</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item>
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -253,6 +270,8 @@
   <tabstop>initial_checkbox</tabstop>
   <tabstop>load_combination_box</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="../civiltools.qrc"/>
+ </resources>
  <connections/>
 </ui>
