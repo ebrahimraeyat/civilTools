@@ -35,6 +35,7 @@ class Form(QtWidgets.QWidget):
             design_type = "LRFD"
         elif self.form.asd.isChecked():
             design_type = "ASD"
+        separate_direction = self.form.separate_direction.isChecked()
         self.data = generate_concrete_load_combinations(
             equivalent_loads=equivalent_loads,
             prefix = prefix,
@@ -42,6 +43,7 @@ class Form(QtWidgets.QWidget):
             rho_x=rho_x,
             rho_y=rho_y,
             design_type=design_type,
+            separate_direction=separate_direction,
         )
         items=  {}
         for i in range(0, len(self.data), 4):
