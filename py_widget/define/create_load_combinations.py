@@ -31,6 +31,7 @@ class Form(QtWidgets.QWidget):
         rho_y = float(self.form.rhoy_combobox.currentText())
         prefix = self.form.prefix.text()
         suffix = self.form.suffix.text()
+        ev_negative = self.form.ev_negative.isChecked()
         if self.form.lrfd.isChecked():
             design_type = "LRFD"
         elif self.form.asd.isChecked():
@@ -44,6 +45,7 @@ class Form(QtWidgets.QWidget):
             rho_y=rho_y,
             design_type=design_type,
             separate_direction=separate_direction,
+            ev_negative=ev_negative,
         )
         items=  {}
         for i in range(0, len(self.data), 4):
