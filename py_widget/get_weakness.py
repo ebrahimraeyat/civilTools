@@ -28,12 +28,22 @@ class Form(QtWidgets.QWidget):
             return False
         use_weakness_file = self.form.file_groupbox.isChecked()
         dir_ = 'x' if self.form.x_radio_button.isChecked() else 'y'
+        beam_numbers = self.form.beams_list.count()
+        if beam_numbers == 0:
+            try:
+                name = self.SapModel.SelectObj.GetSelected()[2][0]
+            except:
+                QMessageBox.warning(None, 'Select Beam', 'Select One Beam in the ETABS Model.')
+                return
+        else:
+            name = self.form.beams_list.currentItem().text()
         if use_weakness_file:
             weakness_filepath = Path(self.form.weakness_file.text())
             if weakness_filepath.exists():
-                ret = self.etabs.frame_obj.get_beams_columns_weakness_structure(weakness_filename=weakness_filepath, dir_=dir_)
+                ret = self.etabs.frame_obj.get_beams_columns_weakness_structure(name=name, weakness_filename=weakness_filepath, dir_=dir_)
         else:
-            ret = self.etabs.frame_obj.get_beams_columns_weakness_structure(dir_=dir_)
+            weakness_filename = f'weakness_{dir_}.EDB'
+            ret = self.etabs.frame_obj.get_beams_columns_weakness_structure(name=name, weakness_filename=weakness_filename, dir_=dir_)
         if not ret:
             err = "Please select one beam in ETABS model!"
             QMessageBox.critical(self, "Error", str(err))
