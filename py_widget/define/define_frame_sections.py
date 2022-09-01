@@ -69,8 +69,8 @@ class Form(QtWidgets.QWidget):
         self.form.add_name_pattern_button.clicked.connect(self.add_pattern)
         self.form.section_pattern_name.textChanged.connect(self.update_section_name)
         self.form.run.clicked.connect(self.accept)
-        self.form.longitudinal_bars_mats.lineEdit().editingFinished.connect(self.create_AIII_rebar)
-        self.form.tie_bars_mats.lineEdit().editingFinished.connect(self.create_AII_rebar)
+        self.form.longitudinal_bars_mats.lineEdit().returnPressed.connect(self.create_AIII_rebar)
+        self.form.tie_bars_mats.lineEdit().returnPressed.connect(self.create_AII_rebar)
         self.form.equal_checkbox.clicked.connect(self.set_equal_gui)
         # self.form.columns_tableview.clicked.connect(self.view_section)
         # self.form.columns_tableview.itemSelectionChanged.connect(self.view_section)
@@ -202,18 +202,22 @@ class Form(QtWidgets.QWidget):
             item = self.form.sections.item(i)
             item.setHidden(not (item.text().__contains__(text)))
 
-    def create_AIII_rebar(self):
-        name = self.form.longitudinal_bars_mats.lineEdit().text()
-        if QMessageBox.question(None, 'Create AIII Rebar',
-            f'Do you want to create {name} Rebar?') == QMessageBox.No:
-            return
+    def create_AIII_rebar(self, name=None, message=True):
+        if name is None:
+            name = self.form.longitudinal_bars_mats.lineEdit().text()
+        if message:
+            if QMessageBox.question(None, 'Create AIII Rebar',
+                f'Do you want to create {name} Rebar?') == QMessageBox.No:
+                return
         self.etabs.material.add_AIII_rebar(name)
     
-    def create_AII_rebar(self):
-        name = self.form.tie_bars_mats.lineEdit().text()
-        if QMessageBox.question(None, 'Create AII Rebar',
-            f'Do you want to create {name} Rebar?') == QMessageBox.No:
-            return
+    def create_AII_rebar(self, name=None, message=True):
+        if name is None:
+            name = self.form.tie_bars_mats.lineEdit().text()
+        if message:
+            if QMessageBox.question(None, 'Create AII Rebar',
+                f'Do you want to create {name} Rebar?') == QMessageBox.No:
+                return
         self.etabs.material.add_AII_rebar(name)
 
     def accept(self):
@@ -224,18 +228,11 @@ class Form(QtWidgets.QWidget):
         elif is_beam:
             cover = self.form.beam_cover.value()
         longitudinal_bars_mats = self.form.longitudinal_bars_mats.currentText()
-        # from PySide2.QtWidgets import QMessageBox
-        # if not longitudinal_bars_mats:
-        #     ret = QMessageBox.question(None, 'Create AIII?',
-        #     'ETABS Model did not contain AIII rebars, Do you want to add it?')
-        #     if ret == QMessageBox.Yes:
-        #         pass
+        if longitudinal_bars_mats == '':
+            self.create_AIII_rebar(name='AIII_civiltools', message=False)
         tie_bars_mats = self.form.tie_bars_mats.currentText()
-        # if not tie_bars_mats:
-        #     ret = QMessageBox.question(None, 'Create AII?',
-        #     'ETABS Model did not contain AII rebars, Do you want to add it?')
-        #     if ret == QMessageBox.Yes:
-        #         pass
+        if tie_bars_mats == '':
+            self.create_AII_rebar(name='AII_civiltools', message=False)
         concrete_mat = self.form.concrete_mats.currentText()
         fc = self.etabs.material.get_fc(concrete_mat)
         widths = [int(item.text()) for item in self.form.width_list.selectedItems()]
@@ -258,7 +255,7 @@ class Form(QtWidgets.QWidget):
         elif self.form.design.isChecked():
             design_type = 'Design'
         tie_bar_size = self.form.tie_bar_size.currentText()
-        tie_space = self.form.tie_space.value()
+        tie_space = self.form.tie_space.value() * 10
         n = self.form.n_2.value()
         m = self.form.m_2.value()
         pattern_name = self.form.section_pattern_name.text()
