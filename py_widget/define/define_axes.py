@@ -165,7 +165,7 @@ class Form(QtWidgets.QWidget):
         x_axis = Arch.makeAxis(len(x_distances), 1000)
         x_axis.Label = 'XAxis'
         x_axis.ViewObject.LineColor = (0.00,1.00,0.00)
-        x_axis.ViewObject.FontSize = int(x_length / 10)
+        x_axis.ViewObject.FontSize = int(x_length / 15)
         x_axis.ViewObject.BubbleSize = x_axis.ViewObject.FontSize * 1.5
         x_axis.Placement.Base = base
         x_axis.ViewObject.NumberingStyle = x_style_numbering
@@ -175,7 +175,7 @@ class Form(QtWidgets.QWidget):
         y_axis = Arch.makeAxis(len(y_distances), 1000)
         y_axis.Label = 'YAxis'
         y_axis.ViewObject.LineColor = (1.00,0.00,0.00)
-        y_axis.ViewObject.FontSize = int(x_length / 10)
+        y_axis.ViewObject.FontSize = int(x_length / 15)
         y_axis.ViewObject.BubbleSize = y_axis.ViewObject.FontSize * 1.5
         y_axis.ViewObject.NumberingStyle = y_style_numbering
         y_axis.Distances = y_distances
