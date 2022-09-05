@@ -85,17 +85,17 @@
         <item>
          <widget class="QLabel" name="label">
           <property name="enabled">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <property name="text">
-           <string>Unit</string>
+           <string>DXF Length Unit</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QComboBox" name="unit">
           <property name="enabled">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <item>
            <property name="text">

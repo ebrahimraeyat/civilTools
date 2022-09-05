@@ -42,10 +42,12 @@ dxfImportLayouts = p.GetBool("dxflayouts", False)
 dxfImportPoints = p.GetBool("dxfImportPoints", False)
 dxfImportHatches = p.GetBool("importDxfHatches", False)
 dxfUseStandardSize = p.GetBool("dxfStdSize", False)
-dxfGetColors = p.GetBool("dxfGetOriginalColors", False)
+dxfGetColors = True
+dxfUseLegacyImporter = True
+# dxfUseLegacyImporter = p.GetBool("dxfUseLegacyImporter", False)
+# dxfGetColors = p.GetBool("dxfGetOriginalColors", False)
 dxfUseDraftVisGroups = p.GetBool("dxfUseDraftVisGroups", True)
 dxfFillMode = p.GetBool("fillmode", True)
-dxfUseLegacyImporter = p.GetBool("dxfUseLegacyImporter", False)
 dxfUseLegacyExporter = p.GetBool("dxfUseLegacyExporter", False)
 dxfExportBlocks = p.GetBool("dxfExportBlocks", True)
 dxfScaling = p.GetFloat("dxfScaling", 1.0)
@@ -776,10 +778,11 @@ class ImportDXF:
     @classmethod
     def prec(cls):
         """Return the current Draft precision level."""
-        return 3
+        return 0
         # return Draft.getParam("precision", 6)
 
-    def vec(self, pt):
+    @classmethod
+    def vec(cls, pt):
         """Return a rounded and scaled Vector from a DXF point.
 
         Parameters
@@ -800,15 +803,16 @@ class ImportDXF:
         Use local variables, not global variables.
         """
         if isinstance(pt, (int, float)):
-            v = round(pt, self.prec())
             if dxfScaling != 1:
                 v = v * dxfScaling
+            v = round(pt, cls.prec())
         else:
-            v = Vector(round(pt[0], self.prec()),
-                    round(pt[1], self.prec()),
-                    round(pt[2], self.prec()))
+            v = Vector(*pt)
             if dxfScaling != 1:
                 v.multiply(dxfScaling)
+            v = Vector(round(v.x, cls.prec()),
+                    round(v.y, cls.prec()),
+                    round(v.z, cls.prec()))
         return v
 
 

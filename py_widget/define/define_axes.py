@@ -32,11 +32,17 @@ class Form(QtWidgets.QWidget):
     def getStandardButtons(self):
         return int(QtWidgets.QDialogButtonBox.Cancel)
 
-    # def set_dxf_options(self):
-    #     p = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/Draft")
-    #     p.SetFloat("dxfScaling", 1000)
-    #     p.SetBool("dxfUseLegacyImporter", True)
-    #     p.GetBool("dxfGetOriginalColors", True)
+    def set_dxf_scale(self):
+        p = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/Draft")
+        unit = self.form.unit.currentText()
+        units = {
+                'm': 1000,
+                'cm': 10,
+                'mm': 1,
+                }
+        p.SetFloat("dxfScaling", units[unit])
+        # p.SetBool("dxfUseLegacyImporter", True)
+        # p.GetBool("dxfGetOriginalColors", True)
 
     # def import_dxf(self):
     #     filename = self.form.filename.text()
@@ -97,7 +103,7 @@ class Form(QtWidgets.QWidget):
             return
         if FreeCAD.ActiveDocument is None:
             FreeCAD.newDocument('Grids')
-        
+        self.set_dxf_scale()
         draw_line = self.form.lines.isChecked()
         draw_polyline = draw_line
         draw_block = self.form.blocks.isChecked()
@@ -130,7 +136,12 @@ class Form(QtWidgets.QWidget):
                 if block_name and obj.name != block_name:
                     continue
                 else:
-                    center = obj.Shape.BoundBox.Center
+                    v = obj.Shape.BoundBox.Center
+                    center = FreeCAD.Vector(
+                        round(v.x, 0),
+                        round(v.y, 0),
+                        round(v.z, 0)
+                        )
                     col = Arch.makeStructure(
                         length=obj.width,
                         width=obj.height,
@@ -187,13 +198,12 @@ class Form(QtWidgets.QWidget):
     def get_xy_coordinates(self):
         x_coordinates = set()
         y_coordinates = set()
-        for obj in FreeCAD.ActiveDocument.Objects:
-            doc = FreeCAD.ActiveDocument
-            for obj in doc.Objects:
-                if hasattr(obj, 'IfcType') and obj.IfcType == 'Column':
-                    base = obj.Placement.Base
-                    x_coordinates.add(round(base.x))
-                    y_coordinates.add(round(base.y))
+        doc = FreeCAD.ActiveDocument
+        for obj in doc.Objects:
+            if hasattr(obj, 'IfcType') and obj.IfcType == 'Column':
+                base = obj.Placement.Base
+                x_coordinates.add(round(base.x))
+                y_coordinates.add(round(base.y))
         
         if self.form.selections.isChecked():
             lines = Gui.Selection.getSelection()
@@ -260,7 +270,6 @@ class Form(QtWidgets.QWidget):
             QMessageBox.Warning(None, 'Open ETABS', 'Please open ETABS and run this command again.')
             return
 
-        # len_unit = self.form.unit.currentText()
         self.etabs.set_current_unit('N', 'mm')
         self.etabs.unlock_model()
         g1 = self.export_axes_to_etabs()
@@ -320,6 +329,9 @@ class Form(QtWidgets.QWidget):
                     next_level = self.etabs.SapModel.Story.GetElevation(next_level_name)[0]
                     name = self.etabs.SapModel.FrameObj.AddByCoord(x, y, level, x, y, next_level)[0]
                     self.etabs.SapModel.FrameObj.SetLocalAxes(name, rot)
+                    insertion_point = self.etabs.SapModel.FrameObj.GetInsertionPoint(name)
+                    insertion_point[0] = 10
+                    self.etabs.SapModel.FrameObj.SetInsertionPoint(name, *insertion_point[:-1])
                     n += 1
         return n
         
