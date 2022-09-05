@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>586</width>
-    <height>781</height>
+    <width>326</width>
+    <height>662</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,68 +24,139 @@
       <string notr="true"/>
      </property>
      <property name="title">
-      <string>Import DXF Lines</string>
+      <string>Import DXF File</string>
      </property>
      <property name="flat">
       <bool>false</bool>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QLineEdit" name="filename">
-          <property name="inputMask">
-           <string/>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="placeholderText">
-           <string>*.dxf</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="browse">
-          <property name="text">
-           <string>Browse</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
-        <item>
-         <widget class="QCheckBox" name="layer_checkbox">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="text">
-           <string>Lines Layer</string>
-          </property>
-          <property name="checked">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QComboBox" name="layer_combobox">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <widget class="QPushButton" name="refresh">
+     <layout class="QGridLayout" name="gridLayout_4">
+      <item row="3" column="1">
+       <widget class="QCheckBox" name="hatches">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
         <property name="text">
-         <string>Refresh</string>
+         <string>Hatches</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QCheckBox" name="lines">
+        <property name="text">
+         <string>Lines</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QCheckBox" name="blocks">
+        <property name="text">
+         <string>Blocks</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2" rowspan="3">
+       <widget class="QPushButton" name="browse">
+        <property name="text">
+         <string>Import DXF</string>
         </property>
         <property name="icon">
          <iconset resource="../../civiltools.qrc">
-          <normaloff>:/civiltools/images/automatic.svg</normaloff>:/civiltools/images/automatic.svg</iconset>
+          <normaloff>:/civiltools/images/dxf.svg</normaloff>:/civiltools/images/dxf.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>40</width>
+          <height>40</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1" colspan="2">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Unit</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="unit">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <item>
+           <property name="text">
+            <string>m</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>cm</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>mm</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string>Columns</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QComboBox" name="columns_from">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <item>
+         <property name="text">
+          <string>Block</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Hatch</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QComboBox" name="column_names">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" rowspan="2">
+       <widget class="QPushButton" name="create_columns">
+        <property name="text">
+         <string>Create</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../civiltools.qrc">
+          <normaloff>:/civiltools/images/create_frame_sections.svg</normaloff>:/civiltools/images/create_frame_sections.svg</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -99,161 +170,81 @@
     </widget>
    </item>
    <item>
-    <widget class="QTabWidget" name="tabWidget">
-     <property name="currentIndex">
-      <number>0</number>
+    <widget class="QGroupBox" name="groupBox_4">
+     <property name="title">
+      <string>Grid Lines</string>
      </property>
-     <widget class="QWidget" name="tab">
-      <attribute name="title">
-       <string>Grid Lines</string>
-      </attribute>
-      <layout class="QGridLayout" name="gridLayout_2">
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_2">
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="1" column="1">
+       <widget class="QComboBox" name="y_style_numbering">
+        <property name="currentIndex">
+         <number>1</number>
+        </property>
+        <item>
          <property name="text">
-          <string>X Style</string>
+          <string>1,2,3</string>
          </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QComboBox" name="x_style_numbering">
-         <item>
-          <property name="text">
-           <string>1,2,3</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>A,B,C</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="label_3">
+        </item>
+        <item>
          <property name="text">
-          <string>Y Style</string>
+          <string>A,B,C</string>
          </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QComboBox" name="y_style_numbering">
-         <property name="currentIndex">
-          <number>1</number>
-         </property>
-         <item>
-          <property name="text">
-           <string>1,2,3</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>A,B,C</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QCheckBox" name="selections">
+        </item>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>Y Style</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QComboBox" name="x_style_numbering">
+        <item>
          <property name="text">
-          <string>Selections</string>
+          <string>1,2,3</string>
          </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QPushButton" name="create_axis">
+        </item>
+        <item>
          <property name="text">
-          <string>Create</string>
+          <string>A,B,C</string>
          </property>
-         <property name="icon">
-          <iconset resource="../../civiltools.qrc">
-           <normaloff>:/civiltools/images/grid_lines.svg</normaloff>:/civiltools/images/grid_lines.svg</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>40</width>
-           <height>40</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="tab_2">
-      <attribute name="title">
-       <string>Columns</string>
-      </attribute>
-      <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_4">
-         <property name="text">
-          <string>Columns Block</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QComboBox" name="column_block">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="label_5">
-         <property name="text">
-          <string>dimention</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QDoubleSpinBox" name="col_size">
-         <property name="maximum">
-          <double>1000.000000000000000</double>
-         </property>
-         <property name="value">
-          <double>0.400000000000000</double>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0" colspan="2">
-        <widget class="QListWidget" name="levels_list"/>
-       </item>
-       <item row="3" column="0">
-        <widget class="QPushButton" name="refresh_levels">
-         <property name="text">
-          <string>Refresh</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../../civiltools.qrc">
-           <normaloff>:/civiltools/images/automatic.svg</normaloff>:/civiltools/images/automatic.svg</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>40</width>
-           <height>40</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1">
-        <widget class="QPushButton" name="create_columns">
-         <property name="text">
-          <string>Create</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../../civiltools.qrc">
-           <normaloff>:/civiltools/images/create_frame_sections.svg</normaloff>:/civiltools/images/create_frame_sections.svg</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>40</width>
-           <height>40</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
+        </item>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>X Style</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QCheckBox" name="selections">
+        <property name="text">
+         <string>Add Selected Lines</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QPushButton" name="create_axis">
+        <property name="text">
+         <string>Create</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../civiltools.qrc">
+          <normaloff>:/civiltools/images/grid_lines.svg</normaloff>:/civiltools/images/grid_lines.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>40</width>
+          <height>40</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
    <item>
@@ -290,34 +281,7 @@
        </widget>
       </item>
       <item row="1" column="0" colspan="2">
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>Unit</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QComboBox" name="unit">
-          <item>
-           <property name="text">
-            <string>m</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>cm</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>mm</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-       </layout>
+       <widget class="QListWidget" name="levels_list"/>
       </item>
      </layout>
     </widget>
