@@ -40,9 +40,13 @@ class Form(QtWidgets.QWidget):
         Gui.SendMsgToActiveView("ViewFit")
         Gui.activeDocument().activeView().viewIsometric()
         Gui.runCommand('Std_PerspectiveCamera',1)
+        self.reject()
 
     def reject(self):
         import FreeCADGui as Gui
         Gui.Control.closeDialog()
+
+    def getStandardButtons(self):
+        return int(QtWidgets.QDialogButtonBox.Cancel)
 
     
