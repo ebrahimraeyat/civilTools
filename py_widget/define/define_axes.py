@@ -202,19 +202,21 @@ class Form(QtWidgets.QWidget):
         for obj in doc.Objects:
             if hasattr(obj, 'IfcType') and obj.IfcType == 'Column':
                 base = obj.Placement.Base
-                x_coordinates.add(round(base.x))
-                y_coordinates.add(round(base.y))
-        
+                x = round(base.x, -1)
+                y = round(base.y, -1)
+                x_coordinates.add(x)
+                y_coordinates.add(y)
+                obj.Placement.Base.x = x
+                obj.Placement.Base.y = y
         if self.form.selections.isChecked():
             lines = Gui.Selection.getSelection()
             for line in lines:
                 e = line.Shape.Edges[0]
                 vecs = e.tangentAt(0)
                 if abs(vecs.x) < 0.01 and (0.99 < abs(vecs.y) <1.01):
-                    x_coordinates.add(round(e.BoundBox.XMin))
+                    x_coordinates.add(round(e.BoundBox.XMin, -1))
                 elif abs(vecs.y) < 0.01 and (0.99 < abs(vecs.x) <1.01):
-                    y_coordinates.add(round(e.BoundBox.YMin))
-
+                    y_coordinates.add(round(e.BoundBox.YMin, -1))
         return sorted(x_coordinates), sorted(y_coordinates)
 
     
