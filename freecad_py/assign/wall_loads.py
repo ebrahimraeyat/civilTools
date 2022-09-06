@@ -261,8 +261,8 @@ def get_relative_dists(wall):
     p3 = e1.lastVertex().Point + wall.Placement.Base
     v1 = p2.sub(p1)
     v2 = p3.sub(p1)
-    dist1 = (v1.Length / base.Length).Value
-    dist2 = (v2.Length / base.Length).Value
+    dist1 = round((v1.Length / base.Length).Value, 3)
+    dist2 = round((v2.Length / base.Length).Value, 3)
     assert max(dist1, dist2) <= 1
     return dist1, dist2
 
