@@ -25,7 +25,7 @@ class CivilToolsDefineAxis:
     
     def Activated(self):
         import find_etabs
-        etabs, filename = find_etabs.find_etabs(run=False, backup=False)
+        etabs, filename = find_etabs.find_etabs(run=False, backup=True)
         if (
             etabs is None or
             filename is None
