@@ -221,22 +221,38 @@ def has_wall(base):
 
 def assign_wall_loads_to_etabs(
     etabs = None,
+    wall_loadpat: str = '',
+    wall_weight: float = 0,
+    walls: list = [],
     ):
     names = set()
     etabs.set_current_unit('kgf', 'm')
-    for obj in FreeCAD.ActiveDocument.Objects:
+    if not walls:
+        walls = FreeCAD.ActiveDocument.Objects
+    for obj in walls:
         if (
             hasattr(obj, 'IfcType') and
-            obj.IfcType == 'Wall' and
-            hasattr(obj, 'loadpat')
+            obj.IfcType == 'Wall'
         ):
-            name = obj.base.Label2
+            if hasattr(obj, 'loadpat') and hasattr(obj, 'weight'):
+                loadpat = obj.loadpat
+                weight = obj.weight
+            elif wall_loadpat and wall_weight:
+                loadpat = wall_loadpat
+                weight = wall_weight
+            else:
+                continue
+            name = ''
+            if hasattr(obj, 'base'):
+                name = obj.base.Label2
             if not name:
-                label, story = obj.base.Label.split('_')[:2]
+                if hasattr(obj, 'base'):
+                    label, story = obj.base.Label.split('_')[:2]
+                elif hasattr(obj, 'Base'):
+                    label, story = obj.Base.Label.split('_')[:2]
                 name = etabs.SapModel.FrameObj.GetNameFromLabel(label, story)[0]
-            loadpat = obj.loadpat
             height = equivalent_height_in_meter(obj)
-            load_value = math.ceil(height * obj.weight)
+            load_value = math.ceil(height * weight)
             dist1, dist2 = get_relative_dists(obj)
             etabs.unlock_model()
             etabs.frame_obj.assign_gravity_load(
@@ -253,7 +269,10 @@ def assign_wall_loads_to_etabs(
 
 def get_relative_dists(wall):
     wall_trace = wall.Base
-    base = wall.base
+    if hasattr(wall, 'base'):
+        base = wall.base
+    else: # wall load created with user
+        return 0, 1
     e1 = wall_trace.Shape.Edges[0]
     e2 = base.Shape.Edges[0]
     p1 = e2.firstVertex().Point

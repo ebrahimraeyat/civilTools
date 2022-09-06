@@ -2,6 +2,7 @@ from pathlib import Path
 
 
 from PySide2 import  QtWidgets
+from PySide2.QtWidgets import QMessageBox
 import FreeCADGui as Gui
 import FreeCAD
 import civiltools_rc
@@ -129,9 +130,18 @@ class Form(QtWidgets.QWidget):
                 opening_ratio=opening_ratio,
             )
         elif self.form.etabs_from_freecad_button.isChecked():
+            if self.form.selected_wall.isChecked():
+                walls = Gui.Selection.getSelection()
+            else:
+                walls = []
             from freecad_py.assign import wall_loads
-            wall_loads.assign_wall_loads_to_etabs(self.etabs)
-
+            wall_loads.assign_wall_loads_to_etabs(
+                self.etabs,
+                wall_loadpat=loadpat,
+                wall_weight=mass_per_area,
+                walls=walls,
+                )
+            QMessageBox.information(None, 'Applied', 'Wall loads applied in ETABS Model.')
 
     def reject(self):
         Gui.Control.closeDialog()
