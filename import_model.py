@@ -5,7 +5,7 @@ import FreeCAD
 # import Part
 import Arch
 import Draft
-
+test = False
 
 def import_model(
         etabs = None,
@@ -31,9 +31,18 @@ def import_model(
         for obj in FreeCAD.ActiveDocument.Objects:
             if hasattr(obj, 'IfcType') and obj.IfcType == 'Building':
                 building = obj
+                for story in building.Group:
+                    stories_objects[story.Label] = set(story.Group.copy())
                 break
     if import_beams or import_columns or import_braces:
         profiles = {}
+        beams_columns = {}
+        for obj in FreeCAD.ActiveDocument.Objects:
+            if hasattr(obj, 'Proxy') and hasattr(obj.Proxy, 'Profile'):
+                p_name = obj.Proxy.Profile[2]
+                profiles[p_name] = obj
+            elif hasattr(obj, 'IfcType') and obj.IfcType in ('Beam', 'Column'):
+                beams_columns[obj.Label2] = obj
         frame_props = etabs.SapModel.PropFrame.GetAllFrameProperties()
         section_types_map = {
             1 : ['H', 'IPE'],
@@ -45,11 +54,13 @@ def import_model(
         frames = etabs.SapModel.FrameObj.GetAllFrames()
         if selected_only:
             selected_frames = etabs.select_obj.get_selected_obj_type(2)
-        progressbar = FreeCAD.Base.ProgressIndicator()
-        frames_count = frames[0]
-        progressbar.start("Importing "+str(frames_count)+" Frame Elements...", frames_count)
+        if not test:
+            progressbar = FreeCAD.Base.ProgressIndicator()
+            frames_count = frames[0]
+            progressbar.start("Importing "+str(frames_count)+" Frame Elements...", frames_count)
         for i in range(frames[0]):
-            progressbar.next(True)
+            if not test:
+                progressbar.next(True)
             frame_name = frames[1][i]
             if selected_only and frame_name not in selected_frames:
                 continue
@@ -118,16 +129,23 @@ def import_model(
                 profile.Label = section_name
             # edge = Part.makeLine(v1, v2)
             label, story, _ = etabs.SapModel.FrameObj.GetLabelFromName(frame_name)
-            structure = Arch.makeStructure(profile)
-            structure.IfcType = ifc_type
-            structure.PredefinedType = predefined_type
-            structure.Label = f'{label}_{story}'
-            structure.Label2 = frame_name
-            line = Draft.make_line(v1, v2)
-            line.Label = f'{label}_{story}_CenterLine'
-            line.Label2 = frame_name
-            line.recompute()
-            place_the_beam(structure, line)
+            if frame_name in beams_columns:
+                structure = beams_columns.get(frame_name, None)
+                if structure is None:
+                    continue
+                structure.Base = profile
+                line = FreeCAD.ActiveDocument.getObjectsByLabel(f'{label}_{story}_CenterLine')[0]
+            else:
+                structure = Arch.makeStructure(profile)
+                line = Draft.make_line(v1, v2)
+                structure.IfcType = ifc_type
+                structure.PredefinedType = predefined_type
+                structure.Label = f'{label}_{story}'
+                structure.Label2 = frame_name
+                line.Label = f'{label}_{story}_CenterLine'
+                line.Label2 = frame_name
+                line.recompute()
+                place_the_beam(structure, line)
             # view property of structure
             if FreeCAD.GuiUp:
                 structure.ViewObject.LineWidth = 1
@@ -154,24 +172,28 @@ def import_model(
             structure.Nodes = [v1, v2]
             story_objects = stories_objects.get(story, None)
             if story_objects is None:
-                stories_objects[story] = [structure, line]
+                stories_objects[story] = set([structure,line])
             else:
-                story_objects.extend([structure, line])
-        progressbar.stop()
+                story_objects.add(structure)
+                story_objects.add(line)
+        if not test:
+            progressbar.stop()
     if import_floors or import_walls:
         (n, names, design, _, delim, _,
         x_coords, y_coords, z_coords, _) = etabs.SapModel.AreaObj.GetAllAreas()
         if selected_only:
             selected_areas = etabs.select_obj.get_selected_obj_type(5)
         i = 0
-        progressbar = FreeCAD.Base.ProgressIndicator()
-        progressbar.start("Importing "+str(n)+" Floors and Walls Elements...", n)
+        if not test:
+            progressbar = FreeCAD.Base.ProgressIndicator()
+            progressbar.start("Importing "+str(n)+" Floors and Walls Elements...", n)
         for count, j in enumerate(delim):
             xs = x_coords[i: j + 1]
             ys = y_coords[i: j + 1]
             zs = z_coords[i: j + 1]
             i = j + 1
-            progressbar.next(True)
+            if not test:
+                progressbar.next(True)
             if selected_only and names[count] not in selected_areas:
                 continue
             design_type = design[count]
@@ -198,9 +220,9 @@ def import_model(
             label, story, _ = etabs.SapModel.AreaObj.GetLabelFromName(area_name)
             story_objects = stories_objects.get(story, None)
             if story_objects is None:
-                stories_objects[story] = [area]
+                stories_objects[story] = set(area)
             else:
-                story_objects.append(area)
+                story_objects.add(area)
             area.Label = f'{label}_{story}'
             area.Label2 = area_name
             if FreeCAD.GuiUp:
@@ -210,7 +232,8 @@ def import_model(
                 area.ViewObject.LineWidth = 1
                 area.ViewObject.PointSize = 1
                 area.ViewObject.Transparency = 40
-        progressbar.stop()
+        if not test:
+            progressbar.stop()
     # create IFC objects
     if building is None:
         floors = make_building(etabs)
