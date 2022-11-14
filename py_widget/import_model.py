@@ -47,6 +47,6 @@ class Form(QtWidgets.QWidget):
         Gui.Control.closeDialog()
 
     def getStandardButtons(self):
-        return int(QtWidgets.QDialogButtonBox.Cancel)
+        return -1
 
     
