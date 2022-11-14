@@ -25,12 +25,7 @@ class CivilToolsDefineAxis:
     
     def Activated(self):
         import find_etabs
-        etabs, filename = find_etabs.find_etabs(run=False, backup=True)
-        if (
-            etabs is None or
-            filename is None
-            ):
-            return
+        etabs, _ = find_etabs.find_etabs(run=False, backup=True)
         from py_widget.define import define_axes
         win = define_axes.Form(etabs)
         Gui.Control.showDialog(win)

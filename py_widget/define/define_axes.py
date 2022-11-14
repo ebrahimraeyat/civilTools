@@ -67,11 +67,10 @@ class Form(QtWidgets.QWidget):
     def create_connections(self):
         self.form.columns_from.currentIndexChanged.connect(self.column_from_changed)
         self.form.browse.clicked.connect(self.browse)
-        # self.form.refresh.clicked.connect(self.update_gui)
-        # self.form.refresh_levels.clicked.connect(self.fill_levels)
         self.form.create_axis.clicked.connect(self.create_axis)
         self.form.export_to_etabs.clicked.connect(self.export_to_etabs)
         self.form.create_columns.clicked.connect(self.create_columns)
+        self.form.referesh.clicked.connect(self.fill_levels)
 
     def column_from_changed(self):
         read_from = self.form.columns_from.currentText()
@@ -86,8 +85,16 @@ class Form(QtWidgets.QWidget):
             # self.form.column_names.addItems(hatches)
 
     def fill_levels(self):
-        if self.etabs is None:
-            return
+        if not self.etabs.success:
+            import find_etabs
+            etabs, filename = find_etabs.find_etabs(run=False, backup=True)
+            if (
+                not etabs.success or
+                filename is None
+                ):
+                return
+            else:
+                self.etabs = etabs
         self.form.levels_list.clear()
         levels_names = self.etabs.story.get_level_names()
         self.form.levels_list.addItems(levels_names)
@@ -268,8 +275,8 @@ class Form(QtWidgets.QWidget):
         self.column_from_changed()
 
     def export_to_etabs(self):
-        if self.etabs is None:
-            QMessageBox.Warning(None, 'Open ETABS', 'Please open ETABS and run this command again.')
+        ret = self.show_etabs_warning()
+        if not ret:
             return
 
         self.etabs.set_current_unit('N', 'mm')
@@ -339,6 +346,13 @@ class Form(QtWidgets.QWidget):
         
     def reject(self):
         Gui.Control.closeDialog()
+
+    def show_etabs_warning(self):
+        if not self.etabs.success:
+            QMessageBox.warning(None, 'Open ETABS', 'Please open ETABS and Press referesh button.')
+            return False
+        return True
+
 
 def get_xy_axis():
     x_axis = None
