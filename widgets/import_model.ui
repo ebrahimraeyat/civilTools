@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>284</width>
-    <height>295</height>
+    <width>247</width>
+    <height>221</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,14 +17,14 @@
    <iconset resource="../civiltools.qrc">
     <normaloff>:/civiltools/images/etabs.png</normaloff>:/civiltools/images/etabs.png</iconset>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
-   <item>
+  <layout class="QFormLayout" name="formLayout_3">
+   <item row="0" column="0">
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
       <string>Frames</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
+     <layout class="QFormLayout" name="formLayout">
+      <item row="0" column="0">
        <widget class="QCheckBox" name="beams">
         <property name="enabled">
          <bool>true</bool>
@@ -37,7 +37,7 @@
         </property>
        </widget>
       </item>
-      <item>
+      <item row="1" column="0">
        <widget class="QCheckBox" name="columns">
         <property name="enabled">
          <bool>true</bool>
@@ -50,7 +50,7 @@
         </property>
        </widget>
       </item>
-      <item>
+      <item row="2" column="0">
        <widget class="QCheckBox" name="braces">
         <property name="enabled">
          <bool>true</bool>
@@ -66,13 +66,13 @@
      </layout>
     </widget>
    </item>
-   <item>
+   <item row="0" column="1">
     <widget class="QGroupBox" name="groupBox_2">
      <property name="title">
       <string>Areas</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_3">
-      <item>
+     <layout class="QFormLayout" name="formLayout_2">
+      <item row="0" column="0">
        <widget class="QCheckBox" name="floors">
         <property name="enabled">
          <bool>true</bool>
@@ -85,7 +85,7 @@
         </property>
        </widget>
       </item>
-      <item>
+      <item row="1" column="0">
        <widget class="QCheckBox" name="walls">
         <property name="enabled">
          <bool>true</bool>
@@ -98,7 +98,7 @@
         </property>
        </widget>
       </item>
-      <item>
+      <item row="2" column="0">
        <widget class="QCheckBox" name="openings">
         <property name="enabled">
          <bool>true</bool>
@@ -114,7 +114,17 @@
      </layout>
     </widget>
    </item>
-   <item>
+   <item row="1" column="0">
+    <widget class="QCheckBox" name="new_model">
+     <property name="text">
+      <string>New Model</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
     <widget class="QCheckBox" name="selections">
      <property name="enabled">
       <bool>true</bool>
@@ -127,15 +137,28 @@
      </property>
     </widget>
    </item>
-   <item>
+   <item row="2" column="0" colspan="2">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QCheckBox" name="new_model">
-       <property name="text">
-        <string>New Model</string>
+      <widget class="QPushButton" name="cancel_button">
+       <property name="maximumSize">
+        <size>
+         <width>200</width>
+         <height>16777215</height>
+        </size>
        </property>
-       <property name="checked">
-        <bool>true</bool>
+       <property name="text">
+        <string>Cancel</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../civiltools.qrc">
+         <normaloff>:/civiltools/images/cancel.svg</normaloff>:/civiltools/images/cancel.svg</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>40</width>
+         <height>40</height>
+        </size>
        </property>
       </widget>
      </item>
@@ -154,12 +177,36 @@
         <iconset resource="../civiltools.qrc">
          <normaloff>:/civiltools/images/import.svg</normaloff>:/civiltools/images/import.svg</iconset>
        </property>
+       <property name="iconSize">
+        <size>
+         <width>40</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="default">
+        <bool>true</bool>
+       </property>
+       <property name="flat">
+        <bool>false</bool>
+       </property>
       </widget>
      </item>
     </layout>
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>beams</tabstop>
+  <tabstop>columns</tabstop>
+  <tabstop>braces</tabstop>
+  <tabstop>floors</tabstop>
+  <tabstop>walls</tabstop>
+  <tabstop>openings</tabstop>
+  <tabstop>new_model</tabstop>
+  <tabstop>selections</tabstop>
+  <tabstop>cancel_button</tabstop>
+  <tabstop>import_button</tabstop>
+ </tabstops>
  <resources>
   <include location="../civiltools.qrc"/>
  </resources>

@@ -15,6 +15,7 @@ class Form(QtWidgets.QWidget):
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'import_model.ui'))
         self.etabs = etabs_obj
         self.form.import_button.clicked.connect(self.start_import)
+        self.form.cancel_button.clicked.connect(self.reject)
 
     def start_import(self):
         import_beams = self.form.beams.isChecked()
@@ -47,6 +48,6 @@ class Form(QtWidgets.QWidget):
         Gui.Control.closeDialog()
 
     def getStandardButtons(self):
-        return -1
+        return 0
 
     
