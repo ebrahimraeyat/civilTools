@@ -386,7 +386,7 @@
              </property>
              <item>
               <property name="text">
-               <string>EPY</string>
+               <string>EYP</string>
               </property>
              </item>
             </widget>
@@ -405,7 +405,7 @@
              </property>
              <item>
               <property name="text">
-               <string>ENY</string>
+               <string>EYN</string>
               </property>
              </item>
             </widget>
@@ -458,7 +458,7 @@
              </property>
              <item>
               <property name="text">
-               <string>EPX</string>
+               <string>EXP</string>
               </property>
              </item>
             </widget>
@@ -477,7 +477,7 @@
              </property>
              <item>
               <property name="text">
-               <string>ENX</string>
+               <string>EXN</string>
               </property>
              </item>
             </widget>
