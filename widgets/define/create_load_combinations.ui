@@ -665,14 +665,14 @@
          <item>
           <widget class="QCheckBox" name="separate_direction">
            <property name="text">
-            <string>Separate Direction</string>
+            <string>Not (100-30)</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QCheckBox" name="ev_negative">
            <property name="text">
-            <string>- EV</string>
+            <string>Consider (- EV)</string>
            </property>
            <property name="checked">
             <bool>true</bool>
