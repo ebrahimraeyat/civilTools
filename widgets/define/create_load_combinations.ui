@@ -672,7 +672,7 @@
          <item>
           <widget class="QCheckBox" name="ev_negative">
            <property name="text">
-            <string>Consider (- EV)</string>
+            <string>Consider (-EV)</string>
            </property>
            <property name="checked">
             <bool>true</bool>
