@@ -66,6 +66,7 @@ class Form(QtWidgets.QWidget):
         for ix in self.form.load_combinations_view.selectedIndexes():
             text = ix.data(Qt.DisplayRole)
             selected_combos.add(text)
+        
         progressbar = FreeCAD.Base.ProgressIndicator()
         n = int(len(self.data) / 4)
         progressbar.start(
@@ -107,33 +108,69 @@ class Form(QtWidgets.QWidget):
             11 : self.form.lroof_combobox, # 'ROOF Live',
             # 12 : self.form.dead_combobox # 'Notional',
         }
+        live_loads = [lp for lp in load_patterns if self.etabs.SapModel.LoadPatterns.GetLoadType(lp)[0] in (3, 4, 11)]
+        other_loads = [lp for lp in load_patterns if self.etabs.SapModel.LoadPatterns.GetLoadType(lp)[0] == 8]
+        live_loads_combobox = (
+                self.form.live_combobox,
+                self.form.lred_combobox,
+                self.form.lroof_combobox,
+                self.form.live5_combobox,
+                self.form.lred5_combobox,
+                )
+        other_combobox = (
+            self.form.mass_combobox,
+            self.form.ev_combobox,
+            )
+        for combobox in live_loads_combobox:
+            combobox.addItems(live_loads)
+        for combobox in other_combobox:
+            combobox.addItems(other_loads)
         for lp in load_patterns:
             type_ = self.etabs.SapModel.LoadPatterns.GetLoadType(lp)[0]
             combobox = map_number_to_pattern.get(type_, None)
+            i = j = -1
+            if lp in live_loads:
+                i = live_loads.index(lp)
+            if lp in other_loads:
+                j = other_loads.index(lp)
             if combobox is not None:
-                combobox.addItem(lp)
+                if combobox in live_loads_combobox:
+                    # if i == -1:
+                    #     combobox.addItem(lp)
+                    # else:
+                    combobox.setCurrentIndex(i)
+                else:
+                    combobox.addItem(lp)
             if type_ == 3 and '5' in lp:
-                    self.form.live5_combobox.addItem(lp)
+                self.form.live5_combobox.setCurrentIndex(i)
             elif type_ == 4 and '5' in lp:
-                    self.form.lred5_combobox.addItem(lp)
+                self.form.lred5_combobox.setCurrentIndex(i)
             elif type_ == 5: # seismic
                 pass
             elif type_ == 8:
                 if 'mass' in lp.lower() or 'wall' in lp.lower():
-                    self.form.mass_combobox.addItem(lp)
-                elif 'ev' in lp.lower() or 'ez' in lp.lower():
-                    self.form.ev_combobox.addItem(lp)
-        names = self.etabs.load_patterns.get_special_load_pattern_names(5)
-        extra_names = set(names).difference(('EX', 'EPX', 'ENX', 'EY', 'EPY', 'ENY'))
-        for combobox in (
-                self.form.ex_combobox,
-                self.form.epx_combobox,
-                self.form.enx_combobox,
+                    self.form.mass_combobox.setCurrentIndex(j)
+                elif any((
+                    'ev' in lp.lower(),
+                    'ez' in lp.lower(),
+                    'qv' in lp.lower(),
+                    'qz' in lp.lower(),
+                    )):
+                    self.form.ev_combobox.setCurrentIndex(j)
+        xdir, xdir_minus, xdir_plus, ydir, ydir_minus, ydir_plus = self.etabs.load_patterns.get_seismic_load_patterns()
+        for combobox, name, dir_ in zip(
+                (self.form.ex_combobox,
+                self.form.exn_combobox,
+                self.form.exp_combobox,
                 self.form.ey_combobox,
-                self.form.epy_combobox,
-                self.form.eny_combobox,
-                ):
-            combobox.addItems(extra_names)
+                self.form.eyn_combobox,
+                self.form.eyp_combobox,
+                ), 
+                ('EX', 'EXN', 'EXP', 'EY', 'EYN', 'EYP'),
+                (xdir, xdir_minus, xdir_plus, ydir, ydir_minus, ydir_plus),
+            ):
+            dir_.add(name)
+            combobox.addItems(dir_)
             
     def create_connections(self):
         self.form.create_button.clicked.connect(self.create)
@@ -251,13 +288,13 @@ class Form(QtWidgets.QWidget):
             if not ex in load_patterns:
                 self.etabs.SapModel.LoadPatterns.Add(ex, 5)
         ## EPX
-        epx = self.form.epx_combobox.currentText()
+        epx = self.form.exp_combobox.currentText()
         if epx:
             equivalent_loads['EPX'] = [epx]
             if not epx in load_patterns:
                 self.etabs.SapModel.LoadPatterns.Add(epx, 5)
         ## ENX
-        enx = self.form.enx_combobox.currentText()
+        enx = self.form.exn_combobox.currentText()
         if enx:
             equivalent_loads['ENX'] = [enx]
             if not enx in load_patterns:
@@ -269,13 +306,13 @@ class Form(QtWidgets.QWidget):
             if not ey in load_patterns:
                 self.etabs.SapModel.LoadPatterns.Add(ey, 5)
         ## EPX
-        epy = self.form.epy_combobox.currentText()
+        epy = self.form.eyp_combobox.currentText()
         if epy:
             equivalent_loads['EPY'] = [epy]
             if not epy in load_patterns:
                 self.etabs.SapModel.LoadPatterns.Add(epy, 5)
         ## ENX
-        eny = self.form.eny_combobox.currentText()
+        eny = self.form.eyn_combobox.currentText()
         if eny:
             equivalent_loads['ENY'] = [eny]
             if not eny in load_patterns:

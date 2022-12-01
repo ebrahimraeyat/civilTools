@@ -293,7 +293,7 @@
         <item row="2" column="1">
          <widget class="QGroupBox" name="groupBox_8">
           <property name="title">
-           <string>GroupBox</string>
+           <string>PHO</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_11">
            <item row="0" column="0">
@@ -365,11 +365,6 @@
              <property name="editable">
               <bool>true</bool>
              </property>
-             <item>
-              <property name="text">
-               <string>EY</string>
-              </property>
-             </item>
             </widget>
            </item>
            <item row="1" column="0">
@@ -380,15 +375,10 @@
             </widget>
            </item>
            <item row="1" column="1">
-            <widget class="QComboBox" name="epy_combobox">
+            <widget class="QComboBox" name="eyp_combobox">
              <property name="editable">
               <bool>true</bool>
              </property>
-             <item>
-              <property name="text">
-               <string>EYP</string>
-              </property>
-             </item>
             </widget>
            </item>
            <item row="2" column="0">
@@ -399,15 +389,10 @@
             </widget>
            </item>
            <item row="2" column="1">
-            <widget class="QComboBox" name="eny_combobox">
+            <widget class="QComboBox" name="eyn_combobox">
              <property name="editable">
               <bool>true</bool>
              </property>
-             <item>
-              <property name="text">
-               <string>EYN</string>
-              </property>
-             </item>
             </widget>
            </item>
           </layout>
@@ -437,11 +422,6 @@
              <property name="editable">
               <bool>true</bool>
              </property>
-             <item>
-              <property name="text">
-               <string>EX</string>
-              </property>
-             </item>
             </widget>
            </item>
            <item row="1" column="0">
@@ -452,15 +432,10 @@
             </widget>
            </item>
            <item row="1" column="1">
-            <widget class="QComboBox" name="epx_combobox">
+            <widget class="QComboBox" name="exp_combobox">
              <property name="editable">
               <bool>true</bool>
              </property>
-             <item>
-              <property name="text">
-               <string>EXP</string>
-              </property>
-             </item>
             </widget>
            </item>
            <item row="2" column="0">
@@ -471,15 +446,10 @@
             </widget>
            </item>
            <item row="2" column="1">
-            <widget class="QComboBox" name="enx_combobox">
+            <widget class="QComboBox" name="exn_combobox">
              <property name="editable">
               <bool>true</bool>
              </property>
-             <item>
-              <property name="text">
-               <string>EXN</string>
-              </property>
-             </item>
             </widget>
            </item>
           </layout>
