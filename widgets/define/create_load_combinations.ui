@@ -293,13 +293,13 @@
         <item row="2" column="1">
          <widget class="QGroupBox" name="groupBox_8">
           <property name="title">
-           <string>PHO</string>
+           <string>RHO</string>
           </property>
-          <layout class="QGridLayout" name="gridLayout_11">
+          <layout class="QFormLayout" name="formLayout_3">
            <item row="0" column="0">
             <widget class="QLabel" name="label">
              <property name="text">
-              <string>px</string>
+              <string>Rho_X</string>
              </property>
             </widget>
            </item>
@@ -320,7 +320,7 @@
            <item row="1" column="0">
             <widget class="QLabel" name="label_2">
              <property name="text">
-              <string>py</string>
+              <string>Rho_Y</string>
              </property>
             </widget>
            </item>
@@ -346,7 +346,7 @@
           <property name="title">
            <string>Y</string>
           </property>
-          <layout class="QGridLayout" name="gridLayout_10">
+          <layout class="QFormLayout" name="formLayout_2">
            <item row="0" column="0">
             <widget class="QLabel" name="label_15">
              <property name="enabled">
@@ -370,7 +370,7 @@
            <item row="1" column="0">
             <widget class="QLabel" name="label_16">
              <property name="text">
-              <string>EPY</string>
+              <string>EYP</string>
              </property>
             </widget>
            </item>
@@ -384,7 +384,7 @@
            <item row="2" column="0">
             <widget class="QLabel" name="label_14">
              <property name="text">
-              <string>ENY</string>
+              <string>EYN</string>
              </property>
             </widget>
            </item>
@@ -403,7 +403,7 @@
           <property name="title">
            <string>X</string>
           </property>
-          <layout class="QGridLayout" name="gridLayout_9">
+          <layout class="QFormLayout" name="formLayout">
            <item row="0" column="0">
             <widget class="QLabel" name="label_11">
              <property name="enabled">
@@ -427,7 +427,7 @@
            <item row="1" column="0">
             <widget class="QLabel" name="label_12">
              <property name="text">
-              <string>EPX</string>
+              <string>EXP</string>
              </property>
             </widget>
            </item>
@@ -441,7 +441,7 @@
            <item row="2" column="0">
             <widget class="QLabel" name="label_13">
              <property name="text">
-              <string>ENX</string>
+              <string>EXN</string>
              </property>
             </widget>
            </item>
