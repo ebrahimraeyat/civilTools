@@ -1,7 +1,4 @@
-from email import header
-from msilib.schema import Directory
 from pathlib import Path
-
 
 from PySide2 import  QtWidgets
 import FreeCADGui as Gui
