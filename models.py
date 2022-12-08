@@ -33,17 +33,18 @@ class StructureModel(QAbstractTableModel):
             return ''
         row = index.row()
         column = index.column()
-        system = self.build.x_system
-        Texp = self.build.exp_period_x
-        Tan = self.build.x_period_an
-        k = self.build.kx
-        k_drift = self.build.kx_drift
         c = ''
         c_drift = ''
-        if self.build.results[0]:
-            c = self.build.results[1]
-        if self.build.results_drift[0]:
-            c_drift = self.build.results_drift[1]
+        if column == X:
+            system = self.build.x_system
+            Texp = self.build.exp_period_x
+            Tan = self.build.x_period_an
+            k = self.build.kx
+            k_drift = self.build.kx_drift
+            if self.build.results[0]:
+                c = self.build.results[1]
+            if self.build.results_drift[0]:
+                c_drift = self.build.results_drift[1]
 
         if column == Y:
             system = self.build.y_system
@@ -115,7 +116,6 @@ class StructureModel(QAbstractTableModel):
                 return QVariant(int(Qt.AlignCenter | Qt.AlignVCenter))
             return QVariant(int(Qt.AlignLeft | Qt.AlignVCenter))
         elif role == Qt.BackgroundColorRole:
-            print(role, orientation, section)
             if orientation == Qt.Vertical:
                 # if section == HMAX:
                 #     return QColor(255, 80, 80)

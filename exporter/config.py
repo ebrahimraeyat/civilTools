@@ -20,10 +20,10 @@ def save(json_file, widget):
 	d['infill'] = widget.infillCheckBox.isChecked()
 	d['x_system'] = find_selected_item_in_treewidget(widget.x_treeWidget)
 	d['y_system'] = find_selected_item_in_treewidget(widget.y_treeWidget)
-	x_system_name = widget.x_treeWidget.currentItem().parent().text(0)
-	y_system_name = widget.y_treeWidget.currentItem().parent().text(0)
-	x_lateral_name = widget.x_treeWidget.currentItem().text(0)
-	y_lateral_name = widget.y_treeWidget.currentItem().text(0)
+	i, n = d['x_system']
+	x_system_name, x_lateral_name = get_treewidget_item_text(widget.x_treeWidget, i, n)
+	i, n = d['y_system']
+	y_system_name, y_lateral_name = get_treewidget_item_text(widget.y_treeWidget, i, n)
 	d['x_system_name'] = x_system_name
 	d['y_system_name'] = y_system_name
 	d['x_lateral_name'] = x_lateral_name
@@ -121,3 +121,11 @@ def select_treewidget_item(treewidget, i, n):
 		root_item.child(cur_i).setExpanded(False)
 		root_item.child(i).child(n).setSelected(True)
 		root_item.child(i).setExpanded(True)
+
+def get_treewidget_item_text(treewidget, i, n):
+	if i is None:
+		return
+	root_item = treewidget.invisibleRootItem()
+	system = root_item.child(i).text(0)
+	lateral = root_item.child(i).child(n).text(0)
+	return system, lateral

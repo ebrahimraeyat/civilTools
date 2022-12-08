@@ -217,6 +217,16 @@ class StructureSystem(object):
             return True
         return False
 
+    def __str__(self):
+        return f'''
+            system type is {self.systemType}\n
+            lateral system is {self.lateralType}\n
+            Ru = {self.Ru}\n
+            omega = {self.phi0}\n
+            cd = {self.cd}\n
+            maximum height = {self.maxHeight}\n
+            '''
+
 
 class RFactorTable(object):
 
