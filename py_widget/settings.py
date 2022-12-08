@@ -108,7 +108,8 @@ class Form(QtWidgets.QWidget):
         self.form.x_treeWidget.itemActivated.connect(self.xactivate)
         self.form.bot_x_combo.currentIndexChanged.connect(self.fill_height_and_no_of_stories)
         self.form.top_x_combo.currentIndexChanged.connect(self.fill_height_and_no_of_stories)
-        self.form.buttonBox.accepted.connect(self.save)
+        self.form.save_pushbutton.clicked.connect(self.save)
+        self.form.cancel_pushbutton.clicked.connect(self.reject)
         self.form.top_story_for_height_checkbox.clicked.connect(self.fill_height_and_no_of_stories)
         self.form.top_story_for_height.currentIndexChanged.connect(self.fill_height_and_no_of_stories)
 
@@ -148,6 +149,10 @@ class Form(QtWidgets.QWidget):
         city = self.get_current_city()
         param.SetString("ostan", ostan)
         param.SetString("city", city)
+        self.reject()
+
+    def reject(self):
+        self.form.reject()
 
     def xactivate(self):
         if self.form.x_treeWidget.currentItem().parent():
