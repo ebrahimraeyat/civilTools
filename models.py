@@ -1,7 +1,5 @@
-from PySide2.QtCore import QAbstractTableModel, Qt, QSettings, QModelIndex
-from PySide2.QtWidgets import QDoubleSpinBox, QItemDelegate, QComboBox, QMessageBox
+from PySide2.QtCore import QAbstractTableModel, Qt, QModelIndex
 from PySide2.QtGui import QFont, QColor
-from PySide2 import  QtWidgets
 
 
 X, Y = range(2)
@@ -17,7 +15,6 @@ class StructureModel(QAbstractTableModel):
     def __init__(self, build):
         # super(StructureModel, self).__init__()
         QAbstractTableModel.__init__(self)
-        #self.filename = filename
         self.dirty = False
         self.build = build
 
@@ -72,26 +69,24 @@ class StructureModel(QAbstractTableModel):
             if row == TEXP:
                 return '{0:.4f}'.format(Texp)
             if row == TEXP125:
-                return '{0:.4f}'.format(Texp * 1.25)
+                return f'{Texp * 1.25:.4f}'
             if row == TAN:
-                return '{0:.4f}'.format(Tan)
+                return f'{Tan:.4f}'
             if row == K:
-                return '{0:.4f}'.format(k)
+                return f'{k:.4f}'
             if row == CFACTOR:
                 try:
-                    return '{0:.4f}'.format(c)
+                    return f'{c:.4f}'
                 except:
                     pass
             if row == KDRIFT:
-                return '{0:.4f}'.format(k_drift)
+                return f'{k_drift:.4f}'
             if row == CDRIFT:
                 try:
-                    return '{0:.4f}'.format(c_drift)
+                    return f'{c_drift:.4f}'
                 except:
                     pass
-        if role == Qt.BackgroundColorRole:
-            # if row == HMAX:
-            #     return QColor(255, 140, 140)
+        elif role == Qt.BackgroundColorRole:
             if row in (K, CFACTOR):
                 return QColor(100, 255, 100)
             if row in (KDRIFT, CDRIFT):
@@ -100,14 +95,13 @@ class StructureModel(QAbstractTableModel):
                 return QColor(255, 255, 20)
             else:
                 return QColor(230, 230, 250)
-        if role == Qt.FontRole:
-            if row in (K, CFACTOR, KDRIFT, CDRIFT):
-                font = QFont()
-                font.setBold(True)
-                font.setItalic(True)
-                font.setPointSize(12)
-                return font
-        if role == Qt.TextAlignmentRole:
+        elif role == Qt.FontRole and row in (K, CFACTOR, KDRIFT, CDRIFT):
+            font = QFont()
+            font.setBold(True)
+            font.setItalic(True)
+            font.setPointSize(12)
+            return font
+        elif role == Qt.TextAlignmentRole:
             return QVariant(int(Qt.AlignCenter | Qt.AlignVCenter))
 
     def headerData(self, section, orientation, role=Qt.DisplayRole):
@@ -117,8 +111,6 @@ class StructureModel(QAbstractTableModel):
             return QVariant(int(Qt.AlignLeft | Qt.AlignVCenter))
         elif role == Qt.BackgroundColorRole:
             if orientation == Qt.Vertical:
-                # if section == HMAX:
-                #     return QColor(255, 80, 80)
                 if section in (K, CFACTOR):
                     return QColor(120, 255, 120)
                 elif section in (KDRIFT, CDRIFT):
@@ -145,9 +137,9 @@ class StructureModel(QAbstractTableModel):
         elif role == Qt.DisplayRole:
             if orientation == Qt.Vertical:
                 if section == SYSTEM:
-                    return "سیستم سازه"
+                    return "Category of System"
                 elif section == LATERAL:
-                    return 'سیستم جانبی'
+                    return "Seismic System"
                 elif section == HMAX:
                     return 'H_max'
                 elif section == RU:
@@ -155,11 +147,11 @@ class StructureModel(QAbstractTableModel):
                 elif section == CD:
                     return 'Cd'
                 elif section == TEXP:
-                    return 'زمان تناوب تجربی'
+                    return 'Texp'
                 elif section == TEXP125:
-                    return '۱.۲۵ * زمان تناوب تجربی'
+                    return '1.25*Texp'
                 elif section == TAN:
-                    return 'زمان تناوب تحلیلی'
+                    return 'Tan'
                 elif section == K:
                     return 'K'
                 elif section == CFACTOR:
@@ -172,9 +164,9 @@ class StructureModel(QAbstractTableModel):
                     return 'C_drift'
             elif orientation == Qt.Horizontal:
                 if section == X:
-                    return 'X راستای'
+                    return 'X Dir'
                 elif section == Y:
-                    return 'Y راستای'
+                    return 'Y Dir'
 
     def rowCount(self, index=QModelIndex()):
         return 13
