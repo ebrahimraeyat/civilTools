@@ -30,7 +30,7 @@ class Form(QtWidgets.QWidget):
         # self.set_dxf_options()
 
     def getStandardButtons(self):
-        return int(QtWidgets.QDialogButtonBox.Cancel)
+        return 0
 
     def set_dxf_scale(self):
         p = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/Draft")
@@ -71,6 +71,7 @@ class Form(QtWidgets.QWidget):
         self.form.export_to_etabs.clicked.connect(self.export_to_etabs)
         self.form.create_columns.clicked.connect(self.create_columns)
         self.form.referesh.clicked.connect(self.fill_levels)
+        self.form.cancel_button.clicked.connect(self.reject)
 
     def column_from_changed(self):
         read_from = self.form.columns_from.currentText()
