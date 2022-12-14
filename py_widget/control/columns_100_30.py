@@ -20,6 +20,7 @@ class Form(QtWidgets.QWidget):
         self.form.browse.clicked.connect(self.get_filename)
         self.form.structure_type.currentIndexChanged.connect(self.set_code)
         self.form.check.clicked.connect(self.check)
+        self.form.cancel_button.clicked.connect(self.accept)
 
     def set_code(self):
         self.type_ = self.form.structure_type.currentText()
@@ -55,6 +56,27 @@ class Form(QtWidgets.QWidget):
             headers,
             model=table_model.Column100_30Model,
             )
+        def get_100_30_names():
+                filt = data['Result'] == True
+                df = data.loc[filt]
+                return  df['UniqueName']
+
+        group_name = self.form.group_name.text() # if self.form.group_checkbox.isChecked() else None
+        frame_names = get_100_30_names()
+        if group_name:
+            if len(frame_names) != 0:
+                self.etabs.group.add(group_name)
+                for name in frame_names:
+                    self.etabs.SapModel.FrameObj.SetGroupAssign(name, group_name)
+        # if self.form.select_all.isChecked():
+            # if group_name is None:
+            #     frame_names = get_100_30_names()
+        # if len(frame_names) != 0:
+        #     return
+        self.etabs.view.show_frames(frame_names)   
 
     def accept(self):
         Gui.Control.closeDialog()
+
+    def getStandardButtons(self):
+        return 0

@@ -178,14 +178,13 @@ Gui.addCommand('civiltools_views',civiltools_views.CivilToolsViews())
 Gui.addCommand('civiltools_discretize',gui_discretize.CivilToolsDiscretize())
 
 civiltools_list = [
-            "civiltools_import_model",
             "civil_automatic_drift",
+            "civil_show_torsion",
             "civil_modify_torsion_stiffness",
             "civil_irregurality_of_mass",
             "civil_story_stiffness",
             "civil_get_weakness",
             "civil_get_weakness_torsion",
-            "civil_show_torsion",
             "civil_create_period_file",
             "civil_show_story_forces",
             "civil_show_story_stiffness",
@@ -195,6 +194,7 @@ civiltools_list = [
             "civil_high_pressure_columns",
             "civiltools_100_30",
             "civil_earthquake_factor",
+            "civiltools_import_model",
             ]
 civiltools_assign = [
             "civil_wall_load_on_frames",
