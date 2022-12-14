@@ -108,8 +108,8 @@ class Form(QtWidgets.QWidget):
             11 : self.form.lroof_combobox, # 'ROOF Live',
             # 12 : self.form.dead_combobox # 'Notional',
         }
-        live_loads = [lp for lp in load_patterns if self.etabs.SapModel.LoadPatterns.GetLoadType(lp)[0] in (3, 4, 11)]
-        other_loads = [lp for lp in load_patterns if self.etabs.SapModel.LoadPatterns.GetLoadType(lp)[0] == 8]
+        live_loads = [''] + [lp for lp in load_patterns if self.etabs.SapModel.LoadPatterns.GetLoadType(lp)[0] in (3, 4, 11)]
+        other_loads = [''] + [lp for lp in load_patterns if self.etabs.SapModel.LoadPatterns.GetLoadType(lp)[0] == 8]
         live_loads_combobox = (
                 self.form.live_combobox,
                 self.form.lred_combobox,
