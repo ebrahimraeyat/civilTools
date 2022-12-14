@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>504</width>
-    <height>225</height>
+    <width>433</width>
+    <height>244</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -85,6 +85,13 @@
        </item>
       </widget>
      </item>
+     <item row="3" column="1">
+      <widget class="QLineEdit" name="group_name">
+       <property name="text">
+        <string>100-30</string>
+       </property>
+      </widget>
+     </item>
      <item row="3" column="0">
       <widget class="QLabel" name="label_4">
        <property name="text">
@@ -92,10 +99,10 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
-      <widget class="QLineEdit" name="group_name">
+     <item row="4" column="0" colspan="2">
+      <widget class="QCheckBox" name="create_100_30">
        <property name="text">
-        <string>100-30</string>
+        <string>Create Load Combinations Without 100-30 at end</string>
        </property>
       </widget>
      </item>

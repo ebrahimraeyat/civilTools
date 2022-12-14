@@ -68,12 +68,17 @@ class Form(QtWidgets.QWidget):
                 self.etabs.group.add(group_name)
                 for name in frame_names:
                     self.etabs.SapModel.FrameObj.SetGroupAssign(name, group_name)
-        # if self.form.select_all.isChecked():
-            # if group_name is None:
-            #     frame_names = get_100_30_names()
-        # if len(frame_names) != 0:
-        #     return
-        self.etabs.view.show_frames(frame_names)   
+        self.etabs.view.show_frames(frame_names)
+        create_load_combinations = self.form.create_100_30.isChecked()
+        Gui.Control.closeDialog()
+        if create_load_combinations:
+            # Gui.runCommand('civiltools_load_combinations')
+            import find_etabs
+            from py_widget.define import create_load_combinations
+            win = create_load_combinations.Form(self.etabs)
+            win.form.separate_direction.setChecked(True)
+            find_etabs.show_win(win, in_mdi=False)
+
 
     def accept(self):
         Gui.Control.closeDialog()
