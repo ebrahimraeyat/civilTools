@@ -27,8 +27,8 @@ def allowed_to_continue(
     else:
         if text in ('INTERNET', 'SERIAL'):
             serial_win = SerialForm()
-            serial_win.serial.setText(check.serial)
-            serial_win.exec_()
+            serial_win.form.serial.setText(check.serial)
+            serial_win.form.exec_()
             return False, check
         elif text == 'REGISTERED':
             msg = "Congrajulation! You are now registered, enjoy using this features!"

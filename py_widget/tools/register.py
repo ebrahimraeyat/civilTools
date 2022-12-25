@@ -13,7 +13,7 @@ civiltools_path = Path(__file__).absolute().parent.parent.parent
 class Form(QtWidgets.QWidget):
     def __init__(self):
         super(Form, self).__init__()
-        self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'tools' / 'serial.ui'))
+        self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'serial.ui'))
         self.fill_serial()
         self.create_connections()
         
