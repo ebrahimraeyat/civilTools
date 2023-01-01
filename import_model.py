@@ -96,17 +96,17 @@ def import_model(
             if section_name:
                 section_index = frame_props[1].index(section_name)
                 section_type_num = frame_props[2][section_index]
-                section_type, category = section_types_map.get(section_type_num, ('G', 'Genaral'))
+                section_type, category = section_types_map.get(section_type_num, ('R', 'REC'))
             else:
                 section_type, category = 'None', 'None'
-                section_index = None
-                section_name = 'None'
-            if section_index is None:
-                width = 10
-                height = 10
-            else:
-                width = frame_props[4][section_index]
-                height = frame_props[3][section_index]
+            #     section_index = None
+            #     section_name = 'None'
+            # if section_index is None:
+            #     width = 10
+            #     height = 10
+            # else:
+            width = frame_props[4][section_index]
+            height = frame_props[3][section_index]
             profile = profiles.get(section_name, None)
             if profile is None:
                 if section_type == 'C':
@@ -120,8 +120,8 @@ def import_model(
                             section_type,
                             width, # T3
                             height, # height
-                            frame_props[6][section_index] if section_index else 10, # TW
-                            frame_props[5][section_index] if section_index else 10, # TF
+                            frame_props[6][section_index], # TW
+                            frame_props[5][section_index], # TF
                             # frame_props[7][section_index], # heightB
                             # frame_props[8][section_index], # TFB
                             ])
