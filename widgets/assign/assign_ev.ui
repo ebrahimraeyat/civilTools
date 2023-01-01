@@ -176,13 +176,6 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
-         <widget class="QComboBox" name="lred5_combobox">
-          <property name="editable">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
         <item row="0" column="0">
          <widget class="QCheckBox" name="checkBox_5">
           <property name="enabled">
@@ -190,19 +183,6 @@
           </property>
           <property name="text">
            <string>Live_0.5</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QCheckBox" name="lred5_checkbox">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="text">
-           <string>L-RED-0.5</string>
           </property>
           <property name="checked">
            <bool>true</bool>
@@ -369,6 +349,60 @@
    <item>
     <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
+      <widget class="QPushButton" name="export_to_etabs_button">
+       <property name="toolTip">
+        <string>Export Selected Load Combinations To ETABS Model</string>
+       </property>
+       <property name="text">
+        <string>Apply</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../civiltools.qrc">
+         <normaloff>:/civiltools/images/etabs.png</normaloff>:/civiltools/images/etabs.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="cancel_button">
+       <property name="toolTip">
+        <string>Export Selected Load Combinations To ETABS Model</string>
+       </property>
+       <property name="text">
+        <string>Cancel</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../civiltools.qrc">
+         <normaloff>:/civiltools/images/cancel.svg</normaloff>:/civiltools/images/cancel.svg</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="self_weight">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="text">
+        <string>Self Weight</string>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="replace">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="text">
+        <string>Replace</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QGroupBox" name="groupBox_5">
        <property name="title">
         <string>Cantilever Frames/Floors</string>
@@ -419,33 +453,6 @@
        <property name="icon">
         <iconset resource="../../civiltools.qrc">
          <normaloff>:/civiltools/images/freecad.svg</normaloff>:/civiltools/images/freecad.svg</iconset>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="replace">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="text">
-        <string>Replace</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="export_to_etabs_button">
-       <property name="toolTip">
-        <string>Export Selected Load Combinations To ETABS Model</string>
-       </property>
-       <property name="text">
-        <string>Apply</string>
-       </property>
-       <property name="icon">
-        <iconset resource="../../civiltools.qrc">
-         <normaloff>:/civiltools/images/etabs.png</normaloff>:/civiltools/images/etabs.png</iconset>
        </property>
       </widget>
      </item>

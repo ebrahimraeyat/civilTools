@@ -26,9 +26,17 @@ class Form(QtWidgets.QWidget):
         dead = self.form.dead_combobox.currentText()
         load_patterns.append(dead)
         ev = self.form.ev_combobox.currentText()
+        if not ev:
+            QMessageBox.warning(None, "EV Error", "Please Type the name of the Vertical seismic load pattern!")
+            return
+        load_patterns = self.etabs.load_patterns.get_load_patterns()
+        if ev not in load_patterns:
+            QMessageBox.warning(None, "EV Error", f"Vertical Load Pattern {ev} don't exist in Load patterns!")
+            return
         acc = float(self.form.acc.currentText())
         importance_factor = float(self.form.importance_factor.currentText())
         replace = self.form.replace.isChecked()
+        self_weight = self.form.self_weight.isChecked()
         self.etabs.frame_obj.assign_ev(
             frames=frames,
             load_patterns=load_patterns,
@@ -36,12 +44,14 @@ class Form(QtWidgets.QWidget):
             ev=ev,
             importance_factor=importance_factor,
             replace=replace,
+            self_weight=self_weight,
         )
         QMessageBox.information(
             None,
             'Successfull',
             f'Successfully Apply EV to {self.etabs.get_filename()} Model.',
         )
+        self.reject()
 
     def fill_load_patterns(self):
         load_patterns = self.etabs.load_patterns.get_load_patterns()
@@ -74,8 +84,17 @@ class Form(QtWidgets.QWidget):
             
     def create_connections(self):
         self.form.export_to_etabs_button.clicked.connect(self.export_to_etabs)
+        self.form.self_weight.stateChanged.connect(self.show_self_weight_warnings)
         self.form.partition_dead_checkbox.stateChanged.connect(self.partition_clicked)
         self.form.partition_live_checkbox.stateChanged.connect(self.partition_clicked)
+        self.form.cancel_button.clicked.connect(self.reject)
+
+    def show_self_weight_warnings(self):
+        if self.form.self_weight.isChecked():
+            ev = self.form.ev_combobox.currentText()
+            msg = f"This option changes the self weight value of the vertical load pattern, {ev}, \
+            and this considers the self weight of all Beams and Floors."
+            QMessageBox.warning(None, "Self Weight", msg)
 
     def partition_clicked(self):
         if self.form.partition_dead_checkbox.isChecked():
@@ -101,5 +120,12 @@ class Form(QtWidgets.QWidget):
 
         self.form.acc.setCurrentIndex(i)
         self.form.importance_factor.setCurrentIndex(j)
+
+    def reject(self):
+        import FreeCADGui as Gui
+        Gui.Control.closeDialog()    
+
+    def getStandardButtons(self):
+        return 0
 
     
