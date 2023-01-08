@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="civiltools">
+    <file>images/tooltip.svg</file>
     <file>images/save.svg</file>
     <file>images/save.png</file>
     <file>images/referesh.svg</file>

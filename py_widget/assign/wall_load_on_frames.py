@@ -11,7 +11,7 @@ civiltools_path = Path(__file__).absolute().parent.parent.parent
 
 
 class Form(QtWidgets.QWidget):
-    LOADTYPE = {'Force' : 1, 'Moment': 2}
+    # LOADTYPE = {'Force' : 1, 'Moment': 2}
     def __init__(self, etabs_model):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'assign' / 'wall_load_on_frames.ui'))
@@ -53,6 +53,10 @@ class Form(QtWidgets.QWidget):
         self.form.override_height.clicked.connect(self.reset_widget)
         self.form.relative.clicked.connect(self.set_dists_range)
         self.form.assign_button.clicked.connect(self.assign)
+        self.form.cancel_button.clicked.connect(self.reject)
+
+    def getStandardButtons(self):
+        return 0
 
     def set_dists_range(self):
         if self.form.relative.isChecked():
@@ -86,12 +90,31 @@ class Form(QtWidgets.QWidget):
         dist1 = self.form.dist1.value()
         dist2 = self.form.dist2.value()
         relative = self.form.relative.isChecked()
-        load_type = Form.LOADTYPE[self.form.load_type.currentText()]
+        # load_type = Form.LOADTYPE[self.form.load_type.currentText()]
+        load_type = 1
         replace = self.form.replace.isChecked()
         parapet_wall_height = self.form.parapet_wall_height.value()
         height_from_below = self.form.height_from_below.isChecked()
         opening_ratio = self.form.opening_ratio.value()
-        names = None
+        names = labels = None
+        if self.form.get_from_etabs_draw_on_freecad.isChecked():
+            names = []
+            labels = []
+            try:
+                types, all_names = self.etabs.SapModel.SelectObj.GetSelected()[1:3]
+            except IndexError:
+                types, all_names = [], []
+            for t, name in zip(types, all_names):
+                if t == 2 and self.etabs.frame_obj.is_beam(name):
+                    names.append(name)
+                    label = self.etabs.SapModel.FrameObj.GetLabelFromName(name)[0]
+                    labels.append(label)
+            if not labels:
+                labels = None
+            if not names:
+                names = None
+            print(names)
+            print(labels)
         item_type = 0
         if self.form.etabs_button.isChecked():
             self.etabs.frame_obj.assign_gravity_load_to_selfs_and_above_beams(
@@ -118,7 +141,7 @@ class Form(QtWidgets.QWidget):
                 mass_per_area=mass_per_area,
                 dist1=dist1,
                 dist2=dist2,
-                labels=names,
+                labels=labels,
                 stories=stories,
                 relative=relative,
                 replace=replace,
