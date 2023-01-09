@@ -54,6 +54,36 @@ class Form(QtWidgets.QWidget):
         self.form.relative.clicked.connect(self.set_dists_range)
         self.form.assign_button.clicked.connect(self.assign)
         self.form.cancel_button.clicked.connect(self.reject)
+        self.form.referesh_button.clicked.connect(self.referesh_clicked)
+
+    def referesh_clicked(self):
+        selected_objects = self.etabs.select_obj.get_selected_objects()
+        beam = selected_objects.get(2, None)
+        if beam is None:
+            QMessageBox.warning(None, 'Selection', "Please select one frame")
+            return
+        elif len(beam) > 1:
+            QMessageBox.warning(None, 'Selection', "Please select one frame only")
+            return
+        points = selected_objects.get(1, None)
+        if points is None:
+            QMessageBox.warning(None, 'Selection', "Please select two points")
+            return
+        elif len(points) != 2:
+            QMessageBox.warning(None, 'Selection', "Please select two points only")
+            return
+        p1_sel, p2_sel = points
+        p1, p2, _ = self.etabs.SapModel.FrameObj.GetPoints(beam[0])
+        d1 = self.etabs.points.get_distance_between_two_points_in_XY(p1, p1_sel)
+        d2 = self.etabs.points.get_distance_between_two_points_in_XY(p1, p2_sel)
+        if d2 < d1:
+            p1_sel, p2_sel = p2_sel, p1_sel
+        beam_length = self.etabs.points.get_distance_between_two_points_in_XY(p1, p2)
+        dist1 = min(d1 / beam_length, 1)
+        dist2 = min(d2 / beam_length, 1)
+        self.form.relative.setChecked(True)
+        self.form.dist1.setValue(dist1)
+        self.form.dist2.setValue(dist2)
 
     def getStandardButtons(self):
         return 0
@@ -82,7 +112,10 @@ class Form(QtWidgets.QWidget):
         loadpat = self.form.loadpat.currentText()
         mass_per_area = self.form.mass.value()
         if self.form.override_height.isChecked():
-            height = self.form.user_height.value() * 1000
+            if self.form.etabs_button.isChecked():
+                height = self.form.user_height.value()
+            elif self.form.freecad_button.isChecked():
+                height = self.form.user_height.value() * 1000
         else:
             height = None
         stories = [item.text() for item in self.form.stories.selectedItems()]
