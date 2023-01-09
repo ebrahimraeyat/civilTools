@@ -58,22 +58,30 @@ class Form(QtWidgets.QWidget):
 
     def referesh_clicked(self):
         selected_objects = self.etabs.select_obj.get_selected_objects()
-        beam = selected_objects.get(2, None)
-        if beam is None:
-            QMessageBox.warning(None, 'Selection', "Please select one frame")
+        frames = selected_objects.get(2, None)
+        if frames is None:
+            QMessageBox.warning(None, 'Selection', "Please select one Beam")
             return
-        elif len(beam) > 1:
-            QMessageBox.warning(None, 'Selection', "Please select one frame only")
+        beams = []
+        for frame in frames:
+            if self.etabs.frame_obj.is_beam(frame):
+                beams.append(frame)
+        if not beams:
+            QMessageBox.warning(None, 'Selection', "Please select one Beam")
             return
+        if len(beams) > 1:
+            QMessageBox.warning(None, 'Selection', "Please select one Beam only")
+            return
+        beam = beams[0]
         points = selected_objects.get(1, None)
         if points is None:
             QMessageBox.warning(None, 'Selection', "Please select two points")
             return
         elif len(points) != 2:
-            QMessageBox.warning(None, 'Selection', "Please select two points only")
+            QMessageBox.warning(None, 'Selection', "Please exactly select two points")
             return
         p1_sel, p2_sel = points
-        p1, p2, _ = self.etabs.SapModel.FrameObj.GetPoints(beam[0])
+        p1, p2, _ = self.etabs.SapModel.FrameObj.GetPoints(beam)
         d1 = self.etabs.points.get_distance_between_two_points_in_XY(p1, p1_sel)
         d2 = self.etabs.points.get_distance_between_two_points_in_XY(p1, p2_sel)
         if d2 < d1:
