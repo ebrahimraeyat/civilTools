@@ -29,8 +29,8 @@ class Form(QtWidgets.QWidget):
         if not ev:
             QMessageBox.warning(None, "EV Error", "Please Type the name of the Vertical seismic load pattern!")
             return
-        load_patterns = self.etabs.load_patterns.get_load_patterns()
-        if ev not in load_patterns:
+        all_load_patterns = self.etabs.load_patterns.get_load_patterns()
+        if ev not in all_load_patterns:
             QMessageBox.warning(None, "EV Error", f"Vertical Load Pattern {ev} don't exist in Load patterns!")
             return
         acc = float(self.form.acc.currentText())
