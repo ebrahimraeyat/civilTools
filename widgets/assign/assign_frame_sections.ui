@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>463</width>
+    <width>629</width>
     <height>718</height>
    </rect>
   </property>
@@ -18,6 +18,50 @@
     <normaloff>:/cfactor/images/assign_frame_section.svg</normaloff>:/cfactor/images/assign_frame_section.svg</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="assign_button">
+       <property name="toolTip">
+        <string>Export Selected Load Combinations To ETABS Model</string>
+       </property>
+       <property name="text">
+        <string>Assign</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../civiltools.qrc">
+         <normaloff>:/civiltools/images/assign_frame_sections.svg</normaloff>:/civiltools/images/assign_frame_sections.svg</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>50</width>
+         <height>50</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="cancel_button">
+       <property name="toolTip">
+        <string>Export Selected Load Combinations To ETABS Model</string>
+       </property>
+       <property name="text">
+        <string>Cancel</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../civiltools.qrc">
+         <normaloff>:/civiltools/images/cancel.svg</normaloff>:/civiltools/images/cancel.svg</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>50</width>
+         <height>50</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
@@ -96,6 +140,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../civiltools.qrc"/>
+ </resources>
  <connections/>
 </ui>

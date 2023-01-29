@@ -42,6 +42,8 @@ class Form(QtWidgets.QWidget):
         self.form.all_sections.clicked.connect(self.fill_sections)
         self.form.beams.clicked.connect(self.fill_sections)
         self.form.columns.clicked.connect(self.fill_sections)
+        self.form.assign_button.clicked.connect(self.assign)
+        self.form.cancel_button.clicked.connect(self.reject)
         self.form.filter_line.textChanged.connect(self.filter_sections)
 
     def filter_sections(self):
@@ -50,7 +52,7 @@ class Form(QtWidgets.QWidget):
             item = self.form.sections.item(i)
             item.setHidden(not (item.text().__contains__(text)))
 
-    def accept(self):
+    def assign(self):
         self.etabs.unlock_model()
         stories = [item.text() for item in self.form.stories.selectedItems()]
         sec_name = self.form.sections.currentItem().text()
@@ -65,6 +67,9 @@ class Form(QtWidgets.QWidget):
             frame_names = None,
             sec_type = sec_type,
             )
+        
+    def getStandardButtons(self):
+        return 0
 
     def reject(self):
         Gui.Control.closeDialog()
