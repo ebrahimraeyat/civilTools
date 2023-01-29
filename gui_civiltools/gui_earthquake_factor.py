@@ -48,6 +48,8 @@ class CivilEarthquakeFactor:
         if not json_file.exists():
             QMessageBox.warning(None, 'Settings', 'Please Set Options First!')
             Gui.runCommand("civiltools_settings")
+        if not json_file.exists():
+            return
         from py_widget import earthquake_factor
         win = earthquake_factor.Form(etabs, json_file)
         find_etabs.show_win(win, in_mdi=False)

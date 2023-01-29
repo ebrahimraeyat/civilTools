@@ -45,6 +45,7 @@ from gui_civiltools.define import (
     gui_create_load_combinations,
     gui_frame_sections,
     gui_define_axes,
+    gui_create_spectral,
 )
 from gui_civiltools.control import (
     gui_get_weakness_torsion, 
@@ -177,6 +178,7 @@ Gui.addCommand('civiltools_100_30', gui_100_30_columns.CivilTools100_30Columns()
 Gui.addCommand('civiltools_import_model', gui_import_model.CivilToolsImportModel())
 Gui.addCommand('civiltools_views',civiltools_views.CivilToolsViews())
 Gui.addCommand('civiltools_discretize',gui_discretize.CivilToolsDiscretize())
+Gui.addCommand('civiltools_create_spectral',gui_create_spectral.CivilToolsCreateSpectral())
 
 civiltools_list = [
             "civil_automatic_drift",
@@ -195,6 +197,7 @@ civiltools_list = [
             "civil_high_pressure_columns",
             "civiltools_100_30",
             "civil_earthquake_factor",
+            "civiltools_create_spectral",
             "civiltools_import_model",
             ]
 civiltools_assign = [

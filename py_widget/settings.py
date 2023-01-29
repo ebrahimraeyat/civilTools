@@ -1,14 +1,16 @@
 import os
 from pathlib import Path
+import json, csv
 
 from PySide2 import  QtWidgets
-from PySide2.QtWidgets import QTreeWidgetItemIterator
+from PySide2 import QtCore
 
 import FreeCAD
 import FreeCADGui as Gui
 
 from db import ostanha
 from exporter import config
+from qt_models import treeview_system
 
 civiltools_path = Path(__file__).absolute().parent.parent
 
@@ -19,35 +21,17 @@ class Form(QtWidgets.QWidget):
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'civiltools_project_settings.ui'))
         self.etabs = etabs_model
         self.stories = self.etabs.SapModel.Story.GetStories()[1]
-        self.create_widgets()
+        self.set_system_treeview()
+        self.fill_cities()
         self.create_connections()
         self.fill_top_bot_stories()
         self.load_config()
-        self.fill_height_and_no_of_stories()
+        # self.fill_height_and_no_of_stories()
 
-    def create_widgets(self):
+    def fill_cities(self):
         ostans = ostanha.ostans.keys()
-        self.form.ostanBox.addItems(ostans)
+        self.form.ostan.addItems(ostans)
         self.set_citys_of_current_ostan()
-        # self.setA()
-        iterator = QTreeWidgetItemIterator(self.form.x_treeWidget)
-        i = 0
-        while iterator.value():
-            item = iterator.value()
-            iterator += 1
-            if i == 2:
-                self.form.x_treeWidget.setCurrentItem(item, 0)
-                break
-            i += 1
-        iterator = QTreeWidgetItemIterator(self.form.y_treeWidget)
-        i = 0
-        while iterator.value():
-            item = iterator.value()
-            iterator += 1
-            if i == 2:
-                self.form.y_treeWidget.setCurrentItem(item, 0)
-                break
-            i += 1
 
     def fill_top_bot_stories(self):
         for combo_box in (
@@ -80,32 +64,30 @@ class Form(QtWidgets.QWidget):
                 )
         hx, hy = self.etabs.story.get_heights(bot_story_x, top_story_x, bot_story_y, top_story_y, False)
         nx, ny = self.etabs.story.get_no_of_stories(bot_level_x, top_level_x, bot_level_y, top_level_y)
-        self.form.no_story_x_spinbox.setValue(nx)
+        self.form.no_of_story_x.setValue(nx)
         # self.form.no_story_y_spinbox.setValue(ny)
-        self.form.height_x_spinbox.setValue(hx)
+        self.form.height_x.setValue(hx)
         # self.form.height_y_spinbox.setValue(hy)
 
     def get_current_ostan(self):
-        return self.form.ostanBox.currentText()
+        return self.form.ostan.currentText()
 
     def get_current_city(self):
-        return self.form.cityBox.currentText()
+        return self.form.city.currentText()
 
     def get_citys_of_current_ostan(self, ostan):
         '''return citys of ostan'''
         return ostanha.ostans[ostan].keys()
 
     def set_citys_of_current_ostan(self):
-        self.form.cityBox.clear()
+        self.form.city.clear()
         ostan = self.get_current_ostan()
         citys = self.get_citys_of_current_ostan(ostan)
-        # citys.sort()
-        self.form.cityBox.addItems(citys)
+        self.form.city.addItems(citys)
 
     def create_connections(self):
-        self.form.ostanBox.currentIndexChanged.connect(self.set_citys_of_current_ostan)
-        self.form.cityBox.currentIndexChanged.connect(self.setA)
-        self.form.x_treeWidget.itemActivated.connect(self.xactivate)
+        self.form.ostan.currentIndexChanged.connect(self.set_citys_of_current_ostan)
+        self.form.city.currentIndexChanged.connect(self.setA)
         self.form.bot_x_combo.currentIndexChanged.connect(self.fill_height_and_no_of_stories)
         self.form.top_x_combo.currentIndexChanged.connect(self.fill_height_and_no_of_stories)
         self.form.save_pushbutton.clicked.connect(self.save)
@@ -113,23 +95,22 @@ class Form(QtWidgets.QWidget):
         self.form.top_story_for_height_checkbox.clicked.connect(self.fill_height_and_no_of_stories)
         self.form.top_story_for_height.currentIndexChanged.connect(self.fill_height_and_no_of_stories)
 
-    def save(self):
-        self.save_config()
-
     def load_config(self):
         etabs_filename = self.etabs.get_filename()
         json_file = etabs_filename.with_suffix('.json')
-        if json_file.exists():
-            config.load(json_file, self.form)
         param = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools")
         show_at_startup = param.GetBool("FirstTime", True)
         self.form.show_at_startup.setChecked(show_at_startup)
-        ostan = param.GetString("ostan", 'قم')
-        city = param.GetString("city", 'قم')
-        index = self.form.ostanBox.findText(ostan)
-        self.form.ostanBox.setCurrentIndex(index)
-        index = self.form.cityBox.findText(city)
-        self.form.cityBox.setCurrentIndex(index)
+        # ostan = param.GetString("ostan", 'قم')
+        # city = param.GetString("city", 'قم')
+        # index = self.form.ostan.findText(ostan)
+        # self.form.ostan.setCurrentIndex(index)
+        # index = self.form.city.findText(city)
+        # self.form.city.setCurrentIndex(index)
+        config.load(json_file, self.form)
+        
+    def save(self):
+        self.save_config()
 
     def save_config(self, json_file=None):
         exists = False
@@ -154,20 +135,40 @@ class Form(QtWidgets.QWidget):
     def reject(self):
         self.form.reject()
 
-    def xactivate(self):
-        if self.form.x_treeWidget.currentItem().parent():
-            system = self.form.x_treeWidget.currentItem().parent().text(0)
-            lateral = self.form.x_treeWidget.currentItem().text(0)
-            self.form.y_treeWidget.scrollToItem(self.form.x_treeWidget.currentItem())
-            return (system, lateral)
-        return None
+    def select_treeview_item(self, view, i, n):
+        index = view.model().index(i, 0, QtCore.QModelIndex())
+        index2 = view.model().index(n, 0, index)
+        view.clearSelection()
+        view.setCurrentIndex(index2)
+        # view.setExpanded(index, False)
+        view.setExpanded(index2, True)
 
-    def yactivate(self):
-        if self.form.y_treeWidget.currentItem().parent():
-            system = self.form.y_treeWidget.currentItem().parent().text(0)
-            lateral = self.form.y_treeWidget.currentItem().text(0)
-            return (system, lateral)
-        return None
+    def set_system_treeview(self):
+        items = {}
+
+        # Set some random data:
+        csv_path =  civiltools_path / 'db' / 'systems.csv'
+        with open(csv_path, 'r', encoding='utf-8') as f:
+            reader = csv.reader(f, delimiter=',')
+            for row in reader:
+                if (
+                    row[0][1] in ['ا', 'ب', 'پ', 'ت', 'ث'] or
+                    row[0][0] in ['ا', 'ب', 'پ', 'ت', 'ث']
+                    ):
+                    i = row[0]
+                    root = treeview_system.CustomNode(i)
+                    items[i] = root
+                else:
+                    root.addChild(treeview_system.CustomNode(row))
+        headers = ('System', 'Ru', 'Omega', 'Cd', 'H_max', 'alpha', 'beta', 'note', 'ID')
+        self.form.x_treeview.setModel(treeview_system.CustomModel(list(items.values()), headers=headers))
+        self.form.x_treeview.setColumnWidth(0, 400)
+        for i in range(1,len(headers)):
+            self.form.x_treeview.setColumnWidth(i, 40)
+        self.form.y_treeview.setModel(treeview_system.CustomModel(list(items.values()), headers=headers))
+        self.form.y_treeview.setColumnWidth(0, 400)
+        for i in range(1,len(headers)):
+            self.form.y_treeview.setColumnWidth(i, 40)
 
     def setA(self):
         sotoh = ['خیلی زیاد', 'زیاد', 'متوسط', 'کم']
@@ -175,6 +176,7 @@ class Form(QtWidgets.QWidget):
         city = self.get_current_city()
         try:
             A = int(ostanha.ostans[ostan][city][0])
-            self.form.accText.setText(sotoh[A - 1])
+            i = self.form.risk_level.findText(sotoh[A - 1])
+            self.form.risk_level.setCurrentIndex(i)
         except KeyError:
             pass

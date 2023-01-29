@@ -1,39 +1,78 @@
 import json
 
-from building.RuTable import Ru
+from PySide2 import QtCore
 
 def save(json_file, widget):
-	d = {}
-	d['ostan'] = widget.ostanBox.currentText()
-	d['city'] = widget.cityBox.currentText()
-	d['risk_level'] = widget.accText.text()
-	d['soil_type'] = widget.soilType.currentText()
-	d['importance_factor'] = widget.IBox.currentText()
-	d['bot_x_combo'] = widget.bot_x_combo.currentText()
-	d['top_x_combo'] = widget.top_x_combo.currentText()
-	d['top_story_for_height'] = widget.top_story_for_height.currentText()
-	d['top_story_for_height_checkbox'] = widget.top_story_for_height_checkbox.isChecked()
-	d['height_x'] = widget.height_x_spinbox.value()
-	d['no_of_story_x'] = widget.no_story_x_spinbox.value()
-	# d['t_an_x'] = widget.xTAnalaticalSpinBox.value()
-	# d['t_an_y'] = widget.yTAnalaticalSpinBox.value()
-	d['infill'] = widget.infillCheckBox.isChecked()
-	d['x_system'] = find_selected_item_in_treewidget(widget.x_treeWidget)
-	d['y_system'] = find_selected_item_in_treewidget(widget.y_treeWidget)
-	i, n = d['x_system']
-	x_system_name, x_lateral_name = get_treewidget_item_text(widget.x_treeWidget, i, n)
-	i, n = d['y_system']
-	y_system_name, y_lateral_name = get_treewidget_item_text(widget.y_treeWidget, i, n)
-	d['x_system_name'] = x_system_name
-	d['y_system_name'] = y_system_name
-	d['x_lateral_name'] = x_lateral_name
-	d['y_lateral_name'] = y_lateral_name
+	new_d = {}
+	# comboboxes
+	for key in (
+		'ostan',
+		'city',
+		'risk_level',
+		'soil_type',
+		'importance_factor',
+		'bot_x_combo',
+		'top_x_combo',
+		'top_story_for_height',
+		):
+		if hasattr(widget, key):
+			exec(f"new_d['{key}'] = widget.{key}.currentText()")
+	# Spinboxes
+	for key in (
+		'height_x',
+		'no_of_story_x',
+		't_an_x',
+		't_an_y',
+		):
+		if hasattr(widget, key):
+			exec(f"new_d['{key}'] = widget.{key}.value()")
+	# Checkboxes
+	for key in (
+		'top_story_for_height_checkbox',
+		'infill',
+		):
+		if hasattr(widget, key):
+			exec(f"new_d['{key}'] = widget.{key}.isChecked()")
+
 	from building import RuTable
-	d['cdx'] = RuTable.Ru[x_system_name][x_lateral_name][2]
-	d['cdy'] = RuTable.Ru[y_system_name][y_lateral_name][2]
-	with open(json_file, 'w') as f:
+	system, lateral, i, n = get_treeview_item_prop(widget.x_treeview)
+	new_d['x_system'] = [i, n]
+	new_d['x_system_name'] = system
+	new_d['x_lateral_name'] = lateral
+	new_d['cdx'] = RuTable.Ru[system][lateral][2]
+	system, lateral, i, n = get_treeview_item_prop(widget.y_treeview)
+	new_d['y_system'] = [i, n]
+	new_d['y_system_name'] = system
+	new_d['y_lateral_name'] = lateral
+	new_d['cdy'] = RuTable.Ru[system][lateral][2]
+	d = {}
+	if json_file.exists():
+		with open(json_file, 'r', encoding='utf-8') as f:
+			d = json.load(f)
+	d.update(new_d)
+	with open(json_file, 'w', encoding='utf-8') as f:
 		json.dump(d, f)
 
+def get_treeview_item_prop(view):
+	indexes = view.selectedIndexes()
+	if not len(indexes):
+		return
+	index = indexes[0]
+	if index.isValid():
+		data = index.internalPointer()._data
+		if len(data) == 1:
+			return
+		lateral = data[0]
+		lateral = lateral.split('-')[1]
+		lateral = lateral.lstrip(' ')
+		system = index.parent().data()
+		system = system.split('-')[1]
+		system = system.lstrip(' ')
+		if hasattr(index, 'parent'):
+			i = index.parent().row()
+			n = index.row()
+		return system, lateral, i, n
+	
 def save_analytical_periods(json_file, tx, ty):
 	with open(json_file, 'r') as f:
 		d = json.load(f)
@@ -65,67 +104,58 @@ def get_cd(json_file):
 	return cdx, cdy
 
 def load(json_file, widget=None):
-	with open(json_file, 'r') as f:
-		d = json.load(f)
+	d = {}
+	if json_file.exists():
+		with open(json_file, 'r', encoding='utf-8') as f:
+			d = json.load(f)
 	if widget is None:
 		return d
+	keys = d.keys()
+	for key in (
+		'ostan',
+		'city',
+		'risk_level',
+		'soil_type',
+		'importance_factor',
+		'bot_x_combo',
+		'top_x_combo',
+		'top_story_for_height',
+		):
+		if key in keys and hasattr(widget, key):
+			exec(f"index = widget.{key}.findText(d['{key}'])")
+			exec(f"widget.{key}.setCurrentIndex(index)")
+		elif key in ('ostan', 'city'):
+			exec(f"index = widget.{key}.findText('قم')")
+			exec(f"widget.{key}.setCurrentIndex(index)")
 
-	index = widget.soilType.findText(d['soil_type'])
-	widget.soilType.setCurrentIndex(index)
-	index = widget.IBox.findText(d['importance_factor'])
-	widget.IBox.setCurrentIndex(index)
-	index = widget.bot_x_combo.findText(d['bot_x_combo'])
-	widget.bot_x_combo.setCurrentIndex(index)
-	index = widget.top_x_combo.findText(d['top_x_combo'])
-	widget.top_x_combo.setCurrentIndex(index)
-	text = d.get('top_story_for_height', None)
-	if text:
-		index = widget.top_story_for_height.findText(text)
-		widget.top_story_for_height.setCurrentIndex(index)
-	
-	checked = d.get('top_story_for_height_checkbox', True)
-	widget.top_story_for_height_checkbox.setChecked(checked)
-	widget.top_story_for_height.setEnabled(checked)
-	widget.height_x_spinbox.setValue(d['height_x'])
-	widget.no_story_x_spinbox.setValue(d['no_of_story_x'])
-	# widget.xTAnalaticalSpinBox.setValue(d['t_an_x'])
-	# widget.yTAnalaticalSpinBox.setValue(d['t_an_y'])
-	widget.infillCheckBox.setChecked(d['infill'])
-	x_item = d.get('x_system', None)
-	y_item = d.get('y_system', None)
-	if x_item and y_item:
-		select_treewidget_item(widget.x_treeWidget, *x_item)
-		select_treewidget_item(widget.y_treeWidget, *y_item)
+	# Checkboxes
+	key = 'top_story_for_height_checkbox'
+	if key in keys and hasattr(widget, key):
+		checked = d.get(key, True)
+		widget.top_story_for_height_checkbox.setChecked(checked)
+		widget.top_story_for_height.setEnabled(checked)
+	key = 'infill'
+	if key in keys and hasattr(widget, key):
+		widget.infill.setChecked(d[key])
+	# Spinboxes
+	for key in (
+		'height_x',
+		'no_of_story_x',
+		't_an_x',
+		't_an_y',
+		):
+		if key in keys and hasattr(widget, key):
+			exec(f"widget.{key}.setValue(d['{key}'])")
+	# TreeViewes
+	x_item = d.get('x_system', [2, 1])
+	y_item = d.get('y_system', [2, 1])
+	select_treeview_item(widget.x_treeview, *x_item)
+	select_treeview_item(widget.y_treeview, *y_item)
+	return d
 
-def find_selected_item_in_treewidget(treewidget):
-	root_item = treewidget.invisibleRootItem()
-	top_level_count = root_item.childCount()
-
-	for i in range(top_level_count):
-		top_level_item = root_item.child(i)
-		child_num = top_level_item.childCount()
-		for n in range(child_num):
-			child_item = top_level_item.child(n)
-			if child_item.isSelected():
-				return i, n
-
-def select_treewidget_item(treewidget, i, n):
-	if i is None:
-		return
-	cur_i, cur_n = find_selected_item_in_treewidget(treewidget)
-	root_item = treewidget.invisibleRootItem()
-	if cur_i == i and cur_n == n:
-		return
-	else:
-		root_item.child(cur_i).child(cur_n).setSelected(False)
-		root_item.child(cur_i).setExpanded(False)
-		root_item.child(i).child(n).setSelected(True)
-		root_item.child(i).setExpanded(True)
-
-def get_treewidget_item_text(treewidget, i, n):
-	if i is None:
-		return
-	root_item = treewidget.invisibleRootItem()
-	system = root_item.child(i).text(0)
-	lateral = root_item.child(i).child(n).text(0)
-	return system, lateral
+def select_treeview_item(view, i, n):
+	root_index = view.model().index(i, 0, QtCore.QModelIndex())
+	child_index = view.model().index(n, 0, root_index)
+	view.clearSelection()
+	view.setCurrentIndex(child_index)
+	view.setExpanded(child_index, True)
