@@ -8,7 +8,13 @@ from PySide2 import  QtWidgets
 # from PySide2 import QtCore
 from PySide2.QtWidgets import QFileDialog
 
-import pyqtgraph as pg
+try:
+    import pyqtgraph as pg
+except ImportError:
+    import subprocess
+    import sys
+    package = 'pyqtgraph'
+    subprocess.check_call(['python', "-m", "pip", "install", package])
 
 pg.setConfigOption('background', 'w')
 pg.setConfigOption('foreground', 'k')
