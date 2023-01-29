@@ -51,6 +51,7 @@ class Form(QtWidgets.QWidget):
             item.setHidden(not (item.text().__contains__(text)))
 
     def accept(self):
+        self.etabs.unlock_model()
         stories = [item.text() for item in self.form.stories.selectedItems()]
         sec_name = self.form.sections.currentItem().text()
         sec_type = 'other'
