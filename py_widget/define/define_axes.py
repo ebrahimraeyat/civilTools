@@ -27,42 +27,23 @@ class Form(QtWidgets.QWidget):
         self.dxf_content = None
         self.fill_levels()
         self.create_connections()
-        # self.set_dxf_options()
-
-    def getStandardButtons(self):
-        return 0
 
     def set_dxf_scale(self):
         p = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/Draft")
+        scale = self.form.unit_number.value()
+        p.SetFloat("dxfScaling", scale)
+    
+    def set_scale(self):
         unit = self.form.unit.currentText()
         units = {
                 'm': 1000,
                 'cm': 10,
                 'mm': 1,
                 }
-        p.SetFloat("dxfScaling", units[unit])
+        scale = units[unit]
+        self.form.unit_number.setValue(scale)
         # p.SetBool("dxfUseLegacyImporter", True)
         # p.GetBool("dxfGetOriginalColors", True)
-
-    # def import_dxf(self):
-    #     filename = self.form.filename.text()
-    #     if not filename:
-    #         return
-    #     importDXF.readPreferences()
-    #     doc = FreeCAD.ActiveDocument
-    #     importDXF.getDXFlibs()
-    #     gui = FreeCAD.GuiUp
-    #     if importDXF.dxfReader:
-    #         # groupname = str(Path(filename).name)
-    #         # importgroup = doc.addObject("App::DocumentObjectGroup", groupname)
-    #         # importgroup.Label = groupname
-    #         importDXF.processdxf(doc, filename)
-    #         # for l in layers:
-    #         #     importgroup.addObject(l)
-    #     else:
-    #         importDXF.errorDXFLib(gui)
-    #     if gui:
-    #         Gui.SendMsgToActiveView("ViewFit")
 
     def create_connections(self):
         self.form.columns_from.currentIndexChanged.connect(self.column_from_changed)
@@ -72,6 +53,7 @@ class Form(QtWidgets.QWidget):
         self.form.create_columns.clicked.connect(self.create_columns)
         self.form.referesh.clicked.connect(self.fill_levels)
         self.form.cancel_button.clicked.connect(self.reject)
+        self.form.unit.currentIndexChanged.connect(self.set_scale)
 
     def column_from_changed(self):
         read_from = self.form.columns_from.currentText()
@@ -112,6 +94,8 @@ class Form(QtWidgets.QWidget):
         if FreeCAD.ActiveDocument is None:
             FreeCAD.newDocument('Grids')
         self.set_dxf_scale()
+        import importlib
+        importlib.reload(dxf_funcs)
         draw_line = self.form.lines.isChecked()
         draw_polyline = draw_line
         draw_block = self.form.blocks.isChecked()
@@ -167,7 +151,10 @@ class Form(QtWidgets.QWidget):
         #     QMessageBox.Warning(None, 'Error', 'You Must have at least  1 line in X and Y directions.')
         #     return
         x_style_numbering = self.form.x_style_numbering.currentText()
-        y_style_numbering = self.form.y_style_numbering.currentText()
+        if x_style_numbering == '1,2,3':
+            y_style_numbering = 'A,B,C'
+        else:
+            y_style_numbering = '1,2,3'
         x_length = max(x_coordinates) - min(x_coordinates)
         y_length = max(y_coordinates) - min(y_coordinates)
         base = FreeCAD.Vector(min(x_coordinates), min(y_coordinates), 0)
@@ -347,6 +334,9 @@ class Form(QtWidgets.QWidget):
         
     def reject(self):
         Gui.Control.closeDialog()
+
+    def getStandardButtons(self):
+        return 0
 
     def show_etabs_warning(self):
         if not self.etabs.success:

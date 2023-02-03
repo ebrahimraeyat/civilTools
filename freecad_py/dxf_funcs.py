@@ -1,4 +1,8 @@
 import math
+if __name__ == "__main__":
+    freecad_path = r"G:\Program Files\FreeCAD 0.19\bin"
+    import sys
+    sys.path.append(freecad_path)
 import FreeCAD
 import Part, Draft
 import DraftVecUtils, DraftGeomUtils, WorkingPlane
@@ -51,8 +55,6 @@ dxfFillMode = p.GetBool("fillmode", True)
 dxfUseLegacyExporter = p.GetBool("dxfUseLegacyExporter", False)
 dxfExportBlocks = p.GetBool("dxfExportBlocks", True)
 dxfScaling = p.GetFloat("dxfScaling", 1.0)
-
-
 
 
 class ImportDXF:
@@ -907,7 +909,7 @@ class ImportDXF:
                 scale = insert.scale
                 tsf = FreeCAD.Matrix()
                 # for some reason z must be 0 to work
-                # tsf.scale(scale[0], scale[1], 0)
+                tsf.scale(scale[0], scale[1], 0)
                 tsf.rotateZ(rot)
                 try:
                     shape = shape.transformGeometry(tsf)
@@ -917,6 +919,7 @@ class ImportDXF:
                         shape = shape.transformGeometry(tsf)
                     except Part.OCCError:
                         print("importDXF: unable to apply insert transform:", tsf)
+                # shape.rotate(bb.Center, FreeCAD.Vector(0, 0, 1), insert.rotation)
                 shape.translate(pos)
                 return shape, width, height, insert.rotation
         return None
@@ -1318,3 +1321,14 @@ class ImportDXF:
 
 dxfBrightBackground = ImportDXF.isBrightBackground()
 dxfDefaultColor = ImportDXF.getColor()
+
+
+if __name__ == '__main__':
+    FreeCAD.newDocument()
+    FreeCAD.ActiveDocument.saveAs('ali.FCStd')
+    p = r"E:\alaki\plans\Drawing1.dxf"
+    dxf = ImportDXF(p)
+    # dxf.create_layer()
+    dxf.draw_block()
+    print("")
+
