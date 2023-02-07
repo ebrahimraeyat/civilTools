@@ -363,7 +363,7 @@ class Form(QtWidgets.QWidget):
             QMessageBox.information(None, title, msg)
             return
         msg = "Successfully written to Etabs."
-        config.save_config(self.json_file, self.form)
+        config.save(self.json_file, self.form)
         QMessageBox.information(None, "done", msg)
 
     def exportBCurveToImage(self):
