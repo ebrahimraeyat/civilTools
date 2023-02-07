@@ -64,6 +64,7 @@ def add_wall_on_beams(
                 labels.add(label)
     all_stories = get_all_stories()
     stories_objects = dict()
+    next_beam = None
     
     if stories is None:
         stories = [s.Label for s in all_stories[1:]]
