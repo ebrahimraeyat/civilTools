@@ -360,6 +360,15 @@
         <iconset resource="../../civiltools.qrc">
          <normaloff>:/civiltools/images/etabs.png</normaloff>:/civiltools/images/etabs.png</iconset>
        </property>
+       <property name="iconSize">
+        <size>
+         <width>60</width>
+         <height>60</height>
+        </size>
+       </property>
+       <property name="shortcut">
+        <string>Ctrl+S</string>
+       </property>
       </widget>
      </item>
      <item>
@@ -373,6 +382,15 @@
        <property name="icon">
         <iconset resource="../../civiltools.qrc">
          <normaloff>:/civiltools/images/cancel.svg</normaloff>:/civiltools/images/cancel.svg</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>60</width>
+         <height>60</height>
+        </size>
+       </property>
+       <property name="shortcut">
+        <string>Ctrl+S</string>
        </property>
       </widget>
      </item>

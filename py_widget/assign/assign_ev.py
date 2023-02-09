@@ -51,7 +51,7 @@ class Form(QtWidgets.QWidget):
             'Successfull',
             f'Successfully Apply EV to {self.etabs.get_filename()} Model.',
         )
-        self.reject()
+        # self.reject()
 
     def fill_load_patterns(self):
         load_patterns = self.etabs.load_patterns.get_load_patterns()
@@ -72,19 +72,19 @@ class Form(QtWidgets.QWidget):
             combobox = map_number_to_pattern.get(type_, None)
             if combobox is not None:
                 combobox.addItem(lp)
-            if type_ == 3 and '5' in lp:
-                    self.form.live5_combobox.addItem(lp)
-            elif type_ == 4 and '5' in lp:
-                    self.form.lred5_combobox.addItem(lp)
-            elif type_ == 5: # seismic
-                pass
-            elif type_ == 8:
-                if 'ev' in lp.lower() or 'ez' in lp.lower():
+            # if type_ == 3 and '5' in lp:
+            #         self.form.live5_combobox.addItem(lp)
+            # elif type_ == 4 and '5' in lp:
+            #         self.form.lred5_combobox.addItem(lp)
+            # elif type_ == 5: # seismic
+            #     pass
+            if type_ == 8:
+                if 'ev' in lp.lower() or 'ez' in lp.lower() or 'qz' in lp.lower():
                     self.form.ev_combobox.addItem(lp)
             
     def create_connections(self):
         self.form.export_to_etabs_button.clicked.connect(self.export_to_etabs)
-        self.form.self_weight.stateChanged.connect(self.show_self_weight_warnings)
+        # self.form.self_weight.stateChanged.connect(self.show_self_weight_warnings)
         self.form.partition_dead_checkbox.stateChanged.connect(self.partition_clicked)
         self.form.partition_live_checkbox.stateChanged.connect(self.partition_clicked)
         self.form.cancel_button.clicked.connect(self.reject)
