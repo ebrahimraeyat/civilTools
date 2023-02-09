@@ -122,8 +122,7 @@ class Form(QtWidgets.QWidget):
         self.form.importance_factor.setCurrentIndex(j)
 
     def reject(self):
-        import FreeCADGui as Gui
-        Gui.Control.closeDialog()    
+        self.form.close()    
 
     def getStandardButtons(self):
         return 0
