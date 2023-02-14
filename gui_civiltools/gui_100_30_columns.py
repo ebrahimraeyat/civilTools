@@ -45,12 +45,13 @@ class CivilTools100_30Columns:
             filename is None
             ):
             return
-        ex, ey = etabs.load_patterns.get_EX_EY_load_pattern()
-        if ex is None or ey is None:
-            QMessageBox.warning(None, 'ETABS', 'Please Define EX and EY in ETABS Model.')
+        etabs.lock_and_unlock_model()
+        ex, exn, exp, ey, eyn, eyp = etabs.load_patterns.get_seismic_load_patterns()
+        if not all([ex, exn, exp, ey, eyn, eyp]):
+            QMessageBox.warning(None, 'ETABS', 'Please Define EX, EXN, EXP, EY, EYN, EYP in ETABS Model.')
             return False
         from py_widget.control import columns_100_30
-        win = columns_100_30.Form(etabs, ex, ey)
+        win = columns_100_30.Form(etabs, list(ex)[0], list(exn)[0], list(exp)[0], list(ey)[0], list(eyn)[0], list(eyp)[0])
         Gui.Control.showDialog(win)
         show_warning_about_number_of_use(check)
         

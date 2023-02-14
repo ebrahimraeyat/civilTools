@@ -7,12 +7,16 @@ civiltools_path = Path(__file__).absolute().parent.parent.parent
 
 
 class Form(QtWidgets.QWidget):
-    def __init__(self, etabs_model, ex, ey):
+    def __init__(self, etabs_model, ex, exn, exp, ey, eyn, eyp):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'control' / 'columns_100_30.ui'))
         self.etabs = etabs_model
         self.ex = ex
+        self.exn = exn
+        self.exp = exp
         self.ey = ey
+        self.eyn = eyn
+        self.eyp = eyp
         self.create_connections()
         self.set_code()
 
@@ -44,7 +48,11 @@ class Form(QtWidgets.QWidget):
             filename = file_path
         data = self.etabs.frame_obj.require_100_30(
                 self.ex,
+                self.exn,
+                self.exp,
                 self.ey,
+                self.eyn,
+                self.eyp,
                 filename,
                 self.type_,
                 self.code,
@@ -57,9 +65,9 @@ class Form(QtWidgets.QWidget):
             model=table_model.Column100_30Model,
             )
         def get_100_30_names():
-                filt = data['Result'] == True
-                df = data.loc[filt]
-                return  df['UniqueName']
+            filt = data['Result'] == True
+            df = data.loc[filt]
+            return  df['UniqueName']
 
         group_name = self.form.group_name.text() # if self.form.group_checkbox.isChecked() else None
         frame_names = get_100_30_names()
