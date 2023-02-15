@@ -53,6 +53,7 @@ from gui_civiltools.control import (
 from gui_civiltools.tools import (
     gui_discretize, 
     gui_match_property,
+    gui_expand_area_load_sets,
 )
 
 from freecad_py import civiltools_views
@@ -208,6 +209,7 @@ civiltools_assign = [
 civiltools_tools = [
             "Separator",
             "civilTools_match_property",
+            "expand_area_load_sets",
             "civil_explod_load_patterns",
             "civil_offset_beams",
             "civil_connect_beam",
