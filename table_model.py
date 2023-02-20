@@ -1,4 +1,7 @@
 from pathlib import Path
+import random
+import colorsys
+
 import pandas as pd
 from PySide2.QtCore import QAbstractTableModel, Qt 
 from PySide2.QtGui import QColor, QIcon
@@ -399,13 +402,35 @@ class Column100_30Model(ResultsModel):
             elif role == Qt.TextAlignmentRole:
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
 
+class ExpandLoadSets(ResultsModel):
+    def __init__(self, data, headers):
+        super(ExpandLoadSets, self).__init__(data, headers)
+        self.headers = tuple(self.df.columns)
+        unique_names = self.df['UniqueName'].unique()
+        self.i_uniquename = self.headers.index('UniqueName')
+        
+        self.colors = {}
+        for name in unique_names:
+            self.colors[name] = random_color()
 
-class ResultWidget(QtWidgets.QWidget):
+    def data(self, index, role=Qt.DisplayRole):
+        row = index.row()
+        col = index.column()
+        if index.isValid():
+            value = self.df.iloc[row][col]
+            if role == Qt.DisplayRole:
+                return f'{value}'
+            elif role == Qt.BackgroundColorRole:
+                name = self.df.iloc[row][self.i_uniquename]
+                return QColor.fromRgb(*self.colors[name])
+            elif role == Qt.TextAlignmentRole:
+                return int(Qt.AlignCenter | Qt.AlignVCenter)
+            
+
+class ResultWidget(QtWidgets.QDialog):
     # main widget for user interface
     def __init__(self, data, headers, model, function=None, parent=None):
         super(ResultWidget, self).__init__(parent)
-        # self = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'results.ui'))
-        # self.setupUi(self)
         self.push_button_to_excel = QtWidgets.QPushButton()
         self.push_button_to_excel.setIcon(QIcon(str(civiltools_path / 'images' / 'xlsx.png')))
         label = QtWidgets.QLabel("Filter")
@@ -418,11 +443,11 @@ class ResultWidget(QtWidgets.QWidget):
         hbox.addWidget(label2)
         hbox.addWidget(self.comboBox)
         hbox.addWidget(self.push_button_to_excel)
-        vbox = QtWidgets.QVBoxLayout()
-        vbox.addLayout(hbox)
+        self.vbox = QtWidgets.QVBoxLayout()
+        self.vbox.addLayout(hbox)
         self.result_table_view = QtWidgets.QTableView()
-        vbox.addWidget(self.result_table_view)
-        self.setLayout(vbox)
+        self.vbox.addWidget(self.result_table_view)
+        self.setLayout(self.vbox)
         self.function = function
         self.data = data
         self.headers = headers
@@ -546,6 +571,21 @@ class ResultWidget(QtWidgets.QWidget):
     #     self.statustext.setText(mess_save)
     #     pass
 
+class ExpandedLoadSetsResults(ResultWidget):
+    def __init__(self, data, headers, model, function=None, parent=None):
+        super(ExpandedLoadSetsResults, self).__init__(data, headers, model, function, parent)
+        self.cancel_pushbutton = QtWidgets.QPushButton()
+        self.cancel_pushbutton.setIcon(QIcon(str(civiltools_path / 'images' / 'cancel.svg')))
+        self.cancel_pushbutton.setText('&Cancel')
+        self.apply_pushbutton = QtWidgets.QPushButton()
+        self.apply_pushbutton.setIcon(QIcon(str(civiltools_path / 'images' / 'etabs.png')))
+        self.apply_pushbutton.setText('&Apply')
+
+        hbox = QtWidgets.QHBoxLayout()
+        hbox.addWidget(self.cancel_pushbutton)
+        hbox.addWidget(self.apply_pushbutton)
+        self.vbox.addLayout(hbox)
+
 def show_results(data, headers, model, function=None):
     win = ResultWidget(data, headers, model, function)
     # Gui.Control.showDialog(win)
@@ -567,6 +607,10 @@ def get_mdiarea():
         if isinstance(c, PySide2.QtWidgets.QMdiArea):
             return c
     return None
+
+def random_color():
+    h,s,l = random.random(), 0.5 + random.random()/2.0, 0.4 + random.random()/5.0
+    return [int(256*i) for i in colorsys.hls_to_rgb(h,l,s)]
 
 
 # class EtabsModel:

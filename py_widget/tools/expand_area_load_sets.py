@@ -1,34 +1,49 @@
-# import sys
-# from pathlib import Path
+from pathlib import Path
 
-# from PySide2 import  QtWidgets
-# import FreeCADGui as Gui
-# import civiltools_rc
+from PySide2 import  QtWidgets
 
-# civiltools_path = Path(__file__).absolute().parent.parent.parent
+import table_model
+
+civiltools_path = Path(__file__).absolute().parent.parent.parent
 
 
-# class Form(QtWidgets.QWidget):
-#     def __init__(self, etabs_model):
-#         super(Form, self).__init__()
-#         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'tools' / 'offset.ui'))
-#         unit = etabs_model.get_current_unit()[1]
-#         self.form.distance.setSuffix(f' {unit}')
-#         self.etabs = etabs_model
+class Form(QtWidgets.QWidget):
+    def __init__(self, etabs_model):
+        super(Form, self).__init__()
+        self.etabs = etabs_model
+        self.df = self.get_expanded_shell_uniform_load_sets()
+        self.show_expand_result()
 
-#     def accept(self):
-#         distance = self.form.distance.value()
-#         neg = self.form.negative.isChecked()
-#         self.etabs.frame_obj.offset_frame(distance, neg)
+    def create_connections(self):
+        self.form.cancel_pushbutton.clicked.connect(self.reject)
+        self.form.apply_pushbutton.clicked.connect(self.expand_load_sets)
 
-#     def reject(self):
-#         Gui.Control.closeDialog()
-from PySide2.QtWidgets import  QMessageBox
+    def show_expand_result(self):
+        if self.df.empty:
+            QtWidgets.QMessageBox.warning(None, 'Empty Load Sets', 'There is no load sets in this model.')
+            return
+        df = self.df.copy()
+        del df['Direction']
+        model=table_model.ExpandLoadSets
+        headers=list(df.columns)
+        self.win = table_model.ExpandedLoadSetsResults(df, headers, model, None)
+        self.win.cancel_pushbutton.clicked.connect(self.reject)
+        self.win.apply_pushbutton.clicked.connect(self.expand_load_sets)
+        self.win.setMinimumSize(600, 600)
+        self.win.resize(600, 600)
+        self.win.exec_()
 
-def expand_load_sets(etabs):
-    ret = etabs.area.expand_uniform_load_sets_and_apply_to_model()
-    if ret:
-        QMessageBox.information(None, 'Successful', 'All load sets expanded successfully.')
-    else:
-        QMessageBox.warning(None, 'Failed', "Load sets did not expanded!")
+    def get_expanded_shell_uniform_load_sets(self):
+        return self.etabs.area.get_expanded_shell_uniform_load_sets()
+
+    def reject(self):
+        self.win.close()
+
+    def expand_load_sets(self):
+        ret = self.etabs.area.expand_uniform_load_sets_and_apply_to_model(self.df)
+        if ret:
+            QtWidgets.QMessageBox.information(None, 'Successful', 'All load sets expanded successfully.')
+        else:
+            QtWidgets.QMessageBox.warning(None, 'Failed', "Load sets did not expanded!")
+        self.reject()
 

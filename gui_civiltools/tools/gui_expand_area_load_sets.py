@@ -18,7 +18,7 @@ class CivilToolsExpandAreaLoadSets:
             "civiltools",
             "Expand Area Load Sets")
         path = str(
-                   Path(__file__).parent.absolute().parent.parent / "images" / "expand_area_load_sets.svg"
+                   Path(__file__).parent.absolute().parent.parent / "images" / "expand_area_load_sets.jpg"
                    )
         return {'Pixmap': path,
                 'MenuText': menu_text,
@@ -45,10 +45,8 @@ class CivilToolsExpandAreaLoadSets:
             filename is None
             ):
             return
-        if (QMessageBox.question(None, 'Expand?', 'Do you want to expand all area load sets')) == QMessageBox.No:
-            return
         from py_widget.tools import expand_area_load_sets
-        expand_area_load_sets.expand_load_sets(etabs)
+        expand_area_load_sets.Form(etabs)
         
     def IsActive(self):
         return True
