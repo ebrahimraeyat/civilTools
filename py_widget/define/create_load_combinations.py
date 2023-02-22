@@ -9,7 +9,8 @@ import FreeCADGui as Gui
 import FreeCAD
 import freecad_funcs
 
-
+from exporter import config
+from db import ostanha
 
 civiltools_path = Path(__file__).absolute().parent.parent.parent
 from load_combinations import generate_concrete_load_combinations
@@ -22,9 +23,22 @@ class Form(QtWidgets.QWidget):
         self.form.load_combinations_view.index_activated = Signal(list)
         self.etabs = etabs_model
         self.fill_load_cases()
+        self.fill_cities()
         self.create_connections()
+        self.load_config()
+        self.setA()
         self.data = None
     
+    def load_config(self):
+        if self.etabs is None:
+            return
+        try:
+            etabs_filename = self.etabs.get_filename()
+        except:
+            return
+        json_file = etabs_filename.with_suffix('.json')
+        config.load(json_file, self.form)
+
     def create(self):
         equivalent_loads = self.get_equivalent_loads()
         rho_x = float(self.form.rhox_combobox.currentText())
@@ -32,6 +46,8 @@ class Form(QtWidgets.QWidget):
         prefix = self.form.prefix.text()
         suffix = self.form.suffix.text()
         ev_negative = self.form.ev_negative.isChecked()
+        A = self.get_acc(self.form.risk_level.currentText())
+        I = float(self.form.importance_factor.currentText())
         if self.form.lrfd.isChecked():
             design_type = "LRFD"
         elif self.form.asd.isChecked():
@@ -46,6 +62,8 @@ class Form(QtWidgets.QWidget):
             design_type=design_type,
             separate_direction=separate_direction,
             ev_negative=ev_negative,
+            A=A,
+            I=I,
         )
         items=  {}
         for i in range(0, len(self.data), 4):
@@ -171,7 +189,48 @@ class Form(QtWidgets.QWidget):
             ):
             dir_.add(name)
             combobox.addItems(dir_)
-            
+
+    def setA(self):
+        sotoh = ['خیلی زیاد', 'زیاد', 'متوسط', 'کم']
+        ostan = self.get_current_ostan()
+        city = self.get_current_city()
+        try:
+            A = int(ostanha.ostans[ostan][city][0])
+            i = self.form.risk_level.findText(sotoh[A - 1])
+            self.form.risk_level.setCurrentIndex(i)
+        except KeyError:
+            pass
+    
+    def get_acc(self, sath):
+        sotoh = {'خیلی زیاد' : 0.35,
+                'زیاد' : 0.30,
+                'متوسط' : 0.25,
+                'کم' : 0.20,
+                }
+        return sotoh[sath]
+    
+    def get_current_ostan(self):
+        return self.form.ostan.currentText()
+
+    def get_current_city(self):
+        return self.form.city.currentText()
+
+    def get_citys_of_current_ostan(self, ostan):
+        '''return citys of ostan'''
+        return ostanha.ostans[ostan].keys()
+
+    def set_citys_of_current_ostan(self):
+        self.form.city.clear()
+        ostan = self.get_current_ostan()
+        citys = self.get_citys_of_current_ostan(ostan)
+        # citys.sort()
+        self.form.city.addItems(citys)
+    
+    def fill_cities(self):
+        ostans = ostanha.ostans.keys()
+        self.form.ostan.addItems(ostans)
+        self.set_citys_of_current_ostan()
+
     def create_connections(self):
         self.form.create_button.clicked.connect(self.create)
         self.form.export_to_etabs_button.clicked.connect(self.export_to_etabs)
@@ -179,6 +238,20 @@ class Form(QtWidgets.QWidget):
         self.form.partition_live_checkbox.stateChanged.connect(self.partition_live_clicked)
         self.form.load_combinations_view.activated.connect(self.indexActivated)
         self.form.load_combinations_view.expanded.connect(self.treeExpanded)
+        self.form.ostan.currentIndexChanged.connect(self.set_citys_of_current_ostan)
+        self.form.city.currentIndexChanged.connect(self.setA)
+        self.form.lrfd.clicked.connect(self.consider_ev)
+        self.form.asd.clicked.connect(self.consider_ev)
+    
+    def consider_ev(self):
+        if self.form.lrfd.isChecked():
+            self.form.ev_negative.setChecked(True)
+        else:
+            self.form.ev_negative.setChecked(False)
+        if self.form.asd.isChecked():
+            self.form.ev_negative.setChecked(False)
+        else:
+            self.form.ev_negative.setChecked(True)
 
     def partition_dead_clicked(self):
         if self.form.partition_dead_checkbox.isChecked():

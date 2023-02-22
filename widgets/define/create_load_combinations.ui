@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>758</width>
+    <width>915</width>
     <height>746</height>
    </rect>
   </property>
@@ -529,8 +529,8 @@
       <property name="title">
        <string>Select Load Combinations</string>
       </property>
-      <layout class="QGridLayout" name="gridLayout_6">
-       <item row="0" column="1" rowspan="2">
+      <layout class="QGridLayout" name="gridLayout_5">
+       <item row="0" column="0" rowspan="2">
         <widget class="QGroupBox" name="groupBox_9">
          <property name="title">
           <string>Design Type</string>
@@ -556,7 +556,7 @@
          </layout>
         </widget>
        </item>
-       <item row="0" column="2" rowspan="2">
+       <item row="0" column="1" rowspan="2">
         <widget class="QFrame" name="frame">
          <property name="frameShape">
           <enum>QFrame::Box</enum>
@@ -596,7 +596,254 @@
          </layout>
         </widget>
        </item>
-       <item row="3" column="0" colspan="7">
+       <item row="0" column="2">
+        <widget class="QFrame" name="frame_4">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_5">
+          <item>
+           <widget class="QCheckBox" name="separate_direction">
+            <property name="text">
+             <string>Not (100-30)</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="ev_negative">
+            <property name="text">
+             <string>Consider (-EV)</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="1" column="2" rowspan="2">
+        <layout class="QVBoxLayout" name="verticalLayout_4">
+         <item>
+          <widget class="QFrame" name="frame_2">
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_3">
+            <item>
+             <widget class="QFrame" name="frame_3">
+              <property name="frameShape">
+               <enum>QFrame::StyledPanel</enum>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Raised</enum>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_6">
+               <item row="0" column="1">
+                <widget class="QLabel" name="label_3">
+                 <property name="layoutDirection">
+                  <enum>Qt::LeftToRight</enum>
+                 </property>
+                 <property name="text">
+                  <string>استان</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QLabel" name="label_4">
+                 <property name="layoutDirection">
+                  <enum>Qt::LeftToRight</enum>
+                 </property>
+                 <property name="text">
+                  <string>شهر</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="Gui::PrefComboBox" name="risk_level">
+                 <property name="currentIndex">
+                  <number>1</number>
+                 </property>
+                 <property name="prefEntry" stdset="0">
+                  <cstring>soiltype</cstring>
+                 </property>
+                 <property name="prefPath" stdset="0">
+                  <cstring>Mod/civilTools</cstring>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>خیلی زیاد</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>زیاد</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>متوسط</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>کم</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="Gui::PrefComboBox" name="city">
+                 <property name="prefEntry" stdset="0">
+                  <cstring>city</cstring>
+                 </property>
+                 <property name="prefPath" stdset="0">
+                  <cstring>Mod/civilTools</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="1">
+                <widget class="QLabel" name="label_8">
+                 <property name="toolTip">
+                  <string>Importance Facor</string>
+                 </property>
+                 <property name="text">
+                  <string>ضریب اهمیت</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QLabel" name="label_18">
+                 <property name="layoutDirection">
+                  <enum>Qt::LeftToRight</enum>
+                 </property>
+                 <property name="text">
+                  <string>خطر نسبی</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="Gui::PrefComboBox" name="ostan">
+                 <property name="prefEntry" stdset="0">
+                  <cstring>ostan</cstring>
+                 </property>
+                 <property name="prefPath" stdset="0">
+                  <cstring>Mod/civilTools</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0">
+                <widget class="QComboBox" name="importance_factor">
+                 <property name="currentIndex">
+                  <number>1</number>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>0.8</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>1.0</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>1.2</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>1.4</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="create_button">
+              <property name="text">
+               <string>Create</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../../civiltools.qrc">
+                <normaloff>:/civiltools/images/run.svg</normaloff>:/civiltools/images/run.svg</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>60</width>
+                <height>60</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="export_to_etabs_button">
+              <property name="toolTip">
+               <string>Export Selected Load Combinations To ETABS Model</string>
+              </property>
+              <property name="text">
+               <string>To ETABS</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../../civiltools.qrc">
+                <normaloff>:/civiltools/images/etabs.png</normaloff>:/civiltools/images/etabs.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>60</width>
+                <height>60</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="help">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Help</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../../civiltools.qrc">
+                <normaloff>:/civiltools/images/help.png</normaloff>:/civiltools/images/help.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>60</width>
+                <height>60</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="2" column="0" colspan="2">
         <widget class="QTreeView" name="load_combinations_view">
          <property name="alternatingRowColors">
           <bool>false</bool>
@@ -618,90 +865,19 @@
          </attribute>
         </widget>
        </item>
-       <item row="0" column="3" rowspan="2">
-        <layout class="QVBoxLayout" name="verticalLayout_3">
-         <item>
-          <widget class="QCheckBox" name="separate_direction">
-           <property name="text">
-            <string>Not (100-30)</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="ev_negative">
-           <property name="text">
-            <string>Consider (-EV)</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="2" column="1">
-        <widget class="QPushButton" name="create_button">
-         <property name="text">
-          <string>Create</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../../civiltools.qrc">
-           <normaloff>:/civiltools/images/run.svg</normaloff>:/civiltools/images/run.svg</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>60</width>
-           <height>60</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="2">
-        <widget class="QPushButton" name="export_to_etabs_button">
-         <property name="toolTip">
-          <string>Export Selected Load Combinations To ETABS Model</string>
-         </property>
-         <property name="text">
-          <string>To ETABS</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../../civiltools.qrc">
-           <normaloff>:/civiltools/images/etabs.png</normaloff>:/civiltools/images/etabs.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>60</width>
-           <height>60</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="3">
-        <widget class="QPushButton" name="help">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string>Help</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../../civiltools.qrc">
-           <normaloff>:/civiltools/images/help.png</normaloff>:/civiltools/images/help.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>60</width>
-           <height>60</height>
-          </size>
-         </property>
-        </widget>
-       </item>
       </layout>
      </widget>
     </widget>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Gui::PrefComboBox</class>
+   <extends>QComboBox</extends>
+   <header>Gui/PrefWidgets.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../../civiltools.qrc"/>
  </resources>

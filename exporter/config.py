@@ -147,10 +147,11 @@ def load(json_file, widget=None):
 		if key in keys and hasattr(widget, key):
 			exec(f"widget.{key}.setValue(d['{key}'])")
 	# TreeViewes
-	x_item = d.get('x_system', [2, 1])
-	y_item = d.get('y_system', [2, 1])
-	select_treeview_item(widget.x_treeview, *x_item)
-	select_treeview_item(widget.y_treeview, *y_item)
+	if hasattr(widget, 'x_treeview') and hasattr(widget, 'y_treeview'):
+		x_item = d.get('x_system', [2, 1])
+		y_item = d.get('y_system', [2, 1])
+		select_treeview_item(widget.x_treeview, *x_item)
+		select_treeview_item(widget.y_treeview, *y_item)
 	return d
 
 def select_treeview_item(view, i, n):

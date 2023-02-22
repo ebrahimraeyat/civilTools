@@ -2,7 +2,7 @@
 from pathlib import Path
 
 from PySide2 import QtCore
-# from PySide2.QtWidgets import QMessageBox
+from PySide2.QtWidgets import QMessageBox
 
 import FreeCADGui as Gui
 
@@ -44,6 +44,12 @@ class CivilToolsCreateLoadCombinations:
             etabs is None or
             filename is None
             ):
+            return
+        json_file = filename.with_suffix('.json')
+        if not json_file.exists():
+            QMessageBox.warning(None, 'Settings', 'Please Set Options First!')
+            Gui.runCommand("civiltools_settings")
+        if not json_file.exists():
             return
         from py_widget.define import create_load_combinations
         win = create_load_combinations.Form(etabs)
