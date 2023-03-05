@@ -13,7 +13,7 @@ from exporter import config
 from db import ostanha
 
 civiltools_path = Path(__file__).absolute().parent.parent.parent
-from load_combinations import generate_concrete_load_combinations
+# from load_combinations import generate_concrete_load_combinations
 from qt_models import treeview
 
 class Form(QtWidgets.QWidget):
@@ -46,14 +46,16 @@ class Form(QtWidgets.QWidget):
         prefix = self.form.prefix.text()
         suffix = self.form.suffix.text()
         ev_negative = self.form.ev_negative.isChecked()
+        add_notional = self.form.add_notional.isChecked()
         A = self.get_acc(self.form.risk_level.currentText())
         I = float(self.form.importance_factor.currentText())
+        sequence_numbering = self.form.sequence_numbering.isChecked()
         if self.form.lrfd.isChecked():
             design_type = "LRFD"
         elif self.form.asd.isChecked():
             design_type = "ASD"
         separate_direction = self.form.separate_direction.isChecked()
-        self.data = generate_concrete_load_combinations(
+        self.data = self.etabs.load_combinations.generate_concrete_load_combinations(
             equivalent_loads=equivalent_loads,
             prefix = prefix,
             suffix = suffix,
@@ -64,6 +66,8 @@ class Form(QtWidgets.QWidget):
             ev_negative=ev_negative,
             A=A,
             I=I,
+            sequence_numbering=sequence_numbering,
+            add_notional_loads=add_notional,
         )
         items=  {}
         for i in range(0, len(self.data), 4):

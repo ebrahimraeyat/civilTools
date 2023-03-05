@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>915</width>
-    <height>746</height>
+    <width>908</width>
+    <height>717</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -622,6 +622,16 @@
             </property>
            </widget>
           </item>
+          <item>
+           <widget class="QCheckBox" name="add_notional">
+            <property name="text">
+             <string>Steel (Notional)</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -780,6 +790,16 @@
                </size>
               </property>
              </spacer>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="sequence_numbering">
+              <property name="text">
+               <string>Sequence Numbering</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
             </item>
             <item>
              <widget class="QPushButton" name="create_button">
