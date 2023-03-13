@@ -1015,7 +1015,7 @@ class ImportDXF:
         for insert in blockref.entities.get_type('insert'):
             # print("insert ",insert," in block ",insert.block[0])
             if dxfStarBlocks or insert.block[0] != '*':
-                s = self.drawInsert(insert)
+                s = self.drawInsert(insert)[0]
                 if s:
                     shapes.append(s)
         # for solid in blockref.entities.get_type('solid'):
