@@ -30,13 +30,17 @@ class Form(QtWidgets.QWidget):
                 item = lw.item(i)
                 item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
                 item.setCheckState(Qt.Checked)
+        matching_items = []
         for name in drift_load_patterns:
             if name in x_names:
-                matching_items = self.form.x_loadcase_list.findItems(name, Qt.MatchExactly)
+                items = self.form.x_loadcase_list.findItems(name, Qt.MatchExactly)
             elif name in y_names:
-                matching_items = self.form.y_loadcase_list.findItems(name, Qt.MatchExactly)
-            for item in matching_items:
-                item.setCheckState(Qt.Unchecked)
+                items = self.form.y_loadcase_list.findItems(name, Qt.MatchExactly)
+            else:
+                items = []
+            matching_items.extend(items)
+        for item in matching_items:
+            item.setCheckState(Qt.Unchecked)
 
     def accept(self):
         import table_model
