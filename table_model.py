@@ -477,8 +477,22 @@ class ResultWidget(QtWidgets.QDialog):
                                                   '', "excel(*.xlsx)")
         if filename == '':
             return
-        with pd.ExcelWriter(filename) as writer:
-                self.model.df.to_excel(writer, sheet_name='drift_results')
+        try:
+            import jinja2
+        except ModuleNotFoundError:
+            import subprocess
+            package = 'Jinja2'
+            subprocess.check_call(['python', "-m", "pip", "install", package])
+            css_alt_rows = 'background-color: powderblue; color: black;'
+            css_indexes = 'background-color: steelblue; color: white;'
+            import numpy as np
+            (self.model.df.style.apply(lambda col: np.where(col.index % 2, css_alt_rows, None)) # alternating rows
+                    .applymap_index(lambda _: css_indexes, axis=0) # row indexes (pandas 1.4.0+)
+                    .applymap_index(lambda _: css_indexes, axis=1) # col indexes (pandas 1.4.0+)
+            ).to_excel(filename, engine='openpyxl')
+        else:
+            with pd.ExcelWriter(filename) as writer:
+                    self.model.df.to_excel(writer)
 
     def resize_columns(self):
         self.result_table_view.resizeColumnsToContents()
