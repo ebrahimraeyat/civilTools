@@ -298,8 +298,11 @@ class StoryLengthModel(QAbstractTableModel):
             #     self.diaphs[row] = value
             #     self.form.dataChanged.emit(index, index)
             if col in (1,2):
-                self.df.iat[row, col] = value
-                self.form.dataChanged.emit(index, index)
+                try:
+                    self.df.iat[row, col] = float(value)
+                    self.form.dataChanged.emit(index, index)
+                except:
+                    return False
             return True
         return False
     
