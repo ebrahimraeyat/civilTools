@@ -6,7 +6,7 @@ from PySide2.QtWidgets import QMessageBox
 
 import FreeCADGui as Gui
 
-from export import config
+from exporter import civiltools_config
 
 
 class CivilCreatePeriodFile:
@@ -33,17 +33,14 @@ class CivilCreatePeriodFile:
             filename is None
             ):
             return
-        # filename = etabs.get_filename()
-        json_file = filename.with_suffix('.json')
-        if not json_file.exists():
+        d = civiltools_config.get_settings_from_etabs(etabs)
+        if len(d) == 0:
             QMessageBox.warning(None, 'Settings', 'Please Set Options First!')
             Gui.runCommand("civiltools_settings")
         tx, ty, _ = etabs.get_drift_periods()
-        config.save_analytical_periods(json_file, tx, ty)
+        civiltools_config.save_analytical_periods(etabs, tx, ty)
         t_file = etabs.get_filepath() / 'T.EDB'
         QMessageBox.information(None, 'Successful', f'Created Period File: {t_file}')
-            
-
         
     def IsActive(self):
         return True

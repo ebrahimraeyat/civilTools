@@ -9,7 +9,7 @@ import FreeCAD
 import FreeCADGui as Gui
 
 from db import ostanha
-from exporter import config
+from exporter import civiltools_config
 from qt_models import treeview_system
 
 civiltools_path = Path(__file__).absolute().parent.parent
@@ -96,33 +96,18 @@ class Form(QtWidgets.QWidget):
         self.form.top_story_for_height.currentIndexChanged.connect(self.fill_height_and_no_of_stories)
 
     def load_config(self):
-        etabs_filename = self.etabs.get_filename()
-        json_file = etabs_filename.with_suffix('.json')
         param = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools")
         show_at_startup = param.GetBool("FirstTime", True)
         self.form.show_at_startup.setChecked(show_at_startup)
-        # ostan = param.GetString("ostan", 'قم')
-        # city = param.GetString("city", 'قم')
-        # index = self.form.ostan.findText(ostan)
-        # self.form.ostan.setCurrentIndex(index)
-        # index = self.form.city.findText(city)
-        # self.form.city.setCurrentIndex(index)
-        config.load(json_file, self.form)
+        civiltools_config.load(self.etabs, self.form)
         
     def save(self):
         self.save_config()
 
-    def save_config(self, json_file=None):
-        exists = False
-        if not json_file:
-            etabs_filename = self.etabs.get_filename()
-            json_file = etabs_filename.with_suffix('.json')
-        if json_file.exists():
-            exists = True
-            tx, ty = config.get_analytical_periods(json_file)
-        config.save(json_file, self.form)
-        if exists:
-            config.save_analytical_periods(json_file, tx, ty)
+    def save_config(self):
+        tx, ty = civiltools_config.get_analytical_periods(self.etabs)
+        civiltools_config.save(self.etabs, self.form)
+        civiltools_config.save_analytical_periods(self.etabs, tx, ty)
         param = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools")
         show_at_startup = self.form.show_at_startup.isChecked()
         param.SetBool("FirstTime", show_at_startup)

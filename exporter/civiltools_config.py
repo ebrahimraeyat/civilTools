@@ -1,8 +1,9 @@
 import json
+from json import JSONDecodeError
 
 from PySide2 import QtCore
 
-def save(json_file, widget):
+def save(etabs, widget):
 	new_d = {}
 	# comboboxes
 	for key in (
@@ -45,13 +46,14 @@ def save(json_file, widget):
 	new_d['y_system_name'] = system
 	new_d['y_lateral_name'] = lateral
 	new_d['cdy'] = RuTable.Ru[system][lateral][2]
-	d = {}
-	if json_file.exists():
-		with open(json_file, 'r', encoding='utf-8') as f:
-			d = json.load(f)
+	d = get_settings_from_etabs(etabs)
 	d.update(new_d)
-	with open(json_file, 'w', encoding='utf-8') as f:
-		json.dump(d, f)
+	set_settings_to_etabs(etabs, d)
+
+def set_settings_to_etabs(etabs, d: dict):
+	json_str = json.dumps(d)
+	etabs.SapModel.SetProjectInfo("Company Name", json_str)
+	etabs.SapModel.File.Save()
 
 def get_treeview_item_prop(view):
 	indexes = view.selectedIndexes()
@@ -73,41 +75,44 @@ def get_treeview_item_prop(view):
 			n = index.row()
 		return system, lateral, i, n
 	
-def save_analytical_periods(json_file, tx, ty):
-	with open(json_file, 'r') as f:
-		d = json.load(f)
+def save_analytical_periods(etabs, tx, ty):
+	d = get_settings_from_etabs(etabs)
 	d['t_an_x'] = tx
 	d['t_an_y'] = ty
-	with open(json_file, 'w') as f:
-		json.dump(d, f)
+	set_settings_to_etabs(etabs, d)
 
-def get_analytical_periods(json_file):
-	with open(json_file, 'r') as f:
-		d = json.load(f)
+def get_analytical_periods(etabs):
+	d = get_settings_from_etabs(etabs)
 	tx = d.get('t_an_x', 2)
 	ty = d.get('t_an_y', 2)
 	return tx, ty
 
-def save_cd(json_file, cdx, cdy):
-	with open(json_file, 'r') as f:
-		d = json.load(f)
+def save_cd(etabs, cdx, cdy):
+	d = get_settings_from_etabs(etabs)
 	d['cdx'] = cdx
 	d['cdy'] = cdy
-	with open(json_file, 'w') as f:
-		json.dump(d, f)
+	set_settings_to_etabs(etabs, d)
 
-def get_cd(json_file):
-	with open(json_file, 'r') as f:
-		d = json.load(f)
+def get_cd(etabs):
+	d = get_settings_from_etabs(etabs)
 	cdx = d.get('cdx')
 	cdy = d.get('cdy')
 	return cdx, cdy
 
-def load(json_file, widget=None):
+def get_settings_from_etabs(etabs):
 	d = {}
-	if json_file.exists():
-		with open(json_file, 'r', encoding='utf-8') as f:
-			d = json.load(f)
+	info = etabs.SapModel.GetProjectInfo()
+	json_str = info[2][0]
+	try:
+		company_name = json.loads(json_str)
+	except JSONDecodeError:
+		return d
+	if type(company_name) == dict:
+		d = company_name
+	return d
+
+def load(etabs, widget=None):
+	d = get_settings_from_etabs(etabs)
 	if widget is None:
 		return d
 	keys = d.keys()

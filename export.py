@@ -5,7 +5,6 @@
 from PySide2.QtWidgets import QFileDialog
 import os
 from functools import reduce
-from exporter import config
 
 def getLastSaveDirectory(f):
     f = str(f)

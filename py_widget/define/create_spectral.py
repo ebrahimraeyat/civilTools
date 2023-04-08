@@ -22,7 +22,7 @@ pg.setConfigOption('foreground', 'k')
 import FreeCADGui as Gui
 
 from db import ostanha
-from exporter import config
+from exporter import civiltools_config
 from qt_models import treeview_system
 from building import spectral
 
@@ -182,14 +182,13 @@ class Form(QtWidgets.QWidget):
             etabs_filename = self.etabs.get_filename()
         except:
             return
-        json_file = etabs_filename.with_suffix('.json')
-        config.load(json_file, self.form)
+        civiltools_config.load(self.etabs, self.form)
 
     def update_sa_plot(self):
         soil_type = self.form.soil_type.currentText()
         sath = self.form.risk_level.currentText()
         acc = self.get_acc(sath)
-        importance_factor = self.form.importance_factor.currentText()
+        # importance_factor = self.form.importance_factor.currentText()
         self.reflection_factor = spectral.ReflectionFactor(soilType=soil_type, acc=acc)
 
         self.graphWidget.clear()

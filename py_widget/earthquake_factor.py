@@ -20,7 +20,7 @@ import FreeCADGui as Gui
 from building.build import StructureSystem, Building
 from building import spectral
 from models import StructureModel
-from exporter import config
+from exporter import civiltools_config
 from qt_models import treeview_system
 from db import ostanha
 import civiltools_rc
@@ -29,11 +29,10 @@ civiltools_path = Path(__file__).absolute().parent.parent
 
 
 class Form(QtWidgets.QWidget):
-    def __init__(self, etabs_model, json_file):
+    def __init__(self, etabs_model):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'earthquake_factor.ui'))
         self.etabs = etabs_model
-        self.json_file = json_file
         self.stories = self.etabs.SapModel.Story.GetStories()[1]
         self.fill_cities()
         self.set_plot_widget()
@@ -141,7 +140,7 @@ class Form(QtWidgets.QWidget):
             self.form.y_treeview.setColumnWidth(i, 40)
 
     def get_system(self, view):
-        ret = config.get_treeview_item_prop(view)
+        ret = civiltools_config.get_treeview_item_prop(view)
         if ret is None:
             return
         system, lateral, *args = ret
@@ -265,10 +264,10 @@ class Form(QtWidgets.QWidget):
         self.form.hsplitter1.restoreState(qsettings.value("hsplitter1", self.form.hsplitter1.saveState()))
 
     def load_config(self):  
-        config.load(self.json_file, self.form)
+        civiltools_config.load(self.etabs, self.form)
         
-    def save_config(self, json_file):
-        config.save(json_file, self.form)
+    def save_config(self):
+        civiltools_config.save(self.etabs, self.form)
 
     def getTAnalatical(self):
         xTan = self.form.t_an_x.value()
@@ -363,7 +362,7 @@ class Form(QtWidgets.QWidget):
             QMessageBox.information(None, title, msg)
             return
         msg = "Successfully written to Etabs."
-        config.save(self.json_file, self.form)
+        civiltools_config.save(self.etabs, self.form)
         QMessageBox.information(None, "done", msg)
 
     def exportBCurveToImage(self):
@@ -376,7 +375,7 @@ class Form(QtWidgets.QWidget):
 
     def export_to_word(self):
         filters = "docx(*.docx)"
-        directory = str(self.json_file.parent)
+        directory = str(self.etabs.get_filepath())
         filename, _ = QFileDialog.getSaveFileName(None, 'Export To Word',
                                                   directory, filters)
         if filename == '':

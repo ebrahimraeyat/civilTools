@@ -6,18 +6,17 @@ from PySide2.QtCore import Qt
 
 import FreeCADGui as Gui
 
-from exporter import config
+from exporter import civiltools_config
 from building.build import StructureSystem, Building
 
 civiltools_path = Path(__file__).absolute().parent.parent
 
 
 class Form(QtWidgets.QWidget):
-    def __init__(self, etabs_obj, json_file):
+    def __init__(self, etabs_obj):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'drift.ui'))
         self.etabs = etabs_obj
-        self.json_file = json_file
         self.fill_xy_loadcase_names()
         self.fill_dynamic_xy_loadcase_names()
         self.create_connections()
@@ -62,7 +61,7 @@ class Form(QtWidgets.QWidget):
             self.form.dynamic_y_loadcase_list.setEnabled(False)
 
     def accept(self):
-        d = config.load(self.json_file)
+        d = civiltools_config.get_settings_from_etabs(self.etabs)
         no_of_stories = d['no_of_story_x']
         cdx = d['cdx']
         cdy = d['cdy']
@@ -105,7 +104,7 @@ class Form(QtWidgets.QWidget):
         create_t_file = self.form.create_t_file_box.isChecked()
         if create_t_file:
             tx, ty, _ = self.etabs.get_drift_periods()
-            config.save_analytical_periods(self.json_file, tx, ty)
+            civiltools_config.save_analytical_periods(self.etabs, tx, ty)
             building = self.current_building(tx, ty)
             self.etabs.apply_cfactor_to_edb(building, bot_story, top_story)
             # execute scale response spectrum
@@ -135,7 +134,7 @@ class Form(QtWidgets.QWidget):
         Gui.Control.closeDialog()
 
     def current_building(self, tx, ty):
-        d = config.load(self.json_file)
+        d = civiltools_config.load(self.etabs)
         risk_level = d['risk_level']
         height_x = d['height_x']
         importance_factor = float(d['importance_factor'])

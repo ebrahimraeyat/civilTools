@@ -6,16 +6,15 @@ from PySide2.QtWidgets import QMessageBox
 import FreeCADGui as Gui
 import FreeCAD
 
-from exporter import config
+from exporter import civiltools_config
 
 civiltools_path = Path(__file__).absolute().parent.parent.parent
 
 class Form(QtWidgets.QWidget):
-    def __init__(self, etabs_model, json_file):
+    def __init__(self, etabs_model):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'assign' / 'assign_ev.ui'))
         self.etabs = etabs_model
-        self.json_file = json_file
         self.fill_load_patterns()
         self.fill_acc_importance_factor()
         self.create_connections()
@@ -103,7 +102,7 @@ class Form(QtWidgets.QWidget):
             self.form.partition_dead_checkbox.setChecked(False)
 
     def fill_acc_importance_factor(self):
-        d = config.load(self.json_file)
+        d = civiltools_config.load(self.etabs)
         accs = [
             'کم',
             'متوسط',

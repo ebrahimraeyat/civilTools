@@ -9,7 +9,7 @@ import FreeCADGui as Gui
 import FreeCAD
 import freecad_funcs
 
-from exporter import config
+from exporter import civiltools_config
 from db import ostanha
 
 civiltools_path = Path(__file__).absolute().parent.parent.parent
@@ -36,8 +36,7 @@ class Form(QtWidgets.QWidget):
             etabs_filename = self.etabs.get_filename()
         except:
             return
-        json_file = etabs_filename.with_suffix('.json')
-        config.load(json_file, self.form)
+        civiltools_config.load(self.etabs, self.form)
 
     def create(self):
         equivalent_loads = self.get_equivalent_loads()

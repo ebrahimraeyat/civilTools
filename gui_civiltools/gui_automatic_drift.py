@@ -43,13 +43,13 @@ class CivilAutomaticDrift:
             filename is None
             ):
             return
-        # filename = etabs.get_filename()
-        json_file = filename.with_suffix('.json')
-        if not json_file.exists():
+        from exporter import civiltools_config
+        d = civiltools_config.get_settings_from_etabs(etabs)
+        if len(d) == 0:
             QMessageBox.warning(None, 'Settings', 'Please Set Options First!')
             Gui.runCommand("civiltools_settings")
         from py_widget import drift
-        win = drift.Form(etabs, json_file)
+        win = drift.Form(etabs)
         find_etabs.show_win(win, in_mdi=False)
         show_warning_about_number_of_use(check)
         
