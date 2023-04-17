@@ -60,6 +60,7 @@ class DriftModel(ResultsModel):
             'Avg Drift',
             'Allowable Drift'
         ]]
+        self.df = self.df.astype({'Max Drift': float, 'Avg Drift': float, 'Allowable Drift': float})
         self.headers = tuple(self.df.columns)
 
     def data(self, index, role=Qt.DisplayRole):
@@ -72,7 +73,9 @@ class DriftModel(ResultsModel):
             value = self.df.iloc[row][col]
             allow_drift = float(self.df.iloc[row][allow_i])
             if role == Qt.DisplayRole:
-                return str(value)
+                if col in (max_i, avg_i, allow_i):
+                    return f"{value:.4f}"
+                return value
             elif role == Qt.BackgroundColorRole:
                 if col in (avg_i, max_i):
                     if float(value) > allow_drift:
@@ -101,9 +104,13 @@ class TorsionModel(ResultsModel):
         row = index.row()
         col = index.column()
         i_ratio = self.headers.index('Ratio')
+        i_max = self.headers.index('Max Drift')
+        i_avg = self.headers.index('Avg Drift')
         if index.isValid():
             value = self.df.iloc[row][col]
             if role == Qt.DisplayRole:
+                if col in (i_max, i_avg, i_ratio):
+                    return f"{value:.4f}"
                 return str(value)
             elif role == Qt.BackgroundColorRole:
                 value = float(self.df.iloc[row][i_ratio])
