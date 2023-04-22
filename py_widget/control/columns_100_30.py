@@ -64,19 +64,25 @@ class Form(QtWidgets.QWidget):
             headers,
             model=table_model.Column100_30Model,
             )
-        def get_100_30_names():
-            filt = data['Result'] == True
+        def get_100_30_names(ignore_100_30: bool=True):
+            filt = data['Result'] == ignore_100_30
             df = data.loc[filt]
             return  df['UniqueName']
 
-        group_name = self.form.group_name.text() # if self.form.group_checkbox.isChecked() else None
-        frame_names = get_100_30_names()
-        if group_name:
-            if len(frame_names) != 0:
-                self.etabs.group.add(group_name)
-                for name in frame_names:
-                    self.etabs.SapModel.FrameObj.SetGroupAssign(name, group_name)
-        self.etabs.view.show_frames(frame_names)
+        group_name = "100_30_NotRequired"
+        ignore_frame_names = get_100_30_names(True)
+        if group_name and len(ignore_frame_names) > 0:
+            self.etabs.group.add(group_name, remove=True)
+            for name in ignore_frame_names:
+                self.etabs.SapModel.FrameObj.SetGroupAssign(name, group_name)
+        other_frames = get_100_30_names(False)
+        if len(other_frames) > 0:
+            group_name = "100_30_Required"
+            self.etabs.group.add(group_name, remove=True)
+            for name in other_frames:
+                self.etabs.SapModel.FrameObj.SetGroupAssign(name, group_name)
+        
+        self.etabs.view.show_frames(ignore_frame_names)
         create_load_combinations = self.form.create_100_30.isChecked()
         Gui.Control.closeDialog()
         if create_load_combinations:
