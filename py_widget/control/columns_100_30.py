@@ -18,6 +18,7 @@ class Form(QtWidgets.QWidget):
         self.eyn = eyn
         self.eyp = eyp
         self.create_connections()
+        self.fill_dynamic()
         self.set_code()
 
     def create_connections(self):
@@ -25,6 +26,13 @@ class Form(QtWidgets.QWidget):
         self.form.structure_type.currentIndexChanged.connect(self.set_code)
         self.form.check.clicked.connect(self.check)
         self.form.cancel_button.clicked.connect(self.accept)
+
+    def fill_dynamic(self):
+        x_dynamics, y_dynamics = self.etabs.load_cases.get_response_spectrum_xy_loadcases_names()
+        self.form.sx_combobox.addItems(x_dynamics)
+        self.form.sxe_combobox.addItems(x_dynamics)
+        self.form.sy_combobox.addItems(y_dynamics)
+        self.form.sye_combobox.addItems(y_dynamics)
 
     def set_code(self):
         self.type_ = self.form.structure_type.currentText()
@@ -46,7 +54,24 @@ class Form(QtWidgets.QWidget):
         file_path = Path(filename)
         if file_path.exists():
             filename = file_path
-        data = self.etabs.frame_obj.require_100_30(
+        if self.form.dynamic_groupbox.isChecked():
+            sx = self.form.sx_combobox.currentText()
+            sxe = self.form.sxe_combobox.currentText()
+            sy = self.form.sy_combobox.currentText()
+            sye = self.form.sye_combobox.currentText()
+            data = self.etabs.frame_obj.require_100_30(
+                sx,
+                sxe,
+                None,
+                sy,
+                sye,
+                None,
+                filename,
+                self.type_,
+                self.code,
+            )
+        else:
+            data = self.etabs.frame_obj.require_100_30(
                 self.ex,
                 self.exn,
                 self.exp,
