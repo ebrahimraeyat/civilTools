@@ -409,6 +409,32 @@ class Column100_30Model(ResultsModel):
             elif role == Qt.TextAlignmentRole:
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
 
+class JointShear(ResultsModel):
+    def __init__(self, data, headers):
+        super(JointShear, self).__init__(data, headers)
+        self.headers = tuple(self.df.columns)
+        self.i_maj = self.headers.index('JSMajRatio')
+        self.i_min = self.headers.index('JSMinRatio')
+        self.col_function = (2,)
+
+    def data(self, index, role=Qt.DisplayRole):
+        row = index.row()
+        col = index.column()
+        if index.isValid():
+            value = self.df.iloc[row][col]
+            if role == Qt.DisplayRole:
+                if col in (self.i_maj, self.i_min):
+                    return f'{value:.2f}'
+                return str(value)
+            elif role == Qt.BackgroundColorRole:
+                if col in (self.i_maj, self.i_min):
+                    if value <= 1:
+                        return QColor(low)
+                    else:
+                        return QColor(high)
+            elif role == Qt.TextAlignmentRole:
+                return int(Qt.AlignCenter | Qt.AlignVCenter)
+
 class ExpandLoadSets(ResultsModel):
     def __init__(self, data, headers):
         super(ExpandLoadSets, self).__init__(data, headers)

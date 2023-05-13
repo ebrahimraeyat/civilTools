@@ -49,7 +49,8 @@ from gui_civiltools.define import (
     gui_create_spectral,
 )
 from gui_civiltools.control import (
-    gui_get_weakness_torsion, 
+    gui_get_weakness_torsion,
+    gui_control_joint_shear,
 )
 from gui_civiltools.tools import (
     gui_discretize, 
@@ -196,6 +197,7 @@ civiltools_list = [
             "civil_show_weakness",
             "civil_show_aj",
             "civil_scale_response_spec",
+            "civilTools_control_joint_shear",
             "civil_high_pressure_columns",
             "civiltools_100_30",
             "civil_earthquake_factor",
