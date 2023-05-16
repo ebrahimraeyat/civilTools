@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>433</width>
-    <height>206</height>
+    <height>220</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,7 +23,7 @@
   <property name="modal">
    <bool>false</bool>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QFormLayout" name="formLayout">
      <item row="0" column="0">
@@ -74,25 +74,8 @@
     </layout>
    </item>
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="QPushButton" name="check">
-       <property name="text">
-        <string>Check</string>
-       </property>
-       <property name="icon">
-        <iconset resource="../../civiltools.qrc">
-         <normaloff>:/civiltools/images/tick.svg</normaloff>:/civiltools/images/tick.svg</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>40</width>
-         <height>40</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="1">
       <widget class="QPushButton" name="open_main_file_button">
        <property name="enabled">
         <bool>false</bool>
@@ -112,7 +95,7 @@
        </property>
       </widget>
      </item>
-     <item>
+     <item row="1" column="1">
       <widget class="QPushButton" name="cancel_button">
        <property name="text">
         <string>Cancel</string>
@@ -129,18 +112,22 @@
        </property>
       </widget>
      </item>
-     <item>
-      <spacer name="verticalSpacer">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
+     <item row="0" column="0" rowspan="2">
+      <widget class="QPushButton" name="check">
+       <property name="text">
+        <string>Check</string>
        </property>
-       <property name="sizeHint" stdset="0">
+       <property name="icon">
+        <iconset resource="../../civiltools.qrc">
+         <normaloff>:/civiltools/images/tick.svg</normaloff>:/civiltools/images/tick.svg</iconset>
+       </property>
+       <property name="iconSize">
         <size>
-         <width>20</width>
-         <height>40</height>
+         <width>100</width>
+         <height>100</height>
         </size>
        </property>
-      </spacer>
+      </widget>
      </item>
     </layout>
    </item>
