@@ -69,7 +69,6 @@ class Form(QtWidgets.QWidget):
         self.form.bot_x_combo.currentIndexChanged.connect(self.fill_height_and_no_of_stories)
         self.form.top_x_combo.currentIndexChanged.connect(self.fill_height_and_no_of_stories)
         # self.form.save_pushbutton.clicked.connect(self.save)
-        self.form.cancel_pushbutton.clicked.connect(self.reject)
         self.form.top_story_for_height_checkbox.clicked.connect(self.fill_height_and_no_of_stories)
         self.form.top_story_for_height.currentIndexChanged.connect(self.fill_height_and_no_of_stories)
 

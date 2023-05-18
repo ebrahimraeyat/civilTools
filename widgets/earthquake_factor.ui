@@ -23,7 +23,7 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <layout class="QGridLayout" name="gridLayout_5">
        <item row="0" column="0">
         <layout class="QGridLayout" name="gridLayout_2">
@@ -489,11 +489,11 @@
            </widget>
           </item>
           <item row="7" column="0" colspan="2">
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <layout class="QVBoxLayout" name="verticalLayout_2">
             <item>
              <widget class="QPushButton" name="apply_to_etabs">
               <property name="text">
-               <string/>
+               <string>Apply To ETABS</string>
               </property>
               <property name="icon">
                <iconset resource="../civiltools.qrc">
@@ -501,8 +501,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>40</width>
-                <height>40</height>
+                <width>60</width>
+                <height>60</height>
                </size>
               </property>
              </widget>
@@ -510,7 +510,7 @@
             <item>
              <widget class="QPushButton" name="export_to_word">
               <property name="text">
-               <string/>
+               <string>Export To Word</string>
               </property>
               <property name="icon">
                <iconset resource="../civiltools.qrc">
@@ -518,25 +518,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>40</width>
-                <height>40</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="cancel_pushbutton">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="icon">
-               <iconset resource="../civiltools.qrc">
-                <normaloff>:/civiltools/images/cancel.svg</normaloff>:/civiltools/images/cancel.svg</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>40</width>
-                <height>40</height>
+                <width>60</width>
+                <height>60</height>
                </size>
               </property>
              </widget>
@@ -727,7 +710,6 @@
   <tabstop>bot_x_combo</tabstop>
   <tabstop>top_x_combo</tabstop>
   <tabstop>infill</tabstop>
-  <tabstop>apply_to_etabs</tabstop>
   <tabstop>export_to_word</tabstop>
   <tabstop>tabWidget</tabstop>
   <tabstop>x_treeview</tabstop>
