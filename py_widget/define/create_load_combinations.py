@@ -54,6 +54,7 @@ class Form(QtWidgets.QWidget):
         elif self.form.asd.isChecked():
             design_type = "ASD"
         separate_direction = self.form.separate_direction.isChecked()
+        retaining_wall = self.form.retaining_wall_groupbox.isChecked()
         self.data = self.etabs.load_combinations.generate_concrete_load_combinations(
             equivalent_loads=equivalent_loads,
             prefix = prefix,
@@ -67,6 +68,7 @@ class Form(QtWidgets.QWidget):
             I=I,
             sequence_numbering=sequence_numbering,
             add_notional_loads=add_notional,
+            retaining_wall=retaining_wall,
         )
         items=  {}
         for i in range(0, len(self.data), 4):
@@ -141,6 +143,10 @@ class Form(QtWidgets.QWidget):
         other_combobox = (
             self.form.mass_combobox,
             self.form.ev_combobox,
+            self.form.hxp_combobox,
+            self.form.hxn_combobox,
+            self.form.hyp_combobox,
+            self.form.hyn_combobox,
             )
         for combobox in live_loads_combobox:
             combobox.addItems(live_loads)
@@ -405,5 +411,30 @@ class Form(QtWidgets.QWidget):
             equivalent_loads['EV'] = [ev]
             if not ev in load_patterns:
                 self.etabs.SapModel.LoadPatterns.Add(ev, 8)
+        # Retaining Wall
+        # HXP
+        hxp = self.form.hxp_combobox.currentText()
+        if hxp:
+            equivalent_loads['HXP'] = [hxp]
+            if hxp not in load_patterns:
+                self.etabs.SapModel.LoadPatterns.Add(hxp, 8)
+        # HXN
+        hxn = self.form.hxn_combobox.currentText()
+        if hxn:
+            equivalent_loads['HXN'] = [hxn]
+            if hxn not in load_patterns:
+                self.etabs.SapModel.LoadPatterns.Add(hxn, 8)
+        # HyP
+        hyp = self.form.hyp_combobox.currentText()
+        if hyp:
+            equivalent_loads['HYP'] = [hyp]
+            if hyp not in load_patterns:
+                self.etabs.SapModel.LoadPatterns.Add(hyp, 8)
+        # HXN
+        hyn = self.form.hyn_combobox.currentText()
+        if hyn:
+            equivalent_loads['HYN'] = [hyn]
+            if hyn not in load_patterns:
+                self.etabs.SapModel.LoadPatterns.Add(hyn, 8)
 
         return equivalent_loads
