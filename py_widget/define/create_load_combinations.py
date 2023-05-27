@@ -39,6 +39,7 @@ class Form(QtWidgets.QWidget):
         civiltools_config.load(self.etabs, self.form)
 
     def create(self):
+        self.etabs.unlock_model()
         equivalent_loads = self.get_equivalent_loads()
         rho_x = float(self.form.rhox_combobox.currentText())
         rho_y = float(self.form.rhoy_combobox.currentText())
