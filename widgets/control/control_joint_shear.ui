@@ -85,7 +85,7 @@
        </property>
        <property name="icon">
         <iconset resource="../../civiltools.qrc">
-         <normaloff>:/civiltools/images/etabs.png</normaloff>:/civiltools/images/etabs.png</iconset>
+         <normaloff>:/civiltools/images/open.svg</normaloff>:/civiltools/images/open.svg</iconset>
        </property>
        <property name="iconSize">
         <size>
