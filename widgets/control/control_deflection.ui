@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>505</width>
-    <height>614</height>
+    <width>893</width>
+    <height>465</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -198,6 +198,16 @@
          </property>
         </widget>
        </item>
+       <item row="2" column="0" colspan="2">
+        <widget class="QCheckBox" name="torsion_rebar_checkbox">
+         <property name="text">
+          <string>Add Torsion Rebars</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
        <item row="1" column="0" colspan="2">
         <widget class="QCheckBox" name="is_console">
          <property name="layoutDirection">
@@ -221,13 +231,10 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="0" colspan="2">
-        <widget class="QCheckBox" name="torsion_rebar_checkbox">
+       <item row="7" column="0">
+        <widget class="QLabel" name="label_31">
          <property name="text">
-          <string>Add Torsion Rebars</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
+          <string>Add Rebar</string>
          </property>
         </widget>
        </item>
@@ -238,13 +245,6 @@
          </property>
          <property name="value">
           <double>6.000000000000000</double>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="0">
-        <widget class="QLabel" name="label_31">
-         <property name="text">
-          <string>Add Rebar</string>
          </property>
         </widget>
        </item>
@@ -264,6 +264,32 @@
          </property>
          <property name="value">
           <double>0.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="1">
+        <widget class="QDoubleSpinBox" name="minus_length">
+         <property name="suffix">
+          <string> Cm2</string>
+         </property>
+         <property name="decimals">
+          <number>0</number>
+         </property>
+         <property name="maximum">
+          <double>500.000000000000000</double>
+         </property>
+         <property name="singleStep">
+          <double>5.000000000000000</double>
+         </property>
+         <property name="value">
+          <double>30.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="0">
+        <widget class="QLabel" name="label_32">
+         <property name="text">
+          <string>Minus Length</string>
          </property>
         </widget>
        </item>
@@ -364,7 +390,7 @@
           <bool>true</bool>
          </property>
          <property name="text">
-          <string>Cancel</string>
+          <string>Close</string>
          </property>
          <property name="icon">
           <iconset resource="../../civiltools.qrc">
@@ -420,23 +446,30 @@
        </item>
       </layout>
      </item>
-     <item>
-      <widget class="QTextEdit" name="results"/>
-     </item>
-     <item>
-      <spacer name="verticalSpacer">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <widget class="QTextEdit" name="check_results">
+      <property name="minimumSize">
+       <size>
+        <width>400</width>
+        <height>0</height>
+       </size>
+      </property>
+     </widget>
+     <widget class="QTextEdit" name="results">
+      <property name="minimumSize">
+       <size>
+        <width>400</width>
+        <height>0</height>
+       </size>
+      </property>
+     </widget>
+    </widget>
    </item>
   </layout>
  </widget>
@@ -456,7 +489,6 @@
   <tabstop>snow_combobox</tabstop>
   <tabstop>cancel_button</tabstop>
   <tabstop>help</tabstop>
-  <tabstop>results</tabstop>
   <tabstop>open_main_file_button</tabstop>
  </tabstops>
  <resources>

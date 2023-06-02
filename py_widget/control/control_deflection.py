@@ -4,6 +4,7 @@ from PySide2 import  QtWidgets
 from PySide2.QtWidgets import QMessageBox
 import FreeCADGui as Gui
 
+from design import get_deflection_check_result
 
 civiltools_path = Path(__file__).absolute().parent.parent.parent
 
@@ -68,6 +69,7 @@ class Form(QtWidgets.QWidget):
             frame_area = None
         live_percentage = self.form.live_percentage_spinbox.value()
         additional_rebars = self.form.additional_rebars.value()
+        minus_length = self.form.minus_length.value()
         equivalent_loads = self.get_equivalent_loads()
         dead = equivalent_loads.get('Dead', [])
         supper_dead = equivalent_loads.get('SDead', [])
@@ -89,11 +91,15 @@ class Form(QtWidgets.QWidget):
             additional_rebars=additional_rebars,
         )
         text = ret[2]
-        text += f'\n\ncombo1 deflection = {ret[0]:.3f} Cm\ncombo2 deflection = {ret[1]:.3f} Cm'
         self.form.results.setText(text)
         self.form.open_main_file_button.setEnabled(True)
         self.form.check_button.setEnabled(False)
-
+        # check results
+        ln = self.etabs.frame_obj.get_length_of_frame(beam_name) - minus_length
+        def1 = ret[0]
+        def2 = ret[1]
+        text2 = get_deflection_check_result(def1, def2, ln)
+        self.form.check_results.setText(text2)
 
     def fill_load_cases(self):
         load_patterns = self.etabs.load_patterns.get_load_patterns()
