@@ -1,5 +1,8 @@
 <RCC>
   <qresource prefix="civiltools">
+    <file>images/console.svg</file>
+    <file>images/deflection.svg</file>
+    <file>images/open.svg</file>
     <file>images/joint_shear.svg</file>
     <file>images/assign_frame_sections.svg</file>
     <file>images/tooltip.svg</file>
