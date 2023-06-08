@@ -57,6 +57,7 @@ from gui_civiltools.tools import (
     gui_discretize, 
     gui_match_property,
     gui_expand_area_load_sets,
+    gui_run_design,
 )
 
 from freecad_py import civiltools_views
@@ -214,6 +215,7 @@ civiltools_assign = [
 
 civiltools_tools = [
             "Separator",
+            "civiltools_run_and_design",
             "civilTools_match_property",
             "expand_area_load_sets",
             "civil_explod_load_patterns",
