@@ -16,11 +16,17 @@ class Form(QtWidgets.QWidget):
         self.create_connections()
 
     def apply_to_etabs(self):
+        selected_obj_only = self.form.selected_obj.isChecked()
         beams, columns = self.etabs.frame_obj.get_beams_columns()
+        selections = self.etabs.select_obj.get_selected_obj_type(n=2)
         if self.form.tabwidget.currentIndex() == 0: # beams
             if len(beams) == 0:
                 QMessageBox.warning(None, "Not Beams", 'Can not find any Beams in this model!')
                 return
+            if selected_obj_only:
+                names = set(selections).intersection(beams)
+            else:
+                names = beams
             modifiers = [
                 self.form.beam_area_spinbox.value() if self.form.beam_area_checkbox.isChecked() else None,
                 self.form.beam_as2_spinbox.value() if self.form.beam_as2_checkbox.isChecked() else None,
@@ -31,12 +37,15 @@ class Form(QtWidgets.QWidget):
                 self.form.beam_mass_spinbox.value() if self.form.beam_mass_checkbox.isChecked() else None,
                 self.form.beam_weight_spinbox.value() if self.form.beam_weight_checkbox.isChecked() else None,
             ]
-            names = beams
         
         elif self.form.tabwidget.currentIndex() == 1: # columns
             if len(columns) == 0:
                 QMessageBox.warning(None, "Not Columns", 'Can not find any Columns in this model!')
                 return
+            if selected_obj_only:
+                names = set(selections).intersection(columns)
+            else:
+                names = columns
             modifiers = [
                 self.form.column_area_spinbox.value() if self.form.column_area_checkbox.isChecked() else None,
                 self.form.column_as2_spinbox.value() if self.form.column_as2_checkbox.isChecked() else None,
@@ -47,7 +56,6 @@ class Form(QtWidgets.QWidget):
                 self.form.column_mass_spinbox.value() if self.form.column_mass_checkbox.isChecked() else None,
                 self.form.column_weight_spinbox.value() if self.form.column_weight_checkbox.isChecked() else None,
             ]
-            names = columns
         # frames = self.etabs.select_obj.get_selected_obj_type(2)
         self.etabs.unlock_model()
         self.etabs.frame_obj.assign_frame_modifires(
@@ -57,7 +65,7 @@ class Form(QtWidgets.QWidget):
         QMessageBox.information(
             None,
             'Successfull',
-            f'Successfully Apply Modifiers to {self.etabs.get_filename()} Model.',
+            f'Successfully Apply {len(names)} Modifiers to {self.etabs.get_filename()} Model.',
         )
         # self.reject()
             

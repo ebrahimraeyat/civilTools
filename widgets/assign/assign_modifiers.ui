@@ -418,6 +418,16 @@
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
+      <widget class="QCheckBox" name="selected_obj">
+       <property name="text">
+        <string>Selections</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="apply_to_etabs_button">
        <property name="toolTip">
         <string>Export Selected Load Combinations To ETABS Model</string>
