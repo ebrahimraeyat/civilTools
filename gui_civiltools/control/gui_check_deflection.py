@@ -25,6 +25,17 @@ class CivilToolsCheckDeflection:
                 'ToolTip': tooltip}
     
     def Activated(self):
+        from gui_civiltools.gui_check_legal import (
+                allowed_to_continue,
+                show_warning_about_number_of_use,
+                )
+        allow, check = allowed_to_continue(
+            'check_deflection.bin',
+            'https://gist.githubusercontent.com/ebrahimraeyat/74c1a371b99c62de47472a6046a91a97/raw',
+            'cfactor'
+            )
+        if not allow:
+            return
         import find_etabs
         etabs, filename = find_etabs.find_etabs(run=False, backup=False)
         if (
@@ -35,7 +46,7 @@ class CivilToolsCheckDeflection:
         from py_widget.control import control_deflection
         win = control_deflection.Form(etabs)
         find_etabs.show_win(win, in_mdi=False)
-        # show_warning_about_number_of_use(check)
+        show_warning_about_number_of_use(check)
         
     def IsActive(self):
         return True
