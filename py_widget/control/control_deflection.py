@@ -136,8 +136,6 @@ class Form(QtWidgets.QWidget):
                     combobox.addItem(lp)
             if type_ == 3 and '5' in lp:
                 self.form.live5_combobox.setCurrentIndex(i)
-            elif type_ == 4 and '5' in lp:
-                self.form.lred5_combobox.setCurrentIndex(i)
 
     def open_main_file(self):
         self.etabs.SapModel.File.OpenFile(str(self.main_file_path))
