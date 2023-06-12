@@ -72,7 +72,8 @@ class Form(QtWidgets.QWidget):
         I = float(self.form.importance_factor.currentText())
         Rux = self.form.rux.value()
         Ruy = self.form.ruy.value()
-        c_min = 0.12 * A * I
+        g = 981
+        c_min = 0.12 * A * g * I
         t = np.array(self.b_curve.xData)
 
         if Rux == Ruy:
@@ -83,7 +84,7 @@ class Form(QtWidgets.QWidget):
             dirs = ('_x', '_y')
         for R, dir_ in zip(Rs, dirs):
             fname = f'{filename[:-4]}{dir_}{filename[-4:]}'
-            sa = [A * B * I / R if B / R >= 0.12 else c_min for B in self.b_curve.yData]
+            sa = [A * g * B * I / R  if B / R >= 0.12 else c_min for B in self.b_curve.yData]
             sa = np.array(sa)
             data = np.column_stack([t, sa])
             np.savetxt(fname , data, fmt=['%0.10g','%0.10g'])
