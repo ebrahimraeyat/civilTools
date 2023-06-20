@@ -154,7 +154,7 @@ ENV/
 *.$et
 *.ico
 *.ebk
-
+*.msh
 
 # tex
 *.aux
