@@ -171,7 +171,6 @@ Gui.addCommand('civil_show_aj', gui_show_aj.CivilShowAj())
 Gui.addCommand('civil_scale_response_spec', gui_scale_response_spec.CivilScaleResponseSpec())
 Gui.addCommand('civil_high_pressure_columns', gui_high_pressure_columns.CivilHighPressureColumns())
 Gui.addCommand('civil_offset_beams', gui_offset_beams.CivilOffsetBeam())
-Gui.addCommand('civil_wall_load_on_frames', gui_wall_load_on_frames.CivilWallLoadOnFrames())
 Gui.addCommand('civil_connect_beam', gui_connect_beam.CivilConnectBeam())
 Gui.addCommand('civil_distance_between_two_points', gui_distance_between_two_points.CivilDistance())
 Gui.addCommand('civil_create_section_cuts', gui_create_section_cuts.CivilSectionCuts())
@@ -208,7 +207,7 @@ civiltools_list = [
             "civiltools_import_model",
             ]
 civiltools_assign = [
-            "civil_wall_load_on_frames",
+            "civiltools_wall_load",
             "civilTools_assign_modifiers",
             "civilTools_assign_ev",
             ]
