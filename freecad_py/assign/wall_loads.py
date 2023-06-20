@@ -302,7 +302,34 @@ def equivalent_height_in_meter(wall):
     height = (area / wall.Length).getValueAs('m')
     return height
 
-
+def update_levels(etabs,
+                  freecad_document=None,
+                  ):
+    '''
+    Update levels of FreeCAD Model and  wall trace z placement
+    '''
+    force, length = etabs.get_current_unit()
+    etabs.set_current_unit(force, 'mm')
+    stories_levels = etabs.story.storyname_and_levels()
+    if freecad_document is None:
+        freecad_document = FreeCAD.ActiveDocument
+    for o in freecad_document.Objects:
+        if hasattr(o, 'IfcType'):
+            if o.IfcType == 'Building Storey':
+                label = o.Label
+                current_level = o.Placement.Base.z
+                new_level = stories_levels.get(label, current_level)
+                o.Placement.Base.z = new_level
+            elif o.IfcType == "Wall":
+                inlists = o.InList
+                for obj in inlists:
+                    if obj.Label in stories_levels.keys():
+                        story = obj.Label
+                        current_level = o.Base.Placement.Base.z
+                        new_level = stories_levels.get(story, current_level)
+                        o.Base.Placement.Base.z = new_level
+                        break
+    etabs.set_current_unit(force, length)
 
 
             
