@@ -98,6 +98,7 @@ class Form(QtWidgets.QWidget):
         importlib.reload(dxf_funcs)
         draw_line = self.form.lines.isChecked()
         draw_polyline = draw_line
+        draw_circle = draw_line
         draw_block = self.form.blocks.isChecked()
         draw_hatches = self.form.hatches.isChecked()
         self.dxf_content = dxf_funcs.ImportDXF(self.dxf_filename)
@@ -110,6 +111,8 @@ class Form(QtWidgets.QWidget):
             self.dxf_content.draw_polyline()
         if draw_hatches:
             pass
+        if draw_circle:
+            self.dxf_content.draw_circles()
         FreeCAD.ActiveDocument.recompute()
         Gui.Selection.clearSelection()
         Gui.SendMsgToActiveView("ViewFit")

@@ -240,6 +240,51 @@ class ImportDXF:
                 except Part.OCCError:
                     self.warn(polyline, num)
         return None
+    
+    def drawCircle(self, circle, forceShape=False):
+        """Return a Part shape (Circle, Edge) from a DXF circle.
+
+        Parameters
+        ----------
+        circle : drawing.entities
+            The DXF object of type `'circle'`. The `'circle'` object is different
+            from an `'arc'` because the circle forms a full circumference.
+
+        forceShape : bool, optional
+            It defaults to `False`. If it is `True` it will try to produce
+            a `Part.Edge`, otherwise it tries to produce a `Draft Circle`.
+
+        Returns
+        -------
+        Part::Part2DObject or Part::TopoShape ('Edge')
+            The returned object is normally a `Draft Circle` with no face,
+            if the global variables `dxfCreateDraft` or `dxfCreateSketch` are set,
+            and `forceShape` is `False`.
+            Otherwise it produces a `Part.Edge`.
+
+            It returns `None` if it fails producing a shape.
+
+        See also
+        --------
+        drawArc, drawBlock
+
+        To do
+        -----
+        Use local variables, not global variables.
+        """
+        v = self.vec(circle.loc)
+        curve = Part.Circle()
+        curve.Radius = self.vec(circle.radius)
+        curve.Center = v
+        try:
+            if (dxfCreateDraft or dxfCreateSketch) and (not forceShape):
+                pl = self.placementFromDXFOCS(circle)
+                return Draft.make_circle(circle.radius, pl)
+            else:
+                return curve.toShape()
+        except Part.OCCError:
+            self.warn(circle)
+        return None
 
     @classmethod
     def calcBulge(cls, v1, bulge, v2):
@@ -806,7 +851,7 @@ class ImportDXF:
         """
         if isinstance(pt, (int, float)):
             if dxfScaling != 1:
-                v = v * dxfScaling
+                pt = pt * dxfScaling
             v = round(pt, cls.prec())
         else:
             v = Vector(*pt)
@@ -906,11 +951,29 @@ class ImportDXF:
                 height = bb.YLength
                 pos = self.vec(insert.loc)
                 rot = math.radians(insert.rotation)
-                scale = insert.scale
                 tsf = FreeCAD.Matrix()
+                if self.check_rectangle(shape.Edges):
+                    print(f'{insert.block} is rectangle\n')
+                    e = shape.Edges[0]
+                    v = e.tangentAt(0)
+                    if v.x == 0:
+                        rot = 0
+                        e = shape.Edges[1]
+                    else:
+                        rot = math.atan(v.y / v.x)
+                    width = e.Length
+                    height = 0
+                    for e in shape.Edges:
+                        if e.Length != width:
+                            height = e.Length
+                            break
+                    if height == 0:
+                        height = width
+                else:
+                    tsf.rotateZ(rot)
+                scale = insert.scale
                 # for some reason z must be 0 to work
                 tsf.scale(scale[0], scale[1], 0)
-                tsf.rotateZ(rot)
                 try:
                     shape = shape.transformGeometry(tsf)
                 except Part.OCCError:
@@ -919,9 +982,8 @@ class ImportDXF:
                         shape = shape.transformGeometry(tsf)
                     except Part.OCCError:
                         print("importDXF: unable to apply insert transform:", tsf)
-                # shape.rotate(bb.Center, FreeCAD.Vector(0, 0, 1), insert.rotation)
                 shape.translate(pos)
-                return shape, width, height, insert.rotation
+                return shape, width, height, rot
         return None
 
     def drawBlock(self, blockref, num=None, createObject=False):
@@ -1008,10 +1070,10 @@ class ImportDXF:
         #     s = drawArc(arc, forceShape=True)
         #     if s:
         #         shapes.append(s)
-        # for circle in blockref.entities.get_type('circle'):
-        #     s = drawCircle(circle, forceShape=True)
-        #     if s:
-        #         shapes.append(s)
+        for circle in blockref.entities.get_type('circle'):
+            s = self.drawCircle(circle, forceShape=True)
+            if s:
+                shapes.append(s)
         for insert in blockref.entities.get_type('insert'):
             # print("insert ",insert," in block ",insert.block[0])
             if dxfStarBlocks or insert.block[0] != '*':
@@ -1042,7 +1104,7 @@ class ImportDXF:
         if shape:
             self.blockshapes[blockref.name] = shape
             if createObject:
-                newob = doc.addObject("Part::Feature", blockref.name)
+                newob = self.doc.addObject("Part::Feature", blockref.name)
                 newob.Shape = shape
                 self.blockobjects[blockref.name] = newob
                 return newob
@@ -1263,6 +1325,40 @@ class ImportDXF:
             shapes = DraftGeomUtils.findWires(edges)
             for s in shapes:
                 self.addObject(s)
+    
+    def draw_circles(self):
+        circles = self.drawing.entities.get_type("circle")
+        if circles:
+            FCC.PrintMessage("drawing " + str(len(circles))+" circles...\n")
+        for circle in circles:
+            if dxfImportLayouts or (not self.rawValue(circle, 67)):
+                shape = self.drawCircle(circle)
+                if shape:
+                    if dxfCreateSketch:
+                        FreeCAD.ActiveDocument.recompute()
+                        if dxfMakeBlocks or dxfJoin:
+                            if sketch:
+                                shape = Draft.make_sketch(shape,
+                                                        autoconstraints=True,
+                                                        addTo=sketch)
+                            else:
+                                shape = Draft.make_sketch(shape,
+                                                        autoconstraints=True)
+                                sketch = shape
+                        else:
+                            shape = Draft.make_sketch(shape,
+                                                    autoconstraints=True)
+                    elif dxfMakeBlocks:
+                        self.addToBlock(shape, circle.layer)
+                    elif self.getShapes:
+                        if isinstance(shape, Part.Shape):
+                            self.shapes.append(shape)
+                        else:
+                            self.shapes.append(shape.Shape)
+                    else:
+                        newob = self.addObject(shape, "Circle", circle.layer)
+                        if gui:
+                            self.formatObject(newob, circle)
 
 
     # Draw blocks
@@ -1296,7 +1392,7 @@ class ImportDXF:
                         newob.addProperty('App::PropertyLength', 'height', 'Geometry')
                         newob.height = height
                         newob.addProperty('App::PropertyAngle', 'rotation', 'Geometry')
-                        newob.rotation = rotation
+                        newob.rotation = math.degrees(rotation)
                         newob.addProperty('App::PropertyString', 'name', 'Base')
                         newob.name = block_name
                         if gui:
