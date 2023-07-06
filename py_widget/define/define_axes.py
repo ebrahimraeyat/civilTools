@@ -8,7 +8,7 @@ from PySide2.QtCore import Qt
 
 import FreeCAD
 import FreeCADGui as Gui
-import Arch
+import Part, Arch
 
 from freecad_py import dxf_funcs
 
@@ -131,19 +131,29 @@ class Form(QtWidgets.QWidget):
                 if block_name and obj.name != block_name:
                     continue
                 else:
-                    v = obj.Shape.BoundBox.Center
-                    center = FreeCAD.Vector(
-                        round(v.x, 0),
-                        round(v.y, 0),
-                        round(v.z, 0)
-                        )
-                    col = Arch.makeStructure(
-                        length=obj.width,
-                        width=obj.height,
-                        height = 8 * obj.width)
-                    col.Placement = FreeCAD.Placement(
-                    center,
-                    FreeCAD.Rotation(FreeCAD.Vector(0,0,1),obj.rotation))
+                    edges = obj.Shape.Edges
+                    if len(edges) == 1:
+                        # center = FreeCAD.Vector(0, 0, 0)
+                        face = Part.makeFace(obj.Shape.Edges, 'Part::FaceMakerSimple')
+                        newob = FreeCAD.ActiveDocument.addObject("Part::Feature", 'Section')
+                        newob.Shape = face
+                        Arch.makeStructure(
+                            newob,
+                            height = 8 * obj.width)
+                    else:
+                        v = obj.Shape.BoundBox.Center
+                        center = FreeCAD.Vector(
+                            round(v.x, 0),
+                            round(v.y, 0),
+                            round(v.z, 0)
+                            )
+                        col = Arch.makeStructure(
+                            length=obj.width,
+                            width=obj.height,
+                            height = 8 * obj.width)
+                        col.Placement = FreeCAD.Placement(
+                        center,
+                        FreeCAD.Rotation(FreeCAD.Vector(0,0,1),obj.rotation))
         FreeCAD.ActiveDocument.recompute()
 
     def create_axis(self):
@@ -199,13 +209,19 @@ class Form(QtWidgets.QWidget):
         doc = FreeCAD.ActiveDocument
         for obj in doc.Objects:
             if hasattr(obj, 'IfcType') and obj.IfcType == 'Column':
-                base = obj.Placement.Base
-                x = round(base.x, -1)
-                y = round(base.y, -1)
+                center = obj.Shape.BoundBox.Center
+                x = round(center.x, -1)
+                y = round(center.y, -1)
                 x_coordinates.add(x)
                 y_coordinates.add(y)
-                obj.Placement.Base.x = x
-                obj.Placement.Base.y = y
+                if obj.Length == 0:
+                    delta_x = x - center.x
+                    delta_y = y - center.y
+                    obj.Placement.Base.x = delta_x
+                    obj.Placement.Base.y = delta_y
+                else:
+                    obj.Placement.Base.x = x
+                    obj.Placement.Base.y = y
         if self.form.selections.isChecked():
             lines = Gui.Selection.getSelection()
             for line in lines:
@@ -320,7 +336,7 @@ class Form(QtWidgets.QWidget):
                 level_names.append(item.text())
         for obj in doc.Objects:
             if hasattr(obj, 'IfcType') and obj.IfcType == 'Column':
-                x, y, _ = tuple(obj.Placement.Base)
+                x, y, _ = obj.Shape.BoundBox.Center
                 rot = math.degrees(obj.Placement.Rotation.Angle)
                 for level_name in level_names:
                     i = all_level_names.index(level_name)
