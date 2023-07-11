@@ -285,7 +285,6 @@ class Form(QtWidgets.QWidget):
         ret = self.show_etabs_warning()
         if not ret:
             return
-
         self.etabs.set_current_unit('N', 'mm')
         self.etabs.unlock_model()
         g1 = self.export_axes_to_etabs()
@@ -310,14 +309,12 @@ class Form(QtWidgets.QWidget):
         if x_axis:
             x_grids = get_axis_data(x_axis, 'X')
             for coord, name in x_grids:
-                data.extend([g1, 'X (Cartesian)', name, str(coord), '', '', '', '', '', 'End', 'Yes'])
+                data.extend([g1, 'X (Cartesian)', name, str(coord), 'End', 'Yes'])
         if y_axis:
             y_grids = get_axis_data(y_axis, 'Y')
             for coord, name in y_grids:
-                data.extend([g1, 'Y (Cartesian)', name, str(coord), '', '', '', '', '', 'Start', 'Yes'])
-        table_key = 'Grid Definitions - Grid Lines'
-        fields = ['Name', 'Grid Line Type', 'ID', 'Ordinate', 'Angle', 'X1', 'Y1', 'X2', 'Y2', 'Bubble Location', 'Visible']
-        self.etabs.database.apply_data(table_key, data, fields)
+                data.extend([g1, 'Y (Cartesian)', name, str(coord), 'Start', 'Yes'])
+        self.etabs.database.add_grid_lines(data=data)
         return g1
 
     def export_columns_to_etabs(self):
