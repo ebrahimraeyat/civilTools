@@ -119,10 +119,14 @@ class Form(QtWidgets.QWidget):
                     )
                 numbers.add(name)
         progressbar.stop()
+        color = '<span style=" font-size:9pt; font-weight:600; color:#0000ff;">%s</span>'
+        number_of_combos = color % str(len(numbers))
+        model_filename = color % self.etabs.get_filename_with_suffix()
+        message = f'<html>Successfully written  {number_of_combos} Load Combinations to {model_filename} Model.</html>'
         QMessageBox.information(
             None,
             'Successfull',
-            f'Successfully written {len(numbers)} Load Combinations to {self.etabs.get_filename()} Model.',
+            message,
         )
 
     def fill_load_cases(self):
