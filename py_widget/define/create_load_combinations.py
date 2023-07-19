@@ -54,7 +54,7 @@ class Form(QtWidgets.QWidget):
             design_type = "LRFD"
         elif self.form.asd.isChecked():
             design_type = "ASD"
-        separate_direction = self.form.separate_direction.isChecked()
+        separate_direction = not self.form.separate_direction.isChecked()
         retaining_wall = self.form.retaining_wall_groupbox.isChecked()
         omega_x = 0
         omega_y = 0

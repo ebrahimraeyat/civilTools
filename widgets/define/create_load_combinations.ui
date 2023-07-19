@@ -737,7 +737,10 @@
           <item>
            <widget class="QCheckBox" name="separate_direction">
             <property name="text">
-             <string>Not (100-30)</string>
+             <string>Consider (100-30)</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
