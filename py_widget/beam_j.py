@@ -28,7 +28,7 @@ class Form(QtWidgets.QWidget):
                 beams_names = set(names).intersection(beams)
             elif exclude_selected_beams:
                 beams_names = set(beams).difference(names)
-        phi = self.form.phi_spinbox.value()
+        phi = 0.75
         num_iteration = self.form.iteration_spinbox.value()
         tolerance = self.form.tolerance_spinbox.value()
         j_max_value = self.form.maxj_spinbox.value()
@@ -37,7 +37,7 @@ class Form(QtWidgets.QWidget):
         initial_j = self.form.initial_spinbox.value() if initial_j else None
         decimals = self.form.rounding.isChecked()
         decimals = self.form.round_decimals.value() if decimals else None
-        df = self.etabs.frame_obj.correct_torsion_stiffness_factor(
+        gen = self.etabs.frame_obj.correct_torsion_stiffness_factor(
             load_combinations,
             beams_names,
             phi,
@@ -48,9 +48,21 @@ class Form(QtWidgets.QWidget):
             initial_j,
             decimals,
             )
-        import table_model
-        table_model.show_results(df, None, table_model.BeamsJModel, self.etabs.view.show_frame)
-        self.form.close()
+        i = 0
+        percent = int(0.1 / num_iteration * 100)
+        try:
+            while True:
+                self.form.progressbar.setValue(percent)
+                ret = gen.__next__()
+                if isinstance(ret, int):
+                    i += 1
+                    percent = int(i / num_iteration * 100)
+                else:
+                    import table_model
+                    table_model.show_results(ret, None, table_model.BeamsJModel, self.etabs.view.show_frame)
+                    self.form.close()
+        except StopIteration:
+            return
 
     def reject(self):
         import FreeCADGui as Gui
