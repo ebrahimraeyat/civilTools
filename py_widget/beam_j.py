@@ -60,9 +60,8 @@ class Form(QtWidgets.QWidget):
                 else:
                     import table_model
                     table_model.show_results(ret, None, table_model.BeamsJModel, self.etabs.view.show_frame)
-                    self.form.close()
         except StopIteration:
-            return
+            self.form.close()
 
     def reject(self):
         import FreeCADGui as Gui
