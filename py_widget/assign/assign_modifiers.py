@@ -19,26 +19,19 @@ class Form(QtWidgets.QWidget):
         selected_obj_only = self.form.selected_obj.isChecked()
         beams, columns = self.etabs.frame_obj.get_beams_columns()
         selections = self.etabs.select_obj.get_selected_obj_type(n=2)
-        if self.form.tabwidget.currentIndex() == 0: # beams
+        index = self.form.tabwidget.currentIndex()
+        tab_text = self.form.tabwidget.tabText(index)
+        if tab_text == 'Beams':
             if len(beams) == 0:
                 QMessageBox.warning(None, "Not Beams", 'Can not find any Beams in this model!')
                 return
+            modifiers = self.get_beam_modifiers()
             if selected_obj_only:
                 names = set(selections).intersection(beams)
             else:
                 names = beams
-            modifiers = [
-                self.form.beam_area_spinbox.value() if self.form.beam_area_checkbox.isChecked() else None,
-                self.form.beam_as2_spinbox.value() if self.form.beam_as2_checkbox.isChecked() else None,
-                self.form.beam_as3_spinbox.value() if self.form.beam_as3_checkbox.isChecked() else None,
-                self.form.beam_torsion_spinbox.value() if self.form.beam_torsion_checkbox.isChecked() else None,
-                self.form.beam_i22_spinbox.value() if self.form.beam_i22_checkbox.isChecked() else None,
-                self.form.beam_i33_spinbox.value() if self.form.beam_i33_checkbox.isChecked() else None,
-                self.form.beam_mass_spinbox.value() if self.form.beam_mass_checkbox.isChecked() else None,
-                self.form.beam_weight_spinbox.value() if self.form.beam_weight_checkbox.isChecked() else None,
-            ]
         
-        elif self.form.tabwidget.currentIndex() == 1: # columns
+        elif tab_text == 'Columns':
             if len(columns) == 0:
                 QMessageBox.warning(None, "Not Columns", 'Can not find any Columns in this model!')
                 return
@@ -46,19 +39,9 @@ class Form(QtWidgets.QWidget):
                 names = set(selections).intersection(columns)
             else:
                 names = columns
-            modifiers = [
-                self.form.column_area_spinbox.value() if self.form.column_area_checkbox.isChecked() else None,
-                self.form.column_as2_spinbox.value() if self.form.column_as2_checkbox.isChecked() else None,
-                self.form.column_as3_spinbox.value() if self.form.column_as3_checkbox.isChecked() else None,
-                self.form.column_torsion_spinbox.value() if self.form.column_torsion_checkbox.isChecked() else None,
-                self.form.column_i22_spinbox.value() if self.form.column_i22_checkbox.isChecked() else None,
-                self.form.column_i33_spinbox.value() if self.form.column_i33_checkbox.isChecked() else None,
-                self.form.column_mass_spinbox.value() if self.form.column_mass_checkbox.isChecked() else None,
-                self.form.column_weight_spinbox.value() if self.form.column_weight_checkbox.isChecked() else None,
-            ]
-        # frames = self.etabs.select_obj.get_selected_obj_type(2)
+            modifiers = self.get_column_modifiers()
         self.etabs.unlock_model()
-        self.etabs.frame_obj.assign_frame_modifires(
+        self.etabs.frame_obj.assign_frame_modifiers(
             names,
             *modifiers,
         )
@@ -67,11 +50,37 @@ class Form(QtWidgets.QWidget):
             'Successfull',
             f'Successfully Apply {len(names)} Modifiers to {self.etabs.get_filename()} Model.',
         )
-        # self.reject()
-            
+        
+    def get_beam_modifiers(self):
+        modifiers = [
+            self.form.beam_area_spinbox.value() if self.form.beam_area_checkbox.isChecked() else None,
+            self.form.beam_as2_spinbox.value() if self.form.beam_as2_checkbox.isChecked() else None,
+            self.form.beam_as3_spinbox.value() if self.form.beam_as3_checkbox.isChecked() else None,
+            self.form.beam_torsion_spinbox.value() if self.form.beam_torsion_checkbox.isChecked() else None,
+            self.form.beam_i22_spinbox.value() if self.form.beam_i22_checkbox.isChecked() else None,
+            self.form.beam_i33_spinbox.value() if self.form.beam_i33_checkbox.isChecked() else None,
+            self.form.beam_mass_spinbox.value() if self.form.beam_mass_checkbox.isChecked() else None,
+            self.form.beam_weight_spinbox.value() if self.form.beam_weight_checkbox.isChecked() else None,
+        ]
+        return modifiers
+    
+    def get_column_modifiers(self):
+        modifiers = [
+            self.form.column_area_spinbox.value() if self.form.column_area_checkbox.isChecked() else None,
+            self.form.column_as2_spinbox.value() if self.form.column_as2_checkbox.isChecked() else None,
+            self.form.column_as3_spinbox.value() if self.form.column_as3_checkbox.isChecked() else None,
+            self.form.column_torsion_spinbox.value() if self.form.column_torsion_checkbox.isChecked() else None,
+            self.form.column_i22_spinbox.value() if self.form.column_i22_checkbox.isChecked() else None,
+            self.form.column_i33_spinbox.value() if self.form.column_i33_checkbox.isChecked() else None,
+            self.form.column_mass_spinbox.value() if self.form.column_mass_checkbox.isChecked() else None,
+            self.form.column_weight_spinbox.value() if self.form.column_weight_checkbox.isChecked() else None,
+        ]
+        return modifiers
+    
     def create_connections(self):
         self.form.apply_to_etabs_button.clicked.connect(self.apply_to_etabs)
-        self.form.cancel_button.clicked.connect(self.reject)
+        self.form.apply_to_etabs_button_all.clicked.connect(self.apply_to_etabs)
+        self.form.tabwidget.currentChanged.connect(self.tab_changed)
         # Beams
         self.form.beam_area_checkbox.stateChanged.connect(self.beam_area_checkbox_clicked)
         self.form.beam_as2_checkbox.stateChanged.connect(self.beam_as2_checkbox_clicked)
@@ -90,6 +99,10 @@ class Form(QtWidgets.QWidget):
         self.form.column_i33_checkbox.stateChanged.connect(self.column_i33_checkbox_clicked)
         self.form.column_mass_checkbox.stateChanged.connect(self.column_mass_checkbox_clicked)
         self.form.column_weight_checkbox.stateChanged.connect(self.column_weight_checkbox_clicked)
+
+    def tab_changed(self, index: int):
+        tab_text = self.form.tabwidget.tabText(index)
+        self.form.apply_to_etabs_button.setText(tab_text)
 
     def column_weight_checkbox_clicked(self):
         self.form.column_weight_spinbox.setEnabled(self.form.column_weight_checkbox.isChecked())
