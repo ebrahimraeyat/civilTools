@@ -48,7 +48,7 @@ class Form(QtWidgets.QWidget):
         QMessageBox.information(
             None,
             'Successfull',
-            f'Successfully Apply EV to {self.etabs.get_filename()} Model.',
+            f'Successfully Applied EV to {self.etabs.get_filename()} Model.',
         )
         # self.reject()
 

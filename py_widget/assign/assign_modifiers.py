@@ -48,7 +48,38 @@ class Form(QtWidgets.QWidget):
         QMessageBox.information(
             None,
             'Successfull',
-            f'Successfully Apply {len(names)} Modifiers to {self.etabs.get_filename()} Model.',
+            f'Successfully Applied {len(names)} Modifiers to {self.etabs.get_filename()} Model.',
+        )
+    
+    def apply_to_etabs_all(self):
+        selected_obj_only = self.form.selected_obj.isChecked()
+        beams, columns = self.etabs.frame_obj.get_beams_columns()
+        selections = self.etabs.select_obj.get_selected_obj_type(n=2)
+        if selected_obj_only:
+            names = set(selections).intersection(beams)
+        else:
+            names = beams
+        self.etabs.unlock_model()
+        if names:
+            modifiers = self.get_beam_modifiers()
+            self.etabs.frame_obj.assign_frame_modifiers(
+                names,
+                *modifiers,
+            )
+        if selected_obj_only:
+            names = set(selections).intersection(columns)
+        else:
+            names = columns
+        if names:
+            modifiers = self.get_column_modifiers()
+            self.etabs.frame_obj.assign_frame_modifiers(
+                names,
+                *modifiers,
+            )
+        QMessageBox.information(
+            None,
+            'Successfull',
+            f'Successfully Applied All Modifiers to {self.etabs.get_filename()} Model.',
         )
         
     def get_beam_modifiers(self):
@@ -79,7 +110,7 @@ class Form(QtWidgets.QWidget):
     
     def create_connections(self):
         self.form.apply_to_etabs_button.clicked.connect(self.apply_to_etabs)
-        self.form.apply_to_etabs_button_all.clicked.connect(self.apply_to_etabs)
+        self.form.apply_to_etabs_button_all.clicked.connect(self.apply_to_etabs_all)
         self.form.tabwidget.currentChanged.connect(self.tab_changed)
         # Beams
         self.form.beam_area_checkbox.stateChanged.connect(self.beam_area_checkbox_clicked)

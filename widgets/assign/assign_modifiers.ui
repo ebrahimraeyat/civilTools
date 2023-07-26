@@ -457,7 +457,7 @@
      <item>
       <widget class="QPushButton" name="apply_to_etabs_button_all">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="toolTip">
         <string>Export Selected Load Combinations To ETABS Model</string>
