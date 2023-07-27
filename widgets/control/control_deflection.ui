@@ -241,7 +241,7 @@
        <item row="5" column="1">
         <widget class="QDoubleSpinBox" name="cover_spinbox">
          <property name="suffix">
-          <string> Cm</string>
+          <string> cm</string>
          </property>
          <property name="value">
           <double>6.000000000000000</double>
@@ -251,7 +251,7 @@
        <item row="7" column="1">
         <widget class="QDoubleSpinBox" name="additional_rebars">
          <property name="suffix">
-          <string> Cm2</string>
+          <string> cm2</string>
          </property>
          <property name="decimals">
           <number>0</number>
@@ -270,7 +270,7 @@
        <item row="9" column="1">
         <widget class="QDoubleSpinBox" name="minus_length">
          <property name="suffix">
-          <string> Cm2</string>
+          <string> cm</string>
          </property>
          <property name="decimals">
           <number>0</number>
