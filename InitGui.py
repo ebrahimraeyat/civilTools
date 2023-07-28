@@ -55,15 +55,15 @@ class CivilToolsWorkbench(Workbench):
         from DraftGui import todo
         import check_update
 
-        todo.delay(check_update.check_updates, 'civilTools')
+        check_update.check_updates('civilTools')
         if FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools").GetBool("FirstTime", True):
-            from DraftGui import todo
+            # from DraftGui import todo
             todo.delay(Gui.runCommand, "civiltools_settings")
 
-        if FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools").GetBool("show_at_startup", True):
-            Gui.showPreferences("civilTools", 0)
+        # if FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools").GetBool("show_at_startup", True):
+        #     Gui.showPreferences("civilTools", 0)
         
-        FreeCAD.addImportType("CSI ETABS (*.edb *.EDB)", "gui_civiltools.open_etabs")
+        # FreeCAD.addImportType("CSI ETABS (*.edb *.EDB)", "gui_civiltools.open_etabs")
 
 
 Gui.addWorkbench(CivilToolsWorkbench())
