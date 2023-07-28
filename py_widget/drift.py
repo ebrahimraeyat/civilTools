@@ -103,7 +103,11 @@ class Form(QtWidgets.QWidget):
                         loadcases.append(item.text())
         create_t_file = self.form.create_t_file_box.isChecked()
         if create_t_file:
-            tx, ty, _ = self.etabs.get_drift_periods()
+            structure_type = self.etabs.get_type_of_structure()
+            if structure_type == 'steel':
+                tx, ty, main_file = self.etabs.get_drift_periods(open_main_file=False)
+            else:
+                tx, ty, _ = self.etabs.get_drift_periods(open_main_file=True)
             civiltools_config.save_analytical_periods(self.etabs, tx, ty)
             building = self.current_building(tx, ty)
             self.etabs.apply_cfactor_to_edb(building, bot_story, top_story)
@@ -122,8 +126,13 @@ class Form(QtWidgets.QWidget):
             x_loadcases,
             y_loadcases,
             )
+        if create_t_file and structure_type == 'steel':
+            print(f"Opening file {main_file}\n")
+            self.etabs.SapModel.File.OpenFile(str(main_file))
         if ret is None:
-            QMessageBox.warning(None, 'Diphragm', 'Please Check that you assigned diaphragm to stories.')
+            QMessageBox.warning(None,
+                                'Diphragm',
+                                'Please Check that you assigned diaphragm to stories.')
             return
         drifts, headers = ret
         import table_model
