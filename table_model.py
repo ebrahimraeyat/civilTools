@@ -89,16 +89,19 @@ class DriftModel(ResultsModel):
 class TorsionModel(ResultsModel):
     def __init__(self, data, headers):
         super(TorsionModel, self).__init__(data, headers)
-        self.df = self.df[[
+        headers = [
             'Story',
+            'Label',
             'OutputCase',
             'Max Drift',
             'Avg Drift',
-            'Label',
             'Ratio',
-        ]]
-        self.headers = tuple(self.df.columns)
-        self.col_function = (0, 4)
+        ]
+        i_story = headers.index('Story')
+        i_label = headers.index('Label')
+        self.df = self.df[headers]
+        self.headers = tuple(headers)
+        self.col_function = (i_story, i_label)
 
     def data(self, index, role=Qt.DisplayRole):
         row = index.row()
@@ -117,7 +120,7 @@ class TorsionModel(ResultsModel):
                 # if col == i_ratio:
                     # value = float(value)
                 if value <= 1.2:
-                    return QColor('cyan')
+                    return QColor(low)
                 elif 1.2 < value < 1.4:
                     return QColor(intermediate)
                 elif value > 1.4:
