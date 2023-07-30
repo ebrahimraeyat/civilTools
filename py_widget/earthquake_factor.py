@@ -347,7 +347,24 @@ class Form(QtWidgets.QWidget):
         else:
             self.set_bx_by()
 
+    def check_analytical_period(self):
+        if self.final_building:
+            message = '''
+            Analytical Period in %s direction < 1.25 * Experimental,
+            Do you want to continue?
+            '''
+            if self.final_building.x_period_an < 1.25 * self.final_building.exp_period_x:
+                if QMessageBox.question(None, 'X Analytical Period', message % 'X') == QMessageBox.No:
+                    return
+            if self.final_building.y_period_an < 1.25 * self.final_building.exp_period_y:
+                if QMessageBox.question(None, 'Y Analytical Period', message % 'Y') == QMessageBox.No:
+                    return
+        return True
+
     def apply_factors_to_etabs(self):
+        ret = self.check_analytical_period()
+        if not ret:
+            return
         bot_story = self.form.bot_x_combo.currentText()
         top_story = self.form.top_x_combo.currentText()
         ret = self.etabs.apply_cfactor_to_edb(
