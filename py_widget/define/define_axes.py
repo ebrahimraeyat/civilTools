@@ -208,20 +208,19 @@ class Form(QtWidgets.QWidget):
         y_coordinates = set()
         doc = FreeCAD.ActiveDocument
         for obj in doc.Objects:
-            if hasattr(obj, 'IfcType') and obj.IfcType == 'Column':
+            if (
+                (hasattr(obj, 'IfcType') and 'column' in obj.IfcType.lower()) or
+                (hasattr(obj, 'IfcClass') and 'column' in obj.IfcClass.lower())
+            ):
                 center = obj.Shape.BoundBox.Center
                 x = round(center.x, -1)
                 y = round(center.y, -1)
                 x_coordinates.add(x)
                 y_coordinates.add(y)
-                if obj.Length == 0:
-                    delta_x = x - center.x
-                    delta_y = y - center.y
-                    obj.Placement.Base.x = delta_x
-                    obj.Placement.Base.y = delta_y
-                else:
-                    obj.Placement.Base.x = x
-                    obj.Placement.Base.y = y
+                delta_x = x - center.x
+                delta_y = y - center.y
+                obj.Placement.Base.x = obj.Placement.Base.x + delta_x
+                obj.Placement.Base.y = obj.Placement.Base.y + delta_y
         if self.form.selections.isChecked():
             lines = Gui.Selection.getSelection()
             for line in lines:
@@ -239,7 +238,10 @@ class Form(QtWidgets.QWidget):
         if doc is None:
             return
         for obj in doc.Objects:
-            if hasattr(obj, 'IfcType') and obj.IfcType == 'Column':
+            if (
+                (hasattr(obj, 'IfcType') and 'column' in obj.IfcType.lower()) or
+                (hasattr(obj, 'IfcClass') and 'column' in obj.IfcClass.lower())
+            ):
                 doc.removeObject(obj.Name)
 
     def get_blocks(self):
@@ -332,7 +334,10 @@ class Form(QtWidgets.QWidget):
             if item.checkState() == Qt.Checked:
                 level_names.append(item.text())
         for obj in doc.Objects:
-            if hasattr(obj, 'IfcType') and obj.IfcType == 'Column':
+            if (
+                (hasattr(obj, 'IfcType') and 'column' in obj.IfcType.lower()) or
+                (hasattr(obj, 'IfcClass') and 'column' in obj.IfcClass.lower())
+            ):
                 x, y, _ = obj.Shape.BoundBox.Center
                 rot = math.degrees(obj.Placement.Rotation.Angle)
                 for level_name in level_names:
