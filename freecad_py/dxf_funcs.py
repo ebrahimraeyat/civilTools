@@ -10,7 +10,7 @@ from DraftGeomUtils import vec as Vec
 from FreeCAD import Vector
 from FreeCAD import Console as FCC
 
-import dxfColorMap
+from freecad_obj import dxfColorMap
 import dxfReader
 
 # sets the default working plane if Draft hasn't been started yet
@@ -758,7 +758,7 @@ class ImportDXF:
                 if dxfobj.color_index == 256:
                     cm = self.getGroupColor(dxfobj)[:3]
                 else:
-                    cm = dxfColorMap.color_map[dxfobj.color_index]
+                    cm = dxfColorMap.color_map.get(dxfobj.color_index, [0.0, 0.0, 0.0])
                 obj.ViewObject.TextColor = (cm[0], cm[1], cm[2])
             elif hasattr(obj.ViewObject, "LineColor"):
                 if dxfobj.color_index == 256:
@@ -766,7 +766,7 @@ class ImportDXF:
                 elif (dxfobj.color_index == 7) and dxfBrightBackground:
                     cm = [0.0, 0.0, 0.0]
                 else:
-                    cm = dxfColorMap.color_map[dxfobj.color_index]
+                    cm = dxfColorMap.color_map.get(dxfobj.color_index, [0.0, 0.0, 0.0])
                 obj.ViewObject.LineColor = (cm[0], cm[1], cm[2], 0.0)
         else:
             if hasattr(obj.ViewObject, "TextColor"):
@@ -819,7 +819,7 @@ class ImportDXF:
                             else:
                                 if isinstance(l.color, int):
                                     if l.color > 0:
-                                        return dxfColorMap.color_map[l.color]
+                                        return dxfColorMap.color_map.get(l.color, [0.0, 0.0, 0.0])
         return [0.0, 0.0, 0.0]
 
     @classmethod
@@ -1144,7 +1144,7 @@ class ImportDXF:
             for table in self.drawing.tables.get_type("table"):
                 for layer in table.get_type("layer"):
                     name = layer.name
-                    color = tuple(dxfColorMap.color_map[layer.color])
+                    color = tuple(dxfColorMap.color_map.get(layer.color, [0.0, 0.0, 0.0]))
                     drawstyle = "Solid"
                     lt = self.rawValue(layer, 6)
                     if "DASHED" in lt.upper():
