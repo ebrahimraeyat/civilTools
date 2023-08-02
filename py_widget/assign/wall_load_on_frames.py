@@ -54,9 +54,9 @@ class Form(QtWidgets.QWidget):
         self.form.relative.clicked.connect(self.set_dists_range)
         self.form.assign_button.clicked.connect(self.assign)
         self.form.cancel_button.clicked.connect(self.reject)
-        self.form.referesh_button.clicked.connect(self.referesh_clicked)
+        self.form.refresh_button.clicked.connect(self.refresh_clicked)
 
-    def referesh_clicked(self):
+    def refresh_clicked(self):
         selected_objects = self.etabs.select_obj.get_selected_objects()
         frames = selected_objects.get(2, None)
         if frames is None:

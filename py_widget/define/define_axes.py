@@ -51,7 +51,7 @@ class Form(QtWidgets.QWidget):
         self.form.create_axis.clicked.connect(self.create_axis)
         self.form.export_to_etabs.clicked.connect(self.export_to_etabs)
         self.form.create_columns.clicked.connect(self.create_columns)
-        self.form.referesh.clicked.connect(self.fill_levels)
+        self.form.refresh.clicked.connect(self.fill_levels)
         self.form.cancel_button.clicked.connect(self.reject)
         self.form.unit.currentIndexChanged.connect(self.set_scale)
 
@@ -361,7 +361,7 @@ class Form(QtWidgets.QWidget):
 
     def show_etabs_warning(self):
         if not self.etabs.success:
-            QMessageBox.warning(None, 'Open ETABS', 'Please open ETABS and Press referesh button.')
+            QMessageBox.warning(None, 'Open ETABS', 'Please open ETABS and Press refresh button.')
             return False
         return True
 

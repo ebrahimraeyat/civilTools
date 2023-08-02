@@ -294,13 +294,13 @@
            </widget>
           </item>
           <item row="2" column="0" colspan="2">
-           <widget class="QPushButton" name="referesh_button">
+           <widget class="QPushButton" name="refresh_button">
             <property name="text">
-             <string>Referesh</string>
+             <string>Refresh</string>
             </property>
             <property name="icon">
              <iconset resource="../../civiltools.qrc">
-              <normaloff>:/civiltools/images/referesh.svg</normaloff>:/civiltools/images/referesh.svg</iconset>
+              <normaloff>:/civiltools/images/refresh.svg</normaloff>:/civiltools/images/refresh.svg</iconset>
             </property>
             <property name="iconSize">
              <size>
