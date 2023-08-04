@@ -17,15 +17,21 @@ class Form(QtWidgets.QWidget):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'drift.ui'))
         self.etabs = etabs_obj
+        self.dynamic_tab_clicked = False
         self.fill_xy_loadcase_names()
-        self.fill_dynamic_xy_loadcase_names()
         self.create_connections()
     
     def create_connections(self):
-        self.form.xy.clicked.connect(self.reset_widget)
         self.form.run.clicked.connect(self.accept)
+        self.form.tab_widget.currentChanged.connect(self.tab_changed)
+        # self.form.xy.clicked.connect(self.reset_widget)
         # self.form.angular.clicked.connect(self.reset_widget)
         # self.form.angular.clicked.connect(self.fill_angular_fields)
+
+    def tab_changed(self, index: int):
+        if index == 1 and not self.dynamic_tab_clicked:
+            self.fill_dynamic_xy_loadcase_names()
+            self.dynamic_tab_clicked = True
 
     def fill_dynamic_xy_loadcase_names(self):
         x_specs, y_specs = self.etabs.load_cases.get_response_spectrum_xy_loadcases_names()
@@ -70,7 +76,7 @@ class Form(QtWidgets.QWidget):
         x_loadcases = []
         y_loadcases = []
 
-        tab = self.form.tabWidget.currentIndex()
+        tab = self.form.tab_widget.currentIndex()
         if tab == 0:
             lw = self.form.x_loadcase_list
             for i in range(lw.count()):
