@@ -21,30 +21,43 @@ class Form(QtWidgets.QWidget):
         selections = self.etabs.select_obj.get_selected_obj_type(n=2)
         index = self.form.tabwidget.currentIndex()
         tab_text = self.form.tabwidget.tabText(index)
-        if tab_text == 'Beams':
-            if len(beams) == 0:
-                QMessageBox.warning(None, "Not Beams", 'Can not find any Beams in this model!')
-                return
-            modifiers = self.get_beam_modifiers()
-            if selected_obj_only:
-                names = set(selections).intersection(beams)
-            else:
-                names = beams
-        
-        elif tab_text == 'Columns':
-            if len(columns) == 0:
-                QMessageBox.warning(None, "Not Columns", 'Can not find any Columns in this model!')
-                return
-            if selected_obj_only:
-                names = set(selections).intersection(columns)
-            else:
-                names = columns
-            modifiers = self.get_column_modifiers()
         self.etabs.unlock_model()
-        self.etabs.frame_obj.assign_frame_modifiers(
-            names,
-            *modifiers,
-        )
+        if tab_text in ('Beams', 'Columns'):
+            if tab_text == 'Beams':
+                if len(beams) == 0:
+                    QMessageBox.warning(None, "Not Beams", 'Can not find any Beams in this model!')
+                    return
+                modifiers = self.get_beam_modifiers()
+                if selected_obj_only:
+                    names = set(selections).intersection(beams)
+                else:
+                    names = beams
+            
+            elif tab_text == 'Columns':
+                if len(columns) == 0:
+                    QMessageBox.warning(None, "Not Columns", 'Can not find any Columns in this model!')
+                    return
+                if selected_obj_only:
+                    names = set(selections).intersection(columns)
+                else:
+                    names = columns
+                modifiers = self.get_column_modifiers()
+            self.etabs.frame_obj.assign_frame_modifiers(
+                names,
+                *modifiers,
+            )
+        elif tab_text == 'Slabs':
+            reset_section_modifiers = self.form.reset_section_modifiers.isChecked()
+            if selected_obj_only:
+                names = self.etabs.select_obj.get_selected_floors()
+            else:
+                names = self.etabs.area.get_slab_names()
+            modifiers = self.get_slab_modifiers()
+            self.etabs.area.assign_slab_modifiers(
+                names,
+                *modifiers,
+                reset=reset_section_modifiers,
+            )
         QMessageBox.information(
             None,
             'Successfull',
@@ -55,6 +68,7 @@ class Form(QtWidgets.QWidget):
         selected_obj_only = self.form.selected_obj.isChecked()
         beams, columns = self.etabs.frame_obj.get_beams_columns()
         selections = self.etabs.select_obj.get_selected_obj_type(n=2)
+        # Beams
         if selected_obj_only:
             names = set(selections).intersection(beams)
         else:
@@ -66,6 +80,7 @@ class Form(QtWidgets.QWidget):
                 names,
                 *modifiers,
             )
+        # Columns
         if selected_obj_only:
             names = set(selections).intersection(columns)
         else:
@@ -76,6 +91,18 @@ class Form(QtWidgets.QWidget):
                 names,
                 *modifiers,
             )
+        # Slabs
+        reset_section_modifiers = self.form.reset_section_modifiers.isChecked()
+        if selected_obj_only:
+            names = self.etabs.select_obj.get_selected_floors()
+        else:
+            names = self.etabs.area.get_slab_names()
+        modifiers = self.get_slab_modifiers()
+        self.etabs.area.assign_slab_modifiers(
+            names,
+            *modifiers,
+            reset=reset_section_modifiers,
+        )
         QMessageBox.information(
             None,
             'Successfull',
@@ -108,6 +135,21 @@ class Form(QtWidgets.QWidget):
         ]
         return modifiers
     
+    def get_slab_modifiers(self):
+        modifiers = [
+            self.form.slabs_f11_spinbox.value() if self.form.slabs_f11_checkbox.isChecked() else None,
+            self.form.slabs_f22_spinbox.value() if self.form.slabs_f22_checkbox.isChecked() else None,
+            self.form.slabs_f12_spinbox.value() if self.form.slabs_f12_checkbox.isChecked() else None,
+            self.form.slabs_m11_spinbox.value() if self.form.slabs_m11_checkbox.isChecked() else None,
+            self.form.slabs_m22_spinbox.value() if self.form.slabs_m22_checkbox.isChecked() else None,
+            self.form.slabs_m12_spinbox.value() if self.form.slabs_m12_checkbox.isChecked() else None,
+            self.form.slabs_v13_spinbox.value() if self.form.slabs_v13_checkbox.isChecked() else None,
+            self.form.slabs_v23_spinbox.value() if self.form.slabs_v23_checkbox.isChecked() else None,
+            self.form.slabs_mass_spinbox.value() if self.form.slabs_mass_checkbox.isChecked() else None,
+            self.form.slabs_weight_spinbox.value() if self.form.slabs_weight_checkbox.isChecked() else None,
+        ]
+        return modifiers
+    
     def create_connections(self):
         self.form.apply_to_etabs_button.clicked.connect(self.apply_to_etabs)
         self.form.apply_to_etabs_button_all.clicked.connect(self.apply_to_etabs_all)
@@ -130,11 +172,55 @@ class Form(QtWidgets.QWidget):
         self.form.column_i33_checkbox.stateChanged.connect(self.column_i33_checkbox_clicked)
         self.form.column_mass_checkbox.stateChanged.connect(self.column_mass_checkbox_clicked)
         self.form.column_weight_checkbox.stateChanged.connect(self.column_weight_checkbox_clicked)
+        # Slabs
+        self.form.slabs_f11_checkbox.stateChanged.connect(self.slabs_f11_checkbox_clicked)
+        self.form.slabs_f22_checkbox.stateChanged.connect(self.slabs_f22_checkbox_clicked)
+        self.form.slabs_f12_checkbox.stateChanged.connect(self.slabs_f12_checkbox_clicked)
+        self.form.slabs_m11_checkbox.stateChanged.connect(self.slabs_m11_checkbox_clicked)
+        self.form.slabs_m22_checkbox.stateChanged.connect(self.slabs_m22_checkbox_clicked)
+        self.form.slabs_m12_checkbox.stateChanged.connect(self.slabs_m12_checkbox_clicked)
+        self.form.slabs_v13_checkbox.stateChanged.connect(self.slabs_v13_checkbox_clicked)
+        self.form.slabs_v23_checkbox.stateChanged.connect(self.slabs_v23_checkbox_clicked)
+        self.form.slabs_mass_checkbox.stateChanged.connect(self.slabs_mass_checkbox_clicked)
+        self.form.slabs_weight_checkbox.stateChanged.connect(self.slabs_weight_checkbox_clicked)
 
     def tab_changed(self, index: int):
         tab_text = self.form.tabwidget.tabText(index)
         self.form.apply_to_etabs_button.setText(tab_text)
 
+    
+    # Slabs
+    def slabs_weight_checkbox_clicked(self):
+        self.form.slabs_weight_spinbox.setEnabled(self.form.slabs_weight_checkbox.isChecked())
+    
+    def slabs_mass_checkbox_clicked(self):
+        self.form.slabs_mass_spinbox.setEnabled(self.form.slabs_mass_checkbox.isChecked())
+    
+    def slabs_f11_checkbox_clicked(self):
+        self.form.slabs_f11_spinbox.setEnabled(self.form.slabs_f11_checkbox.isChecked())
+    
+    def slabs_f22_checkbox_clicked(self):
+        self.form.slabs_f22_spinbox.setEnabled(self.form.slabs_f22_checkbox.isChecked())
+    
+    def slabs_f12_checkbox_clicked(self):
+        self.form.slabs_f12_spinbox.setEnabled(self.form.slabs_f12_checkbox.isChecked())
+    
+    def slabs_m11_checkbox_clicked(self):
+        self.form.slabs_m11_spinbox.setEnabled(self.form.slabs_m11_checkbox.isChecked())
+    
+    def slabs_m22_checkbox_clicked(self):
+        self.form.slabs_m22_spinbox.setEnabled(self.form.slabs_m22_checkbox.isChecked())
+    
+    def slabs_m12_checkbox_clicked(self):
+        self.form.slabs_m12_spinbox.setEnabled(self.form.slabs_m12_checkbox.isChecked())
+    
+    def slabs_v13_checkbox_clicked(self):
+        self.form.slabs_v13_spinbox.setEnabled(self.form.slabs_v13_checkbox.isChecked())
+    
+    def slabs_v23_checkbox_clicked(self):
+        self.form.slabs_v23_spinbox.setEnabled(self.form.slabs_v23_checkbox.isChecked())
+
+    # columns
     def column_weight_checkbox_clicked(self):
         self.form.column_weight_spinbox.setEnabled(self.form.column_weight_checkbox.isChecked())
     
@@ -159,6 +245,7 @@ class Form(QtWidgets.QWidget):
     def column_area_checkbox_clicked(self):
         self.form.column_area_spinbox.setEnabled(self.form.column_area_checkbox.isChecked())
 
+    # Beams
     def beam_weight_checkbox_clicked(self):
         self.form.beam_weight_spinbox.setEnabled(self.form.beam_weight_checkbox.isChecked())
     
