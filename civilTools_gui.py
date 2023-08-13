@@ -52,6 +52,7 @@ from gui_civiltools.control import (
     gui_get_weakness_torsion,
     gui_control_joint_shear,
     gui_check_deflection,
+    gui_check_deflection_of_slab,
 )
 from gui_civiltools.tools import (
     gui_discretize, 
@@ -189,6 +190,7 @@ civiltools_list = [
             "civil_show_torsion",
             "civil_modify_torsion_stiffness",
             "civilTools_check_deflection",
+            "civilTools_check_deflection_of_slab",
             "civil_irregurality_of_mass",
             "civil_story_stiffness",
             "civil_get_weakness",
