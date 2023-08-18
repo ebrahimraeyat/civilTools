@@ -1,14 +1,12 @@
 try:
     from docx.shared import Inches
 except ImportError:
-    import subprocess
-    import sys
     package = 'python-docx'
-    subprocess.check_call(['python', "-m", "pip", "install", package])
-    
+    from freecad_funcs import install_package
+    install_package(package_name=package)
+
 from docx import Document
 from docx.enum.table import WD_TABLE_DIRECTION
-import sys
 import os
 
 cfactor_path = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))

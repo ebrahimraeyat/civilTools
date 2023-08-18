@@ -11,7 +11,14 @@ from PySide2.QtWidgets import (
     )
 from PySide2.QtCore import QSettings, Qt
 
-import pyqtgraph as pg
+try:
+    import pyqtgraph as pg
+except ImportError:
+    package = 'pyqtgraph'
+    from freecad_funcs import install_package
+    install_package(package)
+    import pyqtgraph as pg
+
 pg.setConfigOption('background', 'w')
 pg.setConfigOption('foreground', 'k')
 

@@ -3,7 +3,7 @@ import random
 import colorsys
 
 import pandas as pd
-from PySide2.QtCore import QAbstractTableModel, Qt 
+from PySide2.QtCore import QAbstractTableModel, Qt
 from PySide2.QtGui import QColor, QIcon
 from PySide2 import QtCore, QtWidgets
 
@@ -469,6 +469,8 @@ class ResultWidget(QtWidgets.QDialog):
         super(ResultWidget, self).__init__(parent)
         self.push_button_to_excel = QtWidgets.QPushButton()
         self.push_button_to_excel.setIcon(QIcon(str(civiltools_path / 'images' / 'xlsx.png')))
+        self.push_button_to_word = QtWidgets.QPushButton()
+        self.push_button_to_word.setIcon(QIcon(str(civiltools_path / 'images' / 'word.png')))
         label = QtWidgets.QLabel("Filter")
         self.lineEdit = QtWidgets.QLineEdit()
         label2 = QtWidgets.QLabel("By Column:")
@@ -478,6 +480,7 @@ class ResultWidget(QtWidgets.QDialog):
         hbox.addWidget(self.lineEdit)
         hbox.addWidget(label2)
         hbox.addWidget(self.comboBox)
+        hbox.addWidget(self.push_button_to_word)
         hbox.addWidget(self.push_button_to_excel)
         self.vbox = QtWidgets.QVBoxLayout()
         self.vbox.addLayout(hbox)
@@ -497,6 +500,7 @@ class ResultWidget(QtWidgets.QDialog):
         self.horizontalHeader = self.result_table_view.horizontalHeader()
         self.horizontalHeader.sectionClicked.connect(self.on_view_horizontalHeader_sectionClicked)
         self.push_button_to_excel.clicked.connect(self.export_to_excel)
+        self.push_button_to_word.clicked.connect(self.export_to_word)
         self.resize_columns()
         if self.function:
             self.result_table_view.clicked.connect(self.row_clicked)
@@ -529,6 +533,51 @@ class ResultWidget(QtWidgets.QDialog):
         else:
             with pd.ExcelWriter(filename) as writer:
                     self.model.df.to_excel(writer)
+    
+    def export_to_word(self,
+                       ali='',
+                       doc=None,
+                       ):
+        filename, _ = QtWidgets.QFileDialog.getSaveFileName(self, 'export to word',
+                                                  '', "word(*.docx)")
+        if filename == '':
+            return
+        try:
+            from docx.shared import Inches
+        except ImportError:
+            package = 'python-docx'
+            from freecad_funcs import install_package
+            install_package(package)
+    
+        from docx import Document
+        from docx.oxml.ns import nsdecls
+        from docx.oxml import parse_xml
+
+        # create a new document
+        if doc is None:
+            doc = Document()
+        table_docx = doc.add_table(rows=self.model.rowCount()+1, cols=self.model.columnCount())
+
+        # write the column headers to the first row of the table
+        for j in range(self.model.columnCount()):
+            table_docx.cell(0, j).text = self.model.headerData(j, Qt.Horizontal, Qt.DisplayRole)
+
+        # write the data to the remaining rows of the table
+        for row in range(self.model.rowCount()):
+            for col in range(self.model.columnCount()):
+                index = self.model.index(row, col)
+                text = self.model.data(index)
+                color = self.model.data(index, Qt.BackgroundColorRole)
+                cell = table_docx.cell(row+1, col)
+                cell.text = text
+                if color:
+                    shading_elm = parse_xml(r'<w:shd {} w:fill="{}"/>'.format(nsdecls('w'), color.name()))
+                    cell._tc.get_or_add_tcPr().append(shading_elm)
+
+
+        # save the document
+        doc.save(filename)
+        # self.model.df.to_excel()
 
     def resize_columns(self):
         self.result_table_view.resizeColumnsToContents()
@@ -608,18 +657,6 @@ class ResultWidget(QtWidgets.QDialog):
     def on_comboBox_currentIndexChanged(self, index):
         self.proxy.setFilterKeyColumn(index)
 
-    # def saveResults(self):
-    #     if self.modelPath:
-    #         excel_path = self.modelPath + '/results.xlsx'
-    #         with pd.ExcelWriter(excel_path) as writer:
-    #             self.driftTable.to_excel(writer, sheet_name='drift_results')
-    #             self.torsTable.to_excel(writer, sheet_name='torsion_results')
-    #         mess_save = 'results saved to excel'
-    #     else:
-    #         mess_save = 'ETABS file path not found'
-
-    #     self.statustext.setText(mess_save)
-    #     pass
 
 class ExpandedLoadSetsResults(ResultWidget):
     def __init__(self, data, headers, model, function=None, parent=None):
