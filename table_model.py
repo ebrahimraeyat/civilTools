@@ -557,10 +557,18 @@ class ResultWidget(QtWidgets.QDialog):
         if doc is None:
             doc = Document()
         table_docx = doc.add_table(rows=self.model.rowCount()+1, cols=self.model.columnCount())
+        table_docx.style = 'Table Grid'
 
         # write the column headers to the first row of the table
         for j in range(self.model.columnCount()):
-            table_docx.cell(0, j).text = self.model.headerData(j, Qt.Horizontal, Qt.DisplayRole)
+            cell = table_docx.cell(0, j)
+            cell.text = self.model.headerData(j, Qt.Horizontal, Qt.DisplayRole)
+            # Set header text to bold
+            run = cell.paragraphs[0].runs[0]
+            run.bold = True
+            run.italic = True
+            shading_elm = parse_xml(r'<w:shd {} w:fill="{}"/>'.format(nsdecls('w'), "#244061"))
+            cell._tc.get_or_add_tcPr().append(shading_elm)
 
         # write the data to the remaining rows of the table
         for row in range(self.model.rowCount()):
