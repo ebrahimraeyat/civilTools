@@ -49,15 +49,17 @@ class ResultsModel(QAbstractTableModel):
             return self.headers[col]
         return int(col + 1)
 
-    def sort(self, col, order):
-        """Sort table by given column number."""
-        self.layoutAboutToBeChanged.emit()
-        self.df = self.df.sort_values(
-            by=self.df.columns[col],
-            ascending = order == Qt.AscendingOrder,
-            kind="mergesort",
-        )
-        self.layoutChanged.emit()
+    # def sort(self, col, order):
+    #     """Sort table by given column number."""
+    #     self.layoutAboutToBeChanged.emit()
+    #     self.df.sort_values(
+    #         by=self.df.columns[col],
+    #         ascending = order == Qt.AscendingOrder,
+    #         kind="mergesort",
+    #         inplace=True,
+    #     )
+    #     self.df.reset_index(drop=True, inplace=True)
+    #     self.layoutChanged.emit()
 
 class DriftModel(ResultsModel):
     def __init__(self, data, headers):
@@ -502,10 +504,10 @@ class ResultWidget(QtWidgets.QDialog):
         self.data = data
         self.headers = headers
         self.model = model(self.data, self.headers)
+        # self.result_table_view.setModel(self.model)
         self.proxy = QtCore.QSortFilterProxyModel(self)
         self.proxy.setSourceModel(self.model)
         self.result_table_view.setModel(self.proxy)
-        # self.result_table_view.setModel(self.model)
         self.comboBox.addItems(self.model.headers)
         self.lineEdit.textChanged.connect(self.on_lineEdit_textChanged)
         self.comboBox.currentIndexChanged.connect(self.on_comboBox_currentIndexChanged)
@@ -517,12 +519,15 @@ class ResultWidget(QtWidgets.QDialog):
         if self.function:
             self.result_table_view.clicked.connect(self.row_clicked)
 
-    def row_clicked(self):
-           row = self.result_table_view.currentIndex().row()
-           args = []
-           for col in self.model.col_function:
-               args.append(self.model.df.iloc[row][col])
-           self.function(*args) 
+    def row_clicked(self, index):
+        source_index = self.proxy.mapToSource(index)
+        row = source_index.row()
+        # col = source_index.column()
+        args = []
+        for col in self.model.col_function:
+            value = str(self.model.data(self.model.index(row, col)))
+            args.append(value)
+        self.function(*args) 
 
     def export_to_excel(self):
         filename, _ = QtWidgets.QFileDialog.getSaveFileName(self, 'export to excel',
