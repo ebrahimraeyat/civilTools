@@ -49,6 +49,15 @@ class ResultsModel(QAbstractTableModel):
             return self.headers[col]
         return int(col + 1)
 
+    def sort(self, col, order):
+        """Sort table by given column number."""
+        self.layoutAboutToBeChanged.emit()
+        self.df = self.df.sort_values(
+            by=self.df.columns[col],
+            ascending = order == Qt.AscendingOrder,
+            kind="mergesort",
+        )
+        self.layoutChanged.emit()
 
 class DriftModel(ResultsModel):
     def __init__(self, data, headers):
@@ -62,6 +71,7 @@ class DriftModel(ResultsModel):
         ]]
         self.df = self.df.astype({'Max Drift': float, 'Avg Drift': float, 'Allowable Drift': float})
         self.headers = tuple(self.df.columns)
+
 
     def data(self, index, role=Qt.DisplayRole):
         row = index.row()
@@ -485,6 +495,7 @@ class ResultWidget(QtWidgets.QDialog):
         self.vbox = QtWidgets.QVBoxLayout()
         self.vbox.addLayout(hbox)
         self.result_table_view = QtWidgets.QTableView()
+        self.result_table_view.setSortingEnabled(True)
         self.vbox.addWidget(self.result_table_view)
         self.setLayout(self.vbox)
         self.function = function
@@ -494,11 +505,12 @@ class ResultWidget(QtWidgets.QDialog):
         self.proxy = QtCore.QSortFilterProxyModel(self)
         self.proxy.setSourceModel(self.model)
         self.result_table_view.setModel(self.proxy)
+        # self.result_table_view.setModel(self.model)
         self.comboBox.addItems(self.model.headers)
         self.lineEdit.textChanged.connect(self.on_lineEdit_textChanged)
         self.comboBox.currentIndexChanged.connect(self.on_comboBox_currentIndexChanged)
-        self.horizontalHeader = self.result_table_view.horizontalHeader()
-        self.horizontalHeader.sectionClicked.connect(self.on_view_horizontalHeader_sectionClicked)
+        # self.horizontalHeader = self.result_table_view.horizontalHeader()
+        # self.horizontalHeader.sectionClicked.connect(self.on_view_horizontalHeader_sectionClicked)
         self.push_button_to_excel.clicked.connect(self.export_to_excel)
         self.push_button_to_word.clicked.connect(self.export_to_word)
         self.resize_columns()
@@ -596,38 +608,38 @@ class ResultWidget(QtWidgets.QDialog):
         # self.result_table_view.setFixedWidth(width)
 
 
-    @QtCore.Slot(int)
-    def on_view_horizontalHeader_sectionClicked(self, logicalIndex):
-        self.logicalIndex   = logicalIndex
-        self.menuValues     = QtWidgets.QMenu(self)
-        self.signalMapper   = QtCore.QSignalMapper(self)  
+    # @QtCore.Slot(int)
+    # def on_view_horizontalHeader_sectionClicked(self, logicalIndex):
+    #     self.logicalIndex   = logicalIndex
+    #     self.menuValues     = QtWidgets.QMenu(self)
+    #     self.signalMapper   = QtCore.QSignalMapper(self)  
 
-        self.comboBox.blockSignals(True)
-        self.comboBox.setCurrentIndex(self.logicalIndex)
-        self.comboBox.blockSignals(True)
+    #     self.comboBox.blockSignals(True)
+    #     self.comboBox.setCurrentIndex(self.logicalIndex)
+    #     self.comboBox.blockSignals(True)
 
 
-        valuesUnique = list(self.model.df.iloc[:, self.logicalIndex].unique())
+    #     valuesUnique = list(self.model.df.iloc[:, self.logicalIndex].unique())
 
-        actionAll = QtWidgets.QAction("All", self)
-        actionAll.triggered.connect(self.on_actionAll_triggered)
-        self.menuValues.addAction(actionAll)
-        self.menuValues.addSeparator()
+    #     actionAll = QtWidgets.QAction("All", self)
+    #     actionAll.triggered.connect(self.on_actionAll_triggered)
+    #     self.menuValues.addAction(actionAll)
+    #     self.menuValues.addSeparator()
 
-        for actionNumber, actionName in enumerate(sorted(list(set(valuesUnique)))):              
-            action = QtWidgets.QAction(actionName, self)
-            self.signalMapper.setMapping(action, actionNumber)  
-            action.triggered.connect(self.signalMapper.map)  
-            self.menuValues.addAction(action)
+    #     for actionNumber, actionName in enumerate(sorted(list(set(valuesUnique)))):              
+    #         action = QtWidgets.QAction(actionName, self)
+    #         self.signalMapper.setMapping(action, actionNumber)  
+    #         action.triggered.connect(self.signalMapper.map)  
+    #         self.menuValues.addAction(action)
 
-        self.signalMapper.mapped.connect(self.on_signalMapper_mapped)  
+    #     self.signalMapper.mapped.connect(self.on_signalMapper_mapped)  
 
-        headerPos = self.result_table_view.mapToGlobal(self.horizontalHeader.pos())        
+    #     headerPos = self.result_table_view.mapToGlobal(self.horizontalHeader.pos())        
 
-        posY = headerPos.y() + self.horizontalHeader.height()
-        posX = headerPos.x() + self.horizontalHeader.sectionPosition(self.logicalIndex)
+    #     posY = headerPos.y() + self.horizontalHeader.height()
+    #     posX = headerPos.x() + self.horizontalHeader.sectionPosition(self.logicalIndex)
 
-        self.menuValues.exec_(QtCore.QPoint(posX, posY))
+    #     self.menuValues.exec_(QtCore.QPoint(posX, posY))
 
     @QtCore.Slot()
     def on_actionAll_triggered(self):
