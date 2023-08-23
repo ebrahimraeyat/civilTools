@@ -74,5 +74,13 @@ class Form(QtWidgets.QWidget):
         self.form.all_load_type.clicked.connect(self.fill_load_combinations)
         self.form.seismic_load_type.clicked.connect(self.fill_load_combinations)
         self.form.gravity_load_type.clicked.connect(self.fill_load_combinations)
+        self.form.seismic_load_type.clicked.connect(self.set_load_combo)
+        self.form.gravity_load_type.clicked.connect(self.set_load_combo)
         self.form.create_button.clicked.connect(self.create)
+
+    def set_load_combo(self):
+        if self.form.seismic_load_type.isChecked():
+            self.form.combo_name.setText("PUSH_SEISMIC")
+        elif self.form.gravity_load_type.isChecked():
+            self.form.combo_name.setText("PUSH_GRAV")
     
