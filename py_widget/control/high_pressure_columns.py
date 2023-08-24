@@ -12,10 +12,18 @@ class Form(QtWidgets.QWidget):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'control' / 'high_pressure_columns.ui'))
         self.etabs = etabs_model
+        self.create_connections()
+
+    def create_connections(self):
+        self.form.limit_spinbox.valueChanged.connect(self.set_group_name)
+
+    def set_group_name(self, float):
+        self.form.group_name.setText(f'{float:.2f}*Ag*fc')
 
 
     def accept(self):
-        data, headers = self.etabs.database.get_hight_pressure_columns()
+        limit = self.form.limit_spinbox.value()
+        data, headers = self.etabs.database.get_axial_pressure_columns(limit)
         import table_model
         table_model.show_results(
             data,
@@ -24,7 +32,7 @@ class Form(QtWidgets.QWidget):
             function=self.etabs.view.show_frame,
             )
         def get_high_pressure_names():
-            filt = data['high pressure'] == True
+            filt = data['Result'] == True
             df = data.loc[filt]
             return  df['UniqueName']
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>about</class>
- <widget class="QDialog" name="about">
+ <class>column_axial_force</class>
+ <widget class="QDialog" name="column_axial_force">
   <property name="windowModality">
    <enum>Qt::NonModal</enum>
   </property>
@@ -9,12 +9,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>294</width>
-    <height>73</height>
+    <width>232</width>
+    <height>94</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>High Pressure Columns</string>
+   <string>Column Axial Forces</string>
   </property>
   <property name="modal">
    <bool>false</bool>
@@ -35,7 +35,7 @@
      <item>
       <widget class="QLineEdit" name="group_name">
        <property name="text">
-        <string>high_pressure_columns</string>
+        <string>0.3*Ag*fc</string>
        </property>
       </widget>
      </item>
@@ -48,6 +48,25 @@
      </property>
      <property name="checked">
       <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDoubleSpinBox" name="limit_spinbox">
+     <property name="prefix">
+      <string/>
+     </property>
+     <property name="suffix">
+      <string> * Ag * fc</string>
+     </property>
+     <property name="maximum">
+      <double>1.000000000000000</double>
+     </property>
+     <property name="singleStep">
+      <double>0.100000000000000</double>
+     </property>
+     <property name="value">
+      <double>0.300000000000000</double>
      </property>
     </widget>
    </item>

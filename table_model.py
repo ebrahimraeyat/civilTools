@@ -381,8 +381,8 @@ class HighPressureColumnModel(ResultsModel):
         self.i_t2 = self.headers.index('t2')
         self.i_t3 = self.headers.index('t3')
         self.i_fc = self.headers.index('fc')
-        self.i_Agfc = self.headers.index('0.3*Ag*fc')
-        self.i_hp = self.headers.index('high pressure')
+        self.i_Agfc = self.headers.index('limit*Ag*fc')
+        self.i_hp = self.headers.index('Result')
         if index.isValid():
             value = self.df.iloc[row][col]
             if role == Qt.DisplayRole:
@@ -391,7 +391,7 @@ class HighPressureColumnModel(ResultsModel):
                 return str(value)
             elif role == Qt.BackgroundColorRole:
                 if self.df.iloc[row][self.i_hp]:
-                    return QColor(high)
+                    return QColor(intermediate)
                 else:
                     return QColor(low)
             elif role == Qt.TextAlignmentRole:
