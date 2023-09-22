@@ -11,8 +11,22 @@ class Building(object):
     specialIDs = (11, 21, 25, 28, 31, 34, 41, 42, 45, 46, 47, 48, 51)
     IDs3354 = (31, 34, 41, 42, 43, 44, 45, 46, 47, 48, 49)
 
-    def __init__(self, risk_level, importance_factor, soilType, number_of_story, height,
-                 is_infill, x_system, y_system, city, x_period_an, y_period_an):
+    def __init__(self,
+                 risk_level,
+                 importance_factor,
+                 soilType,
+                 number_of_story,
+                 height,
+                 is_infill,
+                 x_system,
+                 y_system,
+                 city,
+                 x_period_an,
+                 y_period_an,
+                 x_system2= None,
+                 y_system2= None,
+                 height2: float=0,
+                 ):
 
         self.filename = ''
         self.risk_level = risk_level
@@ -27,22 +41,32 @@ class Building(object):
         self.is_infill = is_infill
         self.x_system = x_system
         self.y_system = y_system
-        self.exp_period_x = self.period(x_system)
-        self.exp_period_y = self.period(y_system)
-        self.Tx = max(min(x_period_an, 1.25 * self.exp_period_x), self.exp_period_x)
-        self.Ty = max(min(y_period_an, 1.25 * self.exp_period_y), self.exp_period_y)
+        self.exp_period_x = self.period(x_system, height)
+        self.exp_period_y = self.period(y_system, height)
+        if x_system2:
+            self.x_system2 = x_system2
+            self.y_system2 = y_system2
+            self.exp_period_x2 = self.period(x_system2, height2)
+            self.exp_period_y2 = self.period(y_system2, height2)
+            tx = (self.exp_period_x * height + self.exp_period_x2 * height2) / (height + height2)
+            ty = (self.exp_period_y * height + self.exp_period_y2 * height2) / (height + height2)
+            self.tx = max(min(x_period_an, 1.25 * tx), tx)
+            self.ty = max(min(y_period_an, 1.25 * ty), ty)
+        else:
+            self.tx = max(min(x_period_an, 1.25 * self.exp_period_x), self.exp_period_x)
+            self.ty = max(min(y_period_an, 1.25 * self.exp_period_y), self.exp_period_y)
         self.x_period_an = x_period_an
         self.y_period_an = y_period_an
         if importance_factor == 1.4:
-            self.x_period_an = self.Tx
-            self.y_period_an = self.Ty
+            self.x_period_an = self.tx
+            self.y_period_an = self.ty
 
-        self.soil_reflection_prop_x = ReflectionFactor(soilType, self.acc, self.Tx)
-        self.soil_reflection_prop_y = ReflectionFactor(soilType, self.acc, self.Ty)
+        self.soil_reflection_prop_x = ReflectionFactor(soilType, self.acc, self.tx)
+        self.soil_reflection_prop_y = ReflectionFactor(soilType, self.acc, self.ty)
         self.Bx = self.soil_reflection_prop_x.B
         self.By = self.soil_reflection_prop_y.B
         self.maxHeight = self.maxAllowedHeight()
-        self.kx, self.ky = self.getK(self.Tx, self.Ty)
+        self.kx, self.ky = self.getK(self.tx, self.ty)
         self.results = self.calculateC(self.Bx, self.By)
         # analytical calculations for drift
         self.soil_reflection_drift_prop_x = ReflectionFactor(soilType, self.acc, self.x_period_an)
@@ -60,15 +84,19 @@ class Building(object):
                 u'خیلی زیاد': 0.35}
         return accs[self.risk_level]
 
-    def period(self, system):
+    def period(self,
+               system,
+               height: float=0,
+               ):
         alpha = system.alpha
         power = system.pow
-        H = self.height
+        if height == 0:
+            height = self.height
 
         if self.is_infill:
-            return 0.8 * alpha * H ** power
+            return 0.8 * alpha * height ** power
         else:
-            return alpha * H ** power
+            return alpha * height ** power
 
     def direction(self):
         pass
@@ -171,6 +199,12 @@ class Building(object):
             return check_inputs
         A = self.acc
         I = self.importance_factor
+        # if self.x_system2:
+        #     if self.x_system.Ru > self.x_system2.Ru:
+        #         Rux = self.x_system2.Ru
+        #     if self.y_system.Ru > self.y_system2.Ru:
+        #         Ruy = self.y_system2.Ru
+        # else:
         Rux = self.x_system.Ru
         Ruy = self.y_system.Ru
         CxNotApproved = A * Bx * I / Rux
