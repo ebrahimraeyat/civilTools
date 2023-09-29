@@ -158,10 +158,14 @@ def load(etabs, widget=None):
 	if key in keys and hasattr(widget, key):
 		checked = d.get(key, False)
 		widget.activate_second_system.setChecked(checked)
-		widget.x_system_label.setEnabled(checked)
-		widget.y_system_label.setEnabled(checked)
-		widget.x_treeview_2.setEnabled(checked)
-		widget.y_treeview_2.setEnabled(checked)
+		if hasattr(widget, 'x_system_label'):
+			widget.x_system_label.setEnabled(checked)
+		if hasattr(widget, 'y_system_label'):
+			widget.y_system_label.setEnabled(checked)
+		if hasattr(widget, 'x_treeview_2'):
+			widget.x_treeview_2.setEnabled(checked)
+		if hasattr(widget, 'y_treeview_2'):
+			widget.y_treeview_2.setEnabled(checked)
 	# Spinboxes
 	for key in (
 		'height_x',

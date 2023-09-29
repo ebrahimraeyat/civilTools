@@ -43,6 +43,8 @@ class Form(QtWidgets.QWidget):
         equivalent_loads = self.get_equivalent_loads()
         rho_x = float(self.form.rhox_combobox.currentText())
         rho_y = float(self.form.rhoy_combobox.currentText())
+        rho_x1 = float(self.form.rhox1_combobox.currentText())
+        rho_y1 = float(self.form.rhoy1_combobox.currentText())
         prefix = self.form.prefix.text()
         suffix = self.form.suffix.text()
         ev_negative = self.form.ev_negative.isChecked()
@@ -58,9 +60,13 @@ class Form(QtWidgets.QWidget):
         retaining_wall = self.form.retaining_wall_groupbox.isChecked()
         omega_x = 0
         omega_y = 0
+        omega_x1 = 0
+        omega_y1 = 0
         if self.form.omega_groupbox.isChecked():
             omega_x = float(self.form.omega_x.currentText())
             omega_y = float(self.form.omega_y.currentText())
+            omega_x1 = float(self.form.omega_x1.currentText())
+            omega_y1 = float(self.form.omega_y1.currentText())
         self.data = self.etabs.load_combinations.generate_concrete_load_combinations(
             equivalent_loads=equivalent_loads,
             prefix = prefix,
@@ -77,6 +83,10 @@ class Form(QtWidgets.QWidget):
             retaining_wall=retaining_wall,
             omega_x=omega_x,
             omega_y=omega_y,
+            rho_x1=rho_x1,
+            rho_y1=rho_y1,
+            omega_x1=omega_x1,
+            omega_y1=omega_y1,
         )
         items=  {}
         for i in range(0, len(self.data), 4):
@@ -411,6 +421,44 @@ class Form(QtWidgets.QWidget):
             equivalent_loads['EYN'] = [eyn]
             if not eyn in load_patterns:
                 self.etabs.SapModel.LoadPatterns.Add(eyn, 5)
+        # seismic two systems in height
+        if self.form.activate_second_system.isChecked():
+            ## EX1
+            ex1 = self.form.ex1_combobox.currentText()
+            if ex1:
+                equivalent_loads['EX1'] = [ex1]
+                if not ex1 in load_patterns:
+                    self.etabs.SapModel.LoadPatterns.Add(ex1, 5)
+            ## EXP1
+            exp1 = self.form.exp1_combobox.currentText()
+            if exp1:
+                equivalent_loads['EXP1'] = [exp1]
+                if not exp1 in load_patterns:
+                    self.etabs.SapModel.LoadPatterns.Add(exp1, 5)
+            ## EXN1
+            exn1 = self.form.exn1_combobox.currentText()
+            if exn1:
+                equivalent_loads['EXN1'] = [exn1]
+                if not exn1 in load_patterns:
+                    self.etabs.SapModel.LoadPatterns.Add(exn1, 5)
+            # EY1
+            ey1 = self.form.ey1_combobox.currentText()
+            if ey1:
+                equivalent_loads['EY1'] = [ey1]
+                if not ey1 in load_patterns:
+                    self.etabs.SapModel.LoadPatterns.Add(ey1, 5)
+            ## EYP1
+            eyp1 = self.form.eyp1_combobox.currentText()
+            if eyp1:
+                equivalent_loads['EYP1'] = [eyp1]
+                if not eyp1 in load_patterns:
+                    self.etabs.SapModel.LoadPatterns.Add(eyp1, 5)
+            ## EYN1
+            eyn1 = self.form.eyn1_combobox.currentText()
+            if eyn1:
+                equivalent_loads['EYN1'] = [eyn1]
+                if not eyn1 in load_patterns:
+                    self.etabs.SapModel.LoadPatterns.Add(eyn1, 5)
         # # mass
         # masses = None
         # mass = self.form.mass_combobox.currentText()
