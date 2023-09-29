@@ -31,6 +31,7 @@ def save(etabs, widget):
 	for key in (
 		'top_story_for_height_checkbox',
 		'infill',
+		'activate_second_system',
 		):
 		if hasattr(widget, key):
 			exec(f"new_d['{key}'] = widget.{key}.isChecked()")
@@ -46,6 +47,17 @@ def save(etabs, widget):
 	new_d['y_system_name'] = system
 	new_d['y_lateral_name'] = lateral
 	new_d['cdy'] = RuTable.Ru[system][lateral][2]
+	# second system
+	system, lateral, i, n = get_treeview_item_prop(widget.x_treeview_2)
+	new_d['x_system_2'] = [i, n]
+	new_d['x_system_name_2'] = system
+	new_d['x_lateral_name_2'] = lateral
+	new_d['cdx_2'] = RuTable.Ru[system][lateral][2]
+	system, lateral, i, n = get_treeview_item_prop(widget.y_treeview_2)
+	new_d['y_system_2'] = [i, n]
+	new_d['y_system_name_2'] = system
+	new_d['y_lateral_name_2'] = lateral
+	new_d['cdy_2'] = RuTable.Ru[system][lateral][2]
 	d = get_settings_from_etabs(etabs)
 	d.update(new_d)
 	set_settings_to_etabs(etabs, d)
@@ -83,8 +95,8 @@ def save_analytical_periods(etabs, tx, ty):
 
 def get_analytical_periods(etabs):
 	d = get_settings_from_etabs(etabs)
-	tx = d.get('t_an_x', 2)
-	ty = d.get('t_an_y', 2)
+	tx = d.get('t_an_x', 4)
+	ty = d.get('t_an_y', 4)
 	return tx, ty
 
 def save_cd(etabs, cdx, cdy):
@@ -107,7 +119,7 @@ def get_settings_from_etabs(etabs):
 		company_name = json.loads(json_str)
 	except JSONDecodeError:
 		return d
-	if type(company_name) == dict:
+	if isinstance(company_name, dict):
 		d = company_name
 	return d
 
@@ -142,6 +154,14 @@ def load(etabs, widget=None):
 	key = 'infill'
 	if key in keys and hasattr(widget, key):
 		widget.infill.setChecked(d[key])
+	key = 'activate_second_system'
+	if key in keys and hasattr(widget, key):
+		checked = d.get(key, False)
+		widget.activate_second_system.setChecked(checked)
+		widget.x_system_label.setEnabled(checked)
+		widget.y_system_label.setEnabled(checked)
+		widget.x_treeview_2.setEnabled(checked)
+		widget.y_treeview_2.setEnabled(checked)
 	# Spinboxes
 	for key in (
 		'height_x',
@@ -157,6 +177,11 @@ def load(etabs, widget=None):
 		y_item = d.get('y_system', [2, 1])
 		select_treeview_item(widget.x_treeview, *x_item)
 		select_treeview_item(widget.y_treeview, *y_item)
+	if hasattr(widget, 'x_treeview_2') and hasattr(widget, 'y_treeview_2'):
+		x_item = d.get('x_system_2', [2, 1])
+		y_item = d.get('y_system_2', [2, 1])
+		select_treeview_item(widget.x_treeview_2, *x_item)
+		select_treeview_item(widget.y_treeview_2, *y_item)
 	return d
 
 def select_treeview_item(view, i, n):

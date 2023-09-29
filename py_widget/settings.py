@@ -94,6 +94,13 @@ class Form(QtWidgets.QWidget):
         self.form.cancel_pushbutton.clicked.connect(self.reject)
         self.form.top_story_for_height_checkbox.clicked.connect(self.fill_height_and_no_of_stories)
         self.form.top_story_for_height.currentIndexChanged.connect(self.fill_height_and_no_of_stories)
+        self.form.activate_second_system.clicked.connect(self.second_system_clicked)
+
+    def second_system_clicked(self, checked:bool):
+        self.form.x_system_label.setEnabled(checked)
+        self.form.y_system_label.setEnabled(checked)
+        self.form.x_treeview_2.setEnabled(checked)
+        self.form.y_treeview_2.setEnabled(checked)
 
     def load_config(self):
         param = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools")
@@ -154,6 +161,15 @@ class Form(QtWidgets.QWidget):
         self.form.y_treeview.setColumnWidth(0, 400)
         for i in range(1,len(headers)):
             self.form.y_treeview.setColumnWidth(i, 40)
+        # second system
+        self.form.x_treeview_2.setModel(treeview_system.CustomModel(list(items.values()), headers=headers))
+        self.form.x_treeview_2.setColumnWidth(0, 400)
+        for i in range(1,len(headers)):
+            self.form.x_treeview_2.setColumnWidth(i, 40)
+        self.form.y_treeview_2.setModel(treeview_system.CustomModel(list(items.values()), headers=headers))
+        self.form.y_treeview_2.setColumnWidth(0, 400)
+        for i in range(1,len(headers)):
+            self.form.y_treeview_2.setColumnWidth(i, 40)
 
     def setA(self):
         sotoh = ['خیلی زیاد', 'زیاد', 'متوسط', 'کم']

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1013</width>
-    <height>614</height>
+    <width>1072</width>
+    <height>624</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <iconset resource="../civiltools.qrc">
     <normaloff>:/civiltools/images/automatic.svg</normaloff>:/civiltools/images/automatic.svg</iconset>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3">
+  <layout class="QVBoxLayout" name="verticalLayout_4">
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
@@ -349,6 +349,19 @@
          </layout>
         </item>
         <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
            <widget class="QPushButton" name="cancel_pushbutton">
@@ -386,37 +399,48 @@
           </item>
          </layout>
         </item>
-        <item>
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
        </layout>
       </widget>
      </item>
      <item>
       <widget class="QTabWidget" name="tabWidget">
-       <property name="layoutDirection">
-        <enum>Qt::LeftToRight</enum>
-       </property>
        <property name="currentIndex">
         <number>0</number>
        </property>
        <widget class="QWidget" name="tab">
         <attribute name="title">
-         <string>X System</string>
+         <string>First System</string>
         </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout">
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>X System</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
          <item>
           <widget class="QTreeView" name="x_treeview">
+           <property name="layoutDirection">
+            <enum>Qt::RightToLeft</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Y System</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QTreeView" name="y_treeview">
            <property name="layoutDirection">
             <enum>Qt::RightToLeft</enum>
            </property>
@@ -426,11 +450,57 @@
        </widget>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
-         <string>Y System</string>
+         <string>Second System</string>
         </attribute>
-        <layout class="QHBoxLayout" name="horizontalLayout">
+        <layout class="QVBoxLayout" name="verticalLayout">
          <item>
-          <widget class="QTreeView" name="y_treeview">
+          <widget class="QCheckBox" name="activate_second_system">
+           <property name="text">
+            <string>Activate</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="x_system_label">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>X System</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QTreeView" name="x_treeview_2">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="layoutDirection">
+            <enum>Qt::RightToLeft</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="y_system_label">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Y System</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QTreeView" name="y_treeview_2">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="layoutDirection">
             <enum>Qt::RightToLeft</enum>
            </property>
