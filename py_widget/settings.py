@@ -1,6 +1,5 @@
-import os
 from pathlib import Path
-import json, csv
+import csv
 
 from PySide2 import  QtWidgets
 from PySide2 import QtCore
@@ -38,6 +37,9 @@ class Form(QtWidgets.QWidget):
             self.form.bot_x_combo,
             self.form.top_x_combo,
             self.form.top_story_for_height,
+            self.form.bot_x1_combo,
+            self.form.top_x1_combo,
+            self.form.top_story_for_height1,
             # self.form.bot_y_combo,
             # self.form.top_y_combo,
         ):
@@ -68,6 +70,26 @@ class Form(QtWidgets.QWidget):
         # self.form.no_story_y_spinbox.setValue(ny)
         self.form.height_x.setValue(hx)
         # self.form.height_y_spinbox.setValue(hy)
+        
+        # second system 
+        if self.form.top_story_for_height_checkbox_1.isChecked():
+            self.form.top_story_for_height1.setEnabled(True)
+            top_story_x1 = top_story_y1 = self.form.top_story_for_height1.currentText()
+        else:
+            self.form.top_story_for_height1.setEnabled(False)
+            top_story_x1 = top_story_y1 = self.form.top_x1_combo.currentText()
+        bot_story_x1 = bot_story_y1 = self.form.bot_x1_combo.currentText()
+        # bot_story_y = self.form.bot_y_combo.currentText()
+        # top_story_y = self.form.top_y_combo.currentText()
+        bot_level_x1, top_level_x1, bot_level_y1, top_level_y1 = self.etabs.story.get_top_bot_levels(
+                bot_story_x1, top_story_x1, bot_story_y1, top_story_y1, False
+                )
+        hx, hy = self.etabs.story.get_heights(bot_story_x1, top_story_x1, bot_story_y1, top_story_y1, False)
+        nx, ny = self.etabs.story.get_no_of_stories(bot_level_x1, top_level_x1, bot_level_y1, top_level_y1)
+        self.form.no_of_story_x1.setValue(nx)
+        # self.form.no_story_y_spinbox.setValue(ny)
+        self.form.height_x1.setValue(hx)
+        # self.form.height_y_spinbox.setValue(hy)
 
     def get_current_ostan(self):
         return self.form.ostan.currentText()
@@ -90,17 +112,30 @@ class Form(QtWidgets.QWidget):
         self.form.city.currentIndexChanged.connect(self.setA)
         self.form.bot_x_combo.currentIndexChanged.connect(self.fill_height_and_no_of_stories)
         self.form.top_x_combo.currentIndexChanged.connect(self.fill_height_and_no_of_stories)
+        self.form.bot_x1_combo.currentIndexChanged.connect(self.fill_height_and_no_of_stories)
+        self.form.top_x1_combo.currentIndexChanged.connect(self.fill_height_and_no_of_stories)
         self.form.save_pushbutton.clicked.connect(self.save)
         self.form.cancel_pushbutton.clicked.connect(self.reject)
         self.form.top_story_for_height_checkbox.clicked.connect(self.fill_height_and_no_of_stories)
         self.form.top_story_for_height.currentIndexChanged.connect(self.fill_height_and_no_of_stories)
+        self.form.top_story_for_height_checkbox_1.clicked.connect(self.fill_height_and_no_of_stories)
+        self.form.top_story_for_height1.currentIndexChanged.connect(self.fill_height_and_no_of_stories)
         self.form.activate_second_system.clicked.connect(self.second_system_clicked)
 
     def second_system_clicked(self, checked:bool):
         self.form.x_system_label.setEnabled(checked)
         self.form.y_system_label.setEnabled(checked)
-        self.form.x_treeview_2.setEnabled(checked)
-        self.form.y_treeview_2.setEnabled(checked)
+        self.form.x_treeview_1.setEnabled(checked)
+        self.form.y_treeview_1.setEnabled(checked)
+        self.form.stories_for_apply_earthquake_groupox.setEnabled(checked)
+        self.form.stories_for_height_groupox.setEnabled(checked)
+        self.form.infill_1.setEnabled(checked)
+        self.form.top_story_for_height_checkbox.setEnabled(not checked)
+        if checked:
+            self.form.top_story_for_height_checkbox.setChecked(not checked)
+            self.form.top_story_for_height.setEnabled(not checked)
+        i = self.form.top_x_combo.currentIndex()
+        self.form.bot_x1_combo.setCurrentIndex(i)
 
     def load_config(self):
         param = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools")
@@ -112,9 +147,9 @@ class Form(QtWidgets.QWidget):
         self.save_config()
 
     def save_config(self):
-        tx, ty = civiltools_config.get_analytical_periods(self.etabs)
+        tx, ty, tx1, ty1 = civiltools_config.get_analytical_periods(self.etabs)
         civiltools_config.save(self.etabs, self.form)
-        civiltools_config.save_analytical_periods(self.etabs, tx, ty)
+        civiltools_config.save_analytical_periods(self.etabs, tx, ty, tx1, ty1)
         param = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools")
         show_at_startup = self.form.show_at_startup.isChecked()
         param.SetBool("FirstTime", show_at_startup)
@@ -162,14 +197,14 @@ class Form(QtWidgets.QWidget):
         for i in range(1,len(headers)):
             self.form.y_treeview.setColumnWidth(i, 40)
         # second system
-        self.form.x_treeview_2.setModel(treeview_system.CustomModel(list(items.values()), headers=headers))
-        self.form.x_treeview_2.setColumnWidth(0, 400)
+        self.form.x_treeview_1.setModel(treeview_system.CustomModel(list(items.values()), headers=headers))
+        self.form.x_treeview_1.setColumnWidth(0, 400)
         for i in range(1,len(headers)):
-            self.form.x_treeview_2.setColumnWidth(i, 40)
-        self.form.y_treeview_2.setModel(treeview_system.CustomModel(list(items.values()), headers=headers))
-        self.form.y_treeview_2.setColumnWidth(0, 400)
+            self.form.x_treeview_1.setColumnWidth(i, 40)
+        self.form.y_treeview_1.setModel(treeview_system.CustomModel(list(items.values()), headers=headers))
+        self.form.y_treeview_1.setColumnWidth(0, 400)
         for i in range(1,len(headers)):
-            self.form.y_treeview_2.setColumnWidth(i, 40)
+            self.form.y_treeview_1.setColumnWidth(i, 40)
 
     def setA(self):
         sotoh = ['خیلی زیاد', 'زیاد', 'متوسط', 'کم']

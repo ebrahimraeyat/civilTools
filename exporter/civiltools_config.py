@@ -15,6 +15,17 @@ def save(etabs, widget):
 		'bot_x_combo',
 		'top_x_combo',
 		'top_story_for_height',
+		'bot_x1_combo',
+		'top_x1_combo',
+		'top_story_for_height1',
+		'ex1_combobox',
+		'exp1_combobox',
+		'exn1_combobox',
+		'ey1_combobox',
+		'eyp1_combobox',
+		'eyn1_combobox',
+		'rhox1_combobox',
+		'rhoy1_combobox',
 		):
 		if hasattr(widget, key):
 			exec(f"new_d['{key}'] = widget.{key}.currentText()")
@@ -22,8 +33,12 @@ def save(etabs, widget):
 	for key in (
 		'height_x',
 		'no_of_story_x',
+		'height_x1',
+		'no_of_story_x1',
 		't_an_x',
 		't_an_y',
+		't_an_x1',
+		't_an_y1',
 		):
 		if hasattr(widget, key):
 			exec(f"new_d['{key}'] = widget.{key}.value()")
@@ -31,6 +46,8 @@ def save(etabs, widget):
 	for key in (
 		'top_story_for_height_checkbox',
 		'infill',
+		'top_story_for_height_checkbox_1',
+		'infill_1',
 		'activate_second_system',
 		):
 		if hasattr(widget, key):
@@ -48,16 +65,16 @@ def save(etabs, widget):
 	new_d['y_lateral_name'] = lateral
 	new_d['cdy'] = RuTable.Ru[system][lateral][2]
 	# second system
-	system, lateral, i, n = get_treeview_item_prop(widget.x_treeview_2)
-	new_d['x_system_2'] = [i, n]
-	new_d['x_system_name_2'] = system
-	new_d['x_lateral_name_2'] = lateral
-	new_d['cdx_2'] = RuTable.Ru[system][lateral][2]
-	system, lateral, i, n = get_treeview_item_prop(widget.y_treeview_2)
-	new_d['y_system_2'] = [i, n]
-	new_d['y_system_name_2'] = system
-	new_d['y_lateral_name_2'] = lateral
-	new_d['cdy_2'] = RuTable.Ru[system][lateral][2]
+	system, lateral, i, n = get_treeview_item_prop(widget.x_treeview_1)
+	new_d['x_system_1'] = [i, n]
+	new_d['x_system_name_1'] = system
+	new_d['x_lateral_name_1'] = lateral
+	new_d['cdx1'] = RuTable.Ru[system][lateral][2]
+	system, lateral, i, n = get_treeview_item_prop(widget.y_treeview_1)
+	new_d['y_system_1'] = [i, n]
+	new_d['y_system_name_1'] = system
+	new_d['y_lateral_name_1'] = lateral
+	new_d['cdy1'] = RuTable.Ru[system][lateral][2]
 	d = get_settings_from_etabs(etabs)
 	d.update(new_d)
 	set_settings_to_etabs(etabs, d)
@@ -87,29 +104,37 @@ def get_treeview_item_prop(view):
 			n = index.row()
 		return system, lateral, i, n
 	
-def save_analytical_periods(etabs, tx, ty):
+def save_analytical_periods(etabs, tx, ty, tx1=4, ty1=4):
 	d = get_settings_from_etabs(etabs)
 	d['t_an_x'] = tx
 	d['t_an_y'] = ty
+	d['t_an_x1'] = tx1
+	d['t_an_y1'] = ty1
 	set_settings_to_etabs(etabs, d)
 
 def get_analytical_periods(etabs):
 	d = get_settings_from_etabs(etabs)
 	tx = d.get('t_an_x', 4)
 	ty = d.get('t_an_y', 4)
-	return tx, ty
+	tx1 = d.get('t_an_x1', 4)
+	ty1 = d.get('t_an_y1', 4)
+	return tx, ty, tx1, ty1
 
-def save_cd(etabs, cdx, cdy):
+def save_cd(etabs, cdx, cdy, cdx1=0, cdy1=0):
 	d = get_settings_from_etabs(etabs)
 	d['cdx'] = cdx
 	d['cdy'] = cdy
+	d['cdx1'] = cdx1
+	d['cdy1'] = cdy1
 	set_settings_to_etabs(etabs, d)
 
 def get_cd(etabs):
 	d = get_settings_from_etabs(etabs)
 	cdx = d.get('cdx')
 	cdy = d.get('cdy')
-	return cdx, cdy
+	cdx1 = d.get('cdx1', 0)
+	cdy1 = d.get('cdy1', 0)
+	return cdx, cdy, cdx1, cdy1
 
 def get_settings_from_etabs(etabs):
 	d = {}
@@ -137,6 +162,17 @@ def load(etabs, widget=None):
 		'bot_x_combo',
 		'top_x_combo',
 		'top_story_for_height',
+		'bot_x1_combo',
+		'top_x1_combo',
+		'top_story_for_height1',
+		'ex1_combobox',
+		'exp1_combobox',
+		'exn1_combobox',
+		'ey1_combobox',
+		'eyp1_combobox',
+		'eyn1_combobox',
+		'rhox1_combobox',
+		'rhoy1_combobox',
 		):
 		if key in keys and hasattr(widget, key):
 			exec(f"index = widget.{key}.findText(d['{key}'])")
@@ -146,32 +182,48 @@ def load(etabs, widget=None):
 			exec(f"widget.{key}.setCurrentIndex(index)")
 
 	# Checkboxes
-	key = 'top_story_for_height_checkbox'
-	if key in keys and hasattr(widget, key):
-		checked = d.get(key, True)
-		widget.top_story_for_height_checkbox.setChecked(checked)
-		widget.top_story_for_height.setEnabled(checked)
-	key = 'infill'
-	if key in keys and hasattr(widget, key):
-		widget.infill.setChecked(d[key])
+	for key in (
+		'top_story_for_height_checkbox',
+		'top_story_for_height_checkbox_1',
+		):
+		if key in keys and hasattr(widget, key):
+			checked = d.get(key, True)
+			widget.top_story_for_height_checkbox.setChecked(checked)
+			widget.top_story_for_height.setEnabled(checked)
+	for key in ('infill', 'infill_1'):
+		if key in keys and hasattr(widget, key):
+			widget.infill.setChecked(d[key])
 	key = 'activate_second_system'
 	if key in keys and hasattr(widget, key):
 		checked = d.get(key, False)
 		widget.activate_second_system.setChecked(checked)
-		if hasattr(widget, 'x_system_label'):
-			widget.x_system_label.setEnabled(checked)
-		if hasattr(widget, 'y_system_label'):
-			widget.y_system_label.setEnabled(checked)
-		if hasattr(widget, 'x_treeview_2'):
-			widget.x_treeview_2.setEnabled(checked)
-		if hasattr(widget, 'y_treeview_2'):
-			widget.y_treeview_2.setEnabled(checked)
+		for w in (
+			'x_system_label',
+			'y_system_label',
+			'x_treeview_1',
+			'y_treeview_1',
+			'stories_for_apply_earthquake_groupox',
+			'stories_for_height_groupox',
+			'infill_1',
+			'second_earthquake_properties',
+			):
+			if hasattr(widget, w):
+				exec(f"widget.{w}.setEnabled(checked)")
+		if hasattr(widget, 'top_story_for_height_checkbox') and checked:
+			widget.top_story_for_height_checkbox.setChecked(False)
+			widget.top_story_for_height_checkbox.setEnabled(False)
+			widget.top_story_for_height.setEnabled(False)
+			d['top_story_for_height_checkbox'] = False
 	# Spinboxes
 	for key in (
 		'height_x',
 		'no_of_story_x',
+		'height_x1',
+		'no_of_story_x1',
 		't_an_x',
 		't_an_y',
+		't_an_x1',
+		't_an_y1',
 		):
 		if key in keys and hasattr(widget, key):
 			exec(f"widget.{key}.setValue(d['{key}'])")
@@ -181,11 +233,11 @@ def load(etabs, widget=None):
 		y_item = d.get('y_system', [2, 1])
 		select_treeview_item(widget.x_treeview, *x_item)
 		select_treeview_item(widget.y_treeview, *y_item)
-	if hasattr(widget, 'x_treeview_2') and hasattr(widget, 'y_treeview_2'):
-		x_item = d.get('x_system_2', [2, 1])
-		y_item = d.get('y_system_2', [2, 1])
-		select_treeview_item(widget.x_treeview_2, *x_item)
-		select_treeview_item(widget.y_treeview_2, *y_item)
+	if hasattr(widget, 'x_treeview_1') and hasattr(widget, 'y_treeview_1'):
+		x_item = d.get('x_system_1', [2, 1])
+		y_item = d.get('y_system_1', [2, 1])
+		select_treeview_item(widget.x_treeview_1, *x_item)
+		select_treeview_item(widget.y_treeview_1, *y_item)
 	return d
 
 def select_treeview_item(view, i, n):
