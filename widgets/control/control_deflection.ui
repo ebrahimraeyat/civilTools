@@ -77,20 +77,34 @@
      <item>
       <widget class="QGroupBox" name="groupBox_2">
        <property name="title">
-        <string>Live</string>
+        <string>Lives</string>
        </property>
        <layout class="QGridLayout" name="gridLayout">
-        <item row="2" column="1">
+        <item row="4" column="1">
          <widget class="QComboBox" name="live5_combobox">
           <property name="editable">
            <bool>true</bool>
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
+        <item row="3" column="1">
          <widget class="QComboBox" name="lred_combobox">
           <property name="editable">
            <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_27">
+          <property name="text">
+           <string>L-RED</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="label_28">
+          <property name="text">
+           <string>Live_0.5</string>
           </property>
          </widget>
         </item>
@@ -109,16 +123,16 @@
          </widget>
         </item>
         <item row="1" column="0">
-         <widget class="QLabel" name="label_27">
+         <widget class="QLabel" name="label_33">
           <property name="text">
-           <string>L-RED</string>
+           <string>Parking</string>
           </property>
          </widget>
         </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="label_28">
-          <property name="text">
-           <string>Live_0.5</string>
+        <item row="1" column="1">
+         <widget class="QComboBox" name="live_parking_combobox">
+          <property name="editable">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -225,6 +239,9 @@
            <width>40</width>
            <height>40</height>
           </size>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
          </property>
          <property name="tristate">
           <bool>false</bool>

@@ -59,43 +59,38 @@
            <string>Dead</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_2">
-           <item row="0" column="0">
-            <widget class="QCheckBox" name="checkBox">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="text">
-              <string>Dead</string>
-             </property>
-             <property name="checked">
+           <item row="1" column="2">
+            <widget class="QComboBox" name="sdead_combobox">
+             <property name="editable">
               <bool>true</bool>
              </property>
             </widget>
            </item>
-           <item row="0" column="1">
+           <item row="0" column="2">
             <widget class="QComboBox" name="dead_combobox">
              <property name="editable">
               <bool>true</bool>
              </property>
             </widget>
            </item>
-           <item row="1" column="0">
-            <widget class="QCheckBox" name="checkBox_2">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="text">
-              <string>S-DEAD</string>
-             </property>
-             <property name="checked">
+           <item row="2" column="2">
+            <widget class="QComboBox" name="partition_dead_combobox">
+             <property name="editable">
               <bool>true</bool>
              </property>
             </widget>
            </item>
-           <item row="1" column="1">
-            <widget class="QComboBox" name="sdead_combobox">
-             <property name="editable">
-              <bool>true</bool>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_33">
+             <property name="text">
+              <string>Dead</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_34">
+             <property name="text">
+              <string>S-DEAD</string>
              </property>
             </widget>
            </item>
@@ -109,13 +104,6 @@
              </property>
             </widget>
            </item>
-           <item row="2" column="1">
-            <widget class="QComboBox" name="partition_dead_combobox">
-             <property name="editable">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
           </layout>
          </widget>
         </item>
@@ -125,50 +113,52 @@
            <string>Live</string>
           </property>
           <layout class="QGridLayout" name="gridLayout">
-           <item row="1" column="0">
-            <widget class="QCheckBox" name="checkBox_4">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="text">
-              <string>L-RED</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QCheckBox" name="checkBox_3">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="text">
-              <string>Live</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
+           <item row="1" column="2">
             <widget class="QComboBox" name="lred_combobox">
              <property name="editable">
               <bool>true</bool>
              </property>
             </widget>
            </item>
-           <item row="0" column="1">
+           <item row="0" column="2">
             <widget class="QComboBox" name="live_combobox">
              <property name="editable">
               <bool>true</bool>
              </property>
             </widget>
            </item>
-           <item row="3" column="1">
+           <item row="3" column="2">
             <widget class="QComboBox" name="partition_live_combobox">
              <property name="editable">
               <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="QComboBox" name="live_parking_combobox">
+             <property name="editable">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_36">
+             <property name="text">
+              <string>Live</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_37">
+             <property name="text">
+              <string>L-RED</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_38">
+             <property name="text">
+              <string>Parking</string>
              </property>
             </widget>
            </item>
@@ -191,10 +181,17 @@
            <string>Live-0.5</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_3">
-           <item row="0" column="1">
-            <widget class="QComboBox" name="live5_combobox">
-             <property name="editable">
-              <bool>true</bool>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_41">
+             <property name="text">
+              <string>L-RED-0.5</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_40">
+             <property name="text">
+              <string>Live_0.5</string>
              </property>
             </widget>
            </item>
@@ -205,28 +202,9 @@
              </property>
             </widget>
            </item>
-           <item row="0" column="0">
-            <widget class="QCheckBox" name="checkBox_5">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="text">
-              <string>Live_0.5</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QCheckBox" name="lred5_checkbox">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="text">
-              <string>L-RED-0.5</string>
-             </property>
-             <property name="checked">
+           <item row="0" column="1">
+            <widget class="QComboBox" name="live5_combobox">
+             <property name="editable">
               <bool>true</bool>
              </property>
             </widget>
@@ -241,14 +219,15 @@
           </property>
           <layout class="QGridLayout" name="gridLayout_4">
            <item row="0" column="0">
-            <widget class="QCheckBox" name="checkBox_9">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
+            <widget class="QLabel" name="label_42">
              <property name="text">
               <string>LROOF</string>
              </property>
-             <property name="checked">
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QComboBox" name="snow_combobox">
+             <property name="editable">
               <bool>true</bool>
              </property>
             </widget>
@@ -261,22 +240,9 @@
             </widget>
            </item>
            <item row="1" column="0">
-            <widget class="QCheckBox" name="checkBox_10">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
+            <widget class="QLabel" name="label_43">
              <property name="text">
               <string>SNOW</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QComboBox" name="snow_combobox">
-             <property name="editable">
-              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -302,171 +268,166 @@
        <attribute name="title">
         <string>Seismic</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_9">
+       <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
-         <widget class="QGroupBox" name="groupBox_5">
-          <property name="title">
-           <string>X</string>
-          </property>
-          <layout class="QFormLayout" name="formLayout">
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_11">
-             <property name="enabled">
-              <bool>true</bool>
-             </property>
-             <property name="text">
-              <string>EX</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QComboBox" name="ex_combobox">
-             <property name="enabled">
-              <bool>true</bool>
-             </property>
-             <property name="editable">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_12">
-             <property name="text">
-              <string>EXP</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QComboBox" name="exp_combobox">
-             <property name="editable">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_13">
-             <property name="text">
-              <string>EXN</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QComboBox" name="exn_combobox">
-             <property name="editable">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="groupBox_6">
-          <property name="title">
-           <string>Y</string>
-          </property>
-          <layout class="QFormLayout" name="formLayout_2">
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_15">
-             <property name="enabled">
-              <bool>true</bool>
-             </property>
-             <property name="text">
-              <string>EY</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QComboBox" name="ey_combobox">
-             <property name="enabled">
-              <bool>true</bool>
-             </property>
-             <property name="editable">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_16">
-             <property name="text">
-              <string>EYP</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QComboBox" name="eyp_combobox">
-             <property name="editable">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_14">
-             <property name="text">
-              <string>EYN</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QComboBox" name="eyn_combobox">
-             <property name="editable">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="groupBox_8">
-          <property name="title">
-           <string>RHO</string>
-          </property>
-          <layout class="QFormLayout" name="formLayout_3">
-           <item row="0" column="0">
-            <widget class="QLabel" name="label">
-             <property name="text">
-              <string>Rho_X</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QComboBox" name="rhox_combobox">
-             <item>
-              <property name="text">
-               <string>1</string>
-              </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QGroupBox" name="groupBox_5">
+            <property name="title">
+             <string>X</string>
+            </property>
+            <layout class="QFormLayout" name="formLayout">
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_11">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+               <property name="text">
+                <string>EX</string>
+               </property>
+              </widget>
              </item>
-             <item>
-              <property name="text">
-               <string>1.2</string>
-              </property>
+             <item row="0" column="1">
+              <widget class="QComboBox" name="ex_combobox">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+               <property name="editable">
+                <bool>true</bool>
+               </property>
+              </widget>
              </item>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_2">
-             <property name="text">
-              <string>Rho_Y</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QComboBox" name="rhoy_combobox">
-             <item>
-              <property name="text">
-               <string>1</string>
-              </property>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_12">
+               <property name="text">
+                <string>EXP</string>
+               </property>
+              </widget>
              </item>
-             <item>
-              <property name="text">
-               <string>1.2</string>
-              </property>
+             <item row="1" column="1">
+              <widget class="QComboBox" name="exp_combobox">
+               <property name="editable">
+                <bool>true</bool>
+               </property>
+              </widget>
              </item>
-            </widget>
-           </item>
-          </layout>
-         </widget>
+             <item row="2" column="0">
+              <widget class="QLabel" name="label_13">
+               <property name="text">
+                <string>EXN</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QComboBox" name="exn_combobox">
+               <property name="editable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="label">
+               <property name="text">
+                <string>Rhox</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QComboBox" name="rhox_combobox">
+               <item>
+                <property name="text">
+                 <string>1</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>1.2</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="groupBox_6">
+            <property name="title">
+             <string>Y</string>
+            </property>
+            <layout class="QFormLayout" name="formLayout_2">
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_15">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+               <property name="text">
+                <string>EY</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QComboBox" name="ey_combobox">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+               <property name="editable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_16">
+               <property name="text">
+                <string>EYP</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QComboBox" name="eyp_combobox">
+               <property name="editable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="label_14">
+               <property name="text">
+                <string>EYN</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QComboBox" name="eyn_combobox">
+               <property name="editable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="label_2">
+               <property name="text">
+                <string>Rhoy</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QComboBox" name="rhoy_combobox">
+               <item>
+                <property name="text">
+                 <string>1</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>1.2</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
          <widget class="QGroupBox" name="activate_second_system">
@@ -479,79 +440,7 @@
           <property name="checked">
            <bool>true</bool>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_3">
-           <item>
-            <widget class="QGroupBox" name="groupBox_13">
-             <property name="title">
-              <string>X1</string>
-             </property>
-             <layout class="QFormLayout" name="formLayout_7">
-              <item row="0" column="0">
-               <widget class="QLabel" name="label_19">
-                <property name="enabled">
-                 <bool>true</bool>
-                </property>
-                <property name="text">
-                 <string>EX1</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1">
-               <widget class="QComboBox" name="ex1_combobox">
-                <property name="enabled">
-                 <bool>true</bool>
-                </property>
-                <property name="editable">
-                 <bool>true</bool>
-                </property>
-                <item>
-                 <property name="text">
-                  <string>EX1</string>
-                 </property>
-                </item>
-               </widget>
-              </item>
-              <item row="1" column="0">
-               <widget class="QLabel" name="label_24">
-                <property name="text">
-                 <string>EXP1</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="1">
-               <widget class="QComboBox" name="exp1_combobox">
-                <property name="editable">
-                 <bool>true</bool>
-                </property>
-                <item>
-                 <property name="text">
-                  <string>EXP1</string>
-                 </property>
-                </item>
-               </widget>
-              </item>
-              <item row="2" column="0">
-               <widget class="QLabel" name="label_25">
-                <property name="text">
-                 <string>EXN1</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="1">
-               <widget class="QComboBox" name="exn1_combobox">
-                <property name="editable">
-                 <bool>true</bool>
-                </property>
-                <item>
-                 <property name="text">
-                  <string>EXN1</string>
-                 </property>
-                </item>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
            <item>
             <widget class="QGroupBox" name="groupBox_14">
              <property name="title">
@@ -621,24 +510,15 @@
                 </item>
                </widget>
               </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QGroupBox" name="groupBox_15">
-             <property name="title">
-              <string>RHO1</string>
-             </property>
-             <layout class="QFormLayout" name="formLayout_9">
-              <item row="0" column="0">
-               <widget class="QLabel" name="label_29">
+              <item row="3" column="0">
+               <widget class="QLabel" name="label_30">
                 <property name="text">
-                 <string>Rho_X1</string>
+                 <string>Rhoy1</string>
                 </property>
                </widget>
               </item>
-              <item row="0" column="1">
-               <widget class="QComboBox" name="rhox1_combobox">
+              <item row="3" column="1">
+               <widget class="QComboBox" name="rhoy1_combobox">
                 <item>
                  <property name="text">
                   <string>1</string>
@@ -651,15 +531,87 @@
                 </item>
                </widget>
               </item>
-              <item row="1" column="0">
-               <widget class="QLabel" name="label_30">
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="groupBox_13">
+             <property name="title">
+              <string>X1</string>
+             </property>
+             <layout class="QFormLayout" name="formLayout_7">
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_19">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
                 <property name="text">
-                 <string>Rho_Y1</string>
+                 <string>EX1</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QComboBox" name="ex1_combobox">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
+                <property name="editable">
+                 <bool>true</bool>
+                </property>
+                <item>
+                 <property name="text">
+                  <string>EX1</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="label_24">
+                <property name="text">
+                 <string>EXP1</string>
                 </property>
                </widget>
               </item>
               <item row="1" column="1">
-               <widget class="QComboBox" name="rhoy1_combobox">
+               <widget class="QComboBox" name="exp1_combobox">
+                <property name="editable">
+                 <bool>true</bool>
+                </property>
+                <item>
+                 <property name="text">
+                  <string>EXP1</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QLabel" name="label_25">
+                <property name="text">
+                 <string>EXN1</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <widget class="QComboBox" name="exn1_combobox">
+                <property name="editable">
+                 <bool>true</bool>
+                </property>
+                <item>
+                 <property name="text">
+                  <string>EXN1</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QLabel" name="label_29">
+                <property name="text">
+                 <string>Rhox1</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="1">
+               <widget class="QComboBox" name="rhox1_combobox">
                 <item>
                  <property name="text">
                   <string>1</string>
@@ -1414,28 +1366,16 @@
   <tabstop>separate_direction</tabstop>
   <tabstop>ev_negative</tabstop>
   <tabstop>add_notional</tabstop>
-  <tabstop>checkBox</tabstop>
   <tabstop>dead_combobox</tabstop>
-  <tabstop>checkBox_2</tabstop>
   <tabstop>sdead_combobox</tabstop>
-  <tabstop>partition_dead_checkbox</tabstop>
   <tabstop>partition_dead_combobox</tabstop>
-  <tabstop>checkBox_4</tabstop>
-  <tabstop>checkBox_3</tabstop>
   <tabstop>lred_combobox</tabstop>
   <tabstop>live_combobox</tabstop>
   <tabstop>partition_live_combobox</tabstop>
-  <tabstop>partition_live_checkbox</tabstop>
   <tabstop>live5_combobox</tabstop>
   <tabstop>lred5_combobox</tabstop>
-  <tabstop>checkBox_5</tabstop>
-  <tabstop>lred5_checkbox</tabstop>
-  <tabstop>checkBox_9</tabstop>
   <tabstop>lroof_combobox</tabstop>
-  <tabstop>checkBox_10</tabstop>
   <tabstop>snow_combobox</tabstop>
-  <tabstop>rhox_combobox</tabstop>
-  <tabstop>rhoy_combobox</tabstop>
   <tabstop>ey_combobox</tabstop>
   <tabstop>eyp_combobox</tabstop>
   <tabstop>eyn_combobox</tabstop>
@@ -1467,8 +1407,6 @@
   <tabstop>ey1_combobox</tabstop>
   <tabstop>eyp1_combobox</tabstop>
   <tabstop>eyn1_combobox</tabstop>
-  <tabstop>rhox1_combobox</tabstop>
-  <tabstop>rhoy1_combobox</tabstop>
   <tabstop>omega_y1</tabstop>
   <tabstop>omega_x1</tabstop>
  </tabstops>

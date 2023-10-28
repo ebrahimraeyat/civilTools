@@ -24,8 +24,92 @@ class Form(QtWidgets.QWidget):
         self.fill_cities()
         self.create_connections()
         self.fill_top_bot_stories()
+        self.fill_load_cases()
         self.load_config()
         # self.fill_height_and_no_of_stories()
+
+    def fill_load_cases(self):
+        load_patterns = self.etabs.load_patterns.get_load_patterns()
+        map_number_to_pattern = {
+            1 : self.form.dead_combobox,    # 'Dead',
+            2 : self.form.sdead_combobox,   # 'Super Dead',
+            3 : self.form.live_combobox,    # 'Live',
+            4 : self.form.lred_combobox,    # 'Reducible Live',
+            # 5 : self.form.dead_combobox # 'Seismic',
+            # 6 : self.form.dead_combobox # 'Wind',
+            7 : self.form.snow_combobox, # 'Snow',
+            # 8 : self.form.mass_combobox, # 'Other',
+            11 : self.form.lroof_combobox, # 'ROOF Live',
+            # 12 : self.form.dead_combobox # 'Notional',
+        }
+        live_loads = [''] + [lp for lp in load_patterns if self.etabs.SapModel.LoadPatterns.GetLoadType(lp)[0] in (3, 4, 11)]
+        other_loads = [''] + [lp for lp in load_patterns if self.etabs.SapModel.LoadPatterns.GetLoadType(lp)[0] == 8]
+        live_loads_combobox = (
+                self.form.live_combobox,
+                self.form.lred_combobox,
+                self.form.lroof_combobox,
+                self.form.live5_combobox,
+                self.form.lred5_combobox,
+                self.form.live_parking_combobox,
+                )
+        other_combobox = (
+            self.form.mass_combobox,
+            self.form.ev_combobox,
+            self.form.hxp_combobox,
+            self.form.hxn_combobox,
+            self.form.hyp_combobox,
+            self.form.hyn_combobox,
+            )
+        for combobox in live_loads_combobox:
+            combobox.addItems(live_loads)
+        for combobox in other_combobox:
+            combobox.addItems(other_loads)
+        for lp in load_patterns:
+            type_ = self.etabs.SapModel.LoadPatterns.GetLoadType(lp)[0]
+            combobox = map_number_to_pattern.get(type_, None)
+            i = j = -1
+            if lp in live_loads:
+                i = live_loads.index(lp)
+            if lp in other_loads:
+                j = other_loads.index(lp)
+            if combobox is not None:
+                if combobox in live_loads_combobox:
+                    # if i == -1:
+                    #     combobox.addItem(lp)
+                    # else:
+                    combobox.setCurrentIndex(i)
+                else:
+                    combobox.addItem(lp)
+            if type_ == 3 and '5' in lp:
+                self.form.live5_combobox.setCurrentIndex(i)
+            elif type_ == 4 and '5' in lp:
+                self.form.lred5_combobox.setCurrentIndex(i)
+            elif type_ == 5: # seismic
+                pass
+            elif type_ == 8:
+                if 'mass' in lp.lower() or 'wall' in lp.lower():
+                    self.form.mass_combobox.setCurrentIndex(j)
+                elif any((
+                    'ev' in lp.lower(),
+                    'ez' in lp.lower(),
+                    'qv' in lp.lower(),
+                    'qz' in lp.lower(),
+                    )):
+                    self.form.ev_combobox.setCurrentIndex(j)
+        xdir, xdir_minus, xdir_plus, ydir, ydir_minus, ydir_plus = self.etabs.load_patterns.get_seismic_load_patterns()
+        for combobox, name, dir_ in zip(
+                (self.form.ex_combobox,
+                self.form.exn_combobox,
+                self.form.exp_combobox,
+                self.form.ey_combobox,
+                self.form.eyn_combobox,
+                self.form.eyp_combobox,
+                ),
+                ('EX', 'EXN', 'EXP', 'EY', 'EYN', 'EYP'),
+                (xdir, xdir_minus, xdir_plus, ydir, ydir_minus, ydir_plus),
+            ):
+            dir_.add(name)
+            combobox.addItems(dir_)
 
     def fill_cities(self):
         ostans = ostanha.ostans.keys()
@@ -121,6 +205,16 @@ class Form(QtWidgets.QWidget):
         self.form.top_story_for_height_checkbox_1.clicked.connect(self.fill_height_and_no_of_stories)
         self.form.top_story_for_height1.currentIndexChanged.connect(self.fill_height_and_no_of_stories)
         self.form.activate_second_system.clicked.connect(self.second_system_clicked)
+        self.form.partition_dead_checkbox.stateChanged.connect(self.partition_dead_clicked)
+        self.form.partition_live_checkbox.stateChanged.connect(self.partition_live_clicked)
+
+    def partition_dead_clicked(self, checked):
+        self.form.partition_live_checkbox.setChecked(not checked)
+        self.form.partition_live_combobox.setEnabled(not checked)
+    
+    def partition_live_clicked(self, checked):
+        self.form.partition_dead_checkbox.setChecked(not checked)
+        self.form.partition_dead_combobox.setEnabled(not checked)
 
     def second_system_clicked(self, checked:bool):
         self.form.x_system_label.setEnabled(checked)

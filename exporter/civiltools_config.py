@@ -18,6 +18,31 @@ def save(etabs, widget):
 		'bot_x1_combo',
 		'top_x1_combo',
 		'top_story_for_height1',
+		'dead_combobox',
+		'sdead_combobox',
+		'partition_dead_combobox',
+		'live_combobox',
+		'lred_combobox',
+		'live_parking_combobox',
+		'lroof_combobox',
+		'live5_combobox',
+		'lred5_combobox',
+		'partition_live_combobox',
+		'mass_combobox',
+		'ev_combobox',
+		'hxp_combobox',
+		'hxn_combobox',
+		'hyp_combobox',
+		'hyn_combobox',
+		# Seismic
+		'ex_combobox',
+		'exp_combobox',
+		'exn_combobox',
+		'ey_combobox',
+		'eyp_combobox',
+		'eyn_combobox',
+		'rhox_combobox',
+		'rhoy_combobox',
 		'ex1_combobox',
 		'exp1_combobox',
 		'exn1_combobox',
@@ -49,6 +74,7 @@ def save(etabs, widget):
 		'top_story_for_height_checkbox_1',
 		'infill_1',
 		'activate_second_system',
+		'partition_dead_checkbox',
 		):
 		if hasattr(widget, key):
 			exec(f"new_d['{key}'] = widget.{key}.isChecked()")
@@ -165,6 +191,32 @@ def load(etabs, widget=None):
 		'bot_x1_combo',
 		'top_x1_combo',
 		'top_story_for_height1',
+		# loads
+		'dead_combobox',
+		'sdead_combobox',
+		'partition_dead_combobox',
+		'live_combobox',
+		'lred_combobox',
+		'live_parking_combobox',
+		'lroof_combobox',
+		'live5_combobox',
+		'lred5_combobox',
+		'partition_live_combobox',
+		'mass_combobox',
+		'ev_combobox',
+		'hxp_combobox',
+		'hxn_combobox',
+		'hyp_combobox',
+		'hyn_combobox',
+		# Seismic
+		'ex_combobox',
+		'exp_combobox',
+		'exn_combobox',
+		'ey_combobox',
+		'eyp_combobox',
+		'eyn_combobox',
+		'rhox_combobox',
+		'rhoy_combobox',
 		'ex1_combobox',
 		'exp1_combobox',
 		'exn1_combobox',
@@ -177,7 +229,7 @@ def load(etabs, widget=None):
 		if key in keys and hasattr(widget, key):
 			exec(f"index = widget.{key}.findText(d['{key}'])")
 			exec(f"widget.{key}.setCurrentIndex(index)")
-		elif key in ('ostan', 'city'):
+		elif key in ('ostan', 'city') and hasattr(widget, key):
 			exec(f"index = widget.{key}.findText('قم')")
 			exec(f"widget.{key}.setCurrentIndex(index)")
 
@@ -193,6 +245,14 @@ def load(etabs, widget=None):
 	for key in ('infill', 'infill_1'):
 		if key in keys and hasattr(widget, key):
 			widget.infill.setChecked(d[key])
+	key = 'partition_dead_checkbox'
+	if key in keys and hasattr(widget, key):
+		checked = d.get(key, False)
+		widget.partition_dead_checkbox.setChecked(checked)
+		widget.partition_dead_combobox.setEnabled(checked)
+		widget.partition_live_checkbox.setChecked(not checked)
+		widget.partition_live_combobox.setEnabled(not checked)
+
 	key = 'activate_second_system'
 	if key in keys and hasattr(widget, key):
 		checked = d.get(key, False)

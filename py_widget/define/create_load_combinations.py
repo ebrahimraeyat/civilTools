@@ -161,6 +161,7 @@ class Form(QtWidgets.QWidget):
                 self.form.lroof_combobox,
                 self.form.live5_combobox,
                 self.form.lred5_combobox,
+                self.form.live_parking_combobox,
                 )
         other_combobox = (
             self.form.mass_combobox,
@@ -330,12 +331,12 @@ class Form(QtWidgets.QWidget):
         sdead = self.form.sdead_combobox.currentText()
         if sdead:
             deads.append(sdead)
-            if not sdead in load_patterns:
+            if sdead not in load_patterns:
                 self.etabs.SapModel.LoadPatterns.Add(sdead, 2)
         partition_dead = self.form.partition_dead_combobox.currentText()
         if partition_dead:
             deads.append(partition_dead)
-            if not partition_dead in load_patterns:
+            if partition_dead not in load_patterns:
                 self.etabs.SapModel.LoadPatterns.Add(partition_dead, 1)
         if deads:
             equivalent_loads['Dead'] = deads
@@ -344,17 +345,22 @@ class Form(QtWidgets.QWidget):
         live = self.form.live_combobox.currentText()
         if live:
             lives.append(live)
-            if not live in load_patterns:
+            if live not in load_patterns:
                 self.etabs.SapModel.LoadPatterns.Add(live, 3)
+        live_parking = self.form.live_parking_combobox.currentText()
+        if live_parking:
+            lives.append(live_parking)
+            if live_parking not in load_patterns:
+                self.etabs.SapModel.LoadPatterns.Add(live_parking, 3)
         lred = self.form.lred_combobox.currentText()
         if lred:
             lives.append(lred)
-            if not lred in load_patterns:
+            if lred not in load_patterns:
                 self.etabs.SapModel.LoadPatterns.Add(lred, 4)
         partition_live = self.form.partition_live_combobox.currentText()
         if partition_live:
             lives.append(partition_live)
-            if not partition_live in load_patterns:
+            if partition_live not in load_patterns:
                 self.etabs.SapModel.LoadPatterns.Add(partition_live, 3)
         if lives:
             equivalent_loads['L'] = lives
@@ -363,12 +369,12 @@ class Form(QtWidgets.QWidget):
         live5 = self.form.live5_combobox.currentText()
         if live5:
             Ls_5.append(live5)
-            if not live5 in load_patterns:
+            if live5 not in load_patterns:
                 self.etabs.SapModel.LoadPatterns.Add(live5, 3)
         lred5 = self.form.lred5_combobox.currentText()
         if lred5:
             Ls_5.append(lred5)
-            if not lred5 in load_patterns:
+            if lred5 not in load_patterns:
                 self.etabs.SapModel.LoadPatterns.Add(lred5, 4)
         if Ls_5:
             equivalent_loads['L_5'] = Ls_5
@@ -376,50 +382,50 @@ class Form(QtWidgets.QWidget):
         lroof = self.form.lroof_combobox.currentText()
         if lroof:
             equivalent_loads['RoofLive'] = [lroof]
-            if not lroof in load_patterns:
+            if lroof not in load_patterns:
                 self.etabs.SapModel.LoadPatterns.Add(lroof, 11)
         # snow
         snow = self.form.snow_combobox.currentText()
         if snow:
             equivalent_loads['Snow'] = [snow]
-            if not snow in load_patterns:
+            if snow not in load_patterns:
                 self.etabs.SapModel.LoadPatterns.Add(snow, 7)
         # seismic
         ## EX
         ex = self.form.ex_combobox.currentText()
         if ex:
             equivalent_loads['EX'] = [ex]
-            if not ex in load_patterns:
+            if ex not in load_patterns:
                 self.etabs.SapModel.LoadPatterns.Add(ex, 5)
         ## EXP
         exp = self.form.exp_combobox.currentText()
         if exp:
             equivalent_loads['EXP'] = [exp]
-            if not exp in load_patterns:
+            if exp not in load_patterns:
                 self.etabs.SapModel.LoadPatterns.Add(exp, 5)
         ## EXN
         exn = self.form.exn_combobox.currentText()
         if exn:
             equivalent_loads['EXN'] = [exn]
-            if not exn in load_patterns:
+            if exn not in load_patterns:
                 self.etabs.SapModel.LoadPatterns.Add(exn, 5)
         # EY
         ey = self.form.ey_combobox.currentText()
         if ey:
             equivalent_loads['EY'] = [ey]
-            if not ey in load_patterns:
+            if ey not in load_patterns:
                 self.etabs.SapModel.LoadPatterns.Add(ey, 5)
         ## EYP
         eyp = self.form.eyp_combobox.currentText()
         if eyp:
             equivalent_loads['EYP'] = [eyp]
-            if not eyp in load_patterns:
+            if eyp not in load_patterns:
                 self.etabs.SapModel.LoadPatterns.Add(eyp, 5)
         ## EYN
         eyn = self.form.eyn_combobox.currentText()
         if eyn:
             equivalent_loads['EYN'] = [eyn]
-            if not eyn in load_patterns:
+            if eyn not in load_patterns:
                 self.etabs.SapModel.LoadPatterns.Add(eyn, 5)
         # seismic two systems in height
         if self.form.activate_second_system.isChecked():
@@ -427,37 +433,37 @@ class Form(QtWidgets.QWidget):
             ex1 = self.form.ex1_combobox.currentText()
             if ex1:
                 equivalent_loads['EX1'] = [ex1]
-                if not ex1 in load_patterns:
+                if ex1 not in load_patterns:
                     self.etabs.SapModel.LoadPatterns.Add(ex1, 5)
             ## EXP1
             exp1 = self.form.exp1_combobox.currentText()
             if exp1:
                 equivalent_loads['EXP1'] = [exp1]
-                if not exp1 in load_patterns:
+                if exp1 not in load_patterns:
                     self.etabs.SapModel.LoadPatterns.Add(exp1, 5)
             ## EXN1
             exn1 = self.form.exn1_combobox.currentText()
             if exn1:
                 equivalent_loads['EXN1'] = [exn1]
-                if not exn1 in load_patterns:
+                if exn1 not in load_patterns:
                     self.etabs.SapModel.LoadPatterns.Add(exn1, 5)
             # EY1
             ey1 = self.form.ey1_combobox.currentText()
             if ey1:
                 equivalent_loads['EY1'] = [ey1]
-                if not ey1 in load_patterns:
+                if ey1 not in load_patterns:
                     self.etabs.SapModel.LoadPatterns.Add(ey1, 5)
             ## EYP1
             eyp1 = self.form.eyp1_combobox.currentText()
             if eyp1:
                 equivalent_loads['EYP1'] = [eyp1]
-                if not eyp1 in load_patterns:
+                if eyp1 not in load_patterns:
                     self.etabs.SapModel.LoadPatterns.Add(eyp1, 5)
             ## EYN1
             eyn1 = self.form.eyn1_combobox.currentText()
             if eyn1:
                 equivalent_loads['EYN1'] = [eyn1]
-                if not eyn1 in load_patterns:
+                if eyn1 not in load_patterns:
                     self.etabs.SapModel.LoadPatterns.Add(eyn1, 5)
         # # mass
         # masses = None
@@ -469,7 +475,7 @@ class Form(QtWidgets.QWidget):
         ev = self.form.ev_combobox.currentText()
         if ev:
             equivalent_loads['EV'] = [ev]
-            if not ev in load_patterns:
+            if ev not in load_patterns:
                 self.etabs.SapModel.LoadPatterns.Add(ev, 8)
         # Retaining Wall
         # HXP
