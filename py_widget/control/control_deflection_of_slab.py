@@ -3,8 +3,11 @@ from pathlib import Path
 from PySide2 import  QtWidgets
 from PySide2.QtWidgets import QMessageBox
 import FreeCADGui as Gui
+import FreeCAD
 
 from freecad_funcs import import_etabs_mesh_results
+
+from exporter import civiltools_config
 
 civiltools_path = Path(__file__).absolute().parent.parent.parent
 
@@ -16,7 +19,20 @@ class Form(QtWidgets.QWidget):
         self.etabs = etabs_model
         self.fill_load_cases()
         self.create_connections()
+        self.load_config()
         self.main_file_path = None
+
+    def load_config(self):
+        if self.etabs is None:
+            return
+        try:
+            etabs_filename = self.etabs.get_filename()
+        except:
+            return
+        civiltools_config.load(self.etabs, self.form)
+        p = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools")
+        live_load_percentage = p.GetFloat('civiltools_live_load_percentage_deflection', 0.25)
+        self.form.live_percentage_spinbox.setValue(live_load_percentage)
 
     def create_connections(self):
         self.form.check_button.clicked.connect(self.check)
@@ -90,6 +106,7 @@ class Form(QtWidgets.QWidget):
                 self.form.lred_combobox,
                 self.form.lroof_combobox,
                 self.form.live5_combobox,
+                self.form.live_parking_combobox,
                 )
         for combobox in live_loads_combobox:
             combobox.addItems(live_loads)

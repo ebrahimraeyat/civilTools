@@ -3,6 +3,7 @@ from pathlib import Path
 from PySide2 import  QtWidgets
 from PySide2.QtWidgets import QMessageBox
 import FreeCADGui as Gui
+import FreeCAD
 
 from design import get_deflection_check_result
 
@@ -29,6 +30,9 @@ class Form(QtWidgets.QWidget):
         except:
             return
         civiltools_config.load(self.etabs, self.form)
+        p = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools")
+        live_load_percentage = p.GetFloat('civiltools_live_load_percentage_deflection', 0.25)
+        self.form.live_percentage_spinbox.setValue(live_load_percentage)
 
     def create_connections(self):
         self.form.check_button.clicked.connect(self.check)
