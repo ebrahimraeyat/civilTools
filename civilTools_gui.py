@@ -61,6 +61,10 @@ from gui_civiltools.tools import (
     gui_run_design,
 )
 
+from gui_civiltools.import_export import (
+    gui_dxf,
+)
+
 from freecad_py import civiltools_views
 
 
@@ -206,7 +210,6 @@ civiltools_list = [
             "civiltools_100_30",
             "civil_earthquake_factor",
             "civiltools_create_spectral",
-            "civiltools_import_model",
             ]
 civiltools_assign = [
             "civiltools_wall_load",
@@ -247,3 +250,8 @@ civiltools_help = [
             "civil_registe",
             "civil_help",
             ]
+
+civiltools_import_export = [
+    "civiltools_import_model",
+    "civiltools_import_dxf",
+]
