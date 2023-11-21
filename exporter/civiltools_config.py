@@ -105,6 +105,15 @@ def save(etabs, widget):
 	d.update(new_d)
 	set_settings_to_etabs(etabs, d)
 
+def update_setting(etabs, keys, values):
+	'''
+	update etabs key dictionary setting with new key (maybe) and new value 
+	'''
+	d = get_settings_from_etabs(etabs)
+	new_d = dict(zip(keys, values))
+	d.update(new_d)
+	set_settings_to_etabs(etabs, d)
+
 def set_settings_to_etabs(etabs, d: dict):
 	json_str = json.dumps(d)
 	etabs.SapModel.SetProjectInfo("Company Name", json_str)
