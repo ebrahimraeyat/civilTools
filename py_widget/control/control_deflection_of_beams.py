@@ -1,0 +1,307 @@
+from pathlib import Path
+
+from PySide2 import  QtWidgets
+from PySide2.QtWidgets import QMessageBox
+import FreeCADGui as Gui
+import FreeCAD
+
+from design import get_deflection_check_result
+from qt_models import beam_deflection_model
+
+from exporter import civiltools_config
+
+civiltools_path = Path(__file__).absolute().parent.parent.parent
+
+
+class Form(QtWidgets.QWidget):
+    def __init__(self, etabs_model):
+        super(Form, self).__init__()
+        self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'control' / 'control_deflection_of_beams.ui'))
+        self.etabs = etabs_model
+        self.number_of_populate_table = 0
+        self.results = None
+        self.fill_load_cases()
+        self.create_connections()
+        self.load_config()
+        self.main_file_path = None
+
+    def load_config(self):
+        if self.etabs is None:
+            return
+        try:
+            self.etabs.get_filename()
+        except:
+            return
+        d = civiltools_config.load(self.etabs, self.form)
+        p = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools")
+        live_load_percentage = p.GetFloat('civiltools_live_load_percentage_deflection', 0.25)
+        self.form.live_percentage_spinbox.setValue(live_load_percentage)
+        self.populate_table(d)
+
+    def populate_table(self, d: dict):
+        '''
+        d : A dictionary of etabs file settings
+        '''
+        self.number_of_populate_table += 1
+        selected = self.etabs.select_obj.get_selected_objects()
+        frame_names = selected.get(2, [])
+        beam_names = []
+        for name in frame_names:
+            if (self.etabs.frame_obj.is_beam(name) and
+            self.etabs.SapModel.FrameObj.GetDesignProcedure(name)[0] == 2
+            ):
+                beam_names.append(name)
+        if len(beam_names) == 0 and self.number_of_populate_table != 1:
+            QMessageBox.warning(None, 'Select Beams', 'Select Beams in ETABS Model.')
+            return
+        d = d.get('beams_properties', {})
+        beam_props = {}
+        self.etabs.set_current_unit('kgf', 'cm')
+        for beam_name in beam_names:
+            beam_prop = d.get(beam_name, None)
+            if beam_prop is None:
+                section_name = self.etabs.SapModel.FrameObj.GetSection(beam_name)[0]
+                _, _, h, b, *_ = self.etabs.SapModel.PropFrame.GetRectangle(section_name)
+                if min(h, b) == 0:
+                    continue
+                beam_prop = {
+                    'is_console': 0,
+                    'minus_length': 50,
+                    'add_torsion_rebar': 2,
+                    'add_rebar': 0,
+                    'cover': 4,
+                    'width': b,
+                    'height': h,
+                    'result': '',
+                    }
+            beam_props[beam_name] = beam_prop
+        self.model = beam_deflection_model.BeamDeflectionTableModel(beam_props)
+        self.form.table_view.setModel(self.model)
+        self.resize_columns()
+
+    def create_connections(self):
+        self.form.check_button.clicked.connect(self.check)
+        self.form.cancel_button.clicked.connect(self.reject)
+        self.form.open_main_file_button.clicked.connect(self.open_main_file)
+        self.form.short_term_combobox.currentIndexChanged.connect(self.row_clicked)
+        self.form.long_term_combobox.currentIndexChanged.connect(self.row_clicked)
+        self.form.table_view.clicked.connect(self.row_clicked)
+
+    def row_clicked(self, index):
+        row = self.form.table_view.currentIndex().row()
+        col = beam_deflection_model.NAME
+        beam_name = str(self.model.data(self.model.index(row, col)))
+        self.etabs.view.show_frame(beam_name)
+        self.check_result(row, beam_name)
+
+    def check_result(self,
+        beam_index: int,
+        beam_name: str,
+        ):
+        if self.results is None:
+            return
+        self.form.results.setText(self.results[2][beam_index])
+        # check results
+        short_term = int(self.form.short_term_combobox.currentText().lstrip('Ln / '))
+        long_term = int(self.form.long_term_combobox.currentText().lstrip('Ln / '))
+        def1 = self.results[0][beam_index]
+        def2 = self.results[1][beam_index]
+        beam_prop = self.model.beam_data[beam_name]
+        minus_length = beam_prop['minus_length']
+        ln = self.etabs.frame_obj.get_length_of_frame(beam_name) - minus_length
+        text = f"Beam Name = {beam_name}, "
+        text += get_deflection_check_result(def1, def2, ln, short_term, long_term)
+        self.form.check_results.setText(text)
+
+    def get_file_name(self):
+        return str(self.etabs.get_filename_path_with_suffix(".EDB"))
+    
+    def check(self):
+        beams_props = self.model.beam_data
+        civiltools_config.update_setting(self.etabs, ['beams_properties'], [beams_props])
+        self.main_file_path = self.get_file_name()
+        # Get beam and point
+        points_for_get_deflection=None
+        beam_names = []
+        torsion_areas = []
+        is_consoles = []
+        locations = []
+        distances_for_calculate_rho = []
+        covers = []
+        frame_areas = []
+        additionals_rebars = []
+        for beam_name, beam_prop in beams_props.items():
+            torsion_area = beam_prop['add_torsion_rebar']
+            if torsion_area:
+                torsion_area = None
+            else:
+                torsion_area = 0
+            is_console = beam_prop['is_console']
+            if is_console:
+                location = 'bot'
+                distance_for_calculate_rho = 'start'
+            else:
+                location = 'top'
+                distance_for_calculate_rho = 'middle'
+            cover = beam_prop['cover']
+            b = beam_prop['width']
+            h = beam_prop['height']
+            d = h - cover
+            frame_area = b * d
+            additional_rebars = beam_prop['add_rebar']
+            # prepare inputs for calculate deflections
+            beam_names.append(beam_name)
+            torsion_areas.append(torsion_area)
+            is_consoles.append(is_console)
+            locations.append(location)
+            distances_for_calculate_rho.append(distance_for_calculate_rho)
+            covers.append(cover)
+            frame_areas.append(frame_area)
+            additionals_rebars.append(additional_rebars)
+        live_percentage = self.form.live_percentage_spinbox.value()
+        equivalent_loads = self.get_equivalent_loads()
+        dead = equivalent_loads.get('Dead', [])
+        supper_dead = equivalent_loads.get('SDead', [])
+        lives = equivalent_loads.get('L', []) + equivalent_loads.get('L_5', []) + equivalent_loads.get('RoofLive', []) + equivalent_loads.get('Snow', [])
+        # Get Results
+        self.results = self.etabs.design.get_deflection_of_beams(
+            dead=dead,
+            supper_dead=supper_dead,
+            lives=lives,
+            beam_names=beam_names,
+            distances_for_calculate_rho=distances_for_calculate_rho,
+            locations=locations,
+            torsion_areas=torsion_areas,
+            frame_areas=frame_areas,
+            covers=covers,
+            lives_percentage=live_percentage,
+            filename='',
+            points_for_get_deflection=points_for_get_deflection,
+            is_consoles=is_consoles,
+            additionals_rebars=additionals_rebars,
+        )
+        self.form.open_main_file_button.setEnabled(True)
+        self.form.check_button.setEnabled(False)
+
+    def fill_load_cases(self):
+        load_patterns = self.etabs.load_patterns.get_load_patterns()
+        map_number_to_pattern = {
+            1 : self.form.dead_combobox,    # 'Dead',
+            2 : self.form.sdead_combobox,   # 'Super Dead',
+            3 : self.form.live_combobox,    # 'Live',
+            4 : self.form.lred_combobox,    # 'Reducible Live',
+            7 : self.form.snow_combobox, # 'Snow',
+            11 : self.form.lroof_combobox, # 'ROOF Live',
+        }
+        live_loads = [''] + [lp for lp in load_patterns if self.etabs.SapModel.LoadPatterns.GetLoadType(lp)[0] in (3, 4, 11)]
+        live_loads_combobox = (
+                self.form.live_combobox,
+                self.form.lred_combobox,
+                self.form.lroof_combobox,
+                self.form.live5_combobox,
+                self.form.live_parking_combobox,
+                )
+        for combobox in live_loads_combobox:
+            combobox.addItems(live_loads)
+        for lp in load_patterns:
+            type_ = self.etabs.SapModel.LoadPatterns.GetLoadType(lp)[0]
+            combobox = map_number_to_pattern.get(type_, None)
+            i = -1
+            if lp in live_loads:
+                i = live_loads.index(lp)
+            if combobox is not None:
+                if combobox in live_loads_combobox:
+                    # if i == -1:
+                    #     combobox.addItem(lp)
+                    # else:
+                    combobox.setCurrentIndex(i)
+                else:
+                    combobox.addItem(lp)
+            if type_ == 3 and '5' in lp:
+                self.form.live5_combobox.setCurrentIndex(i)
+
+    def resize_columns(self):
+        for column in range(self.model.columnCount()):
+            self.form.table_view.resizeColumnToContents(column)
+
+    def open_main_file(self):
+        self.etabs.SapModel.File.OpenFile(str(self.main_file_path))
+        self.accept()
+    
+    def get_equivalent_loads(self):
+        load_patterns = self.etabs.load_patterns.get_load_patterns()
+        equivalent_loads = {}
+        # Deads
+        deads = []
+        dead = self.form.dead_combobox.currentText()
+        if dead:
+            deads.append(dead)
+        if deads:
+            equivalent_loads['Dead'] = deads
+        sdeads = []
+        sdead = self.form.sdead_combobox.currentText()
+        if sdead:
+            sdeads.append(sdead)
+        partition = self.form.partition_combobox.currentText()
+        if partition:
+            sdeads.append(partition)
+        if sdeads:
+            equivalent_loads['SDead'] = sdeads
+        # L
+        lives = []
+        live = self.form.live_combobox.currentText()
+        if live:
+            lives.append(live)
+            if live not in load_patterns:
+                self.etabs.SapModel.LoadPatterns.Add(live, 3)
+        lred = self.form.lred_combobox.currentText()
+        if lred:
+            lives.append(lred)
+            if lred not in load_patterns:
+                self.etabs.SapModel.LoadPatterns.Add(lred, 4)
+        if lives:
+            equivalent_loads['L'] = lives
+        # L_5
+        Ls_5 = []
+        live5 = self.form.live5_combobox.currentText()
+        if live5:
+            Ls_5.append(live5)
+            if live5 not in load_patterns:
+                self.etabs.SapModel.LoadPatterns.Add(live5, 3)
+        if Ls_5:
+            equivalent_loads['L_5'] = Ls_5
+        # RoofLive
+        lroof = self.form.lroof_combobox.currentText()
+        if lroof:
+            equivalent_loads['RoofLive'] = [lroof]
+            if lroof not in load_patterns:
+                self.etabs.SapModel.LoadPatterns.Add(lroof, 11)
+        # snow
+        snow = self.form.snow_combobox.currentText()
+        if snow:
+            equivalent_loads['Snow'] = [snow]
+            if snow not in load_patterns:
+                self.etabs.SapModel.LoadPatterns.Add(snow, 7)
+        return equivalent_loads
+    
+    def accept(self):
+        print('accept')
+        self.form.close()
+
+    def closeEvent(self, event):
+        print("you just closed the pyqt window!!! you are awesome!!!")
+        self.reject()
+    
+    def reject(self):
+        if (
+            self.main_file_path is not None and 
+            QMessageBox.question(
+            None,
+            'Open Main File',
+            'Do you want to Open Main File?',)
+            ) == QMessageBox.Yes:
+            self.open_main_file()
+        self.form.close()
+        
+    # def getStandardButtons(self):
+    #     return 0

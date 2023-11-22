@@ -105,7 +105,11 @@ def save(etabs, widget):
 	d.update(new_d)
 	set_settings_to_etabs(etabs, d)
 
-def update_setting(etabs, keys, values):
+def update_setting(
+	etabs,
+	keys: list,
+	values: list,
+	):
 	'''
 	update etabs key dictionary setting with new key (maybe) and new value 
 	'''
