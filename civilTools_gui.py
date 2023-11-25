@@ -11,7 +11,7 @@ import FreeCADGui as Gui
 from gui_civiltools import (
     gui_civiltools_settings,
     gui_earthquake_factor,
-    gui_irregurality_of_mass,
+    gui_irregularity_of_mass,
     gui_explod_load_patterns,
     gui_story_stiffness,
     gui_get_weakness,
@@ -161,7 +161,7 @@ class SerialForm:
 # Gui.addCommand('Civil_help', CivilHelp())
 Gui.addCommand('civiltools_settings', gui_civiltools_settings.CivilToolsSettings())
 Gui.addCommand('civil_earthquake_factor', gui_earthquake_factor.CivilEarthquakeFactor())
-Gui.addCommand('civil_irregurality_of_mass', gui_irregurality_of_mass.CivilIrregularityOfMass())
+Gui.addCommand('civil_irregularity_of_mass', gui_irregularity_of_mass.CivilIrregularityOfMass())
 Gui.addCommand('civil_explod_load_patterns', gui_explod_load_patterns.CivilExplodLoadPatterns())
 Gui.addCommand('civil_story_stiffness', gui_story_stiffness.CivilStoryStiffness())
 Gui.addCommand('civil_get_weakness', gui_get_weakness.CivilGetWeakness())
@@ -196,7 +196,7 @@ civiltools_list = [
             "civil_modify_torsion_stiffness",
             "civilTools_check_deflection_of_beams",
             "civilTools_check_deflection_of_slab",
-            "civil_irregurality_of_mass",
+            "civil_irregularity_of_mass",
             "civil_story_stiffness",
             "civil_get_weakness",
             "civil_get_weakness_torsion",

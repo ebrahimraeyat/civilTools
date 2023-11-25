@@ -45,6 +45,24 @@ class CivilTools100_30Columns:
             filename is None
             ):
             return
+        from exporter import civiltools_config
+        d = civiltools_config.get_settings_from_etabs(etabs)
+        if len(d) == 0:
+            QMessageBox.warning(None, 'Settings', 'Please Set Options First!')
+            Gui.runCommand("civiltools_settings")
+        if len(d) == 0:
+            return
+        if any([
+            d.get('torsional_irregularity_groupbox', False),
+            d.get('reentrance_corner_checkbox', False),
+            d.get('diaphragm_discontinuity_checkbox', False),
+            d.get('out_of_plane_offset_checkbox', False),
+            d.get('nonparallel_system_checkbox', False),
+        ]) and QMessageBox.question(None,
+            "100 - 30",
+            "Model has Horizontal Irregularity, Do you want to continue?",
+            ) == QMessageBox.No:
+            return
         etabs.lock_and_unlock_model()
         ex, exn, exp, ey, eyn, eyp = etabs.load_patterns.get_seismic_load_patterns()
         if not all([ex, exn, exp, ey, eyn, eyp]):

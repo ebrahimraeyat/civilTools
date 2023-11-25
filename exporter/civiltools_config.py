@@ -75,6 +75,21 @@ def save(etabs, widget):
 		'infill_1',
 		'activate_second_system',
 		'partition_dead_checkbox',
+		# Irregularity
+		'torsional_irregularity_groupbox',
+		'torsion_irregular_checkbox',
+		'extreme_torsion_irregular_checkbox',
+		'reentrance_corner_checkbox',
+		'diaphragm_discontinuity_checkbox',
+		'out_of_plane_offset_checkbox',
+		'nonparallel_system_checkbox',
+		'stiffness_soft_story_groupbox',
+		'stiffness_irregular_checkbox',
+		'extreme_stiffness_irregular_checkbox',
+		'weight_mass_checkbox',
+		'geometric_checkbox',
+		'in_plane_discontinuity_checkbox',
+		'lateral_strength_weak_story_checkbox',
 		):
 		if hasattr(widget, key):
 			exec(f"new_d['{key}'] = widget.{key}.isChecked()")
@@ -247,17 +262,37 @@ def load(etabs, widget=None):
 			exec(f"widget.{key}.setCurrentIndex(index)")
 
 	# Checkboxes
-	for key in (
-		'top_story_for_height_checkbox',
-		'top_story_for_height_checkbox_1',
-		):
+	key = 'top_story_for_height_checkbox'
+	if key in keys and hasattr(widget, key):
+		checked = d.get(key, True)
+		widget.top_story_for_height_checkbox.setChecked(checked)
+		widget.top_story_for_height.setEnabled(checked)
+	key = 'top_story_for_height_checkbox_1'
+	if key in keys and hasattr(widget, key):
+		checked = d.get(key, True)
+		widget.top_story_for_height_checkbox_1.setChecked(checked)
+		widget.top_story_for_height1.setEnabled(checked)
+	for key in(
+		'infill',
+		'infill_1',
+		# Irregularity
+		'torsional_irregularity_groupbox',
+		'torsion_irregular_checkbox',
+		'extreme_torsion_irregular_checkbox',
+		'reentrance_corner_checkbox',
+		'diaphragm_discontinuity_checkbox',
+		'out_of_plane_offset_checkbox',
+		'nonparallel_system_checkbox',
+		'stiffness_soft_story_groupbox',
+		'stiffness_irregular_checkbox',
+		'extreme_stiffness_irregular_checkbox',
+		'weight_mass_checkbox',
+		'geometric_checkbox',
+		'in_plane_discontinuity_checkbox',
+		'lateral_strength_weak_story_checkbox',
+	):
 		if key in keys and hasattr(widget, key):
-			checked = d.get(key, True)
-			widget.top_story_for_height_checkbox.setChecked(checked)
-			widget.top_story_for_height.setEnabled(checked)
-	for key in ('infill', 'infill_1'):
-		if key in keys and hasattr(widget, key):
-			widget.infill.setChecked(d[key])
+			exec(f'widget.{key}.setChecked(d["{key}"])')
 	key = 'partition_dead_checkbox'
 	if key in keys and hasattr(widget, key):
 		checked = d.get(key, False)
@@ -265,7 +300,6 @@ def load(etabs, widget=None):
 		widget.partition_dead_combobox.setEnabled(checked)
 		widget.partition_live_checkbox.setChecked(not checked)
 		widget.partition_live_combobox.setEnabled(not checked)
-
 	key = 'activate_second_system'
 	if key in keys and hasattr(widget, key):
 		checked = d.get(key, False)
