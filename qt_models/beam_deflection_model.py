@@ -15,8 +15,8 @@ high = 'red'
 
 
 
-column_count = 9
-NAME, IS_CONSOLE, ADD_TORSION_REBAR, ADD_REBAR, MINUS_LENGTH, COVER, WIDTH, HEIGHT, RESULT = range(column_count)
+column_count = 10
+NAME, STORY, IS_CONSOLE, ADD_TORSION_REBAR, ADD_REBAR, MINUS_LENGTH, COVER, WIDTH, HEIGHT, RESULT = range(column_count)
 
 
 class BeamDeflectionTableModel(QAbstractTableModel):
@@ -47,6 +47,8 @@ class BeamDeflectionTableModel(QAbstractTableModel):
         if orientation == Qt.Horizontal:
             if section == NAME:
                 return "Name"
+            if section == STORY:
+                return "Story"
             if section == IS_CONSOLE:
                 return "Console"
             if section == ADD_TORSION_REBAR:
@@ -72,7 +74,7 @@ class BeamDeflectionTableModel(QAbstractTableModel):
         col = index.column()
         if col in (IS_CONSOLE, ADD_TORSION_REBAR):
             return Qt.ItemIsEnabled | Qt.ItemIsUserCheckable
-        if col in (NAME, RESULT):
+        if col in (NAME, STORY, RESULT):
             return Qt.ItemIsSelectable | Qt.ItemIsEnabled
         return Qt.ItemFlags(
             QAbstractTableModel.flags(self, index) | Qt.ItemIsEditable)
@@ -88,6 +90,8 @@ class BeamDeflectionTableModel(QAbstractTableModel):
         if role == Qt.DisplayRole:
             if col == NAME:
                 return beam_name
+            if col == STORY:
+                return beam_prop['Story']
             elif col == ADD_REBAR:
                 return beam_prop["add_rebar"]
             elif col == MINUS_LENGTH:
@@ -150,6 +154,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.table = QtWidgets.QTableView()
         data = {'1':
         {'is_console': 2,
+        'Story': 'STORY1',
         'minus_length': 30,
         'add_torsion_rebar': 0,
         'add_rebar': 5,

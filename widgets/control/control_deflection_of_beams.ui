@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1212</width>
-    <height>570</height>
+    <width>1282</width>
+    <height>623</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,7 +26,7 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <widget class="QGroupBox" name="groupBox">
@@ -257,7 +257,7 @@
          <item row="1" column="2">
           <widget class="QPushButton" name="help">
            <property name="enabled">
-            <bool>false</bool>
+            <bool>true</bool>
            </property>
            <property name="text">
             <string>Help</string>
@@ -291,16 +291,22 @@
        </item>
       </layout>
      </widget>
-     <widget class="QTableView" name="table_view">
-      <property name="minimumSize">
-       <size>
-        <width>500</width>
-        <height>0</height>
-       </size>
-      </property>
+     <widget class="QWidget" name="verticalLayoutWidget">
+      <layout class="QVBoxLayout" name="table_vertical_layout">
+       <item>
+        <widget class="QTableView" name="table_view">
+         <property name="minimumSize">
+          <size>
+           <width>500</width>
+           <height>0</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
-     <widget class="QWidget" name="">
-      <layout class="QVBoxLayout" name="verticalLayout_3">
+     <widget class="QWidget" name="layoutWidget">
+      <layout class="QVBoxLayout" name="results_vertical_layout">
        <item>
         <widget class="QGroupBox" name="groupBox_3">
          <property name="title">

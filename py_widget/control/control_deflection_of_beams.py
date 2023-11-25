@@ -1,7 +1,11 @@
 from pathlib import Path
+import math
 
-from PySide2 import  QtWidgets
+from PySide2 import QtCore, QtGui, QtWidgets
 from PySide2.QtWidgets import QMessageBox
+import numpy as np
+from PySide2.QtGui import QPolygonF, QBrush
+from PySide2.QtCore import QPointF, Qt
 import FreeCADGui as Gui
 import FreeCAD
 
@@ -20,10 +24,12 @@ class Form(QtWidgets.QWidget):
         self.etabs = etabs_model
         self.number_of_populate_table = 0
         self.results = None
+        self.main_file_path = None
         self.fill_load_cases()
         self.create_connections()
         self.load_config()
-        self.main_file_path = None
+        self.initiate_drawing()
+        self.beam_columns = self.etabs.frame_obj.get_beams_columns_on_stories()
 
     def load_config(self):
         if self.etabs is None:
@@ -62,9 +68,11 @@ class Form(QtWidgets.QWidget):
             if beam_prop is None:
                 section_name = self.etabs.SapModel.FrameObj.GetSection(beam_name)[0]
                 _, _, h, b, *_ = self.etabs.SapModel.PropFrame.GetRectangle(section_name)
+                story = self.etabs.SapModel.FrameObj.GetLabelFromName(beam_name)[1]
                 if min(h, b) == 0:
                     continue
                 beam_prop = {
+                    'Story': story,
                     'is_console': 0,
                     'minus_length': 50,
                     'add_torsion_rebar': 2,
@@ -93,6 +101,7 @@ class Form(QtWidgets.QWidget):
         beam_name = str(self.model.data(self.model.index(row, col)))
         self.etabs.view.show_frame(beam_name)
         self.check_result(row, beam_name)
+        self.draw_beams_columns(beam_name)
 
     def check_result(self,
         beam_index: int,
@@ -303,5 +312,60 @@ class Form(QtWidgets.QWidget):
             self.open_main_file()
         self.form.close()
         
-    # def getStandardButtons(self):
-    #     return 0
+    def initiate_drawing(self):
+        self.scene = QtWidgets.QGraphicsScene()
+        self.view = QtWidgets.QGraphicsView(
+            self.scene, alignment=QtCore.Qt.AlignCenter | QtCore.Qt.AlignHCenter
+        )
+        self.view.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.view.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.view.setRenderHint(QtGui.QPainter.Antialiasing)
+        # self.view.setBackgroundBrush(
+        #     QtWidgets.QApplication.style()
+        #     .standardPalette()
+        #     .brush(QtGui.QPalette.Background)
+        # )
+        self.form.table_vertical_layout.addWidget(self.view)
+    
+    def draw_beams_columns(self, beam_name:str):
+        story = self.etabs.SapModel.FrameObj.GetLabelFromName(beam_name)[1]
+        beams, columns = self.beam_columns[story]
+        self.scene.clear()
+        
+        blue_pen = QtGui.QPen(QtGui.QColor("Red"))
+        black_pen = QtGui.QPen(QtGui.QColor("Black"))
+        blue_pen.setWidth(20)
+        black_pen.setWidth(5)
+        for name in beams:
+            coords = self.etabs.frame_obj.get_xy_of_frame_points(name)
+            line = self.scene.addLine(coords[0], -coords[1] , coords[2] , -coords[3] )
+            if name == beam_name:
+                line.setPen(blue_pen)
+            else:
+                line.setPen(black_pen)
+        # Draw Columns
+        # Convert the points and draw the polygon on the scene
+        brush = QBrush(QtGui.QColor("Black"))
+        for name in columns:
+            coords = self.etabs.frame_obj.get_xy_of_frame_points(name)
+            polygon = convert5Pointto8Point(coords[0], -coords[1], 50, 50, 0)
+            item = self.scene.addPolygon(polygon)
+            # Set the brush on the polygon item
+            item.setBrush(brush)
+        self.view.fitInView(self.scene.sceneRect(), QtCore.Qt.KeepAspectRatio)
+
+
+def convert5Pointto8Point(cx_, cy_, w_, h_, a_):
+    theta = math.radians(a_)
+    bbox = np.array([[cx_], [cy_]]) + \
+        np.matmul([[math.cos(theta), math.sin(theta)],
+                   [-math.sin(theta), math.cos(theta)]],
+                  [[-w_ / 2, w_/ 2, w_ / 2, -w_ / 2, w_ / 2 + 8],
+                   [-h_ / 2, -h_ / 2, h_ / 2, h_ / 2, 0]])
+
+    # Create a QPolygonF object with the points
+    polygon = QPolygonF()
+    for i in range(4):
+        x, y = bbox[0][i], bbox[1][i]
+        polygon.append(QPointF(x, y))
+    return polygon
