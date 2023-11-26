@@ -1,6 +1,6 @@
 from pathlib import Path
 from PySide2.QtCore import QAbstractTableModel, Qt 
-# from PySide2.QtGui import QColor #, QIcon
+from PySide2.QtGui import QColor #, QIcon
 from PySide2 import QtWidgets
 from PySide2.QtWidgets import QAbstractItemView
 from PySide2.QtCore import QModelIndex #, QIcon
@@ -107,6 +107,12 @@ class BeamDeflectionTableModel(QAbstractTableModel):
             if col == ADD_TORSION_REBAR:
                 return beam_prop["add_torsion_rebar"]
 
+        if role == Qt.BackgroundColorRole:
+            if col == WIDTH and beam_prop['width'] <= 0:
+                return QColor('yellow')
+            if col == HEIGHT and beam_prop['height'] <= 0:
+                return QColor('yellow')
+
         # if role == Qt.DecorationRole:
         #     value = self._data[index.row()][index.column()]
         #     if isinstance(value, float):
@@ -126,10 +132,10 @@ class BeamDeflectionTableModel(QAbstractTableModel):
                 self.beam_data[beam_name]['add_torsion_rebar'] = value
             self.dataChanged.emit(index, index)
             return True
-        elif role == Qt.EditRole and col in (RESULT, ADD_REBAR, MINUS_LENGTH, COVER, WIDTH, HEIGHT):
-            if col == RESULT:
-                self.beam_data[beam_name]['result'] = str(value)
-            elif col == ADD_REBAR:
+        elif role == Qt.EditRole and col in (ADD_REBAR, MINUS_LENGTH, COVER, WIDTH, HEIGHT):
+            if float(value) < 0:
+                return False
+            if col == ADD_REBAR:
                 self.beam_data[beam_name]['add_rebar'] = float(value)
             elif col == MINUS_LENGTH:
                 self.beam_data[beam_name]['minus_length'] = float(value)

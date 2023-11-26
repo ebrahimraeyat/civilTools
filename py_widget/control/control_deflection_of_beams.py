@@ -68,10 +68,11 @@ class Form(QtWidgets.QWidget):
             beam_prop = d.get(beam_name, None)
             if beam_prop is None:
                 section_name = self.etabs.SapModel.FrameObj.GetSection(beam_name)[0]
-                _, _, h, b, *_ = self.etabs.SapModel.PropFrame.GetRectangle(section_name)
+                try:
+                    _, _, h, b, *_ = self.etabs.SapModel.PropFrame.GetRectangle(section_name)
+                except:
+                    h, b = 0
                 label, story, *_ = self.etabs.SapModel.FrameObj.GetLabelFromName(beam_name)
-                if min(h, b) == 0:
-                    continue
                 beam_prop = {
                     'Story': story,
                     'Label': label,
@@ -185,6 +186,7 @@ class Form(QtWidgets.QWidget):
         dead = equivalent_loads.get('Dead', [])
         supper_dead = equivalent_loads.get('SDead', [])
         lives = equivalent_loads.get('L', []) + equivalent_loads.get('L_5', []) + equivalent_loads.get('RoofLive', []) + equivalent_loads.get('Snow', [])
+        filename = self.form.filename.text()
         # Get Results
         self.results = self.etabs.design.get_deflection_of_beams(
             dead=dead,
@@ -197,7 +199,7 @@ class Form(QtWidgets.QWidget):
             frame_areas=frame_areas,
             covers=covers,
             lives_percentage=live_percentage,
-            filename='',
+            filename=filename,
             points_for_get_deflection=points_for_get_deflection,
             is_consoles=is_consoles,
             additionals_rebars=additionals_rebars,
