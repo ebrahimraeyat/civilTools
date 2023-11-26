@@ -1,7 +1,8 @@
 from pathlib import Path
 from PySide2.QtCore import QAbstractTableModel, Qt 
-from PySide2.QtGui import QColor #, QIcon
+# from PySide2.QtGui import QColor #, QIcon
 from PySide2 import QtWidgets
+from PySide2.QtWidgets import QAbstractItemView
 from PySide2.QtCore import QModelIndex #, QIcon
 
 # from qt_models import table_models
@@ -15,8 +16,8 @@ high = 'red'
 
 
 
-column_count = 10
-NAME, STORY, IS_CONSOLE, ADD_TORSION_REBAR, ADD_REBAR, MINUS_LENGTH, COVER, WIDTH, HEIGHT, RESULT = range(column_count)
+column_count = 11
+NAME, LABEL, STORY, IS_CONSOLE, ADD_TORSION_REBAR, ADD_REBAR, MINUS_LENGTH, COVER, WIDTH, HEIGHT, RESULT = range(column_count)
 
 
 class BeamDeflectionTableModel(QAbstractTableModel):
@@ -28,14 +29,6 @@ class BeamDeflectionTableModel(QAbstractTableModel):
         super().__init__()
         self.beam_data = beam_data
         self.beam_names = list(self.beam_data.keys())
-        self.set_initial_data()
-
-    def set_initial_data(self):
-        self.is_consoles = []
-        self.add_torsions_rebar = []
-        for beam_name in self.beam_names:
-            self.is_consoles.append(self.beam_data[beam_name]['is_console'])
-            self.add_torsions_rebar.append(self.beam_data[beam_name]['add_torsion_rebar'])
         
     def headerData(self, section, orientation, role=Qt.DisplayRole):
         if role == Qt.TextAlignmentRole:
@@ -47,6 +40,8 @@ class BeamDeflectionTableModel(QAbstractTableModel):
         if orientation == Qt.Horizontal:
             if section == NAME:
                 return "Name"
+            if section == LABEL:
+                return "Label"
             if section == STORY:
                 return "Story"
             if section == IS_CONSOLE:
@@ -74,7 +69,7 @@ class BeamDeflectionTableModel(QAbstractTableModel):
         col = index.column()
         if col in (IS_CONSOLE, ADD_TORSION_REBAR):
             return Qt.ItemIsEnabled | Qt.ItemIsUserCheckable
-        if col in (NAME, STORY, RESULT):
+        if col in (NAME, STORY, LABEL, RESULT):
             return Qt.ItemIsSelectable | Qt.ItemIsEnabled
         return Qt.ItemFlags(
             QAbstractTableModel.flags(self, index) | Qt.ItemIsEditable)
@@ -90,6 +85,8 @@ class BeamDeflectionTableModel(QAbstractTableModel):
         if role == Qt.DisplayRole:
             if col == NAME:
                 return beam_name
+            if col == LABEL:
+                return beam_prop['Label']
             if col == STORY:
                 return beam_prop['Story']
             elif col == ADD_REBAR:
@@ -127,7 +124,9 @@ class BeamDeflectionTableModel(QAbstractTableModel):
                 self.beam_data[beam_name]['is_console'] = value
             elif col == ADD_TORSION_REBAR:
                 self.beam_data[beam_name]['add_torsion_rebar'] = value
-        elif role == Qt.EditRole:
+            self.dataChanged.emit(index, index)
+            return True
+        elif role == Qt.EditRole and col in (RESULT, ADD_REBAR, MINUS_LENGTH, COVER, WIDTH, HEIGHT):
             if col == RESULT:
                 self.beam_data[beam_name]['result'] = str(value)
             elif col == ADD_REBAR:
@@ -140,6 +139,8 @@ class BeamDeflectionTableModel(QAbstractTableModel):
                 self.beam_data[beam_name]['width'] = float(value)
             elif col == HEIGHT:
                 self.beam_data[beam_name]['height'] = float(value)
+            self.dataChanged.emit(index, index)
+            return True
         return False
 
     def rowCount(self, index=QModelIndex()):
@@ -154,6 +155,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.table = QtWidgets.QTableView()
         data = {'1':
         {'is_console': 2,
+        'Label': 'B12',
         'Story': 'STORY1',
         'minus_length': 30,
         'add_torsion_rebar': 0,
@@ -165,9 +167,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.model = BeamDeflectionTableModel(data)
         self.table.setModel(self.model)
         self.setCentralWidget(self.table)
+        self.table.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.table.selectionModel().selectionChanged.connect(self.alaki)
 
-
-    
+    def alaki(self, index):
+        print(index)
 
 if __name__ == "__main__":
     import sys

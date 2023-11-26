@@ -5,7 +5,7 @@ from PySide2 import QtCore, QtGui, QtWidgets
 from PySide2.QtWidgets import QMessageBox
 import numpy as np
 from PySide2.QtGui import QPolygonF, QBrush
-from PySide2.QtCore import QPointF, Qt
+from PySide2.QtCore import QPointF
 import FreeCADGui as Gui
 import FreeCAD
 
@@ -26,9 +26,10 @@ class Form(QtWidgets.QWidget):
         self.results = None
         self.main_file_path = None
         self.fill_load_cases()
-        self.create_connections()
         self.load_config()
-        self.initiate_drawing()
+        self.create_connections()
+        self.scene = QtWidgets.QGraphicsScene()
+        self.form.graphicsview.setScene(self.scene)
         self.beam_columns = self.etabs.frame_obj.get_beams_columns_on_stories()
 
     def load_config(self):
@@ -68,11 +69,12 @@ class Form(QtWidgets.QWidget):
             if beam_prop is None:
                 section_name = self.etabs.SapModel.FrameObj.GetSection(beam_name)[0]
                 _, _, h, b, *_ = self.etabs.SapModel.PropFrame.GetRectangle(section_name)
-                story = self.etabs.SapModel.FrameObj.GetLabelFromName(beam_name)[1]
+                label, story, *_ = self.etabs.SapModel.FrameObj.GetLabelFromName(beam_name)
                 if min(h, b) == 0:
                     continue
                 beam_prop = {
                     'Story': story,
+                    'Label': label,
                     'is_console': 0,
                     'minus_length': 50,
                     'add_torsion_rebar': 2,
@@ -91,17 +93,28 @@ class Form(QtWidgets.QWidget):
         self.form.check_button.clicked.connect(self.check)
         self.form.cancel_button.clicked.connect(self.reject)
         self.form.open_main_file_button.clicked.connect(self.open_main_file)
-        self.form.short_term_combobox.currentIndexChanged.connect(self.row_clicked)
-        self.form.long_term_combobox.currentIndexChanged.connect(self.row_clicked)
-        self.form.table_view.clicked.connect(self.row_clicked)
+        self.form.short_term_combobox.currentIndexChanged.connect(self.result_changed)
+        self.form.long_term_combobox.currentIndexChanged.connect(self.result_changed)
+        self.form.table_view.selectionModel().selectionChanged.connect(self.row_clicked)
 
-    def row_clicked(self, index):
-        row = self.form.table_view.currentIndex().row()
+    def row_clicked(self, selection):
+        if len(selection) == 0:
+            return
+        index = selection.indexes()[0]
+        row = index.row()
         col = beam_deflection_model.NAME
         beam_name = str(self.model.data(self.model.index(row, col)))
         self.etabs.view.show_frame(beam_name)
         self.check_result(row, beam_name)
         self.draw_beams_columns(beam_name)
+    
+    def result_changed(self, index):
+        if self.results is None:
+            return
+        row = self.form.table_view.currentIndex().row()
+        col = beam_deflection_model.NAME
+        beam_name = str(self.model.data(self.model.index(row, col)))
+        self.check_result(row, beam_name)
 
     def check_result(self,
         beam_index: int,
@@ -312,21 +325,6 @@ class Form(QtWidgets.QWidget):
             self.open_main_file()
         self.form.close()
         
-    def initiate_drawing(self):
-        self.scene = QtWidgets.QGraphicsScene()
-        self.view = QtWidgets.QGraphicsView(
-            self.scene, alignment=QtCore.Qt.AlignCenter | QtCore.Qt.AlignHCenter
-        )
-        self.view.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.view.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.view.setRenderHint(QtGui.QPainter.Antialiasing)
-        # self.view.setBackgroundBrush(
-        #     QtWidgets.QApplication.style()
-        #     .standardPalette()
-        #     .brush(QtGui.QPalette.Background)
-        # )
-        self.form.table_vertical_layout.addWidget(self.view)
-    
     def draw_beams_columns(self, beam_name:str):
         story = self.etabs.SapModel.FrameObj.GetLabelFromName(beam_name)[1]
         beams, columns = self.beam_columns[story]
@@ -352,7 +350,7 @@ class Form(QtWidgets.QWidget):
             item = self.scene.addPolygon(polygon)
             # Set the brush on the polygon item
             item.setBrush(brush)
-        self.view.fitInView(self.scene.sceneRect(), QtCore.Qt.KeepAspectRatio)
+        self.form.graphicsview.fitInView(self.scene.sceneRect(), QtCore.Qt.KeepAspectRatio)
 
 
 def convert5Pointto8Point(cx_, cy_, w_, h_, a_):
