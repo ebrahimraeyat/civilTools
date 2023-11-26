@@ -39,7 +39,7 @@ class CivilCreatePeriodFile:
             Gui.runCommand("civiltools_settings")
         tx, ty, _ = etabs.get_drift_periods()
         civiltools_config.save_analytical_periods(etabs, tx, ty)
-        t_file = etabs.get_filepath() / 'T.EDB'
+        t_file = filename.with_name(etabs.get_file_name_without_suffix() + "_T.EDB")
         QMessageBox.information(None, 'Successful', f'Created Period File: {t_file}')
         
     def IsActive(self):
