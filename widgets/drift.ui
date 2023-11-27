@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>478</width>
-    <height>510</height>
+    <height>577</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -212,6 +212,35 @@
         </property>
         <property name="text">
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This process is &lt;span style=&quot; font-weight:600; color:#ff0000;&quot;&gt;time-consuming&lt;/span&gt;, please be patient.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="structuretype_groupbox">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="title">
+      <string>Structure Type</string>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QRadioButton" name="concrete_radiobutton">
+        <property name="text">
+         <string>Concrete</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="steel_radiobutton">
+        <property name="text">
+         <string>Steel</string>
         </property>
        </widget>
       </item>

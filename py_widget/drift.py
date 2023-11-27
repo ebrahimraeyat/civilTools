@@ -20,13 +20,20 @@ class Form(QtWidgets.QWidget):
         self.dynamic_tab_clicked = False
         self.fill_xy_loadcase_names()
         self.create_connections()
+        self.set_structure_type()
     
     def create_connections(self):
         self.form.run.clicked.connect(self.accept)
         self.form.tab_widget.currentChanged.connect(self.tab_changed)
-        # self.form.xy.clicked.connect(self.reset_widget)
-        # self.form.angular.clicked.connect(self.reset_widget)
-        # self.form.angular.clicked.connect(self.fill_angular_fields)
+        self.form.create_t_file_box.clicked.connect(self.create_t_file_clicked)
+
+    def create_t_file_clicked(self, check):
+        self.form.structuretype_groupbox.setEnabled(check)
+
+    def set_structure_type(self):
+        structure_type = self.etabs.get_type_of_structure()
+        if structure_type == 'steel':
+            self.form.steel_radiobutton.setChecked(True)
 
     def tab_changed(self, index: int):
         if index == 1 and not self.dynamic_tab_clicked:
@@ -108,8 +115,10 @@ class Form(QtWidgets.QWidget):
                     if item.checkState() == Qt.Checked:
                         loadcases.append(item.text())
         create_t_file = self.form.create_t_file_box.isChecked()
+        structure_type = 'concrete'
+        if self.form.steel_radiobutton.isChecked():
+            structure_type = 'steel'
         if create_t_file:
-            structure_type = self.etabs.get_type_of_structure()
             if structure_type == 'steel':
                 tx, ty, main_file = self.etabs.get_drift_periods(open_main_file=False)
             else:
