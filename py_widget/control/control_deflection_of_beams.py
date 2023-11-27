@@ -18,49 +18,50 @@ civiltools_path = Path(__file__).absolute().parent.parent.parent
 
 
 class Form(QtWidgets.QWidget):
-    def __init__(self, etabs_model):
+    def __init__(self,
+    etabs_model,
+    beam_names,
+    d: dict={},
+    ):
+        '''
+        d: dictionary of model properties
+        '''
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'control' / 'control_deflection_of_beams.ui'))
         self.etabs = etabs_model
-        self.number_of_populate_table = 0
         self.results = None
         self.main_file_path = None
         self.fill_load_cases()
-        self.load_config()
+        self.load_config(beam_names=beam_names, d=d)
         self.create_connections()
         self.scene = QtWidgets.QGraphicsScene()
         self.form.graphicsview.setScene(self.scene)
         self.beam_columns = self.etabs.frame_obj.get_beams_columns_on_stories()
 
-    def load_config(self):
+    def load_config(self,
+            beam_names: list,
+            d: dict,
+    ):
         if self.etabs is None:
             return
         try:
             self.etabs.get_filename()
         except:
             return
-        d = civiltools_config.load(self.etabs, self.form)
+        if len(d) == 0:
+            d = civiltools_config.load(self.etabs, self.form)
         p = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools")
         live_load_percentage = p.GetFloat('civiltools_live_load_percentage_deflection', 0.25)
         self.form.live_percentage_spinbox.setValue(live_load_percentage)
-        self.populate_table(d)
+        self.populate_table(beam_names, d)
 
-    def populate_table(self, d: dict):
+    def populate_table(self,
+            beam_names: list,
+            d: dict,
+            ):
         '''
         d : A dictionary of etabs file settings
         '''
-        self.number_of_populate_table += 1
-        selected = self.etabs.select_obj.get_selected_objects()
-        frame_names = selected.get(2, [])
-        beam_names = []
-        for name in frame_names:
-            if (self.etabs.frame_obj.is_beam(name) and
-            self.etabs.SapModel.FrameObj.GetDesignProcedure(name)[0] == 2
-            ):
-                beam_names.append(name)
-        if len(beam_names) == 0 and self.number_of_populate_table != 1:
-            QMessageBox.warning(None, 'Select Beams', 'Select Beams in ETABS Model.')
-            return
         d = d.get('beams_properties', {})
         beam_props = {}
         self.etabs.set_current_unit('kgf', 'cm')

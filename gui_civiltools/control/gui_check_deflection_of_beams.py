@@ -43,16 +43,28 @@ class CivilToolsCheckDeflectionOfBeams:
             filename is None
             ):
             return
+        # Get selected beams
+        selected = etabs.select_obj.get_selected_objects()
+        frame_names = selected.get(2, [])
+        beam_names = []
+        for name in frame_names:
+            if (etabs.frame_obj.is_beam(name) and
+                etabs.SapModel.FrameObj.GetDesignProcedure(name)[0] == 2
+            ):
+                beam_names.append(name)
+        if len(beam_names) == 0:
+            QMessageBox.warning(None, 'Select Beams', 'Select Beams in ETABS Model.')
+            return
         from exporter import civiltools_config
         d = civiltools_config.get_settings_from_etabs(etabs)
         if len(d) == 0:
             QMessageBox.warning(None, 'Settings', 'Please Set Options First!')
             Gui.runCommand("civiltools_settings")
-        d = civiltools_config.get_settings_from_etabs(etabs)
+            d = civiltools_config.get_settings_from_etabs(etabs)
         if len(d) == 0:
             return
         from py_widget.control import control_deflection_of_beams
-        win = control_deflection_of_beams.Form(etabs)
+        win = control_deflection_of_beams.Form(etabs, beam_names=beam_names, d=d)
         find_etabs.show_win(win, in_mdi=False)
         show_warning_about_number_of_use(check)
         
