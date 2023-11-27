@@ -37,10 +37,16 @@ class CivilCreatePeriodFile:
         if len(d) == 0:
             QMessageBox.warning(None, 'Settings', 'Please Set Options First!')
             Gui.runCommand("civiltools_settings")
-        tx, ty, _ = etabs.get_drift_periods()
-        civiltools_config.save_analytical_periods(etabs, tx, ty)
-        t_file = filename.with_name(etabs.get_file_name_without_suffix() + "_T.EDB")
-        QMessageBox.information(None, 'Successful', f'Created Period File: {t_file}')
+        t_filename = etabs.get_file_name_without_suffix() + "_T.EDB"
+        tx, ty, _ = etabs.get_drift_periods(t_filename=t_filename)
+        # civiltools_config.save_analytical_periods(etabs, tx, ty)
+        d = {'t_an_x': tx, 't_an_y': ty}
+        civiltools_config.update_setting(etabs, d)
+        file_path = etabs.get_filepath()
+        period_path = file_path / 'periods'
+        t_file_path = period_path / t_filename
+        QMessageBox.information(None, 'Successful', f'Created Period File: {t_file_path}')
+
         
     def IsActive(self):
         return True
