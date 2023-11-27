@@ -1,5 +1,6 @@
 import json
 from json import JSONDecodeError
+from typing import Union
 
 from PySide2 import QtCore
 
@@ -122,14 +123,17 @@ def save(etabs, widget):
 
 def update_setting(
 	etabs,
-	keys: list,
-	values: list,
+	keys: Union[list, dict],
+	values: Union[list, None] = None,
 	):
 	'''
-	update etabs key dictionary setting with new key (maybe) and new value 
+	update etabs setting dictionary with keys and values or dict 
 	'''
 	d = get_settings_from_etabs(etabs)
-	new_d = dict(zip(keys, values))
+	if isinstance(keys, dict):
+		new_d = keys
+	else:
+		new_d = dict(zip(keys, values))
 	d.update(new_d)
 	set_settings_to_etabs(etabs, d)
 
