@@ -3,7 +3,7 @@ from PySide2.QtCore import QAbstractTableModel, Qt
 from PySide2.QtGui import QColor #, QIcon
 from PySide2 import QtWidgets
 from PySide2.QtWidgets import QAbstractItemView
-from PySide2.QtCore import QModelIndex #, QIcon
+from PySide2.QtCore import QModelIndex, QItemSelection #, QIcon
 
 # from qt_models import table_models
 
@@ -13,8 +13,6 @@ civiltools_path = Path(__file__).absolute().parent
 low = 'cyan'
 intermediate = 'yellow'
 high = 'red'
-
-
 
 column_count = 11
 NAME, LABEL, STORY, IS_CONSOLE, ADD_TORSION_REBAR, ADD_REBAR, MINUS_LENGTH, COVER, WIDTH, HEIGHT, RESULT = range(column_count)
@@ -175,6 +173,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setCentralWidget(self.table)
         self.table.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.table.selectionModel().selectionChanged.connect(self.alaki)
+        index = QModelIndex()
+        index.row = 0
+        new_selection = QItemSelection(index, index)
+        selection_model = self.table.selectionModel()
+        old_selection = selection_model.selection()
+        new_selection = QItemSelection(index, index)  # Replace 'index' with the desired QModelIndex object
+        self.table.selectionModel().selectionChanged.emit(old_selection, new_selection)
 
     def alaki(self, index):
         print(index)

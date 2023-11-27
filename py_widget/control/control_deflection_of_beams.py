@@ -5,7 +5,7 @@ from PySide2 import QtCore, QtGui, QtWidgets
 from PySide2.QtWidgets import QMessageBox
 import numpy as np
 from PySide2.QtGui import QPolygonF, QBrush
-from PySide2.QtCore import QPointF
+from PySide2.QtCore import QPointF, QModelIndex, QItemSelection
 import FreeCADGui as Gui
 import FreeCAD
 
@@ -207,6 +207,16 @@ class Form(QtWidgets.QWidget):
         )
         self.form.open_main_file_button.setEnabled(True)
         self.form.check_button.setEnabled(False)
+        self.emit_row_clicked()
+        QMessageBox.information(None, "Complete", "Beam Deflection Check Complete.")
+
+    def emit_row_clicked(self):
+        index = QModelIndex()
+        new_selection = QItemSelection(index, index)
+        selection_model = self.form.table_view.selectionModel()
+        old_selection = selection_model.selection()
+        new_selection = QItemSelection(index, index)  # Replace 'index' with the desired QModelIndex object
+        self.form.table_view.selectionModel().selectionChanged.emit(old_selection, new_selection)
 
     def fill_load_cases(self):
         load_patterns = self.etabs.load_patterns.get_load_patterns()
