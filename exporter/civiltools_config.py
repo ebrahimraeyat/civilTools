@@ -94,29 +94,32 @@ def save(etabs, widget):
 		):
 		if hasattr(widget, key):
 			exec(f"new_d['{key}'] = widget.{key}.isChecked()")
-
 	from building import RuTable
-	system, lateral, i, n = get_treeview_item_prop(widget.x_treeview)
-	new_d['x_system'] = [i, n]
-	new_d['x_system_name'] = system
-	new_d['x_lateral_name'] = lateral
-	new_d['cdx'] = RuTable.Ru[system][lateral][2]
-	system, lateral, i, n = get_treeview_item_prop(widget.y_treeview)
-	new_d['y_system'] = [i, n]
-	new_d['y_system_name'] = system
-	new_d['y_lateral_name'] = lateral
-	new_d['cdy'] = RuTable.Ru[system][lateral][2]
+	if hasattr(widget, 'x_treeview'):
+		system, lateral, i, n = get_treeview_item_prop(widget.x_treeview)
+		new_d['x_system'] = [i, n]
+		new_d['x_system_name'] = system
+		new_d['x_lateral_name'] = lateral
+		new_d['cdx'] = RuTable.Ru[system][lateral][2]
+	if hasattr(widget, 'y_treeview'):
+		system, lateral, i, n = get_treeview_item_prop(widget.y_treeview)
+		new_d['y_system'] = [i, n]
+		new_d['y_system_name'] = system
+		new_d['y_lateral_name'] = lateral
+		new_d['cdy'] = RuTable.Ru[system][lateral][2]
 	# second system
-	system, lateral, i, n = get_treeview_item_prop(widget.x_treeview_1)
-	new_d['x_system_1'] = [i, n]
-	new_d['x_system_name_1'] = system
-	new_d['x_lateral_name_1'] = lateral
-	new_d['cdx1'] = RuTable.Ru[system][lateral][2]
-	system, lateral, i, n = get_treeview_item_prop(widget.y_treeview_1)
-	new_d['y_system_1'] = [i, n]
-	new_d['y_system_name_1'] = system
-	new_d['y_lateral_name_1'] = lateral
-	new_d['cdy1'] = RuTable.Ru[system][lateral][2]
+	if hasattr(widget, 'x_treeview_1'):
+		system, lateral, i, n = get_treeview_item_prop(widget.x_treeview_1)
+		new_d['x_system_1'] = [i, n]
+		new_d['x_system_name_1'] = system
+		new_d['x_lateral_name_1'] = lateral
+		new_d['cdx1'] = RuTable.Ru[system][lateral][2]
+	if hasattr(widget, 'y_treeview_1'):
+		system, lateral, i, n = get_treeview_item_prop(widget.y_treeview_1)
+		new_d['y_system_1'] = [i, n]
+		new_d['y_system_name_1'] = system
+		new_d['y_lateral_name_1'] = lateral
+		new_d['cdy1'] = RuTable.Ru[system][lateral][2]
 	d = get_settings_from_etabs(etabs)
 	d.update(new_d)
 	set_settings_to_etabs(etabs, d)
