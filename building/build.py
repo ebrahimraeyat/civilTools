@@ -113,6 +113,18 @@ class Building(object):
         else:
             maxAllowedHeight = min(xMaxAllowedHeight, yMaxAllowedHeight)
         return maxAllowedHeight
+    
+    def max_allowed_height_x(self):
+        x_max_allowed_height = self.x_system.maxHeight
+        if x_max_allowed_height is None:
+            x_max_allowed_height = 200
+        return x_max_allowed_height
+    
+    def max_allowed_height_y(self):
+        y_max_allowed_height = self.y_system.maxHeight
+        if y_max_allowed_height is None:
+            y_max_allowed_height = 200
+        return y_max_allowed_height
 
     def calculateK(self, T):
         if T < 0.5:
@@ -142,8 +154,7 @@ class Building(object):
         class StructureSystemError(Exception):
             pass
 
-        title = u".را تغییر دهید '%s'سیستم مقاوم در برابر نیروی جانبی در راستای"
-        #title = u' "%s" ایراد سیستم مقاوم در برابر نیروی جانبی در راستای'
+        title = u"سیستم مقاوم در برابر نیروی جانبی در راستای '%s' را تغییر دهید."
         e1 = u'استفاده از سیستم "%s" برای ساختمانهای "با اهمیت خیلی زیاد و زیاد" در تمام مناطق لرزه خیزی مجاز نیست.'
         e2 = u'استفاده از سیستم "%s" برای ساختمانهای "با اهمیت متوسط" در مناطق لرزه خیزی ۱ و ۲ مجاز نیست.'
         e3 = u'ارتفاع حداکثر سیستم "%s" برای ساختمانهای "با اهمیت متوسط" در مناطق لرزه خیزی ۳و ۴ به ۱۵ متر محدود میگردد.'
@@ -158,20 +169,23 @@ class Building(object):
         A = self.acc
         H = self.height
         story = self.number_of_story
-        max_height = self.maxAllowedHeight()
+        max_height_x = self.max_allowed_height_x()
+        max_height_y = self.max_allowed_height_y()
 
         for direction in ("X", "Y"):
             if direction == "X":
                 ID = self.x_system.ID
-                systemType = self.x_system.systemType
+                # systemType = self.x_system.systemType
                 lateralType = self.x_system.lateralType
             else:
                 ID = self.y_system.ID
-                systemType = self.y_system.systemType
+                # systemType = self.y_system.systemType
                 lateralType = self.y_system.lateralType
             try:
-                if self.height > max_height:
-                    raise StructureSystemError(e6 % max_height)
+                if direction == 'X' and self.height > max_height_x:
+                    raise StructureSystemError(e6 % max_height_x)
+                elif direction == 'Y' and self.height > max_height_y:
+                    raise StructureSystemError(e6 % max_height_y)
                 if ID in ID1:
                     if I > 1.1:
                         raise StructureSystemError(e1 % lateralType)
@@ -182,10 +196,10 @@ class Building(object):
                     if I == 1.0 and A in (.2, .25) and H > 15:
                         raise StructureSystemError(e3 % lateralType)
 
-                if A == 0.35 and I == 1.4 and (not ID in specialIDs):
+                if A == 0.35 and I == 1.4 and (ID not in specialIDs):
                     raise StructureSystemError(e4)
 
-                if (H > 50 or story > 15) and (not ID in IDs3354):
+                if (H > 50 or story > 15) and (ID not in IDs3354):
                     raise StructureSystemError(e5)
 
             except StructureSystemError as err:

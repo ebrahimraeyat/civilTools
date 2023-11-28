@@ -11,6 +11,8 @@ from db import ostanha
 from exporter import civiltools_config
 from qt_models import treeview_system
 
+from building.build import StructureSystem, Building
+
 civiltools_path = Path(__file__).absolute().parent.parent
 
 
@@ -207,6 +209,19 @@ class Form(QtWidgets.QWidget):
         self.form.activate_second_system.clicked.connect(self.second_system_clicked)
         self.form.partition_dead_checkbox.stateChanged.connect(self.partition_dead_clicked)
         self.form.partition_live_checkbox.stateChanged.connect(self.partition_live_clicked)
+        # check inputs
+        self.form.risk_level.currentIndexChanged.connect(self.check_inputs)
+        self.form.soil_type.currentIndexChanged.connect(self.check_inputs)
+        self.form.importance_factor.currentIndexChanged.connect(self.check_inputs)
+        self.form.height_x.valueChanged.connect(self.check_inputs)
+        self.form.no_of_story_x.valueChanged.connect(self.check_inputs)
+        self.form.x_treeview.clicked.connect(self.check_inputs)
+        self.form.y_treeview.clicked.connect(self.check_inputs)
+        self.form.height_x1.valueChanged.connect(self.check_inputs)
+        self.form.no_of_story_x1.valueChanged.connect(self.check_inputs)
+        self.form.x_treeview_1.clicked.connect(self.check_inputs)
+        self.form.y_treeview_1.clicked.connect(self.check_inputs)
+        self.form.activate_second_system.clicked.connect(self.check_inputs)
 
     def partition_dead_clicked(self, checked):
         self.form.partition_live_checkbox.setChecked(not checked)
@@ -238,6 +253,9 @@ class Form(QtWidgets.QWidget):
         civiltools_config.load(self.etabs, self.form)
         
     def save(self):
+        ret = self.check_inputs()
+        if not ret:
+            return
         self.save_config()
 
     def save_config(self):
@@ -310,3 +328,85 @@ class Form(QtWidgets.QWidget):
             self.form.risk_level.setCurrentIndex(i)
         except KeyError:
             pass
+
+    def current_building(self):
+        risk_level = self.form.risk_level.currentText()
+        city = self.form.city.currentText()
+        soil = self.form.soil_type.currentText()
+        importance_factor = float(self.form.importance_factor.currentText())
+        height_x = self.form.height_x.value()
+        no_of_story = self.form.no_of_story_x.value()
+        is_infill = self.form.infill.isChecked()
+        x_system = self.get_system(self.form.x_treeview)
+        y_system = self.get_system(self.form.y_treeview)
+        if x_system is None or y_system is None:
+            return None, None
+        build = Building(
+                    risk_level,
+                    importance_factor,
+                    soil,
+                    no_of_story,
+                    height_x,
+                    is_infill,
+                    x_system,
+                    y_system,
+                    city,
+                    4,
+                    4,
+                    )
+        # Second System
+        build1 = None
+        if self.form.activate_second_system.isChecked():
+            height_x = self.form.height_x1.value()
+            if height_x == 0:
+                return build, None
+            no_of_story = self.form.no_of_story_x1.value()
+            is_infill = self.form.infill_1.isChecked()
+            x_system = self.get_system(self.form.x_treeview_1)
+            y_system = self.get_system(self.form.y_treeview_1)
+            if x_system is None or y_system is None:
+                build1 = None
+            else:
+                build1 = Building(
+                            risk_level,
+                            importance_factor,
+                            soil,
+                            no_of_story,
+                            height_x,
+                            is_infill,
+                            x_system,
+                            y_system,
+                            city,
+                            4,
+                            4,
+                            )
+        return build, build1
+
+    def check_inputs(self):
+        building, building1 = self.current_building()
+        if building is None:
+            return False
+        results = building.results
+        if results[0] is False:
+            title, err, direction = results[1:]
+            QtWidgets.QMessageBox.critical(self, "ایراد در انتخاب سیستم اول", title % direction + '\n' + str(err))
+            return False
+        if building1 is not None:
+            results = building1.results
+            if results[0] is False:
+                title, err, direction = results[1:]
+                QtWidgets.QMessageBox.critical(self, "ایراد در انتخاب سیستم دوم", title % direction + '\n' + str(err))
+                return False
+        return True
+
+    def get_system(self, view):
+        ret = civiltools_config.get_treeview_item_prop(view)
+        if ret is None:
+            return
+        system, lateral, *args = ret
+        if 'x' in view.objectName():
+            system = StructureSystem(system, lateral, 'X')
+        elif 'y' in view.objectName():
+            system = StructureSystem(system, lateral, 'Y')
+        return system
+
