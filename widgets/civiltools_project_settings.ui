@@ -47,50 +47,246 @@
            <layout class="QVBoxLayout" name="verticalLayout_2">
             <item>
              <layout class="QGridLayout" name="gridLayout">
-              <item row="3" column="1">
+              <item row="10" column="0" colspan="2">
+               <widget class="QGroupBox" name="groupBox">
+                <property name="title">
+                 <string>Stories For Apply Earthquakes</string>
+                </property>
+                <layout class="QFormLayout" name="formLayout">
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="label_12">
+                   <property name="layoutDirection">
+                    <enum>Qt::LeftToRight</enum>
+                   </property>
+                   <property name="text">
+                    <string>Bottom Story</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="Gui::PrefComboBox" name="bot_x_combo">
+                   <property name="prefEntry" stdset="0">
+                    <cstring>ostan</cstring>
+                   </property>
+                   <property name="prefPath" stdset="0">
+                    <cstring>Mod/civilTools</cstring>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="0">
+                  <widget class="QLabel" name="label_13">
+                   <property name="layoutDirection">
+                    <enum>Qt::LeftToRight</enum>
+                   </property>
+                   <property name="text">
+                    <string>Top Story</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="1">
+                  <widget class="Gui::PrefComboBox" name="top_x_combo">
+                   <property name="prefEntry" stdset="0">
+                    <cstring>ostan</cstring>
+                   </property>
+                   <property name="prefPath" stdset="0">
+                    <cstring>Mod/civilTools</cstring>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item row="13" column="0" colspan="2">
+               <widget class="Gui::PrefCheckBox" name="infill">
+                <property name="layoutDirection">
+                 <enum>Qt::LeftToRight</enum>
+                </property>
+                <property name="text">
+                 <string>Infill Pannels</string>
+                </property>
+                <property name="checked">
+                 <bool>false</bool>
+                </property>
+                <property name="prefEntry" stdset="0">
+                 <cstring>is_infill</cstring>
+                </property>
+                <property name="prefPath" stdset="0">
+                 <cstring>Mod/Civil</cstring>
+                </property>
+               </widget>
+              </item>
+              <item row="12" column="0" colspan="2">
+               <widget class="QGroupBox" name="groupBox_2">
+                <property name="title">
+                 <string>Stories For Calculate Experiential T</string>
+                </property>
+                <layout class="QGridLayout" name="gridLayout_3">
+                 <item row="3" column="0">
+                  <widget class="QLabel" name="label_8">
+                   <property name="layoutDirection">
+                    <enum>Qt::LeftToRight</enum>
+                   </property>
+                   <property name="text">
+                    <string>No. Stories</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="1">
+                  <widget class="QSpinBox" name="no_of_story_x">
+                   <property name="minimum">
+                    <number>1</number>
+                   </property>
+                   <property name="value">
+                    <number>3</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="0">
+                  <widget class="QLabel" name="label_7">
+                   <property name="layoutDirection">
+                    <enum>Qt::LeftToRight</enum>
+                   </property>
+                   <property name="text">
+                    <string>Height</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="1">
+                  <widget class="Gui::PrefDoubleSpinBox" name="height_x">
+                   <property name="layoutDirection">
+                    <enum>Qt::LeftToRight</enum>
+                   </property>
+                   <property name="suffix">
+                    <string> m</string>
+                   </property>
+                   <property name="maximum">
+                    <double>300.000000000000000</double>
+                   </property>
+                   <property name="value">
+                    <double>10.000000000000000</double>
+                   </property>
+                   <property name="prefEntry" stdset="0">
+                    <cstring>building_height</cstring>
+                   </property>
+                   <property name="prefPath" stdset="0">
+                    <cstring>Mod/civilTools</cstring>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QCheckBox" name="top_story_for_height_checkbox">
+                   <property name="layoutDirection">
+                    <enum>Qt::LeftToRight</enum>
+                   </property>
+                   <property name="text">
+                    <string>Top Story</string>
+                   </property>
+                   <property name="checked">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1">
+                  <widget class="Gui::PrefComboBox" name="top_story_for_height">
+                   <property name="prefEntry" stdset="0">
+                    <cstring>ostan</cstring>
+                   </property>
+                   <property name="prefPath" stdset="0">
+                    <cstring>Mod/civilTools</cstring>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item row="7" column="0">
                <widget class="QLabel" name="label_5">
                 <property name="layoutDirection">
                  <enum>Qt::LeftToRight</enum>
                 </property>
                 <property name="text">
-                 <string>نوع خاک</string>
+                 <string notr="true">Soil</string>
                 </property>
                </widget>
               </item>
-              <item row="4" column="0">
-               <widget class="Gui::PrefComboBox" name="importance_factor">
-                <property name="currentIndex">
-                 <number>1</number>
+              <item row="1" column="0">
+               <widget class="QLabel" name="label_3">
+                <property name="layoutDirection">
+                 <enum>Qt::LeftToRight</enum>
                 </property>
+                <property name="text">
+                 <string notr="true">Province</string>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="0">
+               <widget class="QLabel" name="label_14">
+                <property name="layoutDirection">
+                 <enum>Qt::LeftToRight</enum>
+                </property>
+                <property name="text">
+                 <string notr="true">Hazard Zone</string>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="1">
+               <widget class="QComboBox" name="risk_level">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <item>
+                 <property name="text">
+                  <string>خیلی زیاد</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>زیاد</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>متوسط</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>کم</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="Gui::PrefComboBox" name="ostan">
                 <property name="prefEntry" stdset="0">
-                 <cstring>importance_factor</cstring>
+                 <cstring>ostan</cstring>
                 </property>
                 <property name="prefPath" stdset="0">
                  <cstring>Mod/civilTools</cstring>
                 </property>
-                <item>
-                 <property name="text">
-                  <string>0.8</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>1.0</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>1.2</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>1.4</string>
-                 </property>
-                </item>
                </widget>
               </item>
               <item row="3" column="0">
+               <widget class="QLabel" name="label_4">
+                <property name="layoutDirection">
+                 <enum>Qt::LeftToRight</enum>
+                </property>
+                <property name="text">
+                 <string notr="true">City</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="1">
+               <widget class="Gui::PrefComboBox" name="city">
+                <property name="prefEntry" stdset="0">
+                 <cstring>city</cstring>
+                </property>
+                <property name="prefPath" stdset="0">
+                 <cstring>Mod/civilTools</cstring>
+                </property>
+               </widget>
+              </item>
+              <item row="7" column="1">
                <widget class="Gui::PrefComboBox" name="soil_type">
                 <property name="currentIndex">
                  <number>2</number>
@@ -123,241 +319,45 @@
                 </item>
                </widget>
               </item>
-              <item row="4" column="1">
+              <item row="9" column="0">
                <widget class="QLabel" name="label_6">
                 <property name="layoutDirection">
                  <enum>Qt::LeftToRight</enum>
                 </property>
                 <property name="text">
-                 <string>ضریب اهمیت</string>
+                 <string notr="true">Importance Factor</string>
                 </property>
                </widget>
               </item>
-              <item row="0" column="1">
-               <widget class="QLabel" name="label_3">
-                <property name="layoutDirection">
-                 <enum>Qt::LeftToRight</enum>
+              <item row="9" column="1">
+               <widget class="Gui::PrefComboBox" name="importance_factor">
+                <property name="currentIndex">
+                 <number>1</number>
                 </property>
-                <property name="text">
-                 <string>استان</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="0">
-               <widget class="Gui::PrefComboBox" name="ostan">
                 <property name="prefEntry" stdset="0">
-                 <cstring>ostan</cstring>
+                 <cstring>importance_factor</cstring>
                 </property>
                 <property name="prefPath" stdset="0">
                  <cstring>Mod/civilTools</cstring>
                 </property>
-               </widget>
-              </item>
-              <item row="2" column="1">
-               <widget class="QLabel" name="label_14">
-                <property name="layoutDirection">
-                 <enum>Qt::LeftToRight</enum>
-                </property>
-                <property name="text">
-                 <string>خطر نسبی</string>
-                </property>
-               </widget>
-              </item>
-              <item row="8" column="0" colspan="2">
-               <widget class="Gui::PrefCheckBox" name="infill">
-                <property name="layoutDirection">
-                 <enum>Qt::RightToLeft</enum>
-                </property>
-                <property name="text">
-                 <string>اثر میانقاب</string>
-                </property>
-                <property name="checked">
-                 <bool>false</bool>
-                </property>
-                <property name="prefEntry" stdset="0">
-                 <cstring>is_infill</cstring>
-                </property>
-                <property name="prefPath" stdset="0">
-                 <cstring>Mod/Civil</cstring>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="0">
-               <widget class="Gui::PrefComboBox" name="city">
-                <property name="prefEntry" stdset="0">
-                 <cstring>city</cstring>
-                </property>
-                <property name="prefPath" stdset="0">
-                 <cstring>Mod/civilTools</cstring>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="1">
-               <widget class="QLabel" name="label_4">
-                <property name="layoutDirection">
-                 <enum>Qt::LeftToRight</enum>
-                </property>
-                <property name="text">
-                 <string>شهر</string>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="0" colspan="2">
-               <widget class="QGroupBox" name="groupBox">
-                <property name="title">
-                 <string>Stories For Apply Earthquakes</string>
-                </property>
-                <layout class="QGridLayout" name="gridLayout_2">
-                 <item row="0" column="0">
-                  <widget class="Gui::PrefComboBox" name="bot_x_combo">
-                   <property name="prefEntry" stdset="0">
-                    <cstring>ostan</cstring>
-                   </property>
-                   <property name="prefPath" stdset="0">
-                    <cstring>Mod/civilTools</cstring>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="1">
-                  <widget class="QLabel" name="label_13">
-                   <property name="layoutDirection">
-                    <enum>Qt::LeftToRight</enum>
-                   </property>
-                   <property name="text">
-                    <string>بالاترین طبقه</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="0">
-                  <widget class="Gui::PrefComboBox" name="top_x_combo">
-                   <property name="prefEntry" stdset="0">
-                    <cstring>ostan</cstring>
-                   </property>
-                   <property name="prefPath" stdset="0">
-                    <cstring>Mod/civilTools</cstring>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="1">
-                  <widget class="QLabel" name="label_12">
-                   <property name="layoutDirection">
-                    <enum>Qt::LeftToRight</enum>
-                   </property>
-                   <property name="text">
-                    <string>پایینترین طبقه</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </widget>
-              </item>
-              <item row="7" column="0" colspan="2">
-               <widget class="QGroupBox" name="groupBox_2">
-                <property name="title">
-                 <string>Stories For Height</string>
-                </property>
-                <layout class="QGridLayout" name="gridLayout_3">
-                 <item row="0" column="0">
-                  <widget class="Gui::PrefComboBox" name="top_story_for_height">
-                   <property name="prefEntry" stdset="0">
-                    <cstring>ostan</cstring>
-                   </property>
-                   <property name="prefPath" stdset="0">
-                    <cstring>Mod/civilTools</cstring>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="1">
-                  <widget class="QCheckBox" name="top_story_for_height_checkbox">
-                   <property name="layoutDirection">
-                    <enum>Qt::RightToLeft</enum>
-                   </property>
-                   <property name="text">
-                    <string>طبقه بالای ارتفاعی</string>
-                   </property>
-                   <property name="checked">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="0">
-                  <widget class="Gui::PrefDoubleSpinBox" name="height_x">
-                   <property name="layoutDirection">
-                    <enum>Qt::LeftToRight</enum>
-                   </property>
-                   <property name="suffix">
-                    <string> m</string>
-                   </property>
-                   <property name="maximum">
-                    <double>300.000000000000000</double>
-                   </property>
-                   <property name="value">
-                    <double>10.000000000000000</double>
-                   </property>
-                   <property name="prefEntry" stdset="0">
-                    <cstring>building_height</cstring>
-                   </property>
-                   <property name="prefPath" stdset="0">
-                    <cstring>Mod/civilTools</cstring>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="1">
-                  <widget class="QLabel" name="label_7">
-                   <property name="layoutDirection">
-                    <enum>Qt::LeftToRight</enum>
-                   </property>
-                   <property name="text">
-                    <string>ارتفاع</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="0">
-                  <widget class="QSpinBox" name="no_of_story_x">
-                   <property name="minimum">
-                    <number>1</number>
-                   </property>
-                   <property name="value">
-                    <number>3</number>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="1">
-                  <widget class="QLabel" name="label_8">
-                   <property name="layoutDirection">
-                    <enum>Qt::LeftToRight</enum>
-                   </property>
-                   <property name="text">
-                    <string>تعداد طبقات</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </widget>
-              </item>
-              <item row="2" column="0">
-               <widget class="QComboBox" name="risk_level">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
                 <item>
                  <property name="text">
-                  <string>خیلی زیاد</string>
+                  <string>0.8</string>
                  </property>
                 </item>
                 <item>
                  <property name="text">
-                  <string>زیاد</string>
+                  <string>1.0</string>
                  </property>
                 </item>
                 <item>
                  <property name="text">
-                  <string>متوسط</string>
+                  <string>1.2</string>
                  </property>
                 </item>
                 <item>
                  <property name="text">
-                  <string>کم</string>
+                  <string>1.4</string>
                  </property>
                 </item>
                </widget>
@@ -367,7 +367,7 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_6">
               <item>
-               <widget class="QGroupBox" name="groupBox_19">
+               <widget class="QGroupBox" name="groupBox_1">
                 <property name="title">
                  <string>X</string>
                 </property>
@@ -634,8 +634,18 @@
                <property name="title">
                 <string>Stories For Apply Earthquakes</string>
                </property>
-               <layout class="QGridLayout" name="gridLayout_5">
-                <item row="0" column="0">
+               <layout class="QFormLayout" name="formLayout_2">
+                <item row="1" column="0">
+                 <widget class="QLabel" name="label_16">
+                  <property name="layoutDirection">
+                   <enum>Qt::LeftToRight</enum>
+                  </property>
+                  <property name="text">
+                   <string>Bottom Story</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
                  <widget class="Gui::PrefComboBox" name="bot_x1_combo">
                   <property name="prefEntry" stdset="0">
                    <cstring>ostan</cstring>
@@ -645,33 +655,23 @@
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="1">
+                <item row="2" column="0">
                  <widget class="QLabel" name="label_15">
                   <property name="layoutDirection">
                    <enum>Qt::LeftToRight</enum>
                   </property>
                   <property name="text">
-                   <string>بالاترین طبقه</string>
+                   <string>Top Story</string>
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="0">
+                <item row="2" column="1">
                  <widget class="Gui::PrefComboBox" name="top_x1_combo">
                   <property name="prefEntry" stdset="0">
                    <cstring>ostan</cstring>
                   </property>
                   <property name="prefPath" stdset="0">
                    <cstring>Mod/civilTools</cstring>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="1">
-                 <widget class="QLabel" name="label_16">
-                  <property name="layoutDirection">
-                   <enum>Qt::LeftToRight</enum>
-                  </property>
-                  <property name="text">
-                   <string>پایینترین طبقه</string>
                   </property>
                  </widget>
                 </item>
@@ -684,10 +684,23 @@
                 <bool>false</bool>
                </property>
                <property name="title">
-                <string>Stories For Height</string>
+                <string>Stories For Calculate Experiential T</string>
                </property>
-               <layout class="QGridLayout" name="gridLayout_4">
-                <item row="0" column="0">
+               <layout class="QFormLayout" name="formLayout_3">
+                <item row="1" column="0">
+                 <widget class="QCheckBox" name="top_story_for_height_checkbox_1">
+                  <property name="layoutDirection">
+                   <enum>Qt::LeftToRight</enum>
+                  </property>
+                  <property name="text">
+                   <string>Top Story</string>
+                  </property>
+                  <property name="checked">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
                  <widget class="Gui::PrefComboBox" name="top_story_for_height1">
                   <property name="prefEntry" stdset="0">
                    <cstring>ostan</cstring>
@@ -697,20 +710,17 @@
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="1">
-                 <widget class="QCheckBox" name="top_story_for_height_checkbox_1">
+                <item row="4" column="0">
+                 <widget class="QLabel" name="label_9">
                   <property name="layoutDirection">
-                   <enum>Qt::RightToLeft</enum>
+                   <enum>Qt::LeftToRight</enum>
                   </property>
                   <property name="text">
-                   <string>طبقه بالای ارتفاعی</string>
-                  </property>
-                  <property name="checked">
-                   <bool>true</bool>
+                   <string>Height</string>
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="0">
+                <item row="4" column="1">
                  <widget class="Gui::PrefDoubleSpinBox" name="height_x1">
                   <property name="layoutDirection">
                    <enum>Qt::LeftToRight</enum>
@@ -732,33 +742,23 @@
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="1">
-                 <widget class="QLabel" name="label_9">
+                <item row="5" column="0">
+                 <widget class="QLabel" name="label_10">
                   <property name="layoutDirection">
                    <enum>Qt::LeftToRight</enum>
                   </property>
                   <property name="text">
-                   <string>ارتفاع</string>
+                   <string>No. Stories</string>
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="0">
+                <item row="5" column="1">
                  <widget class="QSpinBox" name="no_of_story_x1">
                   <property name="minimum">
                    <number>1</number>
                   </property>
                   <property name="value">
                    <number>3</number>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="1">
-                 <widget class="QLabel" name="label_10">
-                  <property name="layoutDirection">
-                   <enum>Qt::LeftToRight</enum>
-                  </property>
-                  <property name="text">
-                   <string>تعداد طبقات</string>
                   </property>
                  </widget>
                 </item>
@@ -771,10 +771,10 @@
                 <bool>false</bool>
                </property>
                <property name="layoutDirection">
-                <enum>Qt::RightToLeft</enum>
+                <enum>Qt::LeftToRight</enum>
                </property>
                <property name="text">
-                <string>اثر میانقاب</string>
+                <string>Infill Pannels</string>
                </property>
                <property name="checked">
                 <bool>false</bool>
@@ -789,6 +789,9 @@
              </item>
              <item>
               <widget class="QGroupBox" name="second_earthquake_properties">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
                <property name="title">
                 <string>Second Earthquake Properties</string>
                </property>
@@ -800,7 +803,10 @@
                </property>
                <layout class="QHBoxLayout" name="horizontalLayout_7">
                 <item>
-                 <widget class="QGroupBox" name="groupBox_13">
+                 <widget class="QGroupBox" name="second_system_group_x">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
                   <property name="title">
                    <string>X1</string>
                   </property>
@@ -832,6 +838,9 @@
                    </item>
                    <item row="1" column="0">
                     <widget class="QLabel" name="label_24">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
                      <property name="text">
                       <string>EXP1</string>
                      </property>
@@ -839,6 +848,9 @@
                    </item>
                    <item row="1" column="1">
                     <widget class="QComboBox" name="exp1_combobox">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
                      <property name="editable">
                       <bool>true</bool>
                      </property>
@@ -851,6 +863,9 @@
                    </item>
                    <item row="2" column="0">
                     <widget class="QLabel" name="label_25">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
                      <property name="text">
                       <string>EXN1</string>
                      </property>
@@ -858,6 +873,9 @@
                    </item>
                    <item row="2" column="1">
                     <widget class="QComboBox" name="exn1_combobox">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
                      <property name="editable">
                       <bool>true</bool>
                      </property>
@@ -870,6 +888,9 @@
                    </item>
                    <item row="3" column="0">
                     <widget class="QLabel" name="label_29">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
                      <property name="text">
                       <string>Rhox1</string>
                      </property>
@@ -877,6 +898,9 @@
                    </item>
                    <item row="3" column="1">
                     <widget class="QComboBox" name="rhox1_combobox">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
                      <item>
                       <property name="text">
                        <string>1</string>
@@ -893,7 +917,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QGroupBox" name="groupBox_14">
+                 <widget class="QGroupBox" name="second_system_group_y">
                   <property name="title">
                    <string>Y1</string>
                   </property>
@@ -925,6 +949,9 @@
                    </item>
                    <item row="1" column="0">
                     <widget class="QLabel" name="label_27">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
                      <property name="text">
                       <string>EYP1</string>
                      </property>
@@ -932,6 +959,9 @@
                    </item>
                    <item row="1" column="1">
                     <widget class="QComboBox" name="eyp1_combobox">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
                      <property name="editable">
                       <bool>true</bool>
                      </property>
@@ -944,6 +974,9 @@
                    </item>
                    <item row="2" column="0">
                     <widget class="QLabel" name="label_28">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
                      <property name="text">
                       <string>EYN1</string>
                      </property>
@@ -951,6 +984,9 @@
                    </item>
                    <item row="2" column="1">
                     <widget class="QComboBox" name="eyn1_combobox">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
                      <property name="editable">
                       <bool>true</bool>
                      </property>
@@ -963,6 +999,9 @@
                    </item>
                    <item row="3" column="0">
                     <widget class="QLabel" name="label_30">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
                      <property name="text">
                       <string>Rhoy1</string>
                      </property>
@@ -970,6 +1009,9 @@
                    </item>
                    <item row="3" column="1">
                     <widget class="QComboBox" name="rhoy1_combobox">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
                      <item>
                       <property name="text">
                        <string>1</string>

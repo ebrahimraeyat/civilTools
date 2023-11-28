@@ -245,6 +245,9 @@ class Form(QtWidgets.QWidget):
             self.form.top_story_for_height.setEnabled(not checked)
         i = self.form.top_x_combo.currentIndex()
         self.form.bot_x1_combo.setCurrentIndex(i)
+        self.form.second_earthquake_properties.setEnabled(checked)
+        self.form.second_system_group_x.setEnabled(checked)
+        self.form.second_system_group_y.setEnabled(checked)
 
     def load_config(self):
         param = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools")
