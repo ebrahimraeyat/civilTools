@@ -118,7 +118,7 @@
               <item row="12" column="0" colspan="2">
                <widget class="QGroupBox" name="groupBox_2">
                 <property name="title">
-                 <string>Stories For Calculate Experiential T</string>
+                 <string>Stories For Calculate Experimental T</string>
                 </property>
                 <layout class="QGridLayout" name="gridLayout_3">
                  <item row="3" column="0">
@@ -617,6 +617,9 @@
         <layout class="QVBoxLayout" name="verticalLayout_7">
          <item>
           <widget class="QCheckBox" name="activate_second_system">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="text">
             <string>Activate</string>
            </property>
@@ -684,7 +687,7 @@
                 <bool>false</bool>
                </property>
                <property name="title">
-                <string>Stories For Calculate Experiential T</string>
+                <string>Stories For Calculate Experimental T</string>
                </property>
                <layout class="QFormLayout" name="formLayout_3">
                 <item row="1" column="0">

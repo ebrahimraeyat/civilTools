@@ -240,14 +240,20 @@ class Form(QtWidgets.QWidget):
         self.form.stories_for_height_groupox.setEnabled(checked)
         self.form.infill_1.setEnabled(checked)
         self.form.top_story_for_height_checkbox.setEnabled(not checked)
-        if checked:
-            self.form.top_story_for_height_checkbox.setChecked(not checked)
-            self.form.top_story_for_height.setEnabled(not checked)
-        i = self.form.top_x_combo.currentIndex()
-        self.form.bot_x1_combo.setCurrentIndex(i)
+        self.form.top_story_for_height_checkbox.setChecked(not checked)
+        self.form.top_story_for_height.setEnabled(not checked)
         self.form.second_earthquake_properties.setEnabled(checked)
         self.form.second_system_group_x.setEnabled(checked)
         self.form.second_system_group_y.setEnabled(checked)
+        if checked:
+            i = self.form.top_x_combo.currentIndex()
+            self.form.bot_x1_combo.setCurrentIndex(i)
+            i = self.form.top_x_combo.count()
+            if i >= 2:
+                i -= 2
+            else:
+                i -= 1
+            self.form.top_x1_combo.setCurrentIndex(i)
 
     def load_config(self):
         param = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools")
