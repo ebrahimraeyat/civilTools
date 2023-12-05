@@ -3,7 +3,7 @@ import random
 import colorsys
 
 import pandas as pd
-from PySide2.QtCore import QAbstractTableModel, Qt
+from PySide2.QtCore import QAbstractTableModel, Qt, QModelIndex, QItemSelection
 from PySide2.QtGui import QColor, QIcon
 from PySide2 import QtCore, QtWidgets
 
@@ -49,17 +49,7 @@ class ResultsModel(QAbstractTableModel):
             return self.headers[col]
         return int(col + 1)
 
-    # def sort(self, col, order):
-    #     """Sort table by given column number."""
-    #     self.layoutAboutToBeChanged.emit()
-    #     self.df.sort_values(
-    #         by=self.df.columns[col],
-    #         ascending = order == Qt.AscendingOrder,
-    #         kind="mergesort",
-    #         inplace=True,
-    #     )
-    #     self.df.reset_index(drop=True, inplace=True)
-    #     self.layoutChanged.emit()
+
 
 class DriftModel(ResultsModel):
     def __init__(self, data, headers):
@@ -479,6 +469,7 @@ class ResultWidget(QtWidgets.QDialog):
     # main widget for user interface
     def __init__(self, data, headers, model, function=None, parent=None):
         super(ResultWidget, self).__init__(parent)
+        self.setObjectName('result_widget')
         self.push_button_to_excel = QtWidgets.QPushButton()
         self.push_button_to_excel.setIcon(QIcon(str(civiltools_path / 'images' / 'xlsx.png')))
         self.push_button_to_word = QtWidgets.QPushButton()
@@ -503,12 +494,15 @@ class ResultWidget(QtWidgets.QDialog):
         self.function = function
         self.data = data
         self.headers = headers
-        self.model = model(self.data, self.headers)
+        if headers is None:
+            self.model = model(data)
+        else:
+            self.model = model(self.data, self.headers)
         # self.result_table_view.setModel(self.model)
         self.proxy = QtCore.QSortFilterProxyModel(self)
         self.proxy.setSourceModel(self.model)
         self.result_table_view.setModel(self.proxy)
-        self.comboBox.addItems(self.model.headers)
+        self.comboBox.addItems(self.model.df.columns)
         self.lineEdit.textChanged.connect(self.on_lineEdit_textChanged)
         self.comboBox.currentIndexChanged.connect(self.on_comboBox_currentIndexChanged)
         # self.horizontalHeader = self.result_table_view.horizontalHeader()
@@ -519,15 +513,22 @@ class ResultWidget(QtWidgets.QDialog):
         if self.function:
             self.result_table_view.clicked.connect(self.row_clicked)
 
-    def row_clicked(self, index):
+    def get_current_row_col(self, index=None):
+        '''
+        get an index and return the actual source row and col 
+        '''
+        if index is None:
+            index = self.result_table_view.currentIndex()
         source_index = self.proxy.mapToSource(index)
-        row = source_index.row()
-        # col = source_index.column()
+        return source_index.row(), source_index.column()
+
+    def row_clicked(self, index):
+        row, _ = self.get_current_row_col(index)
         args = []
         for col in self.model.col_function:
             value = str(self.model.data(self.model.index(row, col)))
             args.append(value)
-        self.function(*args) 
+        self.function(*args)
 
     def export_to_excel(self):
         filename, _ = QtWidgets.QFileDialog.getSaveFileName(self, 'export to excel',
@@ -698,6 +699,128 @@ class ExpandedLoadSetsResults(ResultWidget):
         hbox.addWidget(self.apply_pushbutton)
         self.vbox.addLayout(hbox)
 
+
+class PandasModel(QAbstractTableModel):
+    '''
+    MetaClass Model for showing Results from pandas dataframe
+    '''
+    check_states_bool = {False: 0, True: 2}
+    check_states_numeric = {0: False, 2: True}
+
+    def __init__(self,
+                 data,
+                 negative_value: bool=False,
+                 ):
+        QAbstractTableModel.__init__(self)
+        self.df = data
+        self.negative_value = negative_value
+
+    def rowCount(self, parent=None):
+        return self.df.shape[0]
+
+    def columnCount(self, parent=None):
+        return self.df.shape[1]
+
+    def headerData(self, col, orientation, role):
+        if role != Qt.DisplayRole:
+            return
+        if orientation == Qt.Horizontal:
+            return self.df.columns[col]
+        return int(col + 1)
+
+    def data(self, index, role=Qt.DisplayRole):
+        if not index.isValid():
+            return
+        col = index.column()
+        row = index.row()
+        value = self.df.iat[row, col]
+        if role == Qt.CheckStateRole and self.df.dtypes[col] == bool:
+            return self.check_states_bool.get(bool(value), 1)
+        elif role == Qt.DisplayRole and self.df.dtypes[col] != bool:
+            return str(self.df.iat[index.row(), index.column()])
+        
+    def setData(self, index, value, role=Qt.EditRole):
+        if not index.isValid():
+            return False
+        col = index.column()
+        row = index.row()
+        if role == Qt.CheckStateRole and self.df.dtypes[col] == bool:
+            self.df.iloc[row, col] = self.check_states_numeric.get(int(value))
+            self.dataChanged.emit(index, index)
+            return True
+        elif role == Qt.EditRole:
+            if pd.api.types.is_numeric_dtype(self.df.iloc[:, col]):
+                if not self.negative_value and float(value) < 0:
+                    return False
+                else:
+                    self.df.iloc[row, col] = float(value)
+                self.dataChanged.emit(index, index)
+                return True
+            elif pd.api.types.is_string_dtype(self.df.iloc[:, col]):
+                self.df.iloc[row, col] = str(value)
+                self.dataChanged.emit(index, index)
+                return True
+        return False
+
+    
+class BeamDeflectionTableModel(PandasModel):
+
+    def __init__(self, df, parent=None):
+        '''
+        beam_data : dict with keys = beam_name and value is dict of properties
+        '''
+        super().__init__(df)
+        self.col_function = (0,)
+        
+    def data(self, index, role=Qt.DisplayRole):
+        if not index.isValid():
+            return
+        col = index.column()
+        row = index.row()
+        col_name = self.df.columns[col]
+        value = self.df.iat[row, col]
+        if role == Qt.CheckStateRole and self.df.dtypes[col] == bool:
+            return self.check_states_bool.get(bool(value), 1)
+        elif role == Qt.DisplayRole and self.df.dtypes[col] != bool:
+            return str(self.df.iat[index.row(), index.column()])
+        elif (
+            role == Qt.BackgroundColorRole and
+            col_name in ('Width', 'Height') and
+            self.df.iloc[row, col] <= 0
+        ):
+            return QColor('yellow')
+        
+    def flags(self, index):
+        if not index.isValid():
+            return Qt.ItemIsEnabled
+        col = index.column()
+        if self.df.dtypes[col] == bool:
+            return Qt.ItemIsEnabled | Qt.ItemIsUserCheckable
+        elif pd.api.types.is_numeric_dtype(self.df.iloc[:, col]):
+            return Qt.ItemFlags(
+                QAbstractTableModel.flags(self, index) | Qt.ItemIsEditable)
+        elif pd.api.types.is_string_dtype(self.df.iloc[:, col]):
+            return Qt.ItemIsSelectable | Qt.ItemIsEnabled
+
+    
+        # if role == Qt.DecorationRole:
+        #     value = self._data[index.row()][index.column()]
+        #     if isinstance(value, float):
+        #         return QtGui.QIcon('calendar.png')
+        # return None
+
+    # def sort(self, col, order):
+    #     """Sort table by given column number."""
+    #     self.layoutAboutToBeChanged.emit()
+    #     self.df.sort_values(
+    #         by=self.df.columns[col],
+    #         ascending = order == Qt.AscendingOrder,
+    #         kind="mergesort",
+    #         inplace=True,
+    #     )
+    #     self.df.reset_index(drop=True, inplace=True)
+    #     self.layoutChanged.emit()
+
 def show_results(data, headers, model, function=None):
     win = ResultWidget(data, headers, model, function)
     # Gui.Control.showDialog(win)
@@ -725,230 +848,33 @@ def random_color():
     return [int(256*i) for i in colorsys.hls_to_rgb(h,l,s)]
 
 
-# class EtabsModel:
-#     # my ETABS API class to open and manipulate etabs model
-#     def __init__(self, modelpath, etabspath="c:/Program Files/Computers and Structures/ETABS 19/ETABS.exe", existinstance=False, specprogpath=False):
-#         # set the following flag to True to attach to an existing instance of the program
-#         # otherwise a new instance of the program will be started
-#         self.AttachToInstance = existinstance
-
-#         # set the following flag to True to manually specify the path to ETABS.exe
-#         # this allows for a connection to a version of ETABS other than the latest installation
-#         # otherwise the latest installed version of ETABS will be launched
-#         self.SpecifyPath = specprogpath
-
-#         # if the above flag is set to True, specify the path to ETABS below
-#         self.ProgramPath = etabspath
-
-#         # full path to the model
-#         # set it to the desired path of your model
-#         self.FullPath = modelpath
-#         [self.modelPath, self.modelName] = os.path.split(self.FullPath)
-#         if not os.path.exists(self.modelPath):
-#             try:
-#                 os.makedirs(self.modelPath)
-#             except OSError:
-#                 pass
-
-#         if self.AttachToInstance:
-#             # attach to a running instance of ETABS
-#             try:
-#                 # get the active ETABS object
-#                 self.myETABSObject = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
-#                 self.success = True
-#             except (OSError, comtypes.COMError):
-#                 print("No running instance of the program found or failed to attach.")
-#                 self.success = False
-#                 sys.exit(-1)
-
-#         else:
-#             # create API helper object
-#             self.helper = comtypes.client.CreateObject('ETABSv1.Helper')
-#             self.helper = self.helper.QueryInterface(comtypes.gen.ETABSv1.cHelper)
-#             if self.SpecifyPath:
-#                 try:
-#                     # 'create an instance of the ETABS object from the specified path
-#                     self.myETABSObject = self.helper.CreateObject(self.ProgramPath)
-#                 except (OSError, comtypes.COMError):
-#                     print("Cannot start a new instance of the program from " + self.ProgramPath)
-#                     sys.exit(-1)
-#             else:
-
-#                 try:
-#                     # create an instance of the ETABS object from the latest installed ETABS
-#                     self.myETABSObject = self.helper.CreateObjectProgID("CSI.ETABS.API.ETABSObject")
-#                 except (OSError, comtypes.COMError):
-#                     print("Cannot start a new instance of the program.")
-#                     sys.exit(-1)
-
-#             # start ETABS application
-#             self.myETABSObject.ApplicationStart()
-
-#         # create SapModel object
-#         self.SapModel = self.myETABSObject.SapModel
-
-#         # initialize model
-#         self.SapModel.InitializeNewModel()
-
-#         # create new blank model
-#         # ret = self.SapModel.File.NewBlank()
-
-#         # open existing model
-#         ret = self.SapModel.File.OpenFile(self.FullPath)
-
-#         """
-#         # save model
-#         print(self.FullPath)
-#         ret = self.SapModel.File.Save(self.FullPath)
-#         print(ret)
-#         print("ETABS mod - model saved")
-#         """
-
-#         # run model (this will create the analysis model)
-#         ret = self.SapModel.Analyze.RunAnalysis()
-
-#         # get all load combination names
-#         self.NumberCombo = 0
-#         self.ComboNames = []
-#         [self.NumberCombo, self.ComboNames, ret] = self.SapModel.RespCombo.GetNameList(self.NumberCombo, self.ComboNames)
-
-#         # isolate drift combos by searching for "drift" in combo name
-#         self.DriftCombos = []
-#         for combo in self.ComboNames:
-#             lowerCombo = combo.lower()
-#             # skip combinations without drift in name
-#             if "drift" not in lowerCombo:
-#                 continue
-#             self.DriftCombos.append(combo)
-
-#         self.StoryDrifts = []
-#         self.JointDisplacements = []
-#         pd.set_option("max_columns", 8)
-#         # pd.set_option("precision", 4)
-
-#     def story_drift_results(self, dlimit=0.01):
-#         # returns dataframe drift results for all drift load combinations
-#         self.StoryDrifts = []
-#         for dcombo in self.DriftCombos:
-#             # deselect all combos and cases, then only display results for combo passed
-#             ret = self.SapModel.Results.Setup.DeselectAllCasesAndCombosForOutput()
-#             ret = self.SapModel.Results.Setup.SetComboSelectedForOutput(dcombo)
-
-#             # initialize drift results
-#             NumberResults = 0
-#             Stories = []
-#             LoadCases = []
-#             StepTypes = []
-#             StepNums = []
-#             Directions = []
-#             Drifts = []
-#             Labels = []
-#             Xs = []
-#             Ys = []
-#             Zs = []
-
-#             [NumberResults, Stories, LoadCases, StepTypes, StepNums, Directions, Drifts, Labels, Xs, Ys, Zs, ret] = \
-#                 self.SapModel.Results.StoryDrifts(NumberResults, Stories, LoadCases, StepTypes, StepNums, Directions,
-#                                                   Drifts, Labels, Xs, Ys, Zs)
-#             # append all drift results to storydrifts list
-#             for i in range(0, NumberResults):
-#                 self.StoryDrifts.append((Stories[i], LoadCases[i], Directions[i], Drifts[i], Drifts[i] / dlimit))
-
-#         # set up pandas data frame and sort by drift column
-#         labels = ['Story', 'Combo', 'Direction', 'Drift', 'DCR(Drift/Limit)']
-#         df = pd.DataFrame.from_records(self.StoryDrifts, columns=labels)
-#         dfSort = df.sort_values(by=['Drift'], ascending=False)
-#         dfSort.Drift = dfSort.Drift.round(4)
-#         dfSort['DCR(Drift/Limit)'] = dfSort['DCR(Drift/Limit)'].round(2)
-#         return dfSort
-
-#     def story_torsion_check(self):
-#         # returns dataframe of torsion results for drift combinations
-#         self.JointDisplacements = []
-#         for dcombo in self.DriftCombos:
-#             # deselect all combos and cases, then only display results for combo passed
-#             ret = self.SapModel.Results.Setup.DeselectAllCasesAndCombosForOutput()
-#             ret = self.SapModel.Results.Setup.SetComboSelectedForOutput(dcombo)
-
-#             # initialize joint drift results
-#             NumberResults = 0
-#             Stories = []
-#             LoadCases = []
-#             Label  = ''
-#             Names = ''
-#             StepType = []
-#             StepNum = []
-#             # Directions = []
-#             DispX = []
-#             DispY = []
-#             DriftX = []
-#             DriftY = []
-
-#             [NumberResults, Stories, Label, Names, LoadCases, StepType, StepNum, DispX, DispY, DriftX, DriftY, ret] = \
-#                 self.SapModel.Results.JointDrifts(NumberResults, Stories, Label, Names, LoadCases, StepType, StepNum,
-#                                                   DispX, DispY, DriftX, DriftY)
-
-#             # append all displacement results to jointdrift list
-#             for i in range(0, NumberResults):
-#                 self.JointDisplacements.append((Label[i], Stories[i], LoadCases[i], DispX[i], DispY[i]))
-
-#         # set up pandas data frame and sort by drift column
-#         jlabels = ['label', 'Story', 'Combo', 'DispX', 'DispY']
-#         jdf = pd.DataFrame.from_records(self.JointDisplacements, columns=jlabels)
-#         story_names = jdf.Story.unique()
-#         # print("story names = " + str(story_names))
-
-#         # set up data frame for torsion displacement results
-#         tlabels = ['Story', 'Load Combo', 'Direction', 'Max Displ', 'Avg Displ', 'Ratio']
-#         tdf = pd.DataFrame(columns=tlabels)
-
-#         # calculate and append to df the max, avg, and ratio of story displacements in each dir.
-#         for dcombo in self.DriftCombos:
-#             for story in story_names:
-#                 temp_df = jdf[(jdf['Story'] == story) & (jdf['Combo'] == dcombo)]
-#                 # assume direction is X
-#                 direction = 'X'
-#                 averaged = abs(temp_df['DispX'].mean())
-#                 maximumd = temp_df['DispX'].abs().max()
-#                 averagey = abs(temp_df['DispY'].mean())
-
-#                 # change direction to Y if avg y-dir displacement is higher
-#                 if averagey > averaged:
-#                     averaged = averagey
-#                     maximumd = temp_df['DispY'].abs().max()
-#                     direction = 'Y'
-
-#                 ratiod = maximumd / averaged
-
-#                 # append info to torsion dataframe
-#                 temp_df2 = pd.DataFrame([[story, dcombo, direction, maximumd, averaged, ratiod]], columns=tlabels)
-#                 tdf = tdf.append(temp_df2, ignore_index=True)
-
-#         tdfSort = tdf.sort_values(by=['Ratio'], ascending=False)
-#         tdfSort.Ratio = tdfSort.Ratio.round(3)
-#         tdfSort['Max Displ'] = tdfSort['Max Displ'].round(3)
-#         tdfSort['Avg Displ'] = tdfSort['Avg Displ'].round(3)
-
-#         return tdfSort
-
-#     def model_close(self):
-#         # close the program
-#         ret = self.myETABSObject.ApplicationExit(False)
-#         self.SapModel = None
-#         self.myETABSObject = None
-#         return 'model closed'
-
-# """
-# # define drift limit for DCR calc
-# DriftLimit = 0.01
-# FilePath = "C:\\Users\\Andrew-V.Young\\Desktop\\ETABS API TEST\\ETABS\\TestModel.EDB"
-
-# testModel = EtabsModel(FilePath)
-# drifts = testModel.story_drift_results(DriftLimit)
-# torsion = testModel.story_torsion_check()
-# print(drifts.head(10))
-# print("\n\n")
-# print(torsion)
-
-# ret = testModel.model_close()
-# print(ret)
+if __name__ == "__main__":
+        import sys
+        data = {'Name': '1',
+        'is_console': False,
+        'Label': 'B12',
+        'Story': 'STORY1',
+        'minus_length': 30,
+        'add_torsion_rebar': False,
+        'add_rebar': 5,
+        'cover': 4,
+        'width': 40,
+        'height': 50,
+        'result': ''}
+        app=QtWidgets.QApplication(sys.argv)
+        df = pd.DataFrame.from_dict(10*[data])
+        new_rows = pd.DataFrame({'Name': ['2', '3'], 'is_console': [False] * 2,
+        'Label': ['B12'] * 2,
+        'Story': ['STORY'] * 2,
+        'minus_length': [30] * 2,
+        'add_torsion_rebar':[False] * 2,
+        'add_rebar': [5] * 2,
+        'cover': [4] * 2,
+        'width': [40] * 2,
+        'height': [50] * 2,
+        'result': [''] * 2,
+        })
+        df = df.append(new_rows, ignore_index=True)
+        widget = ResultWidget(df, headers=None, model=BeamDeflectionTableModel)
+        widget.show()
+        app.exec_()

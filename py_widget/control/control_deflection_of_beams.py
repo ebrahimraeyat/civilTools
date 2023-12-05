@@ -1,16 +1,20 @@
 from pathlib import Path
 import math
 
+import numpy as np
+import pandas as pd
+
 from PySide2 import QtCore, QtGui, QtWidgets
 from PySide2.QtWidgets import QMessageBox
-import numpy as np
 from PySide2.QtGui import QPolygonF, QBrush
 from PySide2.QtCore import QPointF, QModelIndex, QItemSelection
+
 import FreeCADGui as Gui
 import FreeCAD
 
 from design import get_deflection_check_result
-from qt_models import beam_deflection_model
+import table_model
+
 
 from exporter import civiltools_config
 
@@ -63,75 +67,80 @@ class Form(QtWidgets.QWidget):
         d : A dictionary of etabs file settings
         '''
         d = d.get('beams_properties', {})
-        beam_props = {}
-        self.etabs.set_current_unit('kgf', 'cm')
-        for beam_name in beam_names:
-            beam_prop = d.get(beam_name, None)
-            if beam_prop is None:
+        if d and 'Name' in d.keys(): # for df saved format
+            df = pd.DataFrame.from_dict(d)
+            current_names = df.Name.unique()
+        else:
+            df = pd.DataFrame()
+            current_names = []
+        additional_names = list(set(beam_names).difference(current_names))
+        n = len(additional_names)
+        if n > 0:
+            self.etabs.set_current_unit('kgf', 'cm')
+            new_rows = pd.DataFrame({
+                'Name': additional_names,
+                'Console': [False] * n,
+                'Label': [''] * n,
+                'Story': [''] * n,
+                'Minus Length': [50] * n,
+                'Torsion Rebar':[True] * n,
+                'Add Rebar': [5] * n,
+                'Cover': [6] * n,
+                'Width': [40] * n,
+                'Height': [50] * n,
+                'Result': [''] * n,
+            })
+            
+            def fill_props(row):
+                beam_name = row['Name']
                 section_name = self.etabs.SapModel.FrameObj.GetSection(beam_name)[0]
                 try:
                     _, _, h, b, *_ = self.etabs.SapModel.PropFrame.GetRectangle(section_name)
                 except:
-                    h, b = 0
+                    h, b = (0, 0)
                 label, story, *_ = self.etabs.SapModel.FrameObj.GetLabelFromName(beam_name)
-                beam_prop = {
-                    'Story': story,
-                    'Label': label,
-                    'is_console': 0,
-                    'minus_length': 50,
-                    'add_torsion_rebar': 2,
-                    'add_rebar': 0,
-                    'cover': 4,
-                    'width': b,
-                    'height': h,
-                    'result': '',
-                    }
-            beam_props[beam_name] = beam_prop
-        self.model = beam_deflection_model.BeamDeflectionTableModel(beam_props)
-        self.form.table_view.setModel(self.model)
-        self.resize_columns()
+                row['Label'] = label
+                row['Story'] = story
+                row['Height'] = h
+                row['Width'] = b
+                return row
+            
+            new_rows = new_rows.apply(fill_props, axis=1)
+            df = df.append(new_rows, ignore_index=True)
+        filt = df['Name'].isin(beam_names)
+        df = df.loc[filt]
+        self.result_table = table_model.ResultWidget(
+            df,
+            headers=None,
+            model=table_model.BeamDeflectionTableModel,
+            function=self.result_table_clicked)
+        self.form.table_vertical_layout.insertWidget(0, self.result_table)
 
     def create_connections(self):
         self.form.check_button.clicked.connect(self.check)
         self.form.cancel_button.clicked.connect(self.reject)
         self.form.open_main_file_button.clicked.connect(self.open_main_file)
-        self.form.short_term_combobox.currentIndexChanged.connect(self.result_changed)
-        self.form.long_term_combobox.currentIndexChanged.connect(self.result_changed)
-        self.form.table_view.selectionModel().selectionChanged.connect(self.row_clicked)
+        self.form.short_term_combobox.currentIndexChanged.connect(self.check_result)
+        self.form.long_term_combobox.currentIndexChanged.connect(self.check_result)
+        # self.form.table_view.selectionModel().selectionChanged.connect(self.row_clicked)
 
-    def row_clicked(self, selection):
-        if len(selection) == 0:
-            return
-        index = selection.indexes()[0]
-        row = index.row()
-        col = beam_deflection_model.NAME
-        beam_name = str(self.model.data(self.model.index(row, col)))
+    def result_table_clicked(self, beam_name):
         self.etabs.view.show_frame(beam_name)
-        self.check_result(row, beam_name)
         self.draw_beams_columns(beam_name)
+        self.check_result()
     
-    def result_changed(self, index):
+    def check_result(self):
         if self.results is None:
             return
-        row = self.form.table_view.currentIndex().row()
-        col = beam_deflection_model.NAME
-        beam_name = str(self.model.data(self.model.index(row, col)))
-        self.check_result(row, beam_name)
-
-    def check_result(self,
-        beam_index: int,
-        beam_name: str,
-        ):
-        if self.results is None:
-            return
-        self.form.results.setText(self.results[2][beam_index])
+        row, _ = self.result_table.get_current_row_col()
+        beam_name = str(self.result_table.model.data(self.result_table.model.index(row, 0)))
+        self.form.results.setText(self.results[2][row])
         # check results
         short_term = int(self.form.short_term_combobox.currentText().lstrip('Ln / '))
         long_term = int(self.form.long_term_combobox.currentText().lstrip('Ln / '))
-        def1 = self.results[0][beam_index]
-        def2 = self.results[1][beam_index]
-        beam_prop = self.model.beam_data[beam_name]
-        minus_length = beam_prop['minus_length']
+        def1 = self.results[0][row]
+        def2 = self.results[1][row]
+        minus_length = self.result_table.model.df['Minus Length'].iloc[row]
         ln = self.etabs.frame_obj.get_length_of_frame(beam_name) - minus_length
         text = f"Beam Name = {beam_name}, "
         text += get_deflection_check_result(def1, def2, ln, short_term, long_term)
@@ -141,47 +150,14 @@ class Form(QtWidgets.QWidget):
         return str(self.etabs.get_filename_path_with_suffix(".EDB"))
     
     def check(self):
-        beams_props = self.model.beam_data
+        df = self.result_table.model.df
+        if min(min(df.Width.unique()), min(df.Height.unique())) <= 0:
+            QMessageBox.warning(None, "Zero Dimention", 'Check the Beams Widths and Heights, There is Zero Value')
+            return
+        beams_props = df.to_dict()
         civiltools_config.update_setting(self.etabs, ['beams_properties'], [beams_props])
         self.main_file_path = self.get_file_name()
         # Get beam and point
-        points_for_get_deflection=None
-        beam_names = []
-        torsion_areas = []
-        is_consoles = []
-        locations = []
-        distances_for_calculate_rho = []
-        covers = []
-        frame_areas = []
-        additionals_rebars = []
-        for beam_name, beam_prop in beams_props.items():
-            torsion_area = beam_prop['add_torsion_rebar']
-            if torsion_area:
-                torsion_area = None
-            else:
-                torsion_area = 0
-            is_console = beam_prop['is_console']
-            if is_console:
-                location = 'bot'
-                distance_for_calculate_rho = 'start'
-            else:
-                location = 'top'
-                distance_for_calculate_rho = 'middle'
-            cover = beam_prop['cover']
-            b = beam_prop['width']
-            h = beam_prop['height']
-            d = h - cover
-            frame_area = b * d
-            additional_rebars = beam_prop['add_rebar']
-            # prepare inputs for calculate deflections
-            beam_names.append(beam_name)
-            torsion_areas.append(torsion_area)
-            is_consoles.append(is_console)
-            locations.append(location)
-            distances_for_calculate_rho.append(distance_for_calculate_rho)
-            covers.append(cover)
-            frame_areas.append(frame_area)
-            additionals_rebars.append(additional_rebars)
         live_percentage = self.form.live_percentage_spinbox.value()
         equivalent_loads = self.get_equivalent_loads()
         dead = equivalent_loads.get('Dead', [])
@@ -193,26 +169,17 @@ class Form(QtWidgets.QWidget):
             dead=dead,
             supper_dead=supper_dead,
             lives=lives,
-            beam_names=beam_names,
-            distances_for_calculate_rho=distances_for_calculate_rho,
-            locations=locations,
-            torsion_areas=torsion_areas,
-            frame_areas=frame_areas,
-            covers=covers,
+            beam_names=df,
             lives_percentage=live_percentage,
             filename=filename,
-            points_for_get_deflection=points_for_get_deflection,
-            is_consoles=is_consoles,
-            additionals_rebars=additionals_rebars,
         )
         self.form.open_main_file_button.setEnabled(True)
         self.form.check_button.setEnabled(False)
-        self.emit_row_clicked()
+        # self.emit_row_clicked()
         QMessageBox.information(None, "Complete", "Beam Deflection Check Complete.")
 
     def emit_row_clicked(self):
         index = QModelIndex()
-        new_selection = QItemSelection(index, index)
         selection_model = self.form.table_view.selectionModel()
         old_selection = selection_model.selection()
         new_selection = QItemSelection(index, index)  # Replace 'index' with the desired QModelIndex object
