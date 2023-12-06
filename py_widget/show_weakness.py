@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import pandas as pd
+
 from PySide2 import  QtWidgets
 import FreeCADGui as Gui
 from PySide2.QtWidgets import QFileDialog, QMessageBox
@@ -28,11 +30,13 @@ class Form(QtWidgets.QWidget):
         if json_file.exists():
             import table_model
             ret = self.etabs.load_from_json(json_file)
-            table_model.show_results(ret[0], table_model.ColumnsRatioModel)
-            table_model.show_results(ret[2], table_model.BeamsRebarsModel)
+            df = pd.DataFrame(ret[0], columns=ret[1])
+            table_model.show_results(df, table_model.ColumnsRatioModel)
+            df = pd.DataFrame(ret[2], columns=ret[3])
+            table_model.show_results(df, table_model.BeamsRebarsModel)
         else:
-            err = "Please first get weakness ration, then show it!"
-            QMessageBox.critical(self, "Error", str(err))
+            err = "Please first get weakness ratio, then show it!"
+            QMessageBox.critical(self, "Error", err)
             return None
 
     def reject(self):

@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import pandas as pd
+
 from PySide2 import  QtWidgets
 import FreeCADGui as Gui
 from PySide2.QtWidgets import QMessageBox, QFileDialog
@@ -48,8 +50,10 @@ class Form(QtWidgets.QWidget):
             err = "Please select one beam in ETABS model!"
             QMessageBox.critical(self, "Error", str(err))
             return None
-        table_model.show_results(ret[0], table_model.ColumnsRatioModel)
-        table_model.show_results(ret[2], table_model.BeamsRebarsModel)
+        df = pd.DataFrame(ret[0], columns=ret[1])
+        table_model.show_results(df, table_model.ColumnsRatioModel)
+        df = pd.DataFrame(ret[2], columns=ret[3])
+        table_model.show_results(df, table_model.BeamsRebarsModel)
         self.form.close()
 
     def fill_selected_beams(self):
