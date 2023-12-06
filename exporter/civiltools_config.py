@@ -269,6 +269,18 @@ def load(etabs, widget=None):
 		elif key in ('ostan', 'city') and hasattr(widget, key):
 			exec(f"index = widget.{key}.findText('قم')")
 			exec(f"widget.{key}.setCurrentIndex(index)")
+	# Set risk number
+	key = 'risk_level'
+	if hasattr(widget, 'acc') and key in keys:
+		accs = [
+				'کم',
+				'متوسط',
+				'زیاد',
+				'خیلی زیاد',
+				]
+		risk_level = d[key]
+		i = accs.index(risk_level)
+		widget.acc.setCurrentIndex(i)
 
 	# Checkboxes
 	key = 'top_story_for_height_checkbox'
