@@ -4,7 +4,6 @@ from PySide2 import  QtWidgets
 from PySide2.QtWidgets import QMessageBox
 
 import FreeCADGui as Gui
-import FreeCAD
 
 from exporter import civiltools_config
 
@@ -16,8 +15,8 @@ class Form(QtWidgets.QWidget):
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'assign' / 'assign_ev.ui'))
         self.etabs = etabs_model
         self.fill_load_patterns()
-        self.fill_acc_importance_factor()
         self.create_connections()
+        self.load_config()
 
     def export_to_etabs(self):
         frames = self.etabs.select_obj.get_selected_obj_type(2)
@@ -101,24 +100,8 @@ class Form(QtWidgets.QWidget):
         else:
             self.form.partition_dead_checkbox.setChecked(False)
 
-    def fill_acc_importance_factor(self):
-        d = civiltools_config.load(self.etabs)
-        accs = [
-            'کم',
-            'متوسط',
-            'زیاد',
-            'خیلی زیاد',
-            ]
-        importance_factors = []
-        for i in range(self.form.importance_factor.count()):
-            importance_factors.append(self.form.importance_factor.itemText(i))
-        risk_level = d['risk_level']
-        importance_factor = d['importance_factor']
-        i = accs.index(risk_level)
-        j = importance_factors.index(importance_factor)
-
-        self.form.acc.setCurrentIndex(i)
-        self.form.importance_factor.setCurrentIndex(j)
+    def load_config(self):
+        civiltools_config.load(self.etabs, self.form)
 
     def reject(self):
         self.form.close()    
