@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import pandas as pd
+
 from PySide2 import  QtWidgets
 from PySide2.QtCore import Qt
 
@@ -26,8 +28,9 @@ class Form(QtWidgets.QWidget):
                     loadcases.append(item.text())
         data, headers = self.etabs.get_story_forces_with_percentages(
                 loadcases=loadcases)
+        df = pd.DataFrame(data, columns=headers)
         import table_model
-        table_model.show_results(data, headers, table_model.StoryForcesModel)
+        table_model.show_results(df, table_model.StoryForcesModel)
     
     def reject(self):
         Gui.Control.closeDialog()

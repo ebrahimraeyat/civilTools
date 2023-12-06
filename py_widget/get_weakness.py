@@ -48,9 +48,8 @@ class Form(QtWidgets.QWidget):
             err = "Please select one beam in ETABS model!"
             QMessageBox.critical(self, "Error", str(err))
             return None
-        data, headers, data2, headers2 = ret
-        table_model.show_results(data, headers, table_model.ColumnsRatioModel)
-        table_model.show_results(data2, headers2, table_model.BeamsRebarsModel)
+        table_model.show_results(ret[0], table_model.ColumnsRatioModel)
+        table_model.show_results(ret[2], table_model.BeamsRebarsModel)
         self.form.close()
 
     def fill_selected_beams(self):

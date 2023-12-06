@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import pandas as pd
+
 from PySide2 import  QtWidgets
 import FreeCADGui as Gui
 from PySide2.QtWidgets import QMessageBox
@@ -28,7 +30,7 @@ class Form(QtWidgets.QWidget):
             err = "Please Activate Calculate Diaphragm Center of Rigidity in ETABS!"
             QMessageBox.critical(None, "Error", err)
             return None
-        data, headers = ret
         import table_model
-        table_model.show_results(data, headers, table_model.StoryStiffnessModel)
+        df = pd.DataFrame(ret[0], columns=ret[1])
+        table_model.show_results(df, table_model.StoryStiffnessModel)
         self.form.close()

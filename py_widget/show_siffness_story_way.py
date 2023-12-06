@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import pandas as pd
+
 from PySide2 import  QtWidgets
 import FreeCADGui as Gui
 from PySide2.QtWidgets import QFileDialog, QMessageBox
@@ -37,9 +39,9 @@ class Form(QtWidgets.QWidget):
             err = "Can not find the results!"
             QMessageBox.critical(self, "Error", str(err))
             return None
-        data, headers = ret
         import table_model
-        table_model.show_results(data, headers, table_model.StoryStiffnessModel)
+        df = pd.DataFrame(ret[0], columns=ret[1])
+        table_model.show_results(df, table_model.StoryStiffnessModel)
 
     def reject(self):
         import FreeCADGui as Gui

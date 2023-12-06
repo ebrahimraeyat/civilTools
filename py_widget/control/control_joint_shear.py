@@ -41,11 +41,9 @@ class Form(QtWidgets.QWidget):
             )
         if data is None:
             return
-        headers = list(data.columns)
         import table_model
         table_model.show_results(
             data,
-            headers,
             model=table_model.JointShear,
             function=self.etabs.view.show_frame,
             )

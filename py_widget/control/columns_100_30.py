@@ -82,11 +82,9 @@ class Form(QtWidgets.QWidget):
                 self.type_,
                 self.code,
             )
-        headers = list(data.columns)
         import table_model
         table_model.show_results(
             data,
-            headers,
             model=table_model.Column100_30Model,
             )
         def get_100_30_names(ignore_100_30: bool=True):

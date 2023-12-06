@@ -28,9 +28,8 @@ class Form(QtWidgets.QWidget):
         if json_file.exists():
             import table_model
             ret = self.etabs.load_from_json(json_file)
-            data, headers, data2, headers2 = ret
-            table_model.show_results(data, headers, table_model.ColumnsRatioModel)
-            table_model.show_results(data2, headers2, table_model.BeamsRebarsModel)
+            table_model.show_results(ret[0], table_model.ColumnsRatioModel)
+            table_model.show_results(ret[2], table_model.BeamsRebarsModel)
         else:
             err = "Please first get weakness ration, then show it!"
             QMessageBox.critical(self, "Error", str(err))

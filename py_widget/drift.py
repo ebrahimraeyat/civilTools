@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import pandas as pd
+
 from PySide2 import  QtWidgets
 from PySide2.QtWidgets import QMessageBox
 from PySide2.QtCore import Qt
@@ -149,9 +151,9 @@ class Form(QtWidgets.QWidget):
                                 'Diphragm',
                                 'Please Check that you assigned diaphragm to stories.')
             return
-        drifts, headers = ret
         import table_model
-        table_model.show_results(drifts, headers, table_model.DriftModel)
+        df = pd.DataFrame(ret[0], columns=ret[1])
+        table_model.show_results(df, table_model.DriftModel)
         self.form.close()
     
     def reject(self):

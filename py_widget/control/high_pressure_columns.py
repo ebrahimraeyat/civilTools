@@ -23,11 +23,10 @@ class Form(QtWidgets.QWidget):
 
     def accept(self):
         limit = self.form.limit_spinbox.value()
-        data, headers = self.etabs.database.get_axial_pressure_columns(limit)
+        data = self.etabs.database.get_axial_pressure_columns(limit)
         import table_model
         table_model.show_results(
             data,
-            headers,
             model=table_model.HighPressureColumnModel,
             function=self.etabs.view.show_frame,
             )

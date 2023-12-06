@@ -25,72 +25,113 @@ high = 'red'
 #     color = matplotlib.colors.rgb2hex(rgb)
 #     return color
 
-class ResultsModel(QAbstractTableModel):
+class PandasModel(QAbstractTableModel):
     '''
-    MetaClass Model for showing Results
+    MetaClass Model for showing Results from pandas dataframe
     '''
-    def __init__(self, data, headers):
+    check_states_bool = {False: 0, True: 2}
+    check_states_numeric = {0: False, 2: True}
+
+    def __init__(self,
+                 data,
+                 negative_value: bool=False,
+                 ):
         QAbstractTableModel.__init__(self)
-        self.df = pd.DataFrame(data, columns=headers)
-        
+        self.df = data
+        self.negative_value = negative_value
+
     def rowCount(self, parent=None):
         return self.df.shape[0]
 
     def columnCount(self, parent=None):
         return self.df.shape[1]
 
-    def data(self, index, role=Qt.DisplayRole):
-        return None
-
     def headerData(self, col, orientation, role):
         if role != Qt.DisplayRole:
             return
         if orientation == Qt.Horizontal:
-            return self.headers[col]
+            return self.df.columns[col]
         return int(col + 1)
 
+    def data(self, index, role=Qt.DisplayRole):
+        if not index.isValid():
+            return
+        col = index.column()
+        row = index.row()
+        value = self.df.iat[row, col]
+        if role == Qt.CheckStateRole and self.df.dtypes[col] == bool:
+            return self.check_states_bool.get(bool(value), 1)
+        elif role == Qt.DisplayRole and self.df.dtypes[col] != bool:
+            return str(value)
+        
+    def setData(self, index, value, role=Qt.EditRole):
+        if not index.isValid():
+            return False
+        col = index.column()
+        row = index.row()
+        if role == Qt.CheckStateRole and self.df.dtypes[col] == bool:
+            self.df.iloc[row, col] = self.check_states_numeric.get(int(value))
+            self.dataChanged.emit(index, index)
+            return True
+        elif role == Qt.EditRole:
+            if pd.api.types.is_numeric_dtype(self.df.iloc[:, col]):
+                if not self.negative_value and float(value) < 0:
+                    return False
+                else:
+                    self.df.iloc[row, col] = float(value)
+                self.dataChanged.emit(index, index)
+                return True
+            elif pd.api.types.is_string_dtype(self.df.iloc[:, col]):
+                self.df.iloc[row, col] = str(value)
+                self.dataChanged.emit(index, index)
+                return True
+        return False
 
 
-class DriftModel(ResultsModel):
-    def __init__(self, data, headers):
-        super(DriftModel, self).__init__(data, headers)
+class DriftModel(PandasModel):
+    def __init__(self, df):
+        super(DriftModel, self).__init__(df)
+        max_drift = 'Max Drift'
+        avg_drift = 'Avg Drift'
+        allowable_drift = 'Allowable Drift'
         self.df = self.df[[
             'Story',
             'OutputCase',
-            'Max Drift',
-            'Avg Drift',
-            'Allowable Drift'
+            max_drift,
+            avg_drift,
+            allowable_drift,
         ]]
-        self.df = self.df.astype({'Max Drift': float, 'Avg Drift': float, 'Allowable Drift': float})
-        self.headers = tuple(self.df.columns)
-
+        self.df = self.df.astype({max_drift: float, avg_drift: float, allowable_drift: float})
+        headers = tuple(self.df.columns)
+        self.max_i = headers.index(max_drift)
+        self.avg_i = headers.index(avg_drift)
+        self.allow_i = headers.index(allowable_drift)
 
     def data(self, index, role=Qt.DisplayRole):
         row = index.row()
         col = index.column()
-        max_i = self.headers.index('Max Drift')
-        avg_i = self.headers.index('Avg Drift')
-        allow_i = self.headers.index('Allowable Drift')
         if index.isValid():
             value = self.df.iloc[row][col]
-            allow_drift = float(self.df.iloc[row][allow_i])
+            allow_drift = float(self.df.iloc[row][self.allow_i])
             if role == Qt.DisplayRole:
-                if col in (max_i, avg_i, allow_i):
+                if col in (self.max_i, self.avg_i, self.allow_i):
                     return f"{value:.4f}"
                 return value
             elif role == Qt.BackgroundColorRole:
-                if col in (avg_i, max_i):
+                if col in (self.avg_i, self.max_i):
                     if float(value) > allow_drift:
                         return QColor(high)
                     else:
                         return QColor(low)
             elif role == Qt.TextAlignmentRole:
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
+            
+    def setData(self, index, value, role=Qt.EditRole):
+        return None
 
-
-class TorsionModel(ResultsModel):
-    def __init__(self, data, headers):
-        super(TorsionModel, self).__init__(data, headers)
+class TorsionModel(PandasModel):
+    def __init__(self, data):
+        super(TorsionModel, self).__init__(data)
         headers = [
             'Story',
             'Label',
@@ -99,26 +140,25 @@ class TorsionModel(ResultsModel):
             'Avg Drift',
             'Ratio',
         ]
+        self.df = self.df[headers]
         i_story = headers.index('Story')
         i_label = headers.index('Label')
-        self.df = self.df[headers]
-        self.headers = tuple(headers)
+        self.i_ratio = headers.index('Ratio')
+        self.i_max = headers.index('Max Drift')
+        self.i_avg = headers.index('Avg Drift')
         self.col_function = (i_story, i_label)
 
     def data(self, index, role=Qt.DisplayRole):
         row = index.row()
         col = index.column()
-        i_ratio = self.headers.index('Ratio')
-        i_max = self.headers.index('Max Drift')
-        i_avg = self.headers.index('Avg Drift')
         if index.isValid():
             value = self.df.iloc[row][col]
             if role == Qt.DisplayRole:
-                if col in (i_max, i_avg, i_ratio):
+                if col in (self.i_max, self.i_avg, self.i_ratio):
                     return f"{value:.4f}"
                 return str(value)
             elif role == Qt.BackgroundColorRole:
-                value = float(self.df.iloc[row][i_ratio])
+                value = float(self.df.iloc[row][self.i_ratio])
                 # if col == i_ratio:
                     # value = float(value)
                 if value <= 1.2:
@@ -129,11 +169,14 @@ class TorsionModel(ResultsModel):
                     return QColor(high)
             elif role == Qt.TextAlignmentRole:
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
+            
+    def setData(self, index, value, role=Qt.EditRole):
+        return None
 
 
-class StoryForcesModel(ResultsModel):
-    def __init__(self, data, headers):
-        super(StoryForcesModel, self).__init__(data, headers)
+class StoryForcesModel(PandasModel):
+    def __init__(self, data):
+        super(StoryForcesModel, self).__init__(data)
         self.df = self.df[[
             'Story',
             'OutputCase',
@@ -142,34 +185,37 @@ class StoryForcesModel(ResultsModel):
             'Vx %',
             'Vy %',
         ]]
-        self.headers = tuple(self.df.columns)
+        headers = tuple(self.df.columns)
+        self.i_vx = headers.index('Vx %')
+        self.i_vy = headers.index('Vy %')
 
     def data(self, index, role=Qt.DisplayRole):
         row = index.row()
         col = index.column()
-        i_vx = self.headers.index('Vx %')
-        i_vy = self.headers.index('Vy %')
         if index.isValid():
             value = self.df.iloc[row][col]
             if role == Qt.DisplayRole:
                 return str(value)
             elif role == Qt.BackgroundColorRole:
-                fx_Percentage = float(self.df.iloc[row][i_vx])
-                fy_Percentage = float(self.df.iloc[row][i_vy])
-                if max(fx_Percentage, fy_Percentage) >= .35:
+                fx_percentage = float(self.df.iloc[row][self.i_vx])
+                fy_percentage = float(self.df.iloc[row][self.i_vy])
+                if max(fx_percentage, fy_percentage) >= .35:
                     return QColor(intermediate)
                 else:
                     return QColor(low)
             elif role == Qt.TextAlignmentRole:
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
+            
+    def setData(self, index, value, role=Qt.EditRole):
+        return None
 
 
-class ColumnsRatioModel(ResultsModel):
-    def __init__(self, data, headers):
-        super(ColumnsRatioModel, self).__init__(data, headers)
+class ColumnsRatioModel(PandasModel):
+    def __init__(self, data):
+        super(ColumnsRatioModel, self).__init__(data)
         all_cols = list(self.df)
         self.df[all_cols] = self.df[all_cols].astype(str)
-        self.headers = tuple(self.df.columns)
+
         # self.col_function = (0, 4)
     def data(self, index, role=Qt.DisplayRole):
         row = index.row()
@@ -186,21 +232,24 @@ class ColumnsRatioModel(ResultsModel):
                     return QColor(low)
             elif role == Qt.TextAlignmentRole:
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
+            
+    def setData(self, index, value, role=Qt.EditRole):
+        return None
 
 
-class BeamsRebarsModel(ResultsModel):
-    def __init__(self, data, headers):
-        super(BeamsRebarsModel, self).__init__(data, headers)
+class BeamsRebarsModel(PandasModel):
+    def __init__(self, data):
+        super(BeamsRebarsModel, self).__init__(data)
         all_cols = list(self.df)
         self.df[all_cols] = self.df[all_cols].astype(str)
-        self.headers = tuple(self.df.columns)
-        self.i_location = self.headers.index('location')
-        self.i_ta1 = self.headers.index('Top Area1')
-        self.i_ta2 = self.headers.index('Top Area2')
-        self.i_ba1 = self.headers.index('Bot Area1')
-        self.i_ba2 = self.headers.index('Bot Area2')
-        self.i_v1 = self.headers.index('VRebar1')
-        self.i_v2 = self.headers.index('VRebar2')
+        headers = tuple(self.df.columns)
+        self.i_location = headers.index('location')
+        self.i_ta1 = headers.index('Top Area1')
+        self.i_ta2 = headers.index('Top Area2')
+        self.i_ba1 = headers.index('Bot Area1')
+        self.i_ba2 = headers.index('Bot Area2')
+        self.i_v1 = headers.index('VRebar1')
+        self.i_v2 = headers.index('VRebar2')
         # self.col_function = (0, 4)
 
     def data(self, index, role=Qt.DisplayRole):
@@ -242,18 +291,21 @@ class BeamsRebarsModel(ResultsModel):
                         return QColor(low)
             elif role == Qt.TextAlignmentRole:
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
+            
+    def setData(self, index, value, role=Qt.EditRole):
+        return None
 
 
-class IrregularityOfMassModel(ResultsModel):
-    def __init__(self, data, headers):
-        super(IrregularityOfMassModel, self).__init__(data, headers)
-        all_cols = list(self.df)
-        self.df[all_cols] = self.df[all_cols].astype(str)
-        self.headers = tuple(self.df.columns)
-        self.i_mass_x = self.headers.index('Mass X')
-        self.i_below = self.headers.index('1.5 * Below')
-        self.i_above = self.headers.index('1.5 * Above')
+class IrregularityOfMassModel(PandasModel):
+    def __init__(self, data):
+        super(IrregularityOfMassModel, self).__init__(data)
+        headers = list(self.df.columns)
+        self.df[headers] = self.df[headers].astype(str)
+        self.i_mass_x = headers.index('Mass X')
+        self.i_below = headers.index('1.5 * Below')
+        self.i_above = headers.index('1.5 * Above')
         # self.col_function = (0, 4)
+
     def data(self, index, role=Qt.DisplayRole):
         row = index.row()
         col = index.column()
@@ -270,20 +322,23 @@ class IrregularityOfMassModel(ResultsModel):
                         return QColor(low)
             elif role == Qt.TextAlignmentRole:
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
+            
+    def setData(self, index, value, role=Qt.EditRole):
+        return None
 
-class StoryStiffnessModel(ResultsModel):
-    def __init__(self, data, headers):
-        super(StoryStiffnessModel, self).__init__(data, headers)
-        all_cols = list(self.df)
-        self.df[all_cols] = self.df[all_cols].astype(str)
-        self.headers = tuple(self.df.columns)
-        self.i_kx = self.headers.index('Kx')
-        self.i_ky = self.headers.index('Ky')
-        self.i_kx_above = self.headers.index('Kx / kx+1')
-        self.i_ky_above = self.headers.index('Ky / ky+1')
-        self.i_kx_3above = self.headers.index('Kx / kx_3ave')
-        self.i_ky_3above = self.headers.index('Ky / ky_3ave')
+class StoryStiffnessModel(PandasModel):
+    def __init__(self, data):
+        super(StoryStiffnessModel, self).__init__(data)
+        headers = list(self.df.columns)
+        self.df[headers] = self.df[headers].astype(str)
+        self.i_kx = headers.index('Kx')
+        self.i_ky = headers.index('Ky')
+        self.i_kx_above = headers.index('Kx / kx+1')
+        self.i_ky_above = headers.index('Ky / ky+1')
+        self.i_kx_3above = headers.index('Kx / kx_3ave')
+        self.i_ky_3above = headers.index('Ky / ky_3ave')
         # self.col_function = (0, 4)
+
     def data(self, index, role=Qt.DisplayRole):
         row = index.row()
         col = index.column()
@@ -314,6 +369,9 @@ class StoryStiffnessModel(ResultsModel):
                     return self.get_color(k, .7, .8)
             elif role == Qt.TextAlignmentRole:
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
+            
+    def setData(self, index, value, role=Qt.EditRole):
+        return None
 
     @staticmethod
     def get_color(k, a, b):
@@ -327,19 +385,20 @@ class StoryStiffnessModel(ResultsModel):
         else:
             return QColor(low)
 
-class BeamsJModel(ResultsModel):
-    def __init__(self, data, headers):
-        super(BeamsJModel, self).__init__(data, headers)
-        self.headers = tuple(self.df.columns)
+
+class BeamsJModel(PandasModel):
+    def __init__(self, data):
+        super(BeamsJModel, self).__init__(data)
+        headers = tuple(self.df.columns)
+        self.i_T = headers.index('T')
+        self.i_Tcr = headers.index('phi_Tcr')
+        self.i_j = headers.index('j')
+        self.i_init_j = headers.index('init_j')
         self.col_function = (2,)
 
     def data(self, index, role=Qt.DisplayRole):
         row = index.row()
         col = index.column()
-        self.i_T = self.headers.index('T')
-        self.i_Tcr = self.headers.index('phi_Tcr')
-        self.i_j = self.headers.index('j')
-        self.i_init_j = self.headers.index('init_j')
         if index.isValid():
             value = self.df.iloc[row][col]
             if role == Qt.DisplayRole:
@@ -357,22 +416,25 @@ class BeamsJModel(ResultsModel):
                     return QColor(intermediate)
             elif role == Qt.TextAlignmentRole:
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
+            
+    def setData(self, index, value, role=Qt.EditRole):
+        return False
 
-class HighPressureColumnModel(ResultsModel):
-    def __init__(self, data, headers):
-        super(HighPressureColumnModel, self).__init__(data, headers)
-        self.headers = tuple(self.df.columns)
+class HighPressureColumnModel(PandasModel):
+    def __init__(self, data):
+        super(HighPressureColumnModel, self).__init__(data)
+        headers = tuple(self.df.columns)
+        self.i_p = headers.index('P')
+        self.i_t2 = headers.index('t2')
+        self.i_t3 = headers.index('t3')
+        self.i_fc = headers.index('fc')
+        self.i_Agfc = headers.index('limit*Ag*fc')
+        self.i_hp = headers.index('Result')
         self.col_function = (3,)
 
     def data(self, index, role=Qt.DisplayRole):
         row = index.row()
         col = index.column()
-        self.i_p = self.headers.index('P')
-        self.i_t2 = self.headers.index('t2')
-        self.i_t3 = self.headers.index('t3')
-        self.i_fc = self.headers.index('fc')
-        self.i_Agfc = self.headers.index('limit*Ag*fc')
-        self.i_hp = self.headers.index('Result')
         if index.isValid():
             value = self.df.iloc[row][col]
             if role == Qt.DisplayRole:
@@ -386,20 +448,23 @@ class HighPressureColumnModel(ResultsModel):
                     return QColor(low)
             elif role == Qt.TextAlignmentRole:
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
+            
+    def setData(self, index, value, role=Qt.EditRole):
+        return None
 
-class Column100_30Model(ResultsModel):
-    def __init__(self, data, headers):
-        super(Column100_30Model, self).__init__(data, headers)
-        self.headers = tuple(self.df.columns)
+class Column100_30Model(PandasModel):
+    def __init__(self, data):
+        super(Column100_30Model, self).__init__(data)
+        headers = tuple(self.df.columns)
+        self.i_p = headers.index('P')
+        self.i_mmajor = headers.index('MMajor')
+        self.i_mminor = headers.index('MMinor')
+        self.i_ratio = headers.index('Ratio')
+        self.i_result = headers.index('Result')
 
     def data(self, index, role=Qt.DisplayRole):
         row = index.row()
         col = index.column()
-        self.i_p = self.headers.index('P')
-        self.i_mmajor = self.headers.index('MMajor')
-        self.i_mminor = self.headers.index('MMinor')
-        self.i_ratio = self.headers.index('Ratio')
-        self.i_result = self.headers.index('Result')
         if index.isValid():
             value = self.df.iloc[row][col]
             if role == Qt.DisplayRole:
@@ -413,13 +478,16 @@ class Column100_30Model(ResultsModel):
                     return QColor(high)
             elif role == Qt.TextAlignmentRole:
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
+            
+    def setData(self, index, value, role=Qt.EditRole):
+        return None
 
-class JointShear(ResultsModel):
-    def __init__(self, data, headers):
-        super(JointShear, self).__init__(data, headers)
-        self.headers = tuple(self.df.columns)
-        self.i_maj = self.headers.index('JSMajRatio')
-        self.i_min = self.headers.index('JSMinRatio')
+class JointShear(PandasModel):
+    def __init__(self, data):
+        super(JointShear, self).__init__(data)
+        headers = tuple(self.df.columns)
+        self.i_maj = headers.index('JSMajRatio')
+        self.i_min = headers.index('JSMinRatio')
         self.col_function = (2,)
 
     def data(self, index, role=Qt.DisplayRole):
@@ -439,14 +507,17 @@ class JointShear(ResultsModel):
                         return QColor(high)
             elif role == Qt.TextAlignmentRole:
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
+            
+    def setData(self, index, value, role=Qt.EditRole):
+        return None
 
-class ExpandLoadSets(ResultsModel):
-    def __init__(self, data, headers):
-        super(ExpandLoadSets, self).__init__(data, headers)
-        self.headers = tuple(self.df.columns)
-        unique_names = self.df['UniqueName'].unique()
-        self.i_uniquename = self.headers.index('UniqueName')
+class ExpandLoadSets(PandasModel):
+    def __init__(self, data):
+        super(ExpandLoadSets, self).__init__(data)
+        headers = tuple(self.df.columns)
+        self.i_uniquename = headers.index('UniqueName')
         
+        unique_names = self.df['UniqueName'].unique()
         self.colors = {}
         for name in unique_names:
             self.colors[name] = random_color()
@@ -464,10 +535,71 @@ class ExpandLoadSets(ResultsModel):
             elif role == Qt.TextAlignmentRole:
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
             
+    def setData(self, index, value, role=Qt.EditRole):
+        return None
+    
+
+class BeamDeflectionTableModel(PandasModel):
+
+    def __init__(self, df, parent=None):
+        '''
+        beam_data : dict with keys = beam_name and value is dict of properties
+        '''
+        super().__init__(df)
+        self.col_function = (0,)
+        
+    def data(self, index, role=Qt.DisplayRole):
+        if not index.isValid():
+            return
+        col = index.column()
+        row = index.row()
+        col_name = self.df.columns[col]
+        value = self.df.iat[row, col]
+        if role == Qt.CheckStateRole and self.df.dtypes[col] == bool:
+            return self.check_states_bool.get(bool(value), 1)
+        elif role == Qt.DisplayRole and self.df.dtypes[col] != bool:
+            return str(self.df.iat[index.row(), index.column()])
+        elif (
+            role == Qt.BackgroundColorRole and
+            col_name in ('Width', 'Height') and
+            self.df.iloc[row, col] <= 0
+        ):
+            return QColor('yellow')
+        
+    def flags(self, index):
+        if not index.isValid():
+            return Qt.ItemIsEnabled
+        col = index.column()
+        if self.df.dtypes[col] == bool:
+            return Qt.ItemIsEnabled | Qt.ItemIsUserCheckable
+        elif pd.api.types.is_numeric_dtype(self.df.iloc[:, col]):
+            return Qt.ItemFlags(
+                QAbstractTableModel.flags(self, index) | Qt.ItemIsEditable)
+        elif pd.api.types.is_string_dtype(self.df.iloc[:, col]):
+            return Qt.ItemIsSelectable | Qt.ItemIsEnabled
+        
+            # if role == Qt.DecorationRole:
+        #     value = self._data[index.row()][index.column()]
+        #     if isinstance(value, float):
+        #         return QtGui.QIcon('calendar.png')
+        # return None
+
+    # def sort(self, col, order):
+    #     """Sort table by given column number."""
+    #     self.layoutAboutToBeChanged.emit()
+    #     self.df.sort_values(
+    #         by=self.df.columns[col],
+    #         ascending = order == Qt.AscendingOrder,
+    #         kind="mergesort",
+    #         inplace=True,
+    #     )
+    #     self.df.reset_index(drop=True, inplace=True)
+    #     self.layoutChanged.emit()
+            
 
 class ResultWidget(QtWidgets.QDialog):
     # main widget for user interface
-    def __init__(self, data, headers, model, function=None, parent=None):
+    def __init__(self, data, model, function=None, parent=None):
         super(ResultWidget, self).__init__(parent)
         self.setObjectName('result_widget')
         self.push_button_to_excel = QtWidgets.QPushButton()
@@ -493,11 +625,7 @@ class ResultWidget(QtWidgets.QDialog):
         self.setLayout(self.vbox)
         self.function = function
         self.data = data
-        self.headers = headers
-        if headers is None:
-            self.model = model(data)
-        else:
-            self.model = model(self.data, self.headers)
+        self.model = model(data)
         # self.result_table_view.setModel(self.model)
         self.proxy = QtCore.QSortFilterProxyModel(self)
         self.proxy.setSourceModel(self.model)
@@ -700,129 +828,8 @@ class ExpandedLoadSetsResults(ResultWidget):
         self.vbox.addLayout(hbox)
 
 
-class PandasModel(QAbstractTableModel):
-    '''
-    MetaClass Model for showing Results from pandas dataframe
-    '''
-    check_states_bool = {False: 0, True: 2}
-    check_states_numeric = {0: False, 2: True}
-
-    def __init__(self,
-                 data,
-                 negative_value: bool=False,
-                 ):
-        QAbstractTableModel.__init__(self)
-        self.df = data
-        self.negative_value = negative_value
-
-    def rowCount(self, parent=None):
-        return self.df.shape[0]
-
-    def columnCount(self, parent=None):
-        return self.df.shape[1]
-
-    def headerData(self, col, orientation, role):
-        if role != Qt.DisplayRole:
-            return
-        if orientation == Qt.Horizontal:
-            return self.df.columns[col]
-        return int(col + 1)
-
-    def data(self, index, role=Qt.DisplayRole):
-        if not index.isValid():
-            return
-        col = index.column()
-        row = index.row()
-        value = self.df.iat[row, col]
-        if role == Qt.CheckStateRole and self.df.dtypes[col] == bool:
-            return self.check_states_bool.get(bool(value), 1)
-        elif role == Qt.DisplayRole and self.df.dtypes[col] != bool:
-            return str(self.df.iat[index.row(), index.column()])
-        
-    def setData(self, index, value, role=Qt.EditRole):
-        if not index.isValid():
-            return False
-        col = index.column()
-        row = index.row()
-        if role == Qt.CheckStateRole and self.df.dtypes[col] == bool:
-            self.df.iloc[row, col] = self.check_states_numeric.get(int(value))
-            self.dataChanged.emit(index, index)
-            return True
-        elif role == Qt.EditRole:
-            if pd.api.types.is_numeric_dtype(self.df.iloc[:, col]):
-                if not self.negative_value and float(value) < 0:
-                    return False
-                else:
-                    self.df.iloc[row, col] = float(value)
-                self.dataChanged.emit(index, index)
-                return True
-            elif pd.api.types.is_string_dtype(self.df.iloc[:, col]):
-                self.df.iloc[row, col] = str(value)
-                self.dataChanged.emit(index, index)
-                return True
-        return False
-
-    
-class BeamDeflectionTableModel(PandasModel):
-
-    def __init__(self, df, parent=None):
-        '''
-        beam_data : dict with keys = beam_name and value is dict of properties
-        '''
-        super().__init__(df)
-        self.col_function = (0,)
-        
-    def data(self, index, role=Qt.DisplayRole):
-        if not index.isValid():
-            return
-        col = index.column()
-        row = index.row()
-        col_name = self.df.columns[col]
-        value = self.df.iat[row, col]
-        if role == Qt.CheckStateRole and self.df.dtypes[col] == bool:
-            return self.check_states_bool.get(bool(value), 1)
-        elif role == Qt.DisplayRole and self.df.dtypes[col] != bool:
-            return str(self.df.iat[index.row(), index.column()])
-        elif (
-            role == Qt.BackgroundColorRole and
-            col_name in ('Width', 'Height') and
-            self.df.iloc[row, col] <= 0
-        ):
-            return QColor('yellow')
-        
-    def flags(self, index):
-        if not index.isValid():
-            return Qt.ItemIsEnabled
-        col = index.column()
-        if self.df.dtypes[col] == bool:
-            return Qt.ItemIsEnabled | Qt.ItemIsUserCheckable
-        elif pd.api.types.is_numeric_dtype(self.df.iloc[:, col]):
-            return Qt.ItemFlags(
-                QAbstractTableModel.flags(self, index) | Qt.ItemIsEditable)
-        elif pd.api.types.is_string_dtype(self.df.iloc[:, col]):
-            return Qt.ItemIsSelectable | Qt.ItemIsEnabled
-
-    
-        # if role == Qt.DecorationRole:
-        #     value = self._data[index.row()][index.column()]
-        #     if isinstance(value, float):
-        #         return QtGui.QIcon('calendar.png')
-        # return None
-
-    # def sort(self, col, order):
-    #     """Sort table by given column number."""
-    #     self.layoutAboutToBeChanged.emit()
-    #     self.df.sort_values(
-    #         by=self.df.columns[col],
-    #         ascending = order == Qt.AscendingOrder,
-    #         kind="mergesort",
-    #         inplace=True,
-    #     )
-    #     self.df.reset_index(drop=True, inplace=True)
-    #     self.layoutChanged.emit()
-
-def show_results(data, headers, model, function=None):
-    win = ResultWidget(data, headers, model, function)
+def show_results(data, model, function=None):
+    win = ResultWidget(data, model, function)
     # Gui.Control.showDialog(win)
     mdi = get_mdiarea()
     if not mdi:
