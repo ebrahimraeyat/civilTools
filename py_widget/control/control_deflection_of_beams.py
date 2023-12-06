@@ -111,7 +111,6 @@ class Form(QtWidgets.QWidget):
         df = df.loc[filt]
         self.result_table = table_model.ResultWidget(
             df,
-            headers=None,
             model=table_model.BeamDeflectionTableModel,
             function=self.result_table_clicked)
         self.form.table_vertical_layout.insertWidget(0, self.result_table)
