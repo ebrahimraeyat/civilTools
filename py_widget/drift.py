@@ -22,7 +22,7 @@ class Form(QtWidgets.QWidget):
         self.dynamic_tab_clicked = False
         self.fill_xy_loadcase_names()
         self.create_connections()
-        self.set_structure_type()
+        self.load_config()
     
     def create_connections(self):
         self.form.run.clicked.connect(self.accept)
@@ -32,10 +32,8 @@ class Form(QtWidgets.QWidget):
     def create_t_file_clicked(self, check):
         self.form.structuretype_groupbox.setEnabled(check)
 
-    def set_structure_type(self):
-        structure_type = self.etabs.get_type_of_structure()
-        if structure_type == 'steel':
-            self.form.steel_radiobutton.setChecked(True)
+    def load_config(self):
+        civiltools_config.load(self.etabs, self.form)
 
     def tab_changed(self, index: int):
         if index == 1 and not self.dynamic_tab_clicked:

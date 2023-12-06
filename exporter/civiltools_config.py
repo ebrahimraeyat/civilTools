@@ -91,6 +91,8 @@ def save(etabs, widget):
 		'geometric_checkbox',
 		'in_plane_discontinuity_checkbox',
 		'lateral_strength_weak_story_checkbox',
+		'concrete_radiobutton',
+		'steel_radiobutton',
 		):
 		if hasattr(widget, key):
 			exec(f"new_d['{key}'] = widget.{key}.isChecked()")
@@ -279,7 +281,7 @@ def load(etabs, widget=None):
 		checked = d.get(key, True)
 		widget.top_story_for_height_checkbox_1.setChecked(checked)
 		widget.top_story_for_height1.setEnabled(checked)
-	for key in(
+	for key in (
 		'infill',
 		'infill_1',
 		# Irregularity
@@ -300,6 +302,16 @@ def load(etabs, widget=None):
 	):
 		if key in keys and hasattr(widget, key):
 			exec(f'widget.{key}.setChecked(d["{key}"])')
+	# Structure type
+	key = 'steel_radiobutton'
+	if hasattr(widget, key) and hasattr(widget, 'concrete_radiobutton'):
+		if  key in keys:
+			exec(f'widget.{key}.setChecked(d["{key}"])')
+		else:
+			structure_type = etabs.get_type_of_structure()
+			if structure_type == 'steel':
+				exec(f'widget.{key}.setChecked(True)')
+
 	key = 'partition_dead_checkbox'
 	if key in keys and hasattr(widget, key):
 		checked = d.get(key, False)

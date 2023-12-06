@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1062</width>
-    <height>764</height>
+    <width>1096</width>
+    <height>811</height>
    </rect>
   </property>
   <property name="maximumSize">
    <size>
     <width>16777215</width>
-    <height>764</height>
+    <height>811</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -553,6 +553,32 @@
                </widget>
               </item>
              </layout>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox_9">
+              <property name="title">
+               <string>Structure Type</string>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_11">
+               <item>
+                <widget class="QRadioButton" name="concrete_radiobutton">
+                 <property name="text">
+                  <string>Concrete</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="steel_radiobutton">
+                 <property name="text">
+                  <string>Steel</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
             </item>
             <item>
              <spacer name="verticalSpacer">
@@ -1709,6 +1735,22 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
+      <widget class="Gui::PrefCheckBox" name="show_at_startup">
+       <property name="text">
+        <string>Show at Startup</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+       <property name="prefEntry" stdset="0">
+        <cstring>show_at_startup</cstring>
+       </property>
+       <property name="prefPath" stdset="0">
+        <cstring>Mod/Civil</cstring>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="cancel_pushbutton">
        <property name="text">
         <string>Cancel</string>
@@ -1743,22 +1785,6 @@
       </widget>
      </item>
     </layout>
-   </item>
-   <item>
-    <widget class="Gui::PrefCheckBox" name="show_at_startup">
-     <property name="text">
-      <string>Show at Startup</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-     <property name="prefEntry" stdset="0">
-      <cstring>show_at_startup</cstring>
-     </property>
-     <property name="prefPath" stdset="0">
-      <cstring>Mod/Civil</cstring>
-     </property>
-    </widget>
    </item>
   </layout>
  </widget>
