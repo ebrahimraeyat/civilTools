@@ -59,7 +59,8 @@ class Form(QtWidgets.QWidget):
                     percent = int(i / num_iteration * 100)
                 else:
                     import table_model
-                    table_model.show_results(ret, None, table_model.BeamsJModel, self.etabs.view.show_frame)
+                    headers = list(ret.columns)
+                    table_model.show_results(ret, headers, table_model.BeamsJModel, self.etabs.view.show_frame)
         except StopIteration:
             self.form.close()
 
