@@ -4,6 +4,8 @@ from PySide2 import  QtWidgets
 import FreeCADGui as Gui
 from PySide2.QtCore import Qt
 
+from exporter import civiltools_config
+
 civiltools_path = Path(__file__).absolute().parent.parent
 
 
@@ -11,18 +13,28 @@ class Form(QtWidgets.QWidget):
     def __init__(self, etabs_obj):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'torsion.ui'))
-        # self.setupUi(self)
-        # self.form = self
         self.etabs = etabs_obj
-        self.fill_xy_loadcase_names()
         self.form.run.clicked.connect(self.accept)
+        self.load_config()
 
-    def fill_xy_loadcase_names(self):
-        x_names, y_names = self.etabs.load_patterns.get_load_patterns_in_XYdirection()
-        drift_load_patterns = self.etabs.load_patterns.get_drift_load_pattern_names()
-        all_load_case = self.etabs.SapModel.Analyze.GetCaseStatus()[1]
-        x_names = set(x_names).intersection(set(all_load_case))
-        y_names = set(y_names).intersection(set(all_load_case))
+    def load_config(self):
+        d = civiltools_config.load(self.etabs, self.form)
+        self.fill_xy_loadcase_names(d)
+
+    def fill_xy_loadcase_names(self,
+                               d: dict,
+                               ):
+        '''
+        d: Configuration of civiltools
+        '''
+        ex = d.get('ex_combobox')
+        exp = d.get('exp_combobox')
+        exn = d.get('exn_combobox')
+        ey = d.get('ey_combobox')
+        eyp = d.get('eyp_combobox')
+        eyn = d.get('eyn_combobox')
+        x_names = (ex, exp, exn)
+        y_names = (ey, eyp, eyn)
         self.form.x_loadcase_list.addItems(x_names)
         self.form.y_loadcase_list.addItems(y_names)
         for lw in (self.form.x_loadcase_list, self.form.y_loadcase_list):
@@ -30,17 +42,6 @@ class Form(QtWidgets.QWidget):
                 item = lw.item(i)
                 item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
                 item.setCheckState(Qt.Checked)
-        matching_items = []
-        for name in drift_load_patterns:
-            if name in x_names:
-                items = self.form.x_loadcase_list.findItems(name, Qt.MatchExactly)
-            elif name in y_names:
-                items = self.form.y_loadcase_list.findItems(name, Qt.MatchExactly)
-            else:
-                items = []
-            matching_items.extend(items)
-        for item in matching_items:
-            item.setCheckState(Qt.Unchecked)
 
     def accept(self):
         import table_model
