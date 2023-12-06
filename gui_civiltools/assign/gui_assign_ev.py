@@ -44,11 +44,23 @@ class CivilToolsAssignEv:
             ):
             return
         from exporter import civiltools_config
-        d = civiltools_config.get_settings_from_etabs(etabs)
+        d = civiltools_config.load(etabs)
         if len(d) == 0:
             QMessageBox.warning(None, 'Settings', 'Please Set Options First!')
             Gui.runCommand("civiltools_settings")
-            
+            d = civiltools_config.load(etabs)
+            if len(d) == 0:
+                return
+        risk_level = d.get('risk_level', None)
+        if risk_level  is not None and \
+            risk_level == 'خیلی زیاد' and \
+            QMessageBox.question(
+                None,
+                'risk level',
+                'Your are in "High Risk Level Zone", It is not recommended that apply EV individually, Do you want to continue?',
+                ) == QMessageBox.No:
+            return
+        
         from py_widget.assign import assign_ev
         win = assign_ev.Form(etabs)
         find_etabs.show_win(win, in_mdi=False)
