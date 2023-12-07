@@ -91,6 +91,7 @@ def save(etabs, widget):
 		'geometric_checkbox',
 		'in_plane_discontinuity_checkbox',
 		'lateral_strength_weak_story_checkbox',
+		# System type
 		'concrete_radiobutton',
 		'steel_radiobutton',
 		):

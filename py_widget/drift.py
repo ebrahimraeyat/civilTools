@@ -75,11 +75,6 @@ class Form(QtWidgets.QWidget):
 
     def accept(self):
         d = civiltools_config.get_settings_from_etabs(self.etabs)
-        no_of_stories = d['no_of_story_x']
-        cdx = d['cdx']
-        cdy = d['cdy']
-        bot_story = d["bot_x_combo"]
-        top_story = d["top_x_combo"]
         x_loadcases = []
         y_loadcases = []
 
@@ -118,6 +113,12 @@ class Form(QtWidgets.QWidget):
         structure_type = 'concrete'
         if self.form.steel_radiobutton.isChecked():
             structure_type = 'steel'
+        #     no_of_stories = d['no_of_story_x'] + d['no_of_story_x1']
+        no_of_stories = d['no_of_story_x']
+        cdx = d['cdx']
+        cdy = d['cdy']
+        bot_story = d["bot_x_combo"]
+        top_story = d["top_x_combo"]
         if create_t_file:
             if structure_type == 'steel':
                 tx, ty, main_file = self.etabs.get_drift_periods(open_main_file=False)
@@ -125,6 +126,14 @@ class Form(QtWidgets.QWidget):
                 tx, ty, _ = self.etabs.get_drift_periods(open_main_file=True)
             civiltools_config.save_analytical_periods(self.etabs, tx, ty)
             building = self.current_building(tx, ty)
+            two_system = d['activate_second_system']
+            if two_system:
+                bot_story = d["bot_x_combo"]
+                top_story = d["top_x1_combo"]
+                if building.x_system2.Ru >= building.x_system.Ru:
+                    cdx = building.x_system2.cd
+                if building.y_system2.Ru >= building.y_system.Ru:
+                    cdy = building.y_system2.cd
             self.etabs.apply_cfactor_to_edb(building, bot_story, top_story)
             # execute scale response spectrum
             if tab == 1:
@@ -132,6 +141,7 @@ class Form(QtWidgets.QWidget):
                 from py_widget import response_spectrum
                 win = response_spectrum.Form(self.etabs, show_message=False)
                 find_etabs.show_win(win, in_mdi=False)
+        print(building.results)
         loadcases = x_loadcases + y_loadcases
         ret = self.etabs.get_drifts(
             no_of_stories,
@@ -160,10 +170,28 @@ class Form(QtWidgets.QWidget):
     def current_building(self, tx, ty):
         d = civiltools_config.load(self.etabs)
         risk_level = d['risk_level']
-        height_x = d['height_x']
         importance_factor = float(d['importance_factor'])
         soil = d['soil_type']
         city = d['city']
+        two_system = d['activate_second_system']
+        if two_system:
+            height_x1 = d['height_x1']
+            noStory1 = d['no_of_story_x1']
+            xSystemType1 = d['x_system_name_1']
+            xLateralType1 = d['x_lateral_name_1']
+            ySystemType1 = d['y_system_name_1']
+            yLateralType1 = d['y_lateral_name_1']
+            is_infill1= d['infill_1']
+            xSystem1 = StructureSystem(xSystemType1, xLateralType1, "X")
+            ySystem1 = StructureSystem(ySystemType1, yLateralType1, "Y")
+        else:
+            xSystem1 = None
+            ySystem1 = None
+            height_x1 = 0
+            is_infill1 = False
+        #     if 
+        #     no_of_stories = d['no_of_story_x'] + d['no_of_story_x1']
+        height_x = d['height_x']
         noStory = d['no_of_story_x']
         xSystemType = d['x_system_name']
         xLateralType = d['x_lateral_name']
@@ -184,6 +212,10 @@ class Form(QtWidgets.QWidget):
                     city,
                     tx,
                     ty,
+                    xSystem1,
+                    ySystem1,
+                    height_x1,
+                    is_infill1,
                     )
         return build
 

@@ -10,6 +10,7 @@ from building.build import (
     Building,
 )
 
+
 def test_two_building_in_height():
     x = StructureSystem("سیستم قاب خمشی", "قاب خمشی بتن آرمه متوسط", 'X')
     x2 = StructureSystem("سیستم دیوارهای باربر", "دیوارهای برشی بتن آرمه ویژه", 'X')
@@ -21,6 +22,37 @@ def test_two_building_in_height():
     assert my_building.exp_period_y2 == pytest.approx(0.129, abs=.001)
     assert my_building.tx == pytest.approx((1.185 * 26.28 + 0.162 * 3.55) / (26.28 + 3.55), abs=.001)
     assert my_building.ty == pytest.approx((1.185 * 26.28 + 0.162 * 3.55) / (26.28 + 3.55), abs=.001)
+    assert my_building.Bx == pytest.approx(1.30807, abs=.001)
+    assert my_building.By == pytest.approx(1.30807, abs=.001)
+    assert my_building.results[1] == pytest.approx(0.07848, abs=.001)
+    assert my_building.results[2] == pytest.approx(0.07848, abs=.001)
+
+def test_two_building_in_height_fahimi():
+    x = StructureSystem("سیستم دیوارهای باربر", "دیوارهای برشی بتن آرمه ویژه", 'X')
+    x2 = StructureSystem("سیستم قاب خمشی", "قاب خمشی بتن آرمه متوسط", 'X')
+    h1 = 6.5
+    h2 = 31.75
+    tx = 0.2035
+    tx2 = 1.1234
+    ty = 0.2035
+    ty2 = 1.1234
+    my_building = Building("زیاد", 1, 'II', 8, h1, None, x, x, "قم", 4, 4,
+                                   x2, x2, h2)
+    assert my_building.exp_period_x == pytest.approx(tx, abs=.001)
+    assert my_building.exp_period_x2 == pytest.approx(tx2, abs=.001)
+    assert my_building.exp_period_y == pytest.approx(ty, abs=.001)
+    assert my_building.exp_period_y2 == pytest.approx(ty2, abs=.001)
+    tx *= 1.25
+    ty *= 1.25
+    tx2 *= 1.25
+    ty2 *= 1.25
+    assert my_building.tx == pytest.approx((tx * h1 + tx2 * h2) / (h1 + h2), abs=.001)
+    assert my_building.ty == pytest.approx((ty * h1 + ty2 * h2) / (h1 + h2), abs=.001)
+    print(my_building.tx)
+    assert my_building.results[1] == pytest.approx(0.070837, abs=.001)
+    assert my_building.results[2] == pytest.approx(0.070837, abs=.001)
+    assert my_building.Bx == pytest.approx(1.1806, abs=.001)
+    assert my_building.By == pytest.approx(1.1806, abs=.001)
 
 def test_building():
     x = StructureSystem("سیستم قاب خمشی", "قاب خمشی بتن آرمه متوسط", 'X')

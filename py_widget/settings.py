@@ -401,6 +401,11 @@ class Form(QtWidgets.QWidget):
             QtWidgets.QMessageBox.critical(self, "ایراد در انتخاب سیستم اول", title % direction + '\n' + str(err))
             return False
         if building1 is not None:
+            if (building.x_system.Ru < building1.x_system.Ru) or (
+                building.y_system.Ru < building1.y_system.Ru):
+                QtWidgets.QMessageBox.critical(self,  "سیستم دوگانه در ارتفاع" , 
+                                               "در حال حاضر نرم افزار نمیتواند سیستم های دوگانه که ضریب رفتار سازه بالا بیشتر از سازه پایینی است را تحلیل کند.")
+                return False
             results = building1.results
             if results[0] is False:
                 title, err, direction = results[1:]

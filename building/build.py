@@ -10,6 +10,7 @@ class Building(object):
     #ID3 = (25,)
     specialIDs = (11, 21, 25, 28, 31, 34, 41, 42, 45, 46, 47, 48, 51)
     IDs3354 = (31, 34, 41, 42, 43, 44, 45, 46, 47, 48, 49)
+    moment_frames = range(31, 37)
 
     def __init__(self,
                  risk_level,
@@ -26,6 +27,7 @@ class Building(object):
                  x_system2= None,
                  y_system2= None,
                  height2: float=0,
+                 is_infill2: bool=False,
                  ):
 
         self.filename = ''
@@ -38,16 +40,18 @@ class Building(object):
         self.soilProperties = SoilProperties(soilType, self.acc)
         self.number_of_story = number_of_story
         self.height = height
+        self.height2 = height2
         self.is_infill = is_infill
+        self.is_infill2 = is_infill2
         self.x_system = x_system
         self.y_system = y_system
-        self.exp_period_x = self.period(x_system, height)
-        self.exp_period_y = self.period(y_system, height)
+        self.exp_period_x = self.period(x_system, height, is_infill)
+        self.exp_period_y = self.period(y_system, height, is_infill)
+        self.x_system2 = x_system2
         if x_system2:
-            self.x_system2 = x_system2
             self.y_system2 = y_system2
-            self.exp_period_x2 = self.period(x_system2, height2)
-            self.exp_period_y2 = self.period(y_system2, height2)
+            self.exp_period_x2 = self.period(x_system2, height2, is_infill2)
+            self.exp_period_y2 = self.period(y_system2, height2, is_infill2)
             tx = (self.exp_period_x * height + self.exp_period_x2 * height2) / (height + height2)
             ty = (self.exp_period_y * height + self.exp_period_y2 * height2) / (height + height2)
             self.tx = max(min(x_period_an, 1.25 * tx), tx)
@@ -57,7 +61,7 @@ class Building(object):
             self.ty = max(min(y_period_an, 1.25 * self.exp_period_y), self.exp_period_y)
         self.x_period_an = x_period_an
         self.y_period_an = y_period_an
-        if importance_factor == 1.4:
+        if np.isclose(importance_factor, 1.4, atol=.01):
             self.x_period_an = self.tx
             self.y_period_an = self.ty
 
@@ -87,13 +91,14 @@ class Building(object):
     def period(self,
                system,
                height: float=0,
+               is_infill: bool=False,
                ):
         alpha = system.alpha
         power = system.pow
         if height == 0:
             height = self.height
 
-        if self.is_infill:
+        if is_infill and system.ID in self.moment_frames:
             return 0.8 * alpha * height ** power
         else:
             return alpha * height ** power
@@ -213,14 +218,14 @@ class Building(object):
             return check_inputs
         A = self.acc
         I = self.importance_factor
-        # if self.x_system2:
-        #     if self.x_system.Ru > self.x_system2.Ru:
-        #         Rux = self.x_system2.Ru
-        #     if self.y_system.Ru > self.y_system2.Ru:
-        #         Ruy = self.y_system2.Ru
-        # else:
-        Rux = self.x_system.Ru
-        Ruy = self.y_system.Ru
+        if self.x_system2:
+            if self.x_system.Ru >= self.x_system2.Ru:
+                Rux = self.x_system2.Ru
+            if self.y_system.Ru >= self.y_system2.Ru:
+                Ruy = self.y_system2.Ru
+        else:
+            Rux = self.x_system.Ru
+            Ruy = self.y_system.Ru
         CxNotApproved = A * Bx * I / Rux
         CyNotApproved = A * By * I / Ruy
         if CxNotApproved < self.CMin:

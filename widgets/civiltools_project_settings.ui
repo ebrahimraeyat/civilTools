@@ -644,7 +644,7 @@
          <item>
           <widget class="QCheckBox" name="activate_second_system">
            <property name="enabled">
-            <bool>false</bool>
+            <bool>true</bool>
            </property>
            <property name="text">
             <string>Activate</string>
