@@ -57,5 +57,5 @@ class CivilEarthquakeFactor:
         show_warning_about_number_of_use(check)
         
     def IsActive(self):
-        return True
+        return False
         
