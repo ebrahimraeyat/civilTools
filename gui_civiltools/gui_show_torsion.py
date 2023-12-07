@@ -2,6 +2,7 @@
 from pathlib import Path
 
 from PySide2 import QtCore
+from PySide2.QtWidgets import QMessageBox
 
 import FreeCADGui as Gui
 
@@ -43,8 +44,16 @@ class CivilShowTorsion:
             filename is None
             ):
             return
+        from exporter import civiltools_config
+        d = civiltools_config.get_settings_from_etabs(etabs)
+        if len(d) == 0:
+            QMessageBox.warning(None, 'Settings', 'Please Set Options First!')
+            Gui.runCommand("civiltools_settings")
+            d = civiltools_config.get_settings_from_etabs(etabs)
+            if len(d) == 0:
+                return
         from py_widget import torsion
-        win = torsion.Form(etabs)
+        win = torsion.Form(etabs, d)
         find_etabs.show_win(win, in_mdi=False)
         show_warning_about_number_of_use(check)
         

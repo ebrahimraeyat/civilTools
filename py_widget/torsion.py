@@ -4,21 +4,19 @@ from PySide2 import  QtWidgets
 import FreeCADGui as Gui
 from PySide2.QtCore import Qt
 
-from exporter import civiltools_config
 
 civiltools_path = Path(__file__).absolute().parent.parent
 
 
 class Form(QtWidgets.QWidget):
-    def __init__(self, etabs_obj):
+    def __init__(self, etabs_obj, d):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'torsion.ui'))
         self.etabs = etabs_obj
         self.form.run.clicked.connect(self.accept)
-        self.load_config()
+        self.load_config(d)
 
-    def load_config(self):
-        d = civiltools_config.load(self.etabs, self.form)
+    def load_config(self, d):
         self.fill_xy_loadcase_names(d)
 
     def fill_xy_loadcase_names(self,

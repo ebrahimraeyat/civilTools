@@ -48,6 +48,9 @@ class CivilAutomaticDrift:
         if len(d) == 0:
             QMessageBox.warning(None, 'Settings', 'Please Set Options First!')
             Gui.runCommand("civiltools_settings")
+            d = civiltools_config.get_settings_from_etabs(etabs)
+            if len(d) == 0:
+                return
         from py_widget import drift
         win = drift.Form(etabs)
         find_etabs.show_win(win, in_mdi=False)
