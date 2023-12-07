@@ -217,6 +217,26 @@ def load(etabs, widget=None):
 	if widget is None:
 		return d
 	keys = d.keys()
+	# Seismic
+	seismic_loads = etabs.load_patterns.get_seismic_load_patterns()
+	for (e1combobox, e2combobox), names in zip((
+		('ex_combobox', 'ex1_combobox'),
+		('exn_combobox', 'exn1_combobox'),
+		('exp_combobox', 'exp1_combobox'),
+		('ey_combobox', 'ey1_combobox'),
+		('eyn_combobox', 'eyn1_combobox'),
+		('eyp_combobox', 'eyp1_combobox')), seismic_loads
+	):
+		for ecombobox in (e1combobox, e2combobox):
+			if hasattr(widget, ecombobox):
+				if names:
+					# exec(f"all_item_text = [f'{widget.{ecombobox}.itemText('i')}' for i in range(widget.{ecombobox}.count())]")
+					# exec(f"add_names = {names}.difference(all_item_text)")
+					exec("print(names, ecombobox)")
+					exec(f"widget.{ecombobox}.addItems(names)")
+				if ecombobox in keys:
+					exec(f"index = widget.{ecombobox}.findText(d['{ecombobox}'])")
+					exec(f"widget.{ecombobox}.setCurrentIndex(index)")
 	for key in (
 		'ostan',
 		'city',
@@ -246,21 +266,9 @@ def load(etabs, widget=None):
 		'hxn_combobox',
 		'hyp_combobox',
 		'hyn_combobox',
-		# Seismic
-		'ex_combobox',
-		'exp_combobox',
-		'exn_combobox',
-		'ey_combobox',
-		'eyp_combobox',
-		'eyn_combobox',
+		# Rho
 		'rhox_combobox',
 		'rhoy_combobox',
-		'ex1_combobox',
-		'exp1_combobox',
-		'exn1_combobox',
-		'ey1_combobox',
-		'eyp1_combobox',
-		'eyn1_combobox',
 		'rhox1_combobox',
 		'rhoy1_combobox',
 		):
