@@ -232,7 +232,8 @@ def load(etabs, widget=None):
 				if names:
 					# exec(f"all_item_text = [f'{widget.{ecombobox}.itemText('i')}' for i in range(widget.{ecombobox}.count())]")
 					# exec(f"add_names = {names}.difference(all_item_text)")
-					exec("print(names, ecombobox)")
+					# exec("print(names, ecombobox)")
+					exec(f"widget.{ecombobox}.clear()")
 					exec(f"widget.{ecombobox}.addItems(names)")
 				if ecombobox in keys:
 					exec(f"index = widget.{ecombobox}.findText(d['{ecombobox}'])")
