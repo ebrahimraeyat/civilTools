@@ -75,10 +75,87 @@ class Form(QtWidgets.QWidget):
 
     def accept(self):
         d = civiltools_config.get_settings_from_etabs(self.etabs)
+        tab = self.form.tab_widget.currentIndex()
+        create_t_file = self.form.create_t_file_box.isChecked()
+        structure_type = 'concrete'
+        if self.form.steel_radiobutton.isChecked():
+            structure_type = 'steel'
+        #     no_of_stories = d['no_of_story_x'] + d['no_of_story_x1']
+        no_of_stories = d['no_of_story_x']
+        cdx = d['cdx']
+        cdy = d['cdy']
+        if create_t_file:
+            if structure_type == 'steel':
+                tx, ty, main_file = self.etabs.get_drift_periods(open_main_file=False)
+            else:
+                tx, ty, _ = self.etabs.get_drift_periods(open_main_file=True)
+            civiltools_config.save_analytical_periods(self.etabs, tx, ty)
+            building = self.current_building(tx, ty)
+            bot_story = d["bot_x_combo"]
+            top_story = d["top_x_combo"]
+            two_system = d['activate_second_system']
+            if two_system:
+                top_story = d["top_x1_combo"]
+                if building.x_system2.Ru >= building.x_system.Ru:
+                    cdx = building.x_system2.cd
+                if building.y_system2.Ru >= building.y_system.Ru:
+                    cdy = building.y_system2.cd
+            self.etabs.apply_cfactor_to_edb(building, bot_story, top_story)
+            if tab == 1:
+                # execute scale response spectrum
+                import find_etabs
+                from py_widget import response_spectrum
+                win = response_spectrum.Form(self.etabs, show_message=False)
+                find_etabs.show_win(win, in_mdi=False)
+        # For two systems that not ticks the create t file, Temporary
+        else:
+            two_system = d['activate_second_system']
+            if two_system:
+                rux = d.get('Rux', None)
+                if rux:
+                    ruy = d.get('Ruy', None)
+                    rux1 = d.get('Rux1', None)
+                    ruy1 = d.get('Ruy1', None)
+                    if rux1 >= rux:
+                        cdx = d.get('cdx1')
+                    if ruy1 >= ruy:
+                        cdy = d.get('cdy1')
+                else:
+                    building = self.current_building(4, 4)
+                    if building.x_system2.Ru >= building.x_system.Ru:
+                        cdx = building.x_system2.cd
+                    if building.y_system2.Ru >= building.y_system.Ru:
+                        cdy = building.y_system2.cd
+        # Get Drifts
+        x_loadcases, y_loadcases, loadcases = self.get_load_cases(tab)
+        if not loadcases:
+            loadcases = x_loadcases + y_loadcases
+        ret = self.etabs.get_drifts(
+            no_of_stories,
+            cdx,
+            cdy,
+            loadcases,
+            x_loadcases,
+            y_loadcases,
+            )
+        if create_t_file and structure_type == 'steel':
+            print(f"Opening file {main_file}\n")
+            self.etabs.SapModel.File.OpenFile(str(main_file))
+        if ret is None:
+            QMessageBox.warning(None,
+                                'Diphragm',
+                                'Please Check that you assigned diaphragm to stories.')
+            return
+        import table_model
+        df = pd.DataFrame(ret[0], columns=ret[1])
+        table_model.show_results(df, table_model.DriftModel)
+        self.form.close()
+
+    def get_load_cases(self, tab):
         x_loadcases = []
         y_loadcases = []
+        loadcases = []
 
-        tab = self.form.tab_widget.currentIndex()
         if tab == 0:
             lw = self.form.x_loadcase_list
             for i in range(lw.count()):
@@ -109,60 +186,7 @@ class Form(QtWidgets.QWidget):
                     item = lw.item(i)
                     if item.checkState() == Qt.Checked:
                         loadcases.append(item.text())
-        create_t_file = self.form.create_t_file_box.isChecked()
-        structure_type = 'concrete'
-        if self.form.steel_radiobutton.isChecked():
-            structure_type = 'steel'
-        #     no_of_stories = d['no_of_story_x'] + d['no_of_story_x1']
-        no_of_stories = d['no_of_story_x']
-        cdx = d['cdx']
-        cdy = d['cdy']
-        bot_story = d["bot_x_combo"]
-        top_story = d["top_x_combo"]
-        if create_t_file:
-            if structure_type == 'steel':
-                tx, ty, main_file = self.etabs.get_drift_periods(open_main_file=False)
-            else:
-                tx, ty, _ = self.etabs.get_drift_periods(open_main_file=True)
-            civiltools_config.save_analytical_periods(self.etabs, tx, ty)
-            building = self.current_building(tx, ty)
-            two_system = d['activate_second_system']
-            if two_system:
-                bot_story = d["bot_x_combo"]
-                top_story = d["top_x1_combo"]
-                if building.x_system2.Ru >= building.x_system.Ru:
-                    cdx = building.x_system2.cd
-                if building.y_system2.Ru >= building.y_system.Ru:
-                    cdy = building.y_system2.cd
-            self.etabs.apply_cfactor_to_edb(building, bot_story, top_story)
-            # execute scale response spectrum
-            if tab == 1:
-                import find_etabs
-                from py_widget import response_spectrum
-                win = response_spectrum.Form(self.etabs, show_message=False)
-                find_etabs.show_win(win, in_mdi=False)
-        print(building.results)
-        loadcases = x_loadcases + y_loadcases
-        ret = self.etabs.get_drifts(
-            no_of_stories,
-            cdx,
-            cdy,
-            loadcases,
-            x_loadcases,
-            y_loadcases,
-            )
-        if create_t_file and structure_type == 'steel':
-            print(f"Opening file {main_file}\n")
-            self.etabs.SapModel.File.OpenFile(str(main_file))
-        if ret is None:
-            QMessageBox.warning(None,
-                                'Diphragm',
-                                'Please Check that you assigned diaphragm to stories.')
-            return
-        import table_model
-        df = pd.DataFrame(ret[0], columns=ret[1])
-        table_model.show_results(df, table_model.DriftModel)
-        self.form.close()
+        return x_loadcases, y_loadcases, loadcases
     
     def reject(self):
         Gui.Control.closeDialog()
