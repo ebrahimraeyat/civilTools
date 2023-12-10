@@ -482,29 +482,40 @@ class Column100_30Model(PandasModel):
     def setData(self, index, value, role=Qt.EditRole):
         return None
 
-class JointShear(PandasModel):
+
+class JointShearBCC(PandasModel):
     def __init__(self, data):
-        super(JointShear, self).__init__(data)
+        super(JointShearBCC, self).__init__(data)
         headers = tuple(self.df.columns)
-        self.i_maj = headers.index('JSMajRatio')
-        self.i_min = headers.index('JSMinRatio')
+        self.i_maj_js = headers.index('JSMajRatio')
+        self.i_min_js = headers.index('JSMinRatio')
+        self.i_maj_bc = headers.index('BCMajRatio')
+        self.i_min_bc = headers.index('BCMinRatio')
         self.col_function = (2,)
 
     def data(self, index, role=Qt.DisplayRole):
-        row = index.row()
-        col = index.column()
         if index.isValid():
+            row = index.row()
+            col = index.column()
             value = self.df.iloc[row][col]
             if role == Qt.DisplayRole:
-                if col in (self.i_maj, self.i_min):
-                    return f'{value:.2f}'
+                if col in (self.i_maj_js, self.i_min_js, self.i_maj_bc, self.i_min_bc):
+                    try:
+                        value = float(value)
+                        return f'{value:.2f}'
+                    except (ValueError, TypeError):
+                        return str(value)
                 return str(value)
             elif role == Qt.BackgroundColorRole:
-                if col in (self.i_maj, self.i_min):
-                    if value <= 1:
-                        return QColor(low)
-                    else:
-                        return QColor(high)
+                if col in (self.i_maj_js, self.i_min_js, self.i_maj_bc, self.i_min_bc):
+                    try:
+                        value = float(value)
+                        if value <= 1:
+                            return QColor(low)
+                        else:
+                            return QColor(high)
+                    except (ValueError, TypeError):
+                        return QColor(intermediate)
             elif role == Qt.TextAlignmentRole:
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
             

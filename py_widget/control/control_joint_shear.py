@@ -9,7 +9,7 @@ civiltools_path = Path(__file__).absolute().parent.parent.parent
 class Form(QtWidgets.QWidget):
     def __init__(self, etabs_model):
         super(Form, self).__init__()
-        self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'control' / 'control_joint_shear.ui'))
+        self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'control' / 'control_joint_shear_bc.ui'))
         self.etabs = etabs_model
         self.create_connections()
         self.main_file_path = None
@@ -34,17 +34,17 @@ class Form(QtWidgets.QWidget):
             filename = file_path
         open_main_file = self.form.open_main_file.isChecked()
         structure_type = self.form.structure_type_combobox.currentText()
-        data = self.etabs.create_joint_shear_file(
+        df = self.etabs.create_joint_shear_bcc_file(
             filename,
             structure_type,
             open_main_file=open_main_file,
             )
-        if data is None:
+        if df is None:
             return
         import table_model
         table_model.show_results(
-            data,
-            model=table_model.JointShear,
+            df,
+            model=table_model.JointShearBCC,
             function=self.etabs.view.show_frame,
             )
         if open_main_file:

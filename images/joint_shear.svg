@@ -22,12 +22,12 @@
      inkscape:pagecheckerboard="0"
      showgrid="false"
      inkscape:zoom="12.78125"
-     inkscape:cx="19.090465"
-     inkscape:cy="18.347188"
+     inkscape:cx="19.168704"
+     inkscape:cy="18.425428"
      inkscape:window-width="1920"
      inkscape:window-height="991"
      inkscape:window-x="-9"
-     inkscape:window-y="-9"
+     inkscape:window-y="1341"
      inkscape:window-maximized="1"
      inkscape:current-layer="svg23"
      inkscape:showpageshadow="2"
@@ -120,7 +120,17 @@
        y1="6.5202579"
        x2="32.305939"
        y2="6.5202579"
-       gradientTransform="matrix(2.4417464,0,0,2.4417462,-16.989258,-2.0311447)" />
+       gradientTransform="matrix(1.3358377,0,0,1.3358376,-1.4841874,-1.098403)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient1217"
+       id="linearGradient232"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.2720299,0,0,1.2720298,-3.1728325,14.508309)"
+       x1="8.878109"
+       y1="6.5202579"
+       x2="32.305939"
+       y2="6.5202579" />
   </defs>
   <style
      type="text/css"
@@ -136,14 +146,26 @@
 </style>
   <text
      xml:space="preserve"
-     style="font-style:normal;font-weight:normal;font-size:33.5401px;line-height:1.25;font-family:sans-serif;fill:url(#linearGradient1720);fill-opacity:1;stroke:none;stroke-width:0.838507"
-     x="0.13602391"
-     y="26.074163"
+     style="font-style:normal;font-weight:normal;font-size:18.3492px;line-height:1.25;font-family:sans-serif;fill:url(#linearGradient1720);fill-opacity:1;stroke:none;stroke-width:0.458733"
+     x="7.8847613"
+     y="14.27753"
      id="text25715"
-     transform="scale(0.85897717,1.1641753)"><tspan
+     transform="scale(0.92996152,1.0753133)"><tspan
        sodipodi:role="line"
        id="tspan25713"
-       x="0.13602391"
-       y="26.074163"
-       style="fill:url(#linearGradient1720);fill-opacity:1;stroke:none;stroke-width:0.838507">JS</tspan></text>
+       x="7.8847613"
+       y="14.27753"
+       style="fill:url(#linearGradient1720);fill-opacity:1;stroke:none;stroke-width:0.458733">JS</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-weight:normal;font-size:17.4727px;line-height:1.25;font-family:sans-serif;fill:url(#linearGradient232);fill-opacity:1;stroke:none;stroke-width:0.436821"
+     x="5.7485976"
+     y="29.149794"
+     id="text25715-1"
+     transform="scale(0.9399587,1.0638765)"><tspan
+       sodipodi:role="line"
+       id="tspan25713-6"
+       x="5.7485976"
+       y="29.149794"
+       style="fill:url(#linearGradient232);fill-opacity:1;stroke:none;stroke-width:0.436821">BC</tspan></text>
 </svg>
