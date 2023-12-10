@@ -141,6 +141,7 @@ class Form(QtWidgets.QWidget):
         if create_t_file and structure_type == 'steel':
             print(f"Opening file {main_file}\n")
             self.etabs.SapModel.File.OpenFile(str(main_file))
+            self.etabs.apply_cfactor_to_edb(building, bot_story, top_story)
         if ret is None:
             QMessageBox.warning(None,
                                 'Diphragm',
