@@ -51,11 +51,21 @@ class CivilEarthquakeFactor:
         d = civiltools_config.get_settings_from_etabs(etabs)
         if len(d) == 0:
             return
+        second_system = d.get('activate_second_system', False)
+        if second_system:
+            if QMessageBox.question(None, 'Not Implemented',
+                                 "You have two systems in height, civiltools can't apply earthquake to this type of system\nYou can apply it via Drift command, Do you want to apply it?") == QMessageBox.Yes:
+                from py_widget import drift
+                win = drift.Form(etabs)
+                win.form.create_t_file_box.setChecked(True)
+                win.form.structuretype_groupbox.setEnabled(True)
+                find_etabs.show_win(win, in_mdi=False)
+                return
         from py_widget import earthquake_factor
         win = earthquake_factor.Form(etabs)
         find_etabs.show_win(win, in_mdi=False)
         show_warning_about_number_of_use(check)
         
     def IsActive(self):
-        return False
+        return True
         
