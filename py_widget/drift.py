@@ -85,10 +85,7 @@ class Form(QtWidgets.QWidget):
         cdx = d['cdx']
         cdy = d['cdy']
         if create_t_file:
-            if structure_type == 'steel':
-                tx, ty, main_file = self.etabs.get_drift_periods(open_main_file=False)
-            else:
-                tx, ty, _ = self.etabs.get_drift_periods(open_main_file=True)
+            tx, ty, main_file = self.etabs.get_drift_periods(structure_type=structure_type)
             civiltools_config.save_analytical_periods(self.etabs, tx, ty)
             building = self.current_building(tx, ty)
             bot_story = d["bot_x_combo"]
