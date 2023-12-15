@@ -8,77 +8,107 @@ class Building(object):
     ID1 = (3, 23, 33, 36)
     #ID2 = (21, 25,28)
     #ID3 = (25,)
-    specialIDs = (11, 21, 25, 28, 31, 34, 41, 42, 45, 46, 47, 48, 51)
-    IDs3354 = (31, 34, 41, 42, 43, 44, 45, 46, 47, 48, 49)
+    special_ids = (11, 21, 25, 28, 31, 34, 41, 42, 45, 46, 47, 48, 51)
+    ids_3354 = (31, 34, 41, 42, 43, 44, 45, 46, 47, 48, 49)
     moment_frames = range(31, 37)
 
     def __init__(self,
                  risk_level,
                  importance_factor,
-                 soilType,
-                 number_of_story,
-                 height,
-                 is_infill,
-                 x_system,
-                 y_system,
+                 soil_type,
                  city,
-                 x_period_an,
-                 y_period_an,
-                 x_system2= None,
-                 y_system2= None,
-                 height2: float=0,
-                 is_infill2: bool=False,
+                 number_of_story_1,
+                 height_1,
+                 is_infill_1,
+                 x_system_1,
+                 y_system_1,
+                 tx_an_1,
+                 ty_an_1,
+                 x_system_2= None,
+                 y_system_2= None,
+                 height_2: float=0,
+                 is_infill_2: bool=False,
+                 number_of_story_2: int=0,
+                 tx_an_2: float=4,
+                 ty_an_2: float=4,
+                 tx_an_all: float=4,
+                 ty_an_all: float=4,
                  ):
-
-        self.filename = ''
         self.risk_level = risk_level
         self.acc = self.acceleration
         self.city = city
         self.importance_factor = importance_factor
-        self.CMin = 0.12 * self.acc * self.importance_factor
-        self.soilType = soilType
-        self.soilProperties = SoilProperties(soilType, self.acc)
-        self.number_of_story = number_of_story
-        self.height = height
-        self.height2 = height2
-        self.is_infill = is_infill
-        self.is_infill2 = is_infill2
-        self.x_system = x_system
-        self.y_system = y_system
-        self.exp_period_x = self.period(x_system, height, is_infill)
-        self.exp_period_y = self.period(y_system, height, is_infill)
-        self.x_system2 = x_system2
-        if x_system2:
-            self.y_system2 = y_system2
-            self.exp_period_x2 = self.period(x_system2, height2, is_infill2)
-            self.exp_period_y2 = self.period(y_system2, height2, is_infill2)
-            tx = (self.exp_period_x * height + self.exp_period_x2 * height2) / (height + height2)
-            ty = (self.exp_period_y * height + self.exp_period_y2 * height2) / (height + height2)
-            self.tx = max(min(x_period_an, 1.25 * tx), tx)
-            self.ty = max(min(y_period_an, 1.25 * ty), ty)
-        else:
-            self.tx = max(min(x_period_an, 1.25 * self.exp_period_x), self.exp_period_x)
-            self.ty = max(min(y_period_an, 1.25 * self.exp_period_y), self.exp_period_y)
-        self.x_period_an = x_period_an
-        self.y_period_an = y_period_an
-        if np.isclose(importance_factor, 1.4, atol=.01):
-            self.x_period_an = self.tx
-            self.y_period_an = self.ty
+        self.soil_type = soil_type
+        self.c_min = 0.12 * self.acc * self.importance_factor
+        self.soil_properties = SoilProperties(soil_type, self.acc)
+        self.number_of_story = number_of_story_1
+        self.height = height_1
+        self.is_infill = is_infill_1
+        self.x_system = x_system_1
+        self.y_system = y_system_1
+        self.tx_an = tx_an_1
+        self.ty_an = ty_an_1
 
-        self.soil_reflection_prop_x = ReflectionFactor(soilType, self.acc, self.tx)
-        self.soil_reflection_prop_y = ReflectionFactor(soilType, self.acc, self.ty)
-        self.Bx = self.soil_reflection_prop_x.B
-        self.By = self.soil_reflection_prop_y.B
-        self.maxHeight = self.maxAllowedHeight()
-        self.kx, self.ky = self.getK(self.tx, self.ty)
-        self.results = self.calculateC(self.Bx, self.By)
-        # analytical calculations for drift
-        self.soil_reflection_drift_prop_x = ReflectionFactor(soilType, self.acc, self.x_period_an)
-        self.soil_reflection_drift_prop_y = ReflectionFactor(soilType, self.acc, self.y_period_an)
-        self.Bx_drift = min(self.Bx, self.soil_reflection_drift_prop_x.B)
-        self.By_drift = min(self.By, self.soil_reflection_drift_prop_y.B)
-        self.kx_drift, self.ky_drift = self.getK(self.x_period_an, self.y_period_an)
-        self.results_drift = self.calculateC(self.Bx_drift, self.By_drift)
+        self.tx_exp = self.period(x_system_1, height_1, is_infill_1)
+        self.ty_exp = self.period(y_system_1, height_1, is_infill_1)
+        if np.isclose(importance_factor, 1.4, atol=.01):
+            self.tx_an = self.tx_exp
+            self.ty_an = self.ty_exp
+        self.tx = max(min(self.tx_an, 1.25 * self.tx_exp), self.tx_exp)
+        self.ty = max(min(self.ty_an, 1.25 * self.ty_exp), self.ty_exp)
+
+        self.soil_reflection_prop_x = ReflectionFactor(self.soil_type, self.acc, self.tx)
+        self.soil_reflection_prop_y = ReflectionFactor(self.soil_type, self.acc, self.ty)
+        self.bx = self.soil_reflection_prop_x.B
+        self.by = self.soil_reflection_prop_y.B
+        self.max_height = self.max_allowed_height_systems(self.x_system, self.y_system)
+        self.kx, self.ky = self.get_k(self.tx, self.ty)
+        self.results = self.calculate_c(self.bx, self.by, self.x_system, self.y_system, self.height, self.number_of_story)
+        self.soil_reflection_drift_prop_x = ReflectionFactor(self.soil_type, self.acc, self.tx_an)
+        self.soil_reflection_drift_prop_y = ReflectionFactor(self.soil_type, self.acc, self.ty_an)
+        self.bx_drift = min(self.bx, self.soil_reflection_drift_prop_x.B)
+        self.by_drift = min(self.by, self.soil_reflection_drift_prop_y.B)
+        self.kx_drift, self.ky_drift = self.get_k(self.tx_an, self.ty_an)
+        self.results_drift = self.calculate_c(self.bx_drift, self.by_drift, self.x_system, self.y_system, self.height, self.number_of_story)
+        self.building2 = None
+        if x_system_2 is not None:
+            self.building2 = Building(
+                risk_level,
+                importance_factor,
+                soil_type,
+                city,
+                number_of_story_2,
+                height_2,
+                is_infill_2,
+                x_system_2,
+                y_system_2,
+                tx_an_2,
+                ty_an_2,
+            )
+            self.tx_an_all = tx_an_all
+            self.ty_an_all = ty_an_all
+            self.tx_exp_all = (self.tx_exp * height_1 + self.building2.tx_exp * self.building2.height) / (height_1 + self.building2.height)
+            self.ty_exp_all = (self.ty_exp * height_1 + self.building2.ty_exp * self.building2.height) / (height_1 + self.building2.height)
+            self.tx_all = max(min(self.tx_an_all, 1.25 * self.tx_exp_all), self.tx_exp_all)
+            self.ty_all = max(min(self.ty_an_all, 1.25 * self.ty_exp_all), self.ty_exp_all)
+            if np.isclose(importance_factor, 1.4, atol=.01):
+                self.tx_an_all = self.tx_all
+                self.ty_an_all = self.ty_all
+            self.soil_reflection_prop_all_x = ReflectionFactor(self.soil_type, self.acc, self.tx_all)
+            self.soil_reflection_prop_all_y = ReflectionFactor(self.soil_type, self.acc, self.ty_all)
+            self.bx_all = self.soil_reflection_prop_all_x.B
+            self.by_all = self.soil_reflection_prop_all_y.B
+            self.kx_all, self.ky_all = self.get_k(self.tx_all, self.ty_all)
+            self.results_all_bot = self.calculate_c(self.bx_all, self.by_all, x_system_1, y_system_1, height_1, number_of_story_1)
+            self.results_all_top = self.calculate_c(self.bx_all, self.by_all, x_system_2, y_system_2, height_2, number_of_story_2)
+            # analytical calculations for drift
+            self.soil_reflection_drift_prop_all_x = ReflectionFactor(self.soil_type, self.acc, self.tx_an_all)
+            self.soil_reflection_drift_prop_all_y = ReflectionFactor(self.soil_type, self.acc, self.ty_an_all)
+            self.bx_drift_all = min(self.bx_all, self.soil_reflection_drift_prop_all_x.B)
+            self.by_drift_all = min(self.by_all, self.soil_reflection_drift_prop_all_y.B)
+            self.kx_drift_all, self.ky_drift_all = self.get_k(self.tx_an_all, self.ty_an_all)
+            self.results_drift_all_bot = self.calculate_c(self.bx_drift_all, self.by_drift_all, x_system_1, y_system_1, height_1, number_of_story_1)
+            self.results_drift_all_top = self.calculate_c(self.bx_drift_all, self.by_drift_all, x_system_2, y_system_2, height_2, number_of_story_2)
 
     @property
     def acceleration(self):
@@ -103,58 +133,49 @@ class Building(object):
         else:
             return alpha * height ** power
 
-    def direction(self):
-        pass
-
-    def maxAllowedHeight(self):
-        xMaxAllowedHeight = self.x_system.maxHeight
-        yMaxAllowedHeight = self.y_system.maxHeight
-        if (xMaxAllowedHeight and yMaxAllowedHeight) is None:
-            maxAllowedHeight = 200
-        elif xMaxAllowedHeight is None:
-            maxAllowedHeight = yMaxAllowedHeight
-        elif yMaxAllowedHeight is None:
-            maxAllowedHeight = xMaxAllowedHeight
+    def max_allowed_height_systems(self, x_system, y_system):
+        x_max_allowed_height = x_system.maxHeight
+        y_max_allowed_height = y_system.maxHeight
+        if (x_max_allowed_height and y_max_allowed_height) is None:
+            max_allowed_height = 200
+        elif x_max_allowed_height is None:
+            max_allowed_height = y_max_allowed_height
+        elif y_max_allowed_height is None:
+            max_allowed_height = x_max_allowed_height
         else:
-            maxAllowedHeight = min(xMaxAllowedHeight, yMaxAllowedHeight)
-        return maxAllowedHeight
+            max_allowed_height = min(x_max_allowed_height, y_max_allowed_height)
+        return max_allowed_height
     
-    def max_allowed_height_x(self):
-        x_max_allowed_height = self.x_system.maxHeight
+    def max_allowed_height_system(self, system):
+        x_max_allowed_height = system.maxHeight
         if x_max_allowed_height is None:
             x_max_allowed_height = 200
         return x_max_allowed_height
     
-    def max_allowed_height_y(self):
-        y_max_allowed_height = self.y_system.maxHeight
-        if y_max_allowed_height is None:
-            y_max_allowed_height = 200
-        return y_max_allowed_height
-
-    def calculateK(self, T):
-        if T < 0.5:
+    def calculate_k(self, t):
+        if t < 0.5:
             self._kStr = u'T &#60 0.5 '
             return 1.0
-        elif T > 2.5:
+        elif t > 2.5:
             self._kStr = u'T &#62 2.5 '
             return 2.0
         else:
             self._kStr = u' 0.5 &#60 T &#60 2.5 &#8658 k<sub>{0}</sub> = 0.5 &#215 T + 0.75'
-            return 0.5 * T + 0.75
+            return 0.5 * t + 0.75
 
-    def getK(self, Tx, Ty):
-        kx = self.calculateK(Tx)
+    def get_k(self, tx, ty):
+        kx = self.calculate_k(tx)
         self._kxStr = self._kStr.format('x')
-        ky = self.calculateK(Ty)
+        ky = self.calculate_k(ty)
         self._kyStr = self._kStr.format('y')
         return kx, ky
 
-    def getDEngheta(self):
-        if self.number_of_story <= 8 and not self.importance_factor in (1.2, 1.4):
+    def get_engheta(self):
+        if self.number_of_story <= 8 and self.importance_factor not in (1.2, 1.4):
             return 0.005 * self.height * 100
         return False
 
-    def checkInputs(self):
+    def check_inputs(self, x_system, y_system, height, number_of_story):
 
         class StructureSystemError(Exception):
             pass
@@ -167,84 +188,63 @@ class Building(object):
         e5 = u'در ساختمانهای با بیشتر از ۱۵ طبقه و یا بلندتر از ۵۰ متر، استفاده از سیستم قاب خمشی ویژه و یا سیستم دوگانه الزامی است.'
         e6 = 'حداکثر ارتفاع مجاز سازه %i متر می باشد.'
 
-        ID1 = self.ID1
-        specialIDs = self.specialIDs
-        IDs3354 = self.IDs3354
-        I = self.importance_factor
-        A = self.acc
-        H = self.height
-        story = self.number_of_story
-        max_height_x = self.max_allowed_height_x()
-        max_height_y = self.max_allowed_height_y()
+        max_height_x = self.max_allowed_height_system(x_system)
+        max_height_y = self.max_allowed_height_system(y_system)
 
         for direction in ("X", "Y"):
             if direction == "X":
-                ID = self.x_system.ID
-                # systemType = self.x_system.systemType
-                lateralType = self.x_system.lateralType
+                ID = x_system.ID
+                lateral_type = x_system.lateralType
             else:
-                ID = self.y_system.ID
-                # systemType = self.y_system.systemType
-                lateralType = self.y_system.lateralType
+                ID = y_system.ID
+                lateral_type = y_system.lateralType
             try:
-                if direction == 'X' and self.height > max_height_x:
+                if direction == 'X' and height > max_height_x:
                     raise StructureSystemError(e6 % max_height_x)
-                elif direction == 'Y' and self.height > max_height_y:
+                elif direction == 'Y' and height > max_height_y:
                     raise StructureSystemError(e6 % max_height_y)
-                if ID in ID1:
-                    if I > 1.1:
-                        raise StructureSystemError(e1 % lateralType)
+                if ID in self.ID1:
+                    if self.importance_factor > 1.1:
+                        raise StructureSystemError(e1 % lateral_type)
 
-                    if I == 1.0 and A in (.3, .35):
-                        raise StructureSystemError(e2 % lateralType)
+                    if np.isclose(self.importance_factor, 1.0, atol=1e-09) and self.acc in (.3, .35):
+                        raise StructureSystemError(e2 % lateral_type)
 
-                    if I == 1.0 and A in (.2, .25) and H > 15:
-                        raise StructureSystemError(e3 % lateralType)
+                    if np.isclose(self.importance_factor, 1.0, atol=1e-09) and self.acc in (.2, .25) and height > 15:
+                        raise StructureSystemError(e3 % lateral_type)
 
-                if A == 0.35 and I == 1.4 and (ID not in specialIDs):
+                if np.isclose(self.acc, 0.35, atol=1e-09) and np.isclose(self.importance_factor, 1.4, atol=1e-09) and (ID not in self.special_ids):
                     raise StructureSystemError(e4)
 
-                if (H > 50 or story > 15) and (ID not in IDs3354):
+                if (height > 50 or number_of_story > 15) and (ID not in self.ids_3354):
                     raise StructureSystemError(e5)
 
             except StructureSystemError as err:
                 return False, title, err, direction
         return [True]
 
-    def calculateC(self, Bx, By):
-        check_inputs = self.checkInputs()
-        # TODO
+    def calculate_c(self, bx, by, x_system, y_system, height, number_of_story):
+        check_inputs = self.check_inputs(x_system, y_system, height, number_of_story)
         if check_inputs[0] is False:
             return check_inputs
-        A = self.acc
-        I = self.importance_factor
-        if self.x_system2:
-            if self.x_system.Ru >= self.x_system2.Ru:
-                Rux = self.x_system2.Ru
-            if self.y_system.Ru >= self.y_system2.Ru:
-                Ruy = self.y_system2.Ru
-        else:
-            Rux = self.x_system.Ru
-            Ruy = self.y_system.Ru
-        CxNotApproved = A * Bx * I / Rux
-        CyNotApproved = A * By * I / Ruy
-        if CxNotApproved < self.CMin:
-            Cx = self.CMin
+        cx_not_approved = self.acc * bx * self.importance_factor / x_system.Ru
+        cy_not_approved = self.acc * by * self.importance_factor / y_system.Ru
+        if cx_not_approved < self.c_min:
+            cx = self.c_min
             self.cxStr = (u"{0:.4f} &#60 C<sub>min</sub> &#8658 Cx = {1}</p>"
-                          ).format(CxNotApproved, self.CMin)
+                          ).format(cx_not_approved, self.c_min)
         else:
-            Cx = CxNotApproved
-            self.cxStr = (u"{0:.4f} &#62 C<sub>min</sub>  O.K</p>").format(CxNotApproved)
-        if CyNotApproved < self.CMin:
-            Cy = self.CMin
+            cx = cx_not_approved
+            self.cxStr = (u"{0:.4f} &#62 C<sub>min</sub>  O.K</p>").format(cx_not_approved)
+        if cy_not_approved < self.c_min:
+            cy = self.c_min
             self.cyStr = (u" {0:.4f} &#60 C<sub>min</sub> &#8658 Cy = {1}</p>"
-                          ).format(CyNotApproved, self.CMin)
+                          ).format(cy_not_approved, self.c_min)
         else:
-            Cy = CyNotApproved
-            self.cyStr = (u"{0:.4f} &#62 C<sub>min</sub>  O.K</p>").format(CyNotApproved)
-        return True, Cx, Cy
-        # else:
-        #     return check_inputs
+            cy = cy_not_approved
+            self.cyStr = (u"{0:.4f} &#62 C<sub>min</sub>  O.K</p>").format(cy_not_approved)
+        return True, cx, cy
+
 
 class StructureSystem(object):
 
@@ -297,25 +297,25 @@ class RFactorTable(object):
 
 class SoilProperties(object):
 
-    def __init__(self, soilType, acc):
+    def __init__(self, soil_type, acc):
         soilTable = SoilTable()
-        self.soilType = soilType
-        self.T0 = soilTable.T0s[soilType]
-        self.Ts = soilTable.Tss[soilType]
-        self.S = soilTable.Ss[(soilType, acc)]
-        self.S0 = soilTable.S0s[(soilType, acc)]
+        self.soil_type = soil_type
+        self.T0 = soilTable.T0s[soil_type]
+        self.Ts = soilTable.Tss[soil_type]
+        self.S = soilTable.Ss[(soil_type, acc)]
+        self.S0 = soilTable.S0s[(soil_type, acc)]
 
 class ReflectionFactor(object):
 
-    def __init__(self, soilType, acc, period):
-        soilProperties = SoilProperties(soilType, acc)
-        self.soilType = soilType
+    def __init__(self, soil_type, acc, period):
+        soil_properties = SoilProperties(soil_type, acc)
+        self.soil_type = soil_type
         self.A = acc
         self.T = period
-        self.T0 = soilProperties.T0
-        self.Ts = soilProperties.Ts
-        self.S = soilProperties.S
-        self.S0 = soilProperties.S0
+        self.T0 = soil_properties.T0
+        self.Ts = soil_properties.Ts
+        self.S = soil_properties.S
+        self.S0 = soil_properties.S0
         self.B1 = self.calculatB1()
         self.N = self.calculatN()
         self.B = self.B1 * self.N
@@ -380,7 +380,7 @@ class ReflectionFactor(object):
         dt = self.dt
         B11Curve = S0 + (S - S0 + 1) * (np.arange(0, T0, dt) / T0)
         B12Curve = np.full((len(np.arange(T0, Ts, dt))), S + 1)
-        if self.soilType == "I":
+        if self.soil_type == "I":
             B13Curve = (S + 1) * (Ts / np.arange(Ts + dt, self.endT, dt))
         else:
             B13Curve = (S + 1) * (Ts / np.arange(Ts, self.endT, dt))

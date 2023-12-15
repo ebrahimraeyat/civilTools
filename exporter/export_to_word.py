@@ -41,9 +41,9 @@ def export(building=None, filename=None):
              'ضریب بزرگنمایی جابجایی': (X.cd, Y.cd),
              'ارتفاع مجاز  )متر(': (X.maxHeight, Y.maxHeight)}
 
-    result = {'زمان تناوب تجربی': (building.exp_period_x, building.exp_period_y),
-              'زمان تناوب تحلیلی': (building.x_period_an, building.y_period_an),
-              'ضریب بازتاب': (building.Bx, building.By),
+    result = {'زمان تناوب تجربی': (building.tx_exp, building.ty_exp),
+              'زمان تناوب تحلیلی': (building.tx_an, building.ty_an),
+              'ضریب بازتاب': (building.bx, building.by),
               'C': (building.results[1], building.results[2]),
               'K': (building.kx, building.ky),
               'C_drift': (building.results_drift[1], building.results_drift[2]),

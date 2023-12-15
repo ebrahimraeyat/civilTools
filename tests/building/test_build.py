@@ -12,20 +12,52 @@ from building.build import (
 
 
 def test_two_building_in_height():
+    h1 = 26.28
+    h2 = 3.55
+    tx_an = 1.76
+    ty_an = 1.99
     x = StructureSystem("سیستم قاب خمشی", "قاب خمشی بتن آرمه متوسط", 'X')
     x2 = StructureSystem("سیستم دیوارهای باربر", "دیوارهای برشی بتن آرمه ویژه", 'X')
-    my_building = Building("زیاد", 1, 'II', 8, 26.28, None, x, x, "قم", 1.76, 1.99,
-                                   x2, x2, 3.55)
-    assert my_building.exp_period_x == pytest.approx(0.948, abs=.001)
-    assert my_building.exp_period_x2 == pytest.approx(0.129, abs=.001)
-    assert my_building.exp_period_y == pytest.approx(0.948, abs=.001)
-    assert my_building.exp_period_y2 == pytest.approx(0.129, abs=.001)
-    assert my_building.tx == pytest.approx((1.185 * 26.28 + 0.162 * 3.55) / (26.28 + 3.55), abs=.001)
-    assert my_building.ty == pytest.approx((1.185 * 26.28 + 0.162 * 3.55) / (26.28 + 3.55), abs=.001)
-    assert my_building.Bx == pytest.approx(1.30807, abs=.001)
-    assert my_building.By == pytest.approx(1.30807, abs=.001)
-    assert my_building.results[1] == pytest.approx(0.07848, abs=.001)
-    assert my_building.results[2] == pytest.approx(0.07848, abs=.001)
+    building = Building("زیاد", 1, 'II', "قم", 6, h1, None, x, x, tx_an, ty_an,
+                                   x2, x2, h2, False, 2)
+    tx = 0.9476
+    tx2 = 0.1293
+    ty = 0.9476
+    ty2 = 0.1293
+    assert building.tx_exp == pytest.approx(tx, abs=.001)
+    assert building.ty_exp == pytest.approx(ty, abs=.001)
+    assert building.tx_an == pytest.approx(tx_an, abs=.001)
+    assert building.ty_an == pytest.approx(ty_an, abs=.001)
+    assert building.tx_all == pytest.approx(building.tx_exp_all * 1.25, abs=.001)
+    assert building.ty_all == pytest.approx(building.ty_exp_all * 1.25, abs=.001)
+    assert building.building2.tx_an == pytest.approx(4, abs=.001)
+    assert building.building2.ty_an == pytest.approx(4, abs=.001)
+    assert building.building2.tx_exp == pytest.approx(tx2, abs=.001)
+    assert building.building2.ty_exp == pytest.approx(ty2, abs=.001)
+    assert building.tx_exp_all == pytest.approx((tx * h1 + tx2 * h2) / (h1 + h2), abs=.001)
+    assert building.ty_exp_all == pytest.approx((ty * h1 + ty2 * h2) / (h1 + h2), abs=.001)
+    assert building.bx == pytest.approx(1.20, abs=.001)
+    assert building.by == pytest.approx(1.20, abs=.001)
+    assert building.kx == pytest.approx(1.3423, abs=.001)
+    assert building.ky == pytest.approx(1.3423, abs=.001)
+    assert building.kx_drift == pytest.approx(1.630, abs=.001)
+    assert building.ky_drift == pytest.approx(1.7450, abs=.001)
+    assert building.results[1] == pytest.approx(0.0720, abs=.001)
+    assert building.results[2]== pytest.approx(0.0720, abs=.001)
+    assert building.results_drift[1] == pytest.approx(0.0534, abs=.001)
+    assert building.results_drift[2]== pytest.approx(0.0489, abs=.001)
+    tx *= 1.25
+    tx2 *= 1.25
+    ty *= 1.25
+    ty2 *= 1.25
+    assert building.tx == pytest.approx(tx, abs=.001)
+    assert building.ty == pytest.approx(ty, abs=.001)
+    assert building.building2.tx == pytest.approx(tx2, abs=.001)
+    assert building.building2.ty == pytest.approx(ty2, abs=.001)
+    assert building.bx_all == pytest.approx(1.30807, abs=.001)
+    assert building.by_all == pytest.approx(1.30807, abs=.001)
+    assert building.results_all_top[1] == pytest.approx(0.07848, abs=.001)
+    assert building.results_all_top[2] == pytest.approx(0.07848, abs=.001)
 
 def test_two_building_in_height_fahimi():
     x = StructureSystem("سیستم دیوارهای باربر", "دیوارهای برشی بتن آرمه ویژه", 'X')
@@ -36,38 +68,37 @@ def test_two_building_in_height_fahimi():
     tx2 = 1.1234
     ty = 0.2035
     ty2 = 1.1234
-    my_building = Building("زیاد", 1, 'II', 8, h1, None, x, x, "قم", 4, 4,
-                                   x2, x2, h2)
-    assert my_building.exp_period_x == pytest.approx(tx, abs=.001)
-    assert my_building.exp_period_x2 == pytest.approx(tx2, abs=.001)
-    assert my_building.exp_period_y == pytest.approx(ty, abs=.001)
-    assert my_building.exp_period_y2 == pytest.approx(ty2, abs=.001)
+    building = Building("زیاد", 1, 'II', "قم", 2, h1, None, x, x, 4, 4,
+                                   x2, x2, h2, False, 6)
+    assert building.tx_exp == pytest.approx(tx, abs=.001)
+    assert building.building2.tx_exp == pytest.approx(tx2, abs=.001)
+    assert building.ty_exp == pytest.approx(ty, abs=.001)
+    assert building.building2.ty_exp == pytest.approx(ty2, abs=.001)
+    assert building.tx_exp_all == pytest.approx((tx * h1 + tx2 * h2) / (h1 + h2), abs=.001)
+    assert building.ty_exp_all == pytest.approx((ty * h1 + ty2 * h2) / (h1 + h2), abs=.001)
     tx *= 1.25
     ty *= 1.25
     tx2 *= 1.25
     ty2 *= 1.25
-    assert my_building.tx == pytest.approx((tx * h1 + tx2 * h2) / (h1 + h2), abs=.001)
-    assert my_building.ty == pytest.approx((ty * h1 + ty2 * h2) / (h1 + h2), abs=.001)
-    print(my_building.tx)
-    assert my_building.results[1] == pytest.approx(0.070837, abs=.001)
-    assert my_building.results[2] == pytest.approx(0.070837, abs=.001)
-    assert my_building.Bx == pytest.approx(1.1806, abs=.001)
-    assert my_building.By == pytest.approx(1.1806, abs=.001)
+    assert building.results_all_top[1] == pytest.approx(0.070837, abs=.001)
+    assert building.results_all_top[2] == pytest.approx(0.070837, abs=.001)
+    assert building.bx_all == pytest.approx(1.1806, abs=.001)
+    assert building.by_all == pytest.approx(1.1806, abs=.001)
 
 def test_building():
     x = StructureSystem("سیستم قاب خمشی", "قاب خمشی بتن آرمه متوسط", 'X')
-    my_building = Building("زیاد", 1, 'II', 8, 26.28, None, x, x, "قم", 1.76, 1.99)
-    assert my_building.exp_period_x == pytest.approx(0.948, abs=.001)
-    assert my_building.exp_period_y == pytest.approx(0.948, abs=.001)
-    assert my_building.tx == pytest.approx(1.185, abs=.001)
-    assert my_building.ty == pytest.approx(1.185, abs=.001)
+    building = Building("زیاد", 1, 'II', "قم", 8, 26.28, None, x, x, 1.76, 1.99)
+    assert building.tx_exp == pytest.approx(0.948, abs=.001)
+    assert building.ty_exp == pytest.approx(0.948, abs=.001)
+    assert building.tx == pytest.approx(1.185, abs=.001)
+    assert building.ty == pytest.approx(1.185, abs=.001)
 
-    assert my_building.kx == pytest.approx(1.342, abs=.001)
-    assert my_building.ky == pytest.approx(1.342, abs=.001)
-    assert my_building.Bx == pytest.approx(1.2, abs=.01)
-    assert my_building.results[0]
-    assert my_building.results[1] == pytest.approx(0.072, abs=.001)
-    assert my_building.results[2] == pytest.approx(0.072, abs=.001)
+    assert building.kx == pytest.approx(1.342, abs=.001)
+    assert building.ky == pytest.approx(1.342, abs=.001)
+    assert building.bx == pytest.approx(1.2, abs=.01)
+    assert building.results[0]
+    assert building.results[1] == pytest.approx(0.072, abs=.001)
+    assert building.results[2] == pytest.approx(0.072, abs=.001)
 
     # def test_Cx(self):
     #     self.assertAlmostEqual(self.myBuilding.results_drift[1], 0.1622, places=3)
@@ -76,13 +107,13 @@ def test_building():
     #     self.assertAlmostEqual(self.myBuilding.kx_drift, 1.00, places=2)
 
     # def test_Texp(self):
-    #     self.assertAlmostEqual(self.myBuilding.exp_period_x, .3223, places=2)
+    #     self.assertAlmostEqual(self.myBuilding.tx_exp, .3223, places=2)
 
     # def test_T(self):
-    #     self.assertAlmostEqual(self.myBuilding.x_period_an, .40296, places=4)
+    #     self.assertAlmostEqual(self.myBuilding.tx_an, .40296, places=4)
 
     # def test_B(self):
-    #     self.assertAlmostEqual(self.myBuilding.Bx_drift, 2.483, places=2)
+    #     self.assertAlmostEqual(self.myBuilding.bx_drift, 2.483, places=2)
 
     # def test_R(self):
     #     self.assertEqual(self.myBuilding.x_system.Ru, 7.5)
@@ -111,10 +142,10 @@ def test_building():
 #         self.assertAlmostEqual(self.myBuilding.results[1], 0.2357, places=3)
 
 #     def test_Texp(self):
-#         self.assertAlmostEqual(self.myBuilding.exp_period_x, 0.28, places=2)
+#         self.assertAlmostEqual(self.myBuilding.tx_exp, 0.28, places=2)
 
 #     def test_B(self):
-#         self.assertAlmostEqual(self.myBuilding.Bx, 2.75, places=2)
+#         self.assertAlmostEqual(self.myBuilding.bx, 2.75, places=2)
 
 #     def test_R(self):
 #         self.assertEqual(self.myBuilding.x_system.Ru, 3.5)
@@ -139,7 +170,7 @@ def test_building():
 #         self.assertAlmostEqual(self.myBuilding.Tx, 0.65, places=2)
 
 #     def test_B(self):
-#         self.assertAlmostEqual(self.myBuilding.Bx, 2.75, places=2)
+#         self.assertAlmostEqual(self.myBuilding.bx, 2.75, places=2)
 
 #     def test_R(self):
 #         self.assertEqual(self.myBuilding.x_system.Ru, 5)
@@ -162,10 +193,10 @@ def test_building():
 #         self.assertAlmostEqual(self.myBuilding.results_drift[2], 0.0953, places=3)
 
 #     def test_T(self):
-#         self.assertAlmostEqual(self.myBuilding.x_period_an, 1.62, places=2)
+#         self.assertAlmostEqual(self.myBuilding.tx_an, 1.62, places=2)
 
 #     def test_B(self):
-#         self.assertAlmostEqual(self.myBuilding.Bx_drift, 1.42, places=2)
+#         self.assertAlmostEqual(self.myBuilding.bx_drift, 1.42, places=2)
 
 #     def test_R(self):
 #         self.assertEqual(self.myBuilding.x_system.Ru, 5)

@@ -65,6 +65,11 @@ def save(etabs, widget):
 		't_an_y',
 		't_an_x1',
 		't_an_y1',
+		# new version
+		'tx_an',
+		'ty_an',
+		'tx1_an',
+		'ty1_an',
 		):
 		if hasattr(widget, key):
 			exec(f"new_d['{key}'] = widget.{key}.value()")
@@ -174,18 +179,22 @@ def get_treeview_item_prop(view):
 	
 def save_analytical_periods(etabs, tx, ty, tx1=4, ty1=4):
 	d = get_settings_from_etabs(etabs)
-	d['t_an_x'] = tx
-	d['t_an_y'] = ty
-	d['t_an_x1'] = tx1
-	d['t_an_y1'] = ty1
+	# d['t_an_x'] = tx
+	# d['t_an_y'] = ty
+	# d['t_an_x1'] = tx1
+	# d['t_an_y1'] = ty1
+	d['tx_an'] = tx
+	d['ty_an'] = ty
+	d['tx1_an'] = tx1
+	d['ty1_an'] = ty1
 	set_settings_to_etabs(etabs, d)
 
 def get_analytical_periods(etabs):
 	d = get_settings_from_etabs(etabs)
-	tx = d.get('t_an_x', 4)
-	ty = d.get('t_an_y', 4)
-	tx1 = d.get('t_an_x1', 4)
-	ty1 = d.get('t_an_y1', 4)
+	tx = d.get('t_an_x', d.get('tx_an', 4))
+	ty = d.get('t_an_y', d.get('ty_an', 4))
+	tx1 = d.get('t_an_x1', d.get('tx1_an', 4))
+	ty1 = d.get('t_an_y1', d.get('ty1_an', 4))
 	return tx, ty, tx1, ty1
 
 def save_cd(etabs, cdx, cdy, cdx1=0, cdy1=0):
@@ -376,6 +385,11 @@ def load(etabs, widget=None):
 		't_an_y',
 		't_an_x1',
 		't_an_y1',
+		# New version
+		'tx_an',
+		'ty_an',
+		'tx1_an',
+		'ty1_an',
 		):
 		if key in keys and hasattr(widget, key):
 			exec(f"widget.{key}.setValue(d['{key}'])")

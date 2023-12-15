@@ -40,7 +40,7 @@ class CivilCreatePeriodFile:
         t_filename = etabs.get_file_name_without_suffix() + "_T.EDB"
         tx, ty, _ = etabs.get_drift_periods(t_filename=t_filename)
         # civiltools_config.save_analytical_periods(etabs, tx, ty)
-        d = {'t_an_x': tx, 't_an_y': ty}
+        d = {'t_an_x': tx, 't_an_y': ty, 'tx_an': tx, 'ty_an': ty}
         civiltools_config.update_setting(etabs, d)
         file_path = etabs.get_filepath()
         period_path = file_path / 'periods'

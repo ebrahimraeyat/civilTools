@@ -34,8 +34,8 @@ class StructureModel(QAbstractTableModel):
         c_drift = ''
         if column == X:
             system = self.build.x_system
-            Texp = self.build.exp_period_x
-            Tan = self.build.x_period_an
+            t_exp = self.build.tx_exp
+            t_an = self.build.tx_an
             k = self.build.kx
             k_drift = self.build.kx_drift
             if self.build.results[0]:
@@ -45,8 +45,8 @@ class StructureModel(QAbstractTableModel):
 
         if column == Y:
             system = self.build.y_system
-            Texp = self.build.exp_period_y
-            Tan = self.build.y_period_an
+            t_exp = self.build.ty_exp
+            t_an = self.build.ty_an
             k = self.build.ky
             k_drift = self.build.ky_drift
             if self.build.results[0]:
@@ -67,11 +67,11 @@ class StructureModel(QAbstractTableModel):
             if row == CD:
                 return str(system.cd)
             if row == TEXP:
-                return '{0:.4f}'.format(Texp)
+                return '{0:.4f}'.format(t_exp)
             if row == TEXP125:
-                return f'{Texp * 1.25:.4f}'
+                return f'{t_exp * 1.25:.4f}'
             if row == TAN:
-                return f'{Tan:.4f}'
+                return f'{t_an:.4f}'
             if row == K:
                 return f'{k:.4f}'
             if row == CFACTOR:
@@ -147,11 +147,11 @@ class StructureModel(QAbstractTableModel):
                 elif section == CD:
                     return 'Cd'
                 elif section == TEXP:
-                    return 'Texp'
+                    return 't_exp'
                 elif section == TEXP125:
-                    return '1.25*Texp'
+                    return '1.25*t_exp'
                 elif section == TAN:
-                    return 'Tan'
+                    return 't_an'
                 elif section == K:
                     return 'K'
                 elif section == CFACTOR:

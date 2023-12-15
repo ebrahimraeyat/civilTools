@@ -58,8 +58,8 @@ class Form(QtWidgets.QWidget):
         self.set_y_system_property()
 
     def create_connections(self):
-        self.form.t_an_x.valueChanged.connect(self.calculate)
-        self.form.t_an_y.valueChanged.connect(self.calculate)
+        self.form.tx_an.valueChanged.connect(self.calculate)
+        self.form.ty_an.valueChanged.connect(self.calculate)
         self.form.risk_level.currentIndexChanged.connect(self.calculate)
         self.form.soil_type.currentIndexChanged.connect(self.calculate)
         self.form.importance_factor.currentIndexChanged.connect(self.calculate)
@@ -149,7 +149,7 @@ class Form(QtWidgets.QWidget):
         ret = civiltools_config.get_treeview_item_prop(view)
         if ret is None:
             return
-        system, lateral, *args = ret
+        system, lateral, *_ = ret
         if 'x' in view.objectName():
             system = StructureSystem(system, lateral, 'X')
         elif 'y' in view.objectName():
@@ -182,10 +182,10 @@ class Form(QtWidgets.QWidget):
                 pass
 
     def set_bx(self):
-        self.form.bx.setText(f'{self.final_building.Bx:0.3f}')
+        self.form.bx.setText(f'{self.final_building.bx:0.3f}')
     
     def set_by(self):
-        self.form.by.setText(f'{self.final_building.By:0.3f}')
+        self.form.by.setText(f'{self.final_building.by:0.3f}')
 
     def fill_cities(self):
         ostans = ostanha.ostans.keys()
@@ -276,9 +276,9 @@ class Form(QtWidgets.QWidget):
         civiltools_config.save(self.etabs, self.form)
 
     def getTAnalatical(self):
-        xTan = self.form.t_an_x.value()
-        yTan = self.form.t_an_y.value()
-        return xTan, yTan
+        tx_an = self.form.tx_an.value()
+        ty_an = self.form.ty_an.value()
+        return tx_an, ty_an
 
     def setSoilProperties(self, build=None):
         if not build:
@@ -286,8 +286,8 @@ class Form(QtWidgets.QWidget):
         xrf = build.soil_reflection_prop_x
         yrf = build.soil_reflection_prop_y
         soilProp = [build.soilType, xrf.T0, xrf.Ts, xrf.S, xrf.S0]
-        xSoilProp = [xrf.B1, xrf.N, build.Bx]
-        ySoilProp = [yrf.B1, yrf.N, build.By]
+        xSoilProp = [xrf.B1, xrf.N, build.bx]
+        ySoilProp = [yrf.B1, yrf.N, build.by]
         for row, item in enumerate(soilProp):
             if row == 0:
                 item = QTableWidgetItem("%s " % item)
@@ -308,11 +308,11 @@ class Form(QtWidgets.QWidget):
 
     def set_bx_by(self):
         if hasattr(self, 'final_building'):
-            self.form.bx.setValue(self.final_building.Bx)
-            self.form.by.setValue(self.final_building.By)
+            self.form.bx.setValue(self.final_building.bx)
+            self.form.by.setValue(self.final_building.by)
 
     def current_building(self):
-        xTan, yTan = self.getTAnalatical()
+        tx_an, ty_an = self.getTAnalatical()
         risk_level = self.form.risk_level.currentText()
         city = self.form.city.currentText()
         soil = self.form.soil_type.currentText()
@@ -328,14 +328,14 @@ class Form(QtWidgets.QWidget):
                     risk_level,
                     importance_factor,
                     soil,
+                    city,
                     no_of_story,
                     height_x,
                     is_infill,
                     x_system,
                     y_system,
-                    city,
-                    xTan,
-                    yTan,
+                    tx_an,
+                    ty_an,
                     )
         return build
 
@@ -360,10 +360,10 @@ class Form(QtWidgets.QWidget):
             Analytical Period in %s direction < 1.25 * Experimental,
             Do you want to continue?
             '''
-            if self.final_building.x_period_an < 1.25 * self.final_building.exp_period_x:
+            if self.final_building.tx_an < 1.25 * self.final_building.tx_exp:
                 if QMessageBox.question(None, 'X Analytical Period', message % 'X') == QMessageBox.No:
                     return
-            if self.final_building.y_period_an < 1.25 * self.final_building.exp_period_y:
+            if self.final_building.ty_an < 1.25 * self.final_building.ty_exp:
                 if QMessageBox.question(None, 'Y Analytical Period', message % 'Y') == QMessageBox.No:
                     return
         return True

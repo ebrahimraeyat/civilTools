@@ -84,13 +84,13 @@ class Form(QtWidgets.QWidget):
         no_of_stories = d['no_of_story_x']
         cdx = d['cdx']
         cdy = d['cdy']
+        two_system = d.get('activate_second_system', False)
         if create_t_file:
             tx, ty, main_file = self.etabs.get_drift_periods(structure_type=structure_type)
             civiltools_config.save_analytical_periods(self.etabs, tx, ty)
             building = self.current_building(tx, ty)
             bot_story = d["bot_x_combo"]
             top_story = d["top_x_combo"]
-            two_system = d['activate_second_system']
             if two_system:
                 top_story = d["top_x1_combo"]
                 if building.x_system2.Ru >= building.x_system.Ru:
@@ -106,7 +106,6 @@ class Form(QtWidgets.QWidget):
                 find_etabs.show_win(win, in_mdi=False)
         # For two systems that not ticks the create t file, Temporary
         else:
-            two_system = d['activate_second_system']
             if two_system:
                 rux = d.get('Rux', None)
                 if rux:
@@ -195,7 +194,7 @@ class Form(QtWidgets.QWidget):
         importance_factor = float(d['importance_factor'])
         soil = d['soil_type']
         city = d['city']
-        two_system = d['activate_second_system']
+        two_system = d.get('activate_second_system', False)
         if two_system:
             height_x1 = d['height_x1']
             noStory1 = d['no_of_story_x1']
@@ -211,6 +210,7 @@ class Form(QtWidgets.QWidget):
             ySystem1 = None
             height_x1 = 0
             is_infill1 = False
+            noStory1=0
         #     if 
         #     no_of_stories = d['no_of_story_x'] + d['no_of_story_x1']
         height_x = d['height_x']
@@ -226,18 +226,19 @@ class Form(QtWidgets.QWidget):
                     risk_level,
                     importance_factor,
                     soil,
+                    city,
                     noStory,
                     height_x,
                     is_infill,
                     xSystem,
                     ySystem,
-                    city,
                     tx,
                     ty,
                     xSystem1,
                     ySystem1,
                     height_x1,
                     is_infill1,
+                    noStory1,
                     )
         return build
 
