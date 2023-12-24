@@ -31,8 +31,17 @@ class Form(QtWidgets.QWidget):
         ey = d.get('ey_combobox')
         eyp = d.get('eyp_combobox')
         eyn = d.get('eyn_combobox')
-        x_names = (ex, exp, exn)
-        y_names = (ey, eyp, eyn)
+        x_names = [ex, exp, exn]
+        y_names = [ey, eyp, eyn]
+        if d.get('activate_second_system', False):
+            ex1 = d.get('ex1_combobox')
+            exp1 = d.get('exp1_combobox')
+            exn1 = d.get('exn1_combobox')
+            ey1 = d.get('ey1_combobox')
+            eyp1 = d.get('eyp1_combobox')
+            eyn1 = d.get('eyn1_combobox')
+            x_names.extend((ex1, exp1, exn1))
+            y_names.extend((ey1, eyp1, eyn1))
         self.form.x_loadcase_list.addItems(x_names)
         self.form.y_loadcase_list.addItems(y_names)
         for lw in (self.form.x_loadcase_list, self.form.y_loadcase_list):

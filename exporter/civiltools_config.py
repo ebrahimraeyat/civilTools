@@ -1,8 +1,19 @@
 import json
-from json import JSONDecodeError
 from typing import Union
+from pathlib import Path
+import csv
 
 from PySide2 import QtCore
+
+from qt_models import treeview_system
+
+civiltools_path = Path(__file__).absolute().parent.parent
+
+from building.build import StructureSystem, Building
+from building import spectral
+from models import StructureModel
+from exporter import civiltools_config
+from db import ostanha
 
 def save(etabs, widget):
 	new_d = {}
@@ -80,6 +91,7 @@ def save(etabs, widget):
 		'top_story_for_height_checkbox_1',
 		'infill_1',
 		'activate_second_system',
+		'special_case',
 		'partition_dead_checkbox',
 		# Irregularity
 		'torsional_irregularity_groupbox',
@@ -135,6 +147,7 @@ def save(etabs, widget):
 	d = get_settings_from_etabs(etabs)
 	d.update(new_d)
 	set_settings_to_etabs(etabs, d)
+	return d
 
 def update_setting(
 	etabs,
@@ -219,7 +232,7 @@ def get_settings_from_etabs(etabs):
 	json_str = info[2][0]
 	try:
 		company_name = json.loads(json_str)
-	except JSONDecodeError:
+	except json.JSONDecodeError:
 		return d
 	if isinstance(company_name, dict):
 		d = company_name
@@ -229,6 +242,9 @@ def load(etabs, widget=None):
 	d = get_settings_from_etabs(etabs)
 	if widget is None:
 		return d
+	fill_cities(widget)
+	fill_height_and_no_of_stories(etabs, widget)
+	fill_top_bot_stories(etabs, widget)
 	keys = d.keys()
 	# Seismic
 	seismic_loads = etabs.load_patterns.get_seismic_load_patterns()
@@ -242,6 +258,8 @@ def load(etabs, widget=None):
 	):
 		for ecombobox in (e1combobox, e2combobox):
 			if hasattr(widget, ecombobox):
+				if d.get(ecombobox, None):
+					names.add(d[ecombobox])
 				if names:
 					# exec(f"all_item_text = [f'{widget.{ecombobox}.itemText('i')}' for i in range(widget.{ecombobox}.count())]")
 					# exec(f"add_names = {names}.difference(all_item_text)")
@@ -250,7 +268,7 @@ def load(etabs, widget=None):
 					exec(f"widget.{ecombobox}.addItems(names)")
 				if ecombobox in keys:
 					exec(f"index = widget.{ecombobox}.findText(d['{ecombobox}'])")
-					exec(f"widget.{ecombobox}.setCurrentIndex(index)")
+					exec(f"if index != -1: widget.{ecombobox}.setCurrentIndex(index)")
 	for key in (
 		'ostan',
 		'city',
@@ -304,6 +322,7 @@ def load(etabs, widget=None):
 		risk_level = d[key]
 		i = accs.index(risk_level)
 		widget.acc.setCurrentIndex(i)
+	setA(widget)
 
 	# Checkboxes
 	key = 'top_story_for_height_checkbox'
@@ -319,6 +338,7 @@ def load(etabs, widget=None):
 	for key in (
 		'infill',
 		'infill_1',
+		'special_case',
 		# Irregularity
 		'torsional_irregularity_groupbox',
 		'torsion_irregular_checkbox',
@@ -367,6 +387,7 @@ def load(etabs, widget=None):
 			'stories_for_height_groupox',
 			'infill_1',
 			'second_earthquake_properties',
+			'special_case',
 			):
 			if hasattr(widget, w):
 				exec(f"widget.{w}.setEnabled(checked)")
@@ -394,6 +415,7 @@ def load(etabs, widget=None):
 		if key in keys and hasattr(widget, key):
 			exec(f"widget.{key}.setValue(d['{key}'])")
 	# TreeViewes
+	set_system_treeview(widget)
 	if hasattr(widget, 'x_treeview') and hasattr(widget, 'y_treeview'):
 		x_item = d.get('x_system', [2, 1])
 		y_item = d.get('y_system', [2, 1])
@@ -412,3 +434,113 @@ def select_treeview_item(view, i, n):
 	view.clearSelection()
 	view.setCurrentIndex(child_index)
 	view.setExpanded(child_index, True)
+
+def set_system_treeview(widget):
+	items = {}
+
+	# Set some random data:
+	csv_path =  civiltools_path / 'db' / 'systems.csv'
+	with open(csv_path, 'r', encoding='utf-8') as f:
+		reader = csv.reader(f, delimiter=',')
+		for row in reader:
+			if (
+				row[0][1] in ['ا', 'ب', 'پ', 'ت', 'ث'] or
+				row[0][0] in ['ا', 'ب', 'پ', 'ت', 'ث']
+				):
+				i = row[0]
+				root = treeview_system.CustomNode(i)
+				items[i] = root
+			else:
+				root.addChild(treeview_system.CustomNode(row))
+	headers = ('System', 'Ru', 'Omega', 'Cd', 'H_max', 'alpha', 'beta', 'note', 'ID')
+	if hasattr(widget, 'x_treeview'):
+		widget.x_treeview.setModel(treeview_system.CustomModel(list(items.values()), headers=headers))
+		widget.x_treeview.setColumnWidth(0, 400)
+		for i in range(1,len(headers)):
+			widget.x_treeview.setColumnWidth(i, 40)
+	if hasattr(widget, 'y_treeview'):
+		widget.y_treeview.setModel(treeview_system.CustomModel(list(items.values()), headers=headers))
+		widget.y_treeview.setColumnWidth(0, 400)
+		for i in range(1,len(headers)):
+			widget.y_treeview.setColumnWidth(i, 40)
+	# second system
+	if hasattr(widget, 'x_treeview_1'):
+		widget.x_treeview_1.setModel(treeview_system.CustomModel(list(items.values()), headers=headers))
+		widget.x_treeview_1.setColumnWidth(0, 400)
+		for i in range(1,len(headers)):
+			widget.x_treeview_1.setColumnWidth(i, 40)
+	if hasattr(widget, 'y_treeview_1'):
+		widget.y_treeview_1.setModel(treeview_system.CustomModel(list(items.values()), headers=headers))
+		widget.y_treeview_1.setColumnWidth(0, 400)
+		for i in range(1,len(headers)):
+			widget.y_treeview_1.setColumnWidth(i, 40)
+
+def fill_cities(widget):
+	if hasattr(widget, 'ostan'):
+		ostans = ostanha.ostans.keys()
+		widget.ostan.addItems(ostans)
+
+def fill_top_bot_stories(etabs, widget):
+	stories = etabs.SapModel.Story.GetStories()[1]
+	for combo_box in (
+		'bot_x_combo',
+		'top_x_combo',
+		'top_story_for_height',
+		'bot_x1_combo',
+		'top_x1_combo',
+		'top_story_for_height1',
+	):
+		if hasattr(widget, combo_box):
+			exec(f'widget.{combo_box}.addItems(stories)')
+	n = len(stories)
+	if hasattr(widget, 'bot_x_combo'):
+		widget.bot_x_combo.setCurrentIndex(0)
+	if hasattr(widget, 'top_x_combo'):
+		widget.top_x_combo.setCurrentIndex(n - 1)
+	if hasattr(widget, 'top_story_for_height'):
+		if n > 1:
+			widget.top_story_for_height.setCurrentIndex(n - 2)
+		else:
+			widget.top_story_for_height.setCurrentIndex(n - 1)
+
+def fill_height_and_no_of_stories(etabs, widget):
+	if hasattr(widget, 'height_x') and hasattr(widget, 'no_of_story_x'):
+		if widget.top_story_for_height_checkbox.isChecked():
+			widget.top_story_for_height.setEnabled(True)
+			top_story_x = top_story_y = widget.top_story_for_height.currentText()
+		else:
+			widget.top_story_for_height.setEnabled(False)
+			top_story_x = top_story_y = widget.top_x_combo.currentText()
+		bot_story_x = bot_story_y = widget.bot_x_combo.currentText()
+		bot_level_x, top_level_x, bot_level_y, top_level_y = etabs.story.get_top_bot_levels(
+				bot_story_x, top_story_x, bot_story_y, top_story_y, False
+				)
+		hx, _ = etabs.story.get_heights(bot_story_x, top_story_x, bot_story_y, top_story_y, False)
+		nx, _ = etabs.story.get_no_of_stories(bot_level_x, top_level_x, bot_level_y, top_level_y)
+		widget.no_of_story_x.setValue(nx)
+		widget.height_x.setValue(hx)
+
+
+def get_current_ostan(widget):
+	return widget.ostan.currentText()
+
+def get_current_city(widget):
+	return widget.city.currentText()
+
+def get_citys_of_current_ostan(ostan):
+	'''return citys of ostan'''
+	return ostanha.ostans[ostan].keys()
+
+def setA(widget):
+	if hasattr(widget, 'risk_level'):
+		sotoh = ['خیلی زیاد', 'زیاد', 'متوسط', 'کم']
+		ostan = get_current_ostan(widget)
+		city = get_current_city(widget)
+		try:
+			A = int(ostanha.ostans[ostan][city][0])
+			i = widget.risk_level.findText(sotoh[A - 1])
+			widget.risk_level.setCurrentIndex(i)
+		except KeyError:
+			pass
+
+

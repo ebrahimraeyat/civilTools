@@ -23,10 +23,9 @@ class Form(QtWidgets.QWidget):
         self.form.load_combinations_view.index_activated = Signal(list)
         self.etabs = etabs_model
         self.fill_load_cases()
-        self.fill_cities()
         self.create_connections()
         self.load_config()
-        self.setA()
+        # self.setA()
         self.data = None
     
     def load_config(self):
@@ -222,17 +221,6 @@ class Form(QtWidgets.QWidget):
             dir_.add(name)
             combobox.addItems(dir_)
 
-    def setA(self):
-        sotoh = ['خیلی زیاد', 'زیاد', 'متوسط', 'کم']
-        ostan = self.get_current_ostan()
-        city = self.get_current_city()
-        try:
-            A = int(ostanha.ostans[ostan][city][0])
-            i = self.form.risk_level.findText(sotoh[A - 1])
-            self.form.risk_level.setCurrentIndex(i)
-        except KeyError:
-            pass
-    
     def get_acc(self, sath):
         sotoh = {'خیلی زیاد' : 0.35,
                 'زیاد' : 0.30,
@@ -258,11 +246,6 @@ class Form(QtWidgets.QWidget):
         # citys.sort()
         self.form.city.addItems(citys)
     
-    def fill_cities(self):
-        ostans = ostanha.ostans.keys()
-        self.form.ostan.addItems(ostans)
-        self.set_citys_of_current_ostan()
-
     def create_connections(self):
         self.form.create_button.clicked.connect(self.create)
         self.form.export_to_etabs_button.clicked.connect(self.export_to_etabs)

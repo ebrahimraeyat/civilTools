@@ -2,8 +2,8 @@ from PySide2.QtCore import QAbstractTableModel, Qt, QModelIndex
 from PySide2.QtGui import QFont, QColor
 
 
-X, Y = range(2)
-CFACTOR, K, TAN, CDRIFT, KDRIFT, TEXP125, TEXP, SYSTEM, LATERAL, RU, HMAX, OMEGA0, CD = range(13)
+X, Y, X1, Y1 = range(4)
+CFACTOR, K, CDRIFT, KDRIFT, TAN, TEXP, TEXP125, RU, HMAX, OMEGA0, CD, BTEIF = range(12)
 MAGIC_NUMBER = 0x570C4
 FILE_VERSION = 1
 
@@ -21,9 +21,11 @@ class StructureModel(QAbstractTableModel):
     def flags(self, index):
         if not index.isValid():
             return Qt.ItemIsEnabled
-        return Qt.ItemFlags(
-                QAbstractTableModel.flags(self, index) |
-                Qt.ItemIsEditable)
+        # row = index.row()
+        # if row == TAN:
+        #     return Qt.ItemFlags(
+        #         QAbstractTableModel.flags(self, index) | Qt.ItemIsEditable)
+        return Qt.ItemIsSelectable | Qt.ItemIsEnabled
 
     def data(self, index, role=Qt.DisplayRole):
         if not index.isValid():
@@ -38,26 +40,47 @@ class StructureModel(QAbstractTableModel):
             t_an = self.build.tx_an
             k = self.build.kx
             k_drift = self.build.kx_drift
+            b_teif = self.build.bx
             if self.build.results[0]:
                 c = self.build.results[1]
             if self.build.results_drift[0]:
                 c_drift = self.build.results_drift[1]
 
-        if column == Y:
+        elif column == Y:
             system = self.build.y_system
             t_exp = self.build.ty_exp
             t_an = self.build.ty_an
             k = self.build.ky
             k_drift = self.build.ky_drift
+            b_teif = self.build.by
             if self.build.results[0]:
                 c = self.build.results[2]
             if self.build.results_drift[0]:
                 c_drift = self.build.results_drift[2]
+        elif column == X1:
+            system = self.build.building2.x_system
+            t_exp = self.build.building2.tx_exp
+            t_an = self.build.building2.tx_an
+            k = self.build.building2.kx
+            k_drift = self.build.building2.kx_drift
+            b_teif = self.build.building2.bx
+            if self.build.building2.results[0]:
+                c = self.build.building2.results[1]
+            if self.build.building2.results_drift[0]:
+                c_drift = self.build.building2.results_drift[1]
+
+        elif column == Y1:
+            system = self.build.building2.y_system
+            t_exp = self.build.building2.ty_exp
+            t_an = self.build.building2.ty_an
+            k = self.build.building2.ky
+            k_drift = self.build.building2.ky_drift
+            b_teif = self.build.building2.by
+            if self.build.building2.results[0]:
+                c = self.build.building2.results[2]
+            if self.build.building2.results_drift[0]:
+                c_drift = self.build.building2.results_drift[2]
         if role == Qt.DisplayRole:
-            if row == SYSTEM:
-                return system.systemType
-            if row == LATERAL:
-                return system.lateralType
             if row == HMAX:
                 return str(system.maxHeight)
             if row == RU:
@@ -67,7 +90,7 @@ class StructureModel(QAbstractTableModel):
             if row == CD:
                 return str(system.cd)
             if row == TEXP:
-                return '{0:.4f}'.format(t_exp)
+                return f'{t_exp:.4f}'
             if row == TEXP125:
                 return f'{t_exp * 1.25:.4f}'
             if row == TAN:
@@ -86,6 +109,8 @@ class StructureModel(QAbstractTableModel):
                     return f'{c_drift:.4f}'
                 except:
                     pass
+            if row == BTEIF:
+                return f'{b_teif: .4f}'
         elif role == Qt.BackgroundColorRole:
             if row in (K, CFACTOR):
                 return QColor(100, 255, 100)
@@ -103,6 +128,24 @@ class StructureModel(QAbstractTableModel):
             return font
         elif role == Qt.TextAlignmentRole:
             return QVariant(int(Qt.AlignCenter | Qt.AlignVCenter))
+        
+    # def setData(self, index, value, role=Qt.EditRole):
+    #     if not index.isValid():
+    #         return False
+    #     col = index.column()
+    #     row = index.row()
+    #     if role == Qt.EditRole and row == TAN:
+    #         if col == X:
+    #             self.build.tx_an = float(value)
+    #         elif col == Y:
+    #             self.build.ty_an = float(value)
+    #         elif col == X1:
+    #             self.build.building2.tx_an = float(value)
+    #         elif col == Y1:
+    #             self.build.building2.ty_an = float(value)
+    #         self.dataChanged.emit(index, index)
+    #         return True
+    #     return False
 
     def headerData(self, section, orientation, role=Qt.DisplayRole):
         if role == Qt.TextAlignmentRole:
@@ -136,20 +179,16 @@ class StructureModel(QAbstractTableModel):
                     return font
         elif role == Qt.DisplayRole:
             if orientation == Qt.Vertical:
-                if section == SYSTEM:
-                    return "Category of System"
-                elif section == LATERAL:
-                    return "Seismic System"
-                elif section == HMAX:
+                if section == HMAX:
                     return 'H_max'
                 elif section == RU:
                     return 'Ru'
                 elif section == CD:
                     return 'Cd'
                 elif section == TEXP:
-                    return 't_exp'
+                    return 't_exp' # <html>X<span style=" vertical-align:sub;">Drift</span></html>'
                 elif section == TEXP125:
-                    return '1.25*t_exp'
+                    return '1.25 x t_exp'
                 elif section == TAN:
                     return 't_an'
                 elif section == K:
@@ -162,16 +201,25 @@ class StructureModel(QAbstractTableModel):
                     return 'K_drift'
                 elif section == CDRIFT:
                     return 'C_drift'
+                elif section == BTEIF:
+                    return 'B'
             elif orientation == Qt.Horizontal:
                 if section == X:
                     return 'X Dir'
                 elif section == Y:
                     return 'Y Dir'
+                elif section == X1:
+                    return 'X1 Dir'
+                elif section == Y1:
+                    return 'Y1 Dir'
 
     def rowCount(self, index=QModelIndex()):
-        return 13
+        return 12
 
     def columnCount(self, index=QModelIndex()):
-        return 2
+        if self.build.building2 is None:
+            return 2
+        else:
+            return 4
 
     

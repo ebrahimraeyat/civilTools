@@ -1,6 +1,7 @@
 from pathlib import Path
-import csv
+import copy
 
+import pandas as pd
 from PySide2 import  QtWidgets
 from PySide2 import QtCore
 
@@ -9,7 +10,6 @@ import FreeCADGui as Gui
 
 from db import ostanha
 from exporter import civiltools_config
-from qt_models import treeview_system
 
 from building.build import StructureSystem, Building
 
@@ -22,10 +22,10 @@ class Form(QtWidgets.QWidget):
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'civiltools_project_settings.ui'))
         self.etabs = etabs_model
         self.stories = self.etabs.SapModel.Story.GetStories()[1]
-        self.set_system_treeview()
-        self.fill_cities()
+        # self.set_system_treeview()
+        # self.fill_cities()
         self.create_connections()
-        self.fill_top_bot_stories()
+        # self.fill_top_bot_stories()
         self.fill_load_cases()
         self.load_config()
         # self.fill_height_and_no_of_stories()
@@ -245,6 +245,7 @@ class Form(QtWidgets.QWidget):
         self.form.second_earthquake_properties.setEnabled(checked)
         self.form.second_system_group_x.setEnabled(checked)
         self.form.second_system_group_y.setEnabled(checked)
+        self.form.special_case.setEnabled(checked)
         if checked:
             i = self.form.top_x_combo.currentIndex()
             self.form.bot_x1_combo.setCurrentIndex(i)
@@ -266,11 +267,12 @@ class Form(QtWidgets.QWidget):
         if not ret:
             return
         self.save_config()
+        # self.etabs.check_seismic_names(apply=True)
 
     def save_config(self):
-        tx, ty, tx1, ty1 = civiltools_config.get_analytical_periods(self.etabs)
+        # tx, ty, tx1, ty1 = civiltools_config.get_analytical_periods(self.etabs)
         civiltools_config.save(self.etabs, self.form)
-        civiltools_config.save_analytical_periods(self.etabs, tx, ty, tx1, ty1)
+        # civiltools_config.save_analytical_periods(self.etabs, tx, ty, tx1, ty1)
         param = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools")
         show_at_startup = self.form.show_at_startup.isChecked()
         param.SetBool("FirstTime", show_at_startup)
@@ -290,42 +292,6 @@ class Form(QtWidgets.QWidget):
         view.setCurrentIndex(index2)
         # view.setExpanded(index, False)
         view.setExpanded(index2, True)
-
-    def set_system_treeview(self):
-        items = {}
-
-        # Set some random data:
-        csv_path =  civiltools_path / 'db' / 'systems.csv'
-        with open(csv_path, 'r', encoding='utf-8') as f:
-            reader = csv.reader(f, delimiter=',')
-            for row in reader:
-                if (
-                    row[0][1] in ['ا', 'ب', 'پ', 'ت', 'ث'] or
-                    row[0][0] in ['ا', 'ب', 'پ', 'ت', 'ث']
-                    ):
-                    i = row[0]
-                    root = treeview_system.CustomNode(i)
-                    items[i] = root
-                else:
-                    root.addChild(treeview_system.CustomNode(row))
-        headers = ('System', 'Ru', 'Omega', 'Cd', 'H_max', 'alpha', 'beta', 'note', 'ID')
-        self.form.x_treeview.setModel(treeview_system.CustomModel(list(items.values()), headers=headers))
-        self.form.x_treeview.setColumnWidth(0, 400)
-        for i in range(1,len(headers)):
-            self.form.x_treeview.setColumnWidth(i, 40)
-        self.form.y_treeview.setModel(treeview_system.CustomModel(list(items.values()), headers=headers))
-        self.form.y_treeview.setColumnWidth(0, 400)
-        for i in range(1,len(headers)):
-            self.form.y_treeview.setColumnWidth(i, 40)
-        # second system
-        self.form.x_treeview_1.setModel(treeview_system.CustomModel(list(items.values()), headers=headers))
-        self.form.x_treeview_1.setColumnWidth(0, 400)
-        for i in range(1,len(headers)):
-            self.form.x_treeview_1.setColumnWidth(i, 40)
-        self.form.y_treeview_1.setModel(treeview_system.CustomModel(list(items.values()), headers=headers))
-        self.form.y_treeview_1.setColumnWidth(0, 400)
-        for i in range(1,len(headers)):
-            self.form.y_treeview_1.setColumnWidth(i, 40)
 
     def setA(self):
         sotoh = ['خیلی زیاد', 'زیاد', 'متوسط', 'کم']
@@ -401,6 +367,12 @@ class Form(QtWidgets.QWidget):
             QtWidgets.QMessageBox.critical(self, "ایراد در انتخاب سیستم اول", title % direction + '\n' + str(err))
             return False
         if building1 is not None:
+            if self.form.special_case.isChecked():
+                if (building.x_system.Ru != building1.x_system.Ru) or (
+                    building.y_system.Ru != building1.y_system.Ru):
+                    QtWidgets.QMessageBox.critical(self,  "سیستم دوگانه در ارتفاع" , 
+                                                "در حال حاضر نرم افزار نمیتواند سیستم های دوگانه خاص که ضریب رفتار سازه بالا و سازه پایینی برابر نیست را تحلیل کند.")
+                    return False
             if (building.x_system.Ru < building1.x_system.Ru) or (
                 building.y_system.Ru < building1.y_system.Ru):
                 QtWidgets.QMessageBox.critical(self,  "سیستم دوگانه در ارتفاع" , 

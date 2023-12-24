@@ -1,5 +1,4 @@
 from pathlib import Path
-import csv
 
 import numpy as np
 
@@ -28,7 +27,6 @@ from building.build import StructureSystem, Building
 from building import spectral
 from models import StructureModel
 from exporter import civiltools_config
-from qt_models import treeview_system
 from db import ostanha
 import civiltools_rc
 
@@ -41,32 +39,34 @@ class Form(QtWidgets.QWidget):
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'earthquake_factor.ui'))
         self.etabs = etabs_model
         self.stories = self.etabs.SapModel.Story.GetStories()[1]
-        self.fill_cities()
+        # self.fill_cities()
         self.set_plot_widget()
-        self.set_system_treeview()
-        self.fill_height_and_no_of_stories()
-        self.fill_top_bot_stories()
+        # self.fill_height_and_no_of_stories()
+        # self.fill_top_bot_stories()
         self.create_connections()
         self.load_config()
         self.final_building = self.current_building()
+        if self.final_building.building2 is None:
+            self.set_enabled_tan(False)
         self.structure_model = StructureModel(self.final_building)
         self.form.structure_properties_table.setModel(self.structure_model)
         self.update_sa_plot()
         self.calculate()
-        self.set_bx_by()
-        self.set_x_system_property()
-        self.set_y_system_property()
 
     def create_connections(self):
-        self.form.tx_an.valueChanged.connect(self.calculate)
-        self.form.ty_an.valueChanged.connect(self.calculate)
-        self.form.risk_level.currentIndexChanged.connect(self.calculate)
-        self.form.soil_type.currentIndexChanged.connect(self.calculate)
-        self.form.importance_factor.currentIndexChanged.connect(self.calculate)
-        self.form.height_x.valueChanged.connect(self.calculate)
+        # self.form.risk_level.currentIndexChanged.connect(self.calculate)
+        # self.form.soil_type.currentIndexChanged.connect(self.calculate)
+        # self.form.importance_factor.currentIndexChanged.connect(self.calculate)
+        # self.form.height_x.valueChanged.connect(self.calculate)
+        # self.form.tx_an.valueChanged.connect(self.calculate)
+        # self.form.ty_an.valueChanged.connect(self.calculate)
+        # self.form.tx1_an.valueChanged.connect(self.calculate)
+        # self.form.ty1_an.valueChanged.connect(self.calculate)
+        self.form.activate_second_system.clicked.connect(self.second_system_clicked)
 
         self.form.apply_to_etabs.clicked.connect(self.apply_factors_to_etabs)
         self.form.export_to_word.clicked.connect(self.export_to_word)
+        self.form.calculate.clicked.connect(self.calculate)
 
         self.form.ostan.currentIndexChanged.connect(self.set_citys_of_current_ostan)
         self.form.city.currentIndexChanged.connect(self.setA)
@@ -78,11 +78,46 @@ class Form(QtWidgets.QWidget):
         # self.form.save_pushbutton.clicked.connect(self.save)
         self.form.top_story_for_height_checkbox.clicked.connect(self.fill_height_and_no_of_stories)
         self.form.top_story_for_height.currentIndexChanged.connect(self.fill_height_and_no_of_stories)
+        self.form.top_story_for_height_checkbox_1.clicked.connect(self.fill_height_and_no_of_stories)
+        self.form.top_story_for_height1.currentIndexChanged.connect(self.fill_height_and_no_of_stories)
+        # self.form.x_treeview.clicked.connect(self.calculate)
+        # self.form.y_treeview.clicked.connect(self.calculate)
+        # self.form.x_treeview_1.clicked.connect(self.calculate)
+        # self.form.y_treeview_1.clicked.connect(self.calculate)
 
-        self.form.x_treeview.clicked.connect(self.set_x_system_property)
-        self.form.y_treeview.clicked.connect(self.set_y_system_property)
-        self.form.x_treeview.clicked.connect(self.calculate)
-        self.form.y_treeview.clicked.connect(self.calculate)
+    def second_system_clicked(self, checked:bool):
+        self.form.x_system_label.setEnabled(checked)
+        self.form.y_system_label.setEnabled(checked)
+        self.form.x_treeview_1.setEnabled(checked)
+        self.form.y_treeview_1.setEnabled(checked)
+        self.form.stories_for_apply_earthquake_groupox.setEnabled(checked)
+        self.form.stories_for_height_groupox.setEnabled(checked)
+        self.form.infill_1.setEnabled(checked)
+        self.form.top_story_for_height_checkbox.setEnabled(not checked)
+        self.form.top_story_for_height_checkbox.setChecked(not checked)
+        self.form.top_story_for_height.setEnabled(not checked)
+        self.form.second_earthquake_properties.setEnabled(checked)
+        self.form.second_system_group_x.setEnabled(checked)
+        self.form.second_system_group_y.setEnabled(checked)
+        self.form.special_case.setEnabled(checked)
+        self.set_enabled_tan(checked)
+        if checked:
+            i = self.form.top_x_combo.currentIndex()
+            self.form.bot_x1_combo.setCurrentIndex(i)
+            i = self.form.top_x_combo.count()
+            if i >= 2:
+                i -= 2
+            else:
+                i -= 1
+            self.form.top_x1_combo.setCurrentIndex(i)
+    
+    def set_enabled_tan(self, checked):
+        self.form.tx1_an.setEnabled(checked)
+        self.form.ty1_an.setEnabled(checked)
+        self.form.tan_sec_label.setEnabled(checked)
+        self.form.tx_all_an.setEnabled(checked)
+        self.form.ty_all_an.setEnabled(checked)
+        self.form.tan_all_label.setEnabled(checked)
 
     def set_plot_widget(self):
         self.graphWidget = pg.PlotWidget()
@@ -118,32 +153,6 @@ class Form(QtWidgets.QWidget):
         # view.setExpanded(index, False)
         view.setExpanded(index2, True)
 
-    def set_system_treeview(self):
-        items = {}
-
-        # Set some random data:
-        csv_path =  civiltools_path / 'db' / 'systems.csv'
-        with open(csv_path, 'r', encoding='utf-8') as f:
-            reader = csv.reader(f, delimiter=',')
-            for row in reader:
-                if (
-                    row[0][1] in ['ا', 'ب', 'پ', 'ت', 'ث'] or
-                    row[0][0] in ['ا', 'ب', 'پ', 'ت', 'ث']
-                    ):
-                    i = row[0]
-                    root = treeview_system.CustomNode(i)
-                    items[i] = root
-                else:
-                    root.addChild(treeview_system.CustomNode(row))
-        headers = ('System', 'Ru', 'Omega', 'Cd', 'H_max', 'alpha', 'beta', 'note', 'ID')
-        self.form.x_treeview.setModel(treeview_system.CustomModel(list(items.values()), headers=headers))
-        self.form.x_treeview.setColumnWidth(0, 400)
-        for i in range(1,len(headers)):
-            self.form.x_treeview.setColumnWidth(i, 40)
-        self.form.y_treeview.setModel(treeview_system.CustomModel(list(items.values()), headers=headers))
-        self.form.y_treeview.setColumnWidth(0, 400)
-        for i in range(1,len(headers)):
-            self.form.y_treeview.setColumnWidth(i, 40)
 
     def get_system(self, view):
         ret = civiltools_config.get_treeview_item_prop(view)
@@ -156,55 +165,30 @@ class Form(QtWidgets.QWidget):
             system = StructureSystem(system, lateral, 'Y')
         return system
 
+    # def fill_cities(self):
+    #     ostans = ostanha.ostans.keys()
+    #     self.form.ostan.addItems(ostans)
+    #     self.set_citys_of_current_ostan()
 
-    def set_x_system_property(self):
-        index = self.form.x_treeview.selectedIndexes()[0]
-        if index.isValid():
-            data = index.internalPointer()._data
-            if len(data) == 1:
-                return
-            try:
-                r = float(data[1])
-                self.form.rux.setValue(r)
-            except:
-                pass
-    
-    def set_y_system_property(self):
-        index = self.form.y_treeview.selectedIndexes()[0]
-        if index.isValid():
-            data = index.internalPointer()._data
-            if len(data) == 1:
-                return
-            try:
-                r = float(data[1])
-                self.form.ruy.setValue(r)
-            except:
-                pass
-
-    def set_bx(self):
-        self.form.bx.setText(f'{self.final_building.bx:0.3f}')
-    
-    def set_by(self):
-        self.form.by.setText(f'{self.final_building.by:0.3f}')
-
-    def fill_cities(self):
-        ostans = ostanha.ostans.keys()
-        self.form.ostan.addItems(ostans)
-        self.set_citys_of_current_ostan()
-
-    def fill_top_bot_stories(self):
-        for combo_box in (
-            self.form.bot_x_combo,
-            self.form.top_x_combo,
-            self.form.top_story_for_height,
-            # self.form.bot_y_combo,
-            # self.form.top_y_combo,
-        ):
-            combo_box.addItems(self.stories)
-        n = len(self.stories)
-        self.form.bot_x_combo.setCurrentIndex(0)
-        self.form.top_x_combo.setCurrentIndex(n - 1)
-        self.form.top_story_for_height.setCurrentIndex(n - 2)
+    # def fill_top_bot_stories(self):
+    #     for combo_box in (
+    #         self.form.bot_x_combo,
+    #         self.form.top_x_combo,
+    #         self.form.top_story_for_height,
+    #         self.form.bot_x1_combo,
+    #         self.form.top_x1_combo,
+    #         self.form.top_story_for_height1,
+    #         # self.form.bot_y_combo,
+    #         # self.form.top_y_combo,
+    #     ):
+    #         combo_box.addItems(self.stories)
+    #     n = len(self.stories)
+    #     self.form.bot_x_combo.setCurrentIndex(0)
+    #     self.form.top_x_combo.setCurrentIndex(n - 1)
+    #     if n > 1:
+    #         self.form.top_story_for_height.setCurrentIndex(n - 2)
+    #     else:
+    #         self.form.top_story_for_height.setCurrentIndex(n - 1)
         # self.form.bot_y_combo.setCurrentIndex(0)
         # self.form.top_y_combo.setCurrentIndex(n - 2)
 
@@ -226,6 +210,26 @@ class Form(QtWidgets.QWidget):
         self.form.no_of_story_x.setValue(nx)
         # self.form.no_story_y_spinbox.setValue(ny)
         self.form.height_x.setValue(hx)
+        # self.form.height_y_spinbox.setValue(hy)
+
+        # second system 
+        if self.form.top_story_for_height_checkbox_1.isChecked():
+            self.form.top_story_for_height1.setEnabled(True)
+            top_story_x1 = top_story_y1 = self.form.top_story_for_height1.currentText()
+        else:
+            self.form.top_story_for_height1.setEnabled(False)
+            top_story_x1 = top_story_y1 = self.form.top_x1_combo.currentText()
+        bot_story_x1 = bot_story_y1 = self.form.bot_x1_combo.currentText()
+        # bot_story_y = self.form.bot_y_combo.currentText()
+        # top_story_y = self.form.top_y_combo.currentText()
+        bot_level_x1, top_level_x1, bot_level_y1, top_level_y1 = self.etabs.story.get_top_bot_levels(
+                bot_story_x1, top_story_x1, bot_story_y1, top_story_y1, False
+                )
+        hx, hy = self.etabs.story.get_heights(bot_story_x1, top_story_x1, bot_story_y1, top_story_y1, False)
+        nx, ny = self.etabs.story.get_no_of_stories(bot_level_x1, top_level_x1, bot_level_y1, top_level_y1)
+        self.form.no_of_story_x1.setValue(nx)
+        # self.form.no_story_y_spinbox.setValue(ny)
+        self.form.height_x1.setValue(hx)
         # self.form.height_y_spinbox.setValue(hy)
 
     def get_acc(self, sath):
@@ -263,11 +267,23 @@ class Form(QtWidgets.QWidget):
             self.form.risk_level.setCurrentIndex(i)
         except KeyError:
             pass
+    
+    def closeEvent(self, event):
+        print('close event')
+        qsettings = QSettings("civiltools", "cfactor")
+        qsettings.setValue("geometry", self.saveGeometry())
+        qsettings.setValue("saveState", self.saveState())
+        # qsettings.setValue( "maximized", self.isMaximized() )
+        qsettings.setValue("splitter", self.form.splitter.saveState())
+        # if not self.isMaximized() == True :
+        qsettings.setValue("pos", self.pos())
+        qsettings.setValue("size", self.size())
+        self.accept(event)
         
     def load_settings(self):
         qsettings = QSettings("civiltools", "cfactor")
         self.restoreGeometry(qsettings.value("geometry", self.saveGeometry()))
-        self.form.hsplitter1.restoreState(qsettings.value("hsplitter1", self.form.hsplitter1.saveState()))
+        self.form.splitter.restoreState(qsettings.value("splitter", self.form.splitter.saveState()))
 
     def load_config(self):  
         civiltools_config.load(self.etabs, self.form)
@@ -275,20 +291,15 @@ class Form(QtWidgets.QWidget):
     def save_config(self):
         civiltools_config.save(self.etabs, self.form)
 
-    def getTAnalatical(self):
-        tx_an = self.form.tx_an.value()
-        ty_an = self.form.ty_an.value()
-        return tx_an, ty_an
-
     def setSoilProperties(self, build=None):
         if not build:
             build = self.current_building()
         xrf = build.soil_reflection_prop_x
         yrf = build.soil_reflection_prop_y
-        soilProp = [build.soilType, xrf.T0, xrf.Ts, xrf.S, xrf.S0]
-        xSoilProp = [xrf.B1, xrf.N, build.bx]
-        ySoilProp = [yrf.B1, yrf.N, build.by]
-        for row, item in enumerate(soilProp):
+        soil_prop = [build.soilType, xrf.T0, xrf.Ts, xrf.S, xrf.S0]
+        xsoil_prop = [xrf.B1, xrf.N, build.bx]
+        ysoil_prop = [yrf.B1, yrf.N, build.by]
+        for row, item in enumerate(soil_prop):
             if row == 0:
                 item = QTableWidgetItem("%s " % item)
             else:
@@ -296,23 +307,27 @@ class Form(QtWidgets.QWidget):
             item.setTextAlignment(Qt.AlignCenter)
             self.form.soilPropertiesTable.setItem(row, 0, item)
 
-        for row, item in enumerate(xSoilProp):
+        for row, item in enumerate(xsoil_prop):
             item = QTableWidgetItem("%.2f " % item)
             item.setTextAlignment(Qt.AlignCenter)
-            self.form.soilPropertiesTable.setItem(row + len(soilProp), 0, item)
+            self.form.soilPropertiesTable.setItem(row + len(soil_prop), 0, item)
 
-        for row, item in enumerate(ySoilProp):
+        for row, item in enumerate(ysoil_prop):
             item = QTableWidgetItem("%.2f " % item)
             item.setTextAlignment(Qt.AlignCenter)
-            self.form.soilPropertiesTable.setItem(row + len(soilProp), 1, item)
+            self.form.soilPropertiesTable.setItem(row + len(soil_prop), 1, item)
 
-    def set_bx_by(self):
-        if hasattr(self, 'final_building'):
-            self.form.bx.setValue(self.final_building.bx)
-            self.form.by.setValue(self.final_building.by)
+    def get_t_an(self):
+        tx_an_1 = self.form.tx_an.value()
+        ty_an_1 = self.form.ty_an.value()
+        tx_an_2 = self.form.tx1_an.value()
+        ty_an_2 = self.form.ty1_an.value()
+        tx_an_all = self.form.tx_all_an.value()
+        ty_an_all = self.form.ty_all_an.value()
+        return tx_an_1, ty_an_1, tx_an_2, ty_an_2, tx_an_all, ty_an_all
 
     def current_building(self):
-        tx_an, ty_an = self.getTAnalatical()
+        tx_an_1, ty_an_1, tx_an_2, ty_an_2, tx_an_all, ty_an_all = self.get_t_an()
         risk_level = self.form.risk_level.currentText()
         city = self.form.city.currentText()
         soil = self.form.soil_type.currentText()
@@ -322,8 +337,19 @@ class Form(QtWidgets.QWidget):
         is_infill = self.form.infill.isChecked()
         x_system = self.get_system(self.form.x_treeview)
         y_system = self.get_system(self.form.y_treeview)
+        x_system_2 = None
+        y_system_2 = None
+        height_2 = 0
+        no_of_story_2 = 0
+        is_infill_2 = False
         if x_system is None or y_system is None:
             return
+        if self.form.activate_second_system.isChecked():
+            x_system_2 = self.get_system(self.form.x_treeview_1)
+            y_system_2 = self.get_system(self.form.y_treeview_1)
+            height_2 = self.form.height_x1.value()
+            no_of_story_2 = self.form.no_of_story_x1.value()
+            is_infill_2 = self.form.infill_1.isChecked()
         build = Building(
                     risk_level,
                     importance_factor,
@@ -334,8 +360,17 @@ class Form(QtWidgets.QWidget):
                     is_infill,
                     x_system,
                     y_system,
-                    tx_an,
-                    ty_an,
+                    tx_an_1,
+                    ty_an_1,
+                    x_system_2,
+                    y_system_2,
+                    height_2,
+                    is_infill_2,
+                    no_of_story_2,
+                    tx_an_2,
+                    ty_an_2,
+                    tx_an_all,
+                    ty_an_all,
                     )
         return build
 
@@ -351,8 +386,6 @@ class Form(QtWidgets.QWidget):
         if results[0] is False:
             title, err, direction = results[1:]
             QMessageBox.critical(self, title % direction, str(err))
-        else:
-            self.set_bx_by()
 
     def check_analytical_period(self):
         if self.final_building:
@@ -369,24 +402,76 @@ class Form(QtWidgets.QWidget):
         return True
 
     def apply_factors_to_etabs(self):
+        d = civiltools_config.save(self.etabs, self.form)
+        # second_system = d.get('activate_second_system', False)
+        # special_case = d.get('special_case', False)
+        # if second_system:
+        #     rux = self.final_building.x_system.Ru
+        #     rux2 = self.final_building.building2.x_system.Ru
+        #     ruy = self.final_building.y_system.Ru
+        #     ruy2 = self.final_building.building2.y_system.Ru
+        #     if special_case:
+        #         if rux != rux2 or ruy != ruy2:
+        #             QMessageBox.warning(None, 'Not Implemented', "Can not apply earthquake for not equal Ru systems.")
+        #             return
+        #     else:
+        #         if 
+        #             cdx = self.final_building.x_system2.cd
+        #         if self.final_building.y_system2.Ru >= self.final_building.y_system.Ru:
+        #             cdy = self.final_building.y_system2.cd
         ret = self.check_analytical_period()
         if not ret:
             return
-        bot_story = self.form.bot_x_combo.currentText()
-        top_story = self.form.top_x_combo.currentText()
-        ret = self.etabs.apply_cfactor_to_edb(
-                self.final_building,
-                bot_story,
-                top_story,
-                )
+        data = self.get_data_for_apply_earthquakes(d)
+        if data is None:
+            return
+        ret = self.etabs.apply_cfactors_to_edb(data)
         if ret == 1:
             msg = "Data can not be written to your Etabs file,\n If you want to correct this problem, try Run analysis."
             title = "Remove Error?"
             QMessageBox.information(None, title, msg)
             return
         msg = "Successfully written to Etabs."
-        civiltools_config.save(self.etabs, self.form)
         QMessageBox.information(None, "done", msg)
+
+    def get_data_for_apply_earthquakes(self, d: dict):
+        bot_1, top_1, bot_2, top_2 = self.etabs.get_top_bot_stories(d)
+        # get bottom system data
+        first_system_seismic = self.etabs.get_first_system_seismic(d)
+        cx_1, cy_1 = self.final_building.results[1:]
+        kx_1, ky_1 = self.final_building.kx, self.final_building.ky
+        data = []
+        # Check if second system is active
+        if self.form.activate_second_system.isChecked():
+            # get top system data
+            second_system_seismic = self.etabs.get_second_system_seismic(d)
+            cx_2, cy_2 = self.final_building.building2.results[1:]
+            kx_2, ky_2 = self.final_building.building2.kx, self.final_building.building2.ky
+            # Special case with Ru_bot = Ru_top
+            if self.form.special_case.isChecked() and \
+            self.final_building.x_system.Ru == self.final_building.building2.x_system.Ru and \
+            self.final_building.y_system.Ru == self.final_building.building2.y_system.Ru:
+                # get bottom system data
+                data.append((first_system_seismic[:3], [top_1, bot_1, str(cx_1), str(kx_1)]))
+                data.append((first_system_seismic[3:], [top_1, bot_1, str(cy_1), str(ky_1)]))
+                # get top system data
+                data.append((second_system_seismic[:3], [top_2, bot_2, str(cx_2), str(kx_2)]))
+                data.append((second_system_seismic[3:], [top_2, bot_2, str(cy_2), str(ky_2)]))
+            # case B, Ru_bot >= Ru_top
+            elif self.final_building.x_system.Ru >= self.final_building.building2.x_system.Ru and \
+            self.final_building.y_system.Ru >= self.final_building.building2.y_system.Ru:
+                cx_all, cy_all = self.final_building.results_all_top[1:]
+                kx_all, ky_all = self.final_building.kx_all, self.final_building.ky_all
+                data.append((first_system_seismic[:3], [top_2, bot_1, str(cx_all), str(kx_all)]))
+                data.append((first_system_seismic[3:], [top_2, bot_1, str(cy_all), str(ky_all)]))
+            else:
+                QMessageBox.warning(None, "Not Implemented", "Can not apply earthquake for your systems")
+                return None
+        else:
+            # get bottom system data
+            data.append((first_system_seismic[:3], [top_1, bot_1, str(cx_1), str(kx_1)]))
+            data.append((first_system_seismic[3:], [top_1, bot_1, str(cy_1), str(ky_1)]))
+        return data
 
     def exportBCurveToImage(self):
         export_graph = export.ExportGraph(self, self.lastDirectory, self.p)
