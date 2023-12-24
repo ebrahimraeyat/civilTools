@@ -268,6 +268,17 @@ class Form(QtWidgets.QWidget):
         else:
             self.form.ev_negative.setChecked(True)
 
+    def setA(self):
+        sotoh = ['خیلی زیاد', 'زیاد', 'متوسط', 'کم']
+        ostan = self.get_current_ostan()
+        city = self.get_current_city()
+        try:
+            A = int(ostanha.ostans[ostan][city][0])
+            i = self.form.risk_level.findText(sotoh[A - 1])
+            self.form.risk_level.setCurrentIndex(i)
+        except KeyError:
+            pass
+
     def partition_dead_clicked(self):
         if self.form.partition_dead_checkbox.isChecked():
             self.form.partition_live_checkbox.setChecked(False)
