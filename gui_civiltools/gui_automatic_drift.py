@@ -52,7 +52,7 @@ class CivilAutomaticDrift:
             if len(d) == 0:
                 return
         from py_widget import drift
-        win = drift.Form(etabs)
+        win = drift.Form(etabs, d)
         find_etabs.show_win(win, in_mdi=False)
         show_warning_about_number_of_use(check)
         

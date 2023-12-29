@@ -63,6 +63,23 @@ def save(etabs, widget):
 		'eyn1_combobox',
 		'rhox1_combobox',
 		'rhoy1_combobox',
+		# Seismic Drifts
+		'ex_drift_combobox',
+		'exp_drift_combobox',
+		'exn_drift_combobox',
+		'ey_drift_combobox',
+		'eyp_drift_combobox',
+		'eyn_drift_combobox',
+		'rhox_drift_combobox',
+		'rhoy_drift_combobox',
+		'ex1_drift_combobox',
+		'exp1_drift_combobox',
+		'exn1_drift_combobox',
+		'ey1_drift_combobox',
+		'eyp1_drift_combobox',
+		'eyn1_drift_combobox',
+		'rhox1_drift_combobox',
+		'rhoy1_drift_combobox',
 		):
 		if hasattr(widget, key):
 			exec(f"new_d['{key}'] = widget.{key}.currentText()")
@@ -238,8 +255,13 @@ def get_settings_from_etabs(etabs):
 		d = company_name
 	return d
 
-def load(etabs, widget=None):
-	d = get_settings_from_etabs(etabs)
+def load(
+		etabs,
+		widget=None,
+		d=None,
+		):
+	if d is None:
+		d = get_settings_from_etabs(etabs)
 	if widget is None:
 		return d
 	fill_cities(widget)
@@ -255,6 +277,29 @@ def load(etabs, widget=None):
 		('ey_combobox', 'ey1_combobox'),
 		('eyn_combobox', 'eyn1_combobox'),
 		('eyp_combobox', 'eyp1_combobox')), seismic_loads
+	):
+		for ecombobox in (e1combobox, e2combobox):
+			if hasattr(widget, ecombobox):
+				if d.get(ecombobox, None):
+					names.add(d[ecombobox])
+				if names:
+					# exec(f"all_item_text = [f'{widget.{ecombobox}.itemText('i')}' for i in range(widget.{ecombobox}.count())]")
+					# exec(f"add_names = {names}.difference(all_item_text)")
+					# exec("print(names, ecombobox)")
+					exec(f"widget.{ecombobox}.clear()")
+					exec(f"widget.{ecombobox}.addItems(names)")
+				if ecombobox in keys:
+					exec(f"index = widget.{ecombobox}.findText(d['{ecombobox}'])")
+					exec(f"if index != -1: widget.{ecombobox}.setCurrentIndex(index)")
+	# Seismic Drifts
+	seismic_loads = etabs.load_patterns.get_seismic_load_patterns(drifts=True)
+	for (e1combobox, e2combobox), names in zip((
+		('ex_drift_combobox', 'ex1_drift_combobox'),
+		('exn_drift_combobox', 'exn1_drift_combobox'),
+		('exp_drift_combobox', 'exp1_drift_combobox'),
+		('ey_drift_combobox', 'ey1_drift_combobox'),
+		('eyn_drift_combobox', 'eyn1_drift_combobox'),
+		('eyp_drift_combobox', 'eyp1_drift_combobox')), seismic_loads
 	):
 		for ecombobox in (e1combobox, e2combobox):
 			if hasattr(widget, ecombobox):
@@ -387,6 +432,7 @@ def load(etabs, widget=None):
 			'stories_for_height_groupox',
 			'infill_1',
 			'second_earthquake_properties',
+			'second_earthquake_properties_drifts',
 			'special_case',
 			):
 			if hasattr(widget, w):

@@ -243,8 +243,11 @@ class Form(QtWidgets.QWidget):
         self.form.top_story_for_height_checkbox.setChecked(not checked)
         self.form.top_story_for_height.setEnabled(not checked)
         self.form.second_earthquake_properties.setEnabled(checked)
+        self.form.second_earthquake_properties_drifts.setEnabled(checked)
         self.form.second_system_group_x.setEnabled(checked)
         self.form.second_system_group_y.setEnabled(checked)
+        self.form.second_system_drift_group_x.setEnabled(checked)
+        self.form.second_system_drift_group_y.setEnabled(checked)
         self.form.special_case.setEnabled(checked)
         if checked:
             i = self.form.top_x_combo.currentIndex()
@@ -264,6 +267,9 @@ class Form(QtWidgets.QWidget):
         
     def save(self):
         ret = self.check_inputs()
+        if not ret:
+            return
+        ret = self.check_seismic_names()
         if not ret:
             return
         self.save_config()
@@ -383,6 +389,56 @@ class Form(QtWidgets.QWidget):
                 title, err, direction = results[1:]
                 QtWidgets.QMessageBox.critical(self, "ایراد در انتخاب سیستم دوم", title % direction + '\n' + str(err))
                 return False
+        return True
+    
+    def check_seismic_names(self):
+        # first system
+        ex = self.form.ex_combobox.currentText()
+        exp = self.form.exp_combobox.currentText()
+        exn = self.form.exn_combobox.currentText()
+        ey = self.form.ey_combobox.currentText()
+        eyp = self.form.eyp_combobox.currentText()
+        eyn = self.form.eyn_combobox.currentText()
+        ex_drift = self.form.ex_drift_combobox.currentText()
+        exp_drift = self.form.exp_drift_combobox.currentText()
+        exn_drift = self.form.exn_drift_combobox.currentText()
+        ey_drift = self.form.ey_drift_combobox.currentText()
+        eyp_drift = self.form.eyp_drift_combobox.currentText()
+        eyn_drift = self.form.eyn_drift_combobox.currentText()
+        title1 = 'Empty earthquake name'
+        warning1 = 'Earthquake names can not be empty, correct the  %s earthquake names.'
+        title2 = 'Similar earthquake name'
+        warning2 = 'Earthquake names can not be similar, correct the  %s earthquake names.'
+        first_system_names = (ex, exp, exn, ey, eyp, eyn, ex_drift, exp_drift, exn_drift, ey_drift, eyp_drift, eyn_drift)
+        for e in first_system_names:
+            if e.strip(' ') == '':
+                QtWidgets.QMessageBox.warning(None, title1, warning1%('first system') )
+                return None
+        if len(set(first_system_names)) != 12:
+            QtWidgets.QMessageBox.warning(None, title2, warning2%('first system'))
+            return None
+        # Second system
+        if self.form.activate_second_system.isChecked():
+            ex1 = self.form.ex1_combobox.currentText()
+            exp1 = self.form.exp1_combobox.currentText()
+            exn1 = self.form.exn1_combobox.currentText()
+            ey1 = self.form.ey1_combobox.currentText()
+            eyp1 = self.form.eyp1_combobox.currentText()
+            eyn1 = self.form.eyn1_combobox.currentText()
+            ex1_drift = self.form.ex1_drift_combobox.currentText()
+            exp1_drift = self.form.exp1_drift_combobox.currentText()
+            exn1_drift = self.form.exn1_drift_combobox.currentText()
+            ey1_drift = self.form.ey1_drift_combobox.currentText()
+            eyp1_drift = self.form.eyp1_drift_combobox.currentText()
+            eyn1_drift = self.form.eyn1_drift_combobox.currentText()
+            second_system_names = (ex1, exp1, exn1, ey1, eyp1, eyn1, ex1_drift, exp1_drift, exn1_drift, ey1_drift, eyp1_drift, eyn1_drift)
+            for e in second_system_names:
+                if e.strip(' ') == '':
+                    QtWidgets.QMessageBox.warning(None, title1, warning1%('second system') )
+                    return None
+            if len(set(first_system_names + second_system_names)) != 24:
+                QtWidgets.QMessageBox.warning(None, title2, warning2%('second system'))
+                return None
         return True
 
     def get_system(self, view):

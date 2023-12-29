@@ -555,6 +555,168 @@
              </layout>
             </item>
             <item>
+             <widget class="QGroupBox" name="second_earthquake_properties_3">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="title">
+               <string>Drifts</string>
+              </property>
+              <property name="checkable">
+               <bool>false</bool>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_15">
+               <item>
+                <widget class="QGroupBox" name="groupBox_13">
+                 <property name="title">
+                  <string>X</string>
+                 </property>
+                 <layout class="QFormLayout" name="formLayout_15">
+                  <item row="0" column="0">
+                   <widget class="QLabel" name="label_63">
+                    <property name="enabled">
+                     <bool>true</bool>
+                    </property>
+                    <property name="text">
+                     <string>EX</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="1">
+                   <widget class="QComboBox" name="ex_drift_combobox">
+                    <property name="enabled">
+                     <bool>true</bool>
+                    </property>
+                    <property name="editable">
+                     <bool>true</bool>
+                    </property>
+                    <item>
+                     <property name="text">
+                      <string>EX(Drift)</string>
+                     </property>
+                    </item>
+                   </widget>
+                  </item>
+                  <item row="1" column="0">
+                   <widget class="QLabel" name="label_64">
+                    <property name="text">
+                     <string>EXP</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="1">
+                   <widget class="QComboBox" name="exp_drift_combobox">
+                    <property name="editable">
+                     <bool>true</bool>
+                    </property>
+                    <item>
+                     <property name="text">
+                      <string>EXP(Drift)</string>
+                     </property>
+                    </item>
+                   </widget>
+                  </item>
+                  <item row="2" column="0">
+                   <widget class="QLabel" name="label_65">
+                    <property name="text">
+                     <string>EXN</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="1">
+                   <widget class="QComboBox" name="exn_drift_combobox">
+                    <property name="editable">
+                     <bool>true</bool>
+                    </property>
+                    <item>
+                     <property name="text">
+                      <string>EXN(Drift)</string>
+                     </property>
+                    </item>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item>
+                <widget class="QGroupBox" name="groupBox_21">
+                 <property name="title">
+                  <string>Y</string>
+                 </property>
+                 <layout class="QFormLayout" name="formLayout_16">
+                  <item row="0" column="0">
+                   <widget class="QLabel" name="label_67">
+                    <property name="enabled">
+                     <bool>true</bool>
+                    </property>
+                    <property name="text">
+                     <string>EY</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="1">
+                   <widget class="QComboBox" name="ey_drift_combobox">
+                    <property name="enabled">
+                     <bool>true</bool>
+                    </property>
+                    <property name="editable">
+                     <bool>true</bool>
+                    </property>
+                    <item>
+                     <property name="text">
+                      <string>EY(Drift)</string>
+                     </property>
+                    </item>
+                   </widget>
+                  </item>
+                  <item row="1" column="0">
+                   <widget class="QLabel" name="label_68">
+                    <property name="text">
+                     <string>EYP</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="1">
+                   <widget class="QComboBox" name="eyp_drift_combobox">
+                    <property name="editable">
+                     <bool>true</bool>
+                    </property>
+                    <item>
+                     <property name="text">
+                      <string>EYP(Drift)</string>
+                     </property>
+                    </item>
+                   </widget>
+                  </item>
+                  <item row="2" column="0">
+                   <widget class="QLabel" name="label_69">
+                    <property name="text">
+                     <string>EYN</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="1">
+                   <widget class="QComboBox" name="eyn_drift_combobox">
+                    <property name="editable">
+                     <bool>true</bool>
+                    </property>
+                    <item>
+                     <property name="text">
+                      <string>EYN(Drift)</string>
+                     </property>
+                    </item>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
              <widget class="QGroupBox" name="groupBox_9">
               <property name="title">
                <string>Structure Type</string>
@@ -861,7 +1023,7 @@
                    <bool>true</bool>
                   </property>
                   <property name="title">
-                   <string>X1</string>
+                   <string>X</string>
                   </property>
                   <layout class="QFormLayout" name="formLayout_7">
                    <item row="0" column="0">
@@ -870,7 +1032,7 @@
                       <bool>true</bool>
                      </property>
                      <property name="text">
-                      <string>EX1</string>
+                      <string>EX</string>
                      </property>
                     </widget>
                    </item>
@@ -895,7 +1057,7 @@
                       <bool>true</bool>
                      </property>
                      <property name="text">
-                      <string>EXP1</string>
+                      <string>EXP</string>
                      </property>
                     </widget>
                    </item>
@@ -920,7 +1082,7 @@
                       <bool>true</bool>
                      </property>
                      <property name="text">
-                      <string>EXN1</string>
+                      <string>EXN</string>
                      </property>
                     </widget>
                    </item>
@@ -945,7 +1107,7 @@
                       <bool>true</bool>
                      </property>
                      <property name="text">
-                      <string>Rhox1</string>
+                      <string>Rhox</string>
                      </property>
                     </widget>
                    </item>
@@ -972,7 +1134,7 @@
                 <item>
                  <widget class="QGroupBox" name="second_system_group_y">
                   <property name="title">
-                   <string>Y1</string>
+                   <string>Y</string>
                   </property>
                   <layout class="QFormLayout" name="formLayout_8">
                    <item row="0" column="0">
@@ -981,7 +1143,7 @@
                       <bool>true</bool>
                      </property>
                      <property name="text">
-                      <string>EY1</string>
+                      <string>EY</string>
                      </property>
                     </widget>
                    </item>
@@ -1006,7 +1168,7 @@
                       <bool>true</bool>
                      </property>
                      <property name="text">
-                      <string>EYP1</string>
+                      <string>EYP</string>
                      </property>
                     </widget>
                    </item>
@@ -1031,7 +1193,7 @@
                       <bool>true</bool>
                      </property>
                      <property name="text">
-                      <string>EYN1</string>
+                      <string>EYN</string>
                      </property>
                     </widget>
                    </item>
@@ -1056,7 +1218,7 @@
                       <bool>true</bool>
                      </property>
                      <property name="text">
-                      <string>Rhoy1</string>
+                      <string>Rhoy</string>
                      </property>
                     </widget>
                    </item>
@@ -1073,6 +1235,198 @@
                      <item>
                       <property name="text">
                        <string>1.2</string>
+                      </property>
+                     </item>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QGroupBox" name="second_earthquake_properties_drifts">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+               <property name="title">
+                <string>Drifts</string>
+               </property>
+               <property name="checkable">
+                <bool>false</bool>
+               </property>
+               <property name="checked">
+                <bool>false</bool>
+               </property>
+               <layout class="QHBoxLayout" name="horizontalLayout_17">
+                <item>
+                 <widget class="QGroupBox" name="second_system_drift_group_x">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="title">
+                   <string>X</string>
+                  </property>
+                  <layout class="QFormLayout" name="formLayout_17">
+                   <item row="0" column="0">
+                    <widget class="QLabel" name="label_22">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
+                     <property name="text">
+                      <string>EX</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="1">
+                    <widget class="QComboBox" name="ex1_drift_combobox">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
+                     <property name="editable">
+                      <bool>true</bool>
+                     </property>
+                     <item>
+                      <property name="text">
+                       <string>EX1(Drift)</string>
+                      </property>
+                     </item>
+                    </widget>
+                   </item>
+                   <item row="1" column="0">
+                    <widget class="QLabel" name="label_74">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
+                     <property name="text">
+                      <string>EXP</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="1">
+                    <widget class="QComboBox" name="exp1_drift_combobox">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
+                     <property name="editable">
+                      <bool>true</bool>
+                     </property>
+                     <item>
+                      <property name="text">
+                       <string>EXP1(Drift)</string>
+                      </property>
+                     </item>
+                    </widget>
+                   </item>
+                   <item row="2" column="0">
+                    <widget class="QLabel" name="label_75">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
+                     <property name="text">
+                      <string>EXN</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="1">
+                    <widget class="QComboBox" name="exn1_drift_combobox">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
+                     <property name="editable">
+                      <bool>true</bool>
+                     </property>
+                     <item>
+                      <property name="text">
+                       <string>EXN1(Drift)</string>
+                      </property>
+                     </item>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QGroupBox" name="second_system_drift_group_y">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="title">
+                   <string>Y</string>
+                  </property>
+                  <layout class="QFormLayout" name="formLayout_18">
+                   <item row="0" column="0">
+                    <widget class="QLabel" name="label_77">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
+                     <property name="text">
+                      <string>EY</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="1">
+                    <widget class="QComboBox" name="ey1_drift_combobox">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
+                     <property name="editable">
+                      <bool>true</bool>
+                     </property>
+                     <item>
+                      <property name="text">
+                       <string>EY1(Drift)</string>
+                      </property>
+                     </item>
+                    </widget>
+                   </item>
+                   <item row="1" column="0">
+                    <widget class="QLabel" name="label_78">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
+                     <property name="text">
+                      <string>EYP</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="1">
+                    <widget class="QComboBox" name="eyp1_drift_combobox">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
+                     <property name="editable">
+                      <bool>true</bool>
+                     </property>
+                     <item>
+                      <property name="text">
+                       <string>EYP1(Drift)</string>
+                      </property>
+                     </item>
+                    </widget>
+                   </item>
+                   <item row="2" column="0">
+                    <widget class="QLabel" name="label_79">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
+                     <property name="text">
+                      <string>EYN</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="1">
+                    <widget class="QComboBox" name="eyn1_drift_combobox">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
+                     <property name="editable">
+                      <bool>true</bool>
+                     </property>
+                     <item>
+                      <property name="text">
+                       <string>EYN1(Drift)</string>
                       </property>
                      </item>
                     </widget>

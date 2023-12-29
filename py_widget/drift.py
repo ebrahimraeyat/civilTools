@@ -15,14 +15,14 @@ civiltools_path = Path(__file__).absolute().parent.parent
 
 
 class Form(QtWidgets.QWidget):
-    def __init__(self, etabs_obj):
+    def __init__(self, etabs_obj, d):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'drift.ui'))
         self.etabs = etabs_obj
         self.dynamic_tab_clicked = False
-        self.fill_xy_loadcase_names()
+        self.fill_xy_loadcase_names(d)
         self.create_connections()
-        self.load_config()
+        self.load_config(d)
     
     def create_connections(self):
         self.form.run.clicked.connect(self.accept)
@@ -32,8 +32,8 @@ class Form(QtWidgets.QWidget):
     def create_t_file_clicked(self, check):
         self.form.structuretype_groupbox.setEnabled(check)
 
-    def load_config(self):
-        civiltools_config.load(self.etabs, self.form)
+    def load_config(self, d):
+        civiltools_config.load(self.etabs, self.form, d)
 
     def tab_changed(self, index: int):
         if index == 1 and not self.dynamic_tab_clicked:
@@ -89,15 +89,13 @@ class Form(QtWidgets.QWidget):
             tx, ty, main_file = self.etabs.get_drift_periods(structure_type=structure_type)
             civiltools_config.save_analytical_periods(self.etabs, tx, ty)
             building = self.current_building(tx, ty)
-            bot_story = d["bot_x_combo"]
-            top_story = d["top_x_combo"]
             if two_system:
-                top_story = d["top_x1_combo"]
-                if building.x_system2.Ru >= building.x_system.Ru:
-                    cdx = building.x_system2.cd
-                if building.y_system2.Ru >= building.y_system.Ru:
-                    cdy = building.y_system2.cd
-            self.etabs.apply_cfactor_to_edb(building, bot_story, top_story)
+                if building.building2.x_system.Ru >= building.x_system.Ru:
+                    cdx = building.building2.x_system.cd
+                if building.building2.y_system.Ru >= building.y_system.Ru:
+                    cdy = building.building2.y_system.cd
+            data = self.get_data_for_apply_earthquakes(building, d)
+            self.etabs.apply_cfactors_to_edb(data, d=d)
             if tab == 1:
                 # execute scale response spectrum
                 import find_etabs
@@ -118,10 +116,10 @@ class Form(QtWidgets.QWidget):
                         cdy = d.get('cdy1')
                 else:
                     building = self.current_building(4, 4)
-                    if building.x_system2.Ru >= building.x_system.Ru:
-                        cdx = building.x_system2.cd
-                    if building.y_system2.Ru >= building.y_system.Ru:
-                        cdy = building.y_system2.cd
+                    if building.building2.x_system.Ru >= building.x_system.Ru:
+                        cdx = building.building2.x_system.cd
+                    if building.building2.y_system.Ru >= building.y_system.Ru:
+                        cdy = building.building2.y_system.cd
         # Get Drifts
         x_loadcases, y_loadcases, loadcases = self.get_load_cases(tab)
         if not loadcases:
@@ -137,7 +135,8 @@ class Form(QtWidgets.QWidget):
         if create_t_file and structure_type == 'steel':
             print(f"Opening file {main_file}\n")
             self.etabs.SapModel.File.OpenFile(str(main_file))
-            self.etabs.apply_cfactor_to_edb(building, bot_story, top_story)
+            data = self.get_data_for_apply_earthquakes(building, d)
+            self.etabs.apply_cfactors_to_edb(data, d=d)
         if ret is None:
             QMessageBox.warning(None,
                                 'Diphragm',
@@ -243,21 +242,62 @@ class Form(QtWidgets.QWidget):
         return build
 
 
-    def fill_xy_loadcase_names(self):
-        x_names, y_names = self.etabs.load_cases.get_xy_seismic_load_cases()
-        drift_load_cases = self.etabs.load_cases.get_seismic_drift_load_cases()
+    def fill_xy_loadcase_names(self,
+                               d: dict,
+                               ):
+        '''
+        d: Configuration of civiltools
+        '''
+        ex, exn, exp, ey, eyn, eyp = self.etabs.get_first_system_seismic_drift(d)
+        x_names = [ex, exp, exn]
+        y_names = [ey, eyp, eyn]
+        if d.get('activate_second_system', False):
+            ex, exn, exp, ey, eyn, eyp = self.etabs.get_second_system_seismic_drift(d)
+            x_names.extend((ex, exp, exn))
+            y_names.extend((ey, eyp, eyn))
         self.form.x_loadcase_list.addItems(x_names)
         self.form.y_loadcase_list.addItems(y_names)
         for lw in (self.form.x_loadcase_list, self.form.y_loadcase_list):
             for i in range(lw.count()):
                 item = lw.item(i)
                 item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
-                item.setCheckState(Qt.Unchecked)
-        for name in drift_load_cases:
-            matching_items = []
-            if name in x_names:
-                matching_items = self.form.x_loadcase_list.findItems(name, Qt.MatchExactly)
-            elif name in y_names:
-                matching_items = self.form.y_loadcase_list.findItems(name, Qt.MatchExactly)
-            for item in matching_items:
                 item.setCheckState(Qt.Checked)
+
+    def get_data_for_apply_earthquakes(self, building, d: dict):
+        bot_1, top_1, bot_2, top_2 = self.etabs.get_top_bot_stories(d)
+        # get bottom system data
+        first_system_seismic = self.etabs.get_first_system_seismic_drift(d)
+        cx_1, cy_1 = building.results_drift[1:]
+        kx_1, ky_1 = building.kx_drift, building.ky_drift
+        data = []
+        # Check if second system is active
+        if d.get('activate_second_system', False):
+            # get top system data
+            second_system_seismic = self.etabs.get_second_system_seismic_drift(d)
+            cx_2, cy_2 = building.building2.results_drift[1:]
+            kx_2, ky_2 = building.building2.kx_drift, building.building2.ky_drift
+            # Special case with Ru_bot = Ru_top
+            if d.get('special_case', False) and \
+            building.x_system.Ru == building.building2.x_system.Ru and \
+            building.y_system.Ru == building.building2.y_system.Ru:
+                # get bottom system data
+                data.append((first_system_seismic[:3], [top_1, bot_1, str(cx_1), str(kx_1)]))
+                data.append((first_system_seismic[3:], [top_1, bot_1, str(cy_1), str(ky_1)]))
+                # get top system data
+                data.append((second_system_seismic[:3], [top_2, bot_2, str(cx_2), str(kx_2)]))
+                data.append((second_system_seismic[3:], [top_2, bot_2, str(cy_2), str(ky_2)]))
+            # case B, Ru_bot >= Ru_top
+            elif building.x_system.Ru >= building.building2.x_system.Ru and \
+            building.y_system.Ru >= building.building2.y_system.Ru:
+                cx_all, cy_all = building.results_drift_all_top[1:]
+                kx_all, ky_all = building.kx_drift_all, building.ky_drift_all
+                data.append((first_system_seismic[:3], [top_2, bot_1, str(cx_all), str(kx_all)]))
+                data.append((first_system_seismic[3:], [top_2, bot_1, str(cy_all), str(ky_all)]))
+            else:
+                QMessageBox.warning(None, "Not Implemented", "Can not apply earthquake for your systems")
+                return None
+        else:
+            # get bottom system data
+            data.append((first_system_seismic[:3], [top_1, bot_1, str(cx_1), str(kx_1)]))
+            data.append((first_system_seismic[3:], [top_1, bot_1, str(cy_1), str(ky_1)]))
+        return data
