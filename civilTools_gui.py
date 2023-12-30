@@ -41,6 +41,7 @@ from gui_civiltools import (
 from gui_civiltools.assign import (
     gui_assign_ev,
     gui_assign_modifiers,
+    gui_assigns,
 )
 from gui_civiltools.define import (
     gui_create_load_combinations,
@@ -213,8 +214,9 @@ civiltools_list = [
             "civiltools_create_spectral",
             ]
 civiltools_assign = [
-            "civiltools_wall_load",
+            "civilTools_assigns",
             "civilTools_assign_modifiers",
+            "civiltools_wall_load",
             "civilTools_assign_ev",
             ]
 
