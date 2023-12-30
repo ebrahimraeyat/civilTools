@@ -67,6 +67,30 @@ class CivilToolsWorkbench(Workbench):
         #     Gui.showPreferences("civilTools", 0)
         
         # FreeCAD.addImportType("CSI ETABS (*.edb *.EDB)", "gui_civiltools.open_etabs")
+            
+    def splash(self):
+        from pathlib import Path
+        import shutil
+        user_path = Path(FreeCAD.getUserAppDataDir())   
+        image = user_path / 'Mod' / 'civilTools' / 'images' / 'civiltools.png'
+        if not image.exists():
+            return
+        splash_path = (user_path / 'Gui' / 'images')
+        try:
+            splash_path.mkdir(parents=True)
+        except FileExistsError:
+            pass
+        suffix = image.suffix
+        splash_image_path = splash_path / f'splash_image{suffix}'
+        # check if splash image folder is empty
+        hash_md5 = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools").GetString("splash_hash_md5", '')
+        if hash_md5 != "85b13cbcb16dca64d61456f56d54e4d3":
+            for i in splash_path.glob("splash_image.*"):
+                i.unlink()
+            shutil.copy(image, splash_image_path)
+            FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools").SetString("splash_hash_md5", "85b13cbcb16dca64d61456f56d54e4d3")
+            FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/OSAFE").SetString("splash_hash_md5", "85b13cbcb16dca64d61456f56d54e4d3")
+            return
 
 
 Gui.addWorkbench(CivilToolsWorkbench())
