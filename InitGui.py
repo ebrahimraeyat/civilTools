@@ -84,12 +84,13 @@ class CivilToolsWorkbench(Workbench):
         splash_image_path = splash_path / f'splash_image{suffix}'
         # check if splash image folder is empty
         hash_md5 = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools").GetString("splash_hash_md5", '')
-        if hash_md5 != "85b13cbcb16dca64d61456f56d54e4d3":
+        splash_hash_md5 = "85b13cbcb16dca64d61456f56d54e4d3"
+        if hash_md5 != splash_hash_md5:
             for i in splash_path.glob("splash_image.*"):
                 i.unlink()
             shutil.copy(image, splash_image_path)
-            FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools").SetString("splash_hash_md5", "85b13cbcb16dca64d61456f56d54e4d3")
-            FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/OSAFE").SetString("splash_hash_md5", "85b13cbcb16dca64d61456f56d54e4d3")
+            FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools").SetString("splash_hash_md5", splash_hash_md5)
+            FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/OSAFE").SetString("splash_hash_md5", splash_hash_md5)
             return
 
 
