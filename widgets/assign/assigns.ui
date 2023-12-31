@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>307</width>
+    <width>390</width>
     <height>300</height>
    </rect>
   </property>
@@ -25,8 +25,8 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="2">
-    <widget class="QPushButton" name="earthquake_pushbutton">
+   <item row="1" column="2">
+    <widget class="QPushButton" name="set_property_modifiers_pushbutton">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -52,8 +52,8 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="2">
-    <widget class="QPushButton" name="property_modifiers_pushbutton">
+   <item row="0" column="2">
+    <widget class="QPushButton" name="set_earthquake_pushbutton">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -72,13 +72,6 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="label_3">
-     <property name="text">
-      <string>End Length Offsets</string>
-     </property>
-    </widget>
-   </item>
    <item row="2" column="1">
     <widget class="QDoubleSpinBox" name="end_length_offset_spinbox">
      <property name="maximum">
@@ -92,8 +85,28 @@
      </property>
     </widget>
    </item>
+   <item row="5" column="1">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>167</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>End Length Offsets</string>
+     </property>
+    </widget>
+   </item>
    <item row="2" column="2">
-    <widget class="QPushButton" name="end_length_offset_pushbutton">
+    <widget class="QPushButton" name="set_end_length_offset_pushbutton">
      <property name="text">
       <string>Set</string>
      </property>
@@ -109,18 +122,116 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="1">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
+   <item row="1" column="3">
+    <widget class="QPushButton" name="check_property_modifiers_pushbutton">
+     <property name="enabled">
+      <bool>false</bool>
      </property>
-     <property name="sizeHint" stdset="0">
+     <property name="text">
+      <string>Check</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../../civiltools.qrc">
+       <normaloff>:/civiltools/images/cancel.svg</normaloff>:/civiltools/images/cancel.svg</iconset>
+     </property>
+     <property name="iconSize">
       <size>
-       <width>20</width>
-       <height>167</height>
+       <width>30</width>
+       <height>20</height>
       </size>
      </property>
-    </spacer>
+    </widget>
+   </item>
+   <item row="0" column="3">
+    <widget class="QPushButton" name="check_earthquake_pushbutton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>Check</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../../civiltools.qrc">
+       <normaloff>:/civiltools/images/cancel.svg</normaloff>:/civiltools/images/cancel.svg</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>30</width>
+       <height>20</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>Diahpragm</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="2">
+    <widget class="QPushButton" name="set_diaphragm_pushbutton">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="text">
+      <string>Set</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../../civiltools.qrc">
+       <normaloff>:/civiltools/images/cancel.svg</normaloff>:/civiltools/images/cancel.svg</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>30</width>
+       <height>20</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="3">
+    <widget class="QPushButton" name="check_diaphragm_pushbutton">
+     <property name="text">
+      <string>Check</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../../civiltools.qrc">
+       <normaloff>:/civiltools/images/cancel.svg</normaloff>:/civiltools/images/cancel.svg</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>30</width>
+       <height>20</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="3">
+    <widget class="QPushButton" name="check_end_length_offset_pushbutton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>Check</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../../civiltools.qrc">
+       <normaloff>:/civiltools/images/cancel.svg</normaloff>:/civiltools/images/cancel.svg</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>30</width>
+       <height>20</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QComboBox" name="diaphragm_combobox">
+     <property name="editable">
+      <bool>true</bool>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
