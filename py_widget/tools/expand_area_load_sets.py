@@ -25,8 +25,7 @@ class Form(QtWidgets.QWidget):
         df = self.df.copy()
         del df['Direction']
         model=table_model.ExpandLoadSets
-        headers=list(df.columns)
-        self.win = table_model.ExpandedLoadSetsResults(df, headers, model, None)
+        self.win = table_model.ExpandedLoadSetsResults(df, model, None)
         self.win.cancel_pushbutton.clicked.connect(self.reject)
         self.win.apply_pushbutton.clicked.connect(self.expand_load_sets)
         self.win.setMinimumSize(600, 600)

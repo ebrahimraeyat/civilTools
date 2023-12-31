@@ -824,8 +824,8 @@ class ResultWidget(QtWidgets.QDialog):
 
 
 class ExpandedLoadSetsResults(ResultWidget):
-    def __init__(self, data, headers, model, function=None, parent=None):
-        super(ExpandedLoadSetsResults, self).__init__(data, headers, model, function, parent)
+    def __init__(self, data, model, function=None, parent=None):
+        super(ExpandedLoadSetsResults, self).__init__(data, model, function, parent)
         self.cancel_pushbutton = QtWidgets.QPushButton()
         self.cancel_pushbutton.setIcon(QIcon(str(civiltools_path / 'images' / 'cancel.svg')))
         self.cancel_pushbutton.setText('&Cancel')
