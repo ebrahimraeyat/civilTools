@@ -1,8 +1,10 @@
 from pathlib import Path
+from typing import Union
 
 from PySide2 import  QtWidgets
+from PySide2.QtCore import Qt
 import FreeCADGui as Gui
-from PySide2.QtWidgets import QMessageBox, QFileDialog
+from PySide2.QtWidgets import QFileDialog
 
 import civiltools_rc
 
@@ -10,29 +12,58 @@ civiltools_path = Path(__file__).absolute().parent.parent.parent
 
 
 class Form(QtWidgets.QWidget):
-    def __init__(self, etabs_obj):
+    def __init__(self,
+                 etabs_obj,
+                 d: dict,
+                 ):
         super(Form, self).__init__()
-        self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'weakness.ui'))
-        self.form.setWindowTitle("Torsion in Weakened Structure")
+        self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'torsion_weaknend.ui'))
         self.etabs = etabs_obj
         self.directory = str(Path(self.etabs.SapModel.GetModelFilename()).parent)
         self.fill_selected_beams()
         self.set_filenames()
+        self.fill_xy_loadcase_names(d)
         self.create_connections()
 
-    def accept(self):
+    def fill_xy_loadcase_names(self,
+                               d: dict,
+                               ):
+        '''
+        d: Configuration of civiltools
+        '''
+        ex, exn, exp, ey, eyn, eyp = self.etabs.get_first_system_seismic(d)
+        x_names = [ex, exp, exn]
+        y_names = [ey, eyp, eyn]
+        if d.get('activate_second_system', False):
+            ex, exn, exp, ey, eyn, eyp = self.etabs.get_second_system_seismic(d)
+            x_names.extend((ex, exp, exn))
+            y_names.extend((ey, eyp, eyn))
+        self.form.x_loadcase_list.addItems(x_names)
+        self.form.y_loadcase_list.addItems(y_names)
+        for lw in (self.form.x_loadcase_list, self.form.y_loadcase_list):
+            for i in range(lw.count()):
+                item = lw.item(i)
+                item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
+                item.setCheckState(Qt.Checked)
 
+    def accept(self):
+        asli_file_path = self.etabs.get_filename()
         use_weakness_file = self.form.file_groupbox.isChecked()
-        dir_ = 'x' if self.form.x_radio_button.isChecked() else 'y'
+        if self.form.x_radio_button.isChecked():
+            dir_ = 'x'
+            lw = self.form. x_loadcase_list
+        else:
+            dir_ = 'y'
+            lw = self.form. y_loadcase_list
         if use_weakness_file:
             weakness_filepath = self.etabs.add_prefix_suffix_name(suffix=f'_weakness_torsion_{dir_}')
             if weakness_filepath.exists() and \
-                not self.etabs.get_filename() == weakness_filepath:
+                self.etabs.get_filename() != weakness_filepath:
                 self.etabs.SapModel.File.OpenFile(str(weakness_filepath))
             else:
                 weakness_filepath = Path(self.form.weakness_file.text())
                 if weakness_filepath.exists() and \
-                    not self.etabs.get_filename() == weakness_filepath:
+                    self.etabs.get_filename() != weakness_filepath:
                     self.etabs.SapModel.File.OpenFile(str(weakness_filepath))
         else:
             items = self.form.beams_list.selectedItems()
@@ -43,12 +74,16 @@ class Form(QtWidgets.QWidget):
             self.etabs.add_prefix_suffix_name(suffix=f'_weakness_torsion_{dir_}', open=True)
             self.etabs.lock_and_unlock_model()
             self.etabs.frame_obj.set_end_release_frame(name)
+        import table_model
+        loadcases = []
+        for i in range(lw.count()):
+            item = lw.item(i)
+            if item.checkState() == Qt.Checked:
+                loadcases.append(item.text())
+        df = self.etabs.get_diaphragm_max_over_avg_drifts(loadcases=loadcases)
+        table_model.show_results(df, table_model.TorsionModel, self.etabs.view.show_point)
+        self.etabs.SapModel.File.OpenFile(str(asli_file_path))
         self.form.close()
-        from PySide2 import QtCore
-        QtCore.QTimer.singleShot(1, lambda : Gui.runCommand("civil_show_torsion"))
-
-    # def getStandardButtons(self):
-    #     return int(QtGui.QDialogButtonBox.Ok) | int(QtGui.QDialogButtonBox.Cancel)| int(QtGui.QDialogButtonBox.Apply)
 
     def fill_selected_beams(self):
         self.form.beams_list.clear()
@@ -69,8 +104,12 @@ class Form(QtWidgets.QWidget):
     def set_filenames(self):
         if self.form.x_radio_button.isChecked():
             dir_ = 'x'
+            self.form.x_loadcase_list.setEnabled(True)
+            self.form.y_loadcase_list.setEnabled(False)
         elif self.form.y_radio_button.isChecked():
             dir_ = 'y'
+            self.form.x_loadcase_list.setEnabled(False)
+            self.form.y_loadcase_list.setEnabled(True)
         path = self.etabs.add_prefix_suffix_name(suffix=f'_weakness_torsion_{dir_}')
         self.form.weakness_file.setText(str(path))
         
