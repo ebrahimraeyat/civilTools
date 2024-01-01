@@ -13,8 +13,7 @@ class Form(QtWidgets.QWidget):
     def __init__(self, etabs_obj):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'weakness.ui'))
-        # self.setupUi(self)
-        # self.form = self
+        self.form.setWindowTitle("Torsion in Weakened Structure")
         self.etabs = etabs_obj
         self.directory = str(Path(self.etabs.SapModel.GetModelFilename()).parent)
         self.fill_selected_beams()

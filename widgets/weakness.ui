@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Investigate Weakness</string>
+   <string>Strength in Weakened Structure</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -38,12 +38,15 @@
      </item>
      <item>
       <widget class="QPushButton" name="refresh_button">
+       <property name="toolTip">
+        <string>Refresh the Selected Beam Name</string>
+       </property>
        <property name="text">
         <string/>
        </property>
        <property name="icon">
         <iconset resource="../civiltools.qrc">
-         <normaloff>:/civiltools/images/torsion.svg</normaloff>:/civiltools/images/torsion.svg</iconset>
+         <normaloff>:/civiltools/images/refresh.svg</normaloff>:/civiltools/images/refresh.svg</iconset>
        </property>
       </widget>
      </item>

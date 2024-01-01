@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="civiltools">
+    <file>images/refresh.svg</file>
     <file>images/import_dxf.svg</file>
     <file>images/deflection_of_slab.png</file>
     <file>images/waffle_slab.svg</file>
