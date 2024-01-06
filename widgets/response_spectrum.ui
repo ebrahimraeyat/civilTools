@@ -57,7 +57,7 @@
        </widget>
       </item>
       <item row="2" column="0">
-       <widget class="QListWidget" name="x_loadcase_list">
+       <widget class="QListWidget" name="x_dynamic_loadcase_list">
         <property name="selectionMode">
          <enum>QAbstractItemView::MultiSelection</enum>
         </property>
@@ -67,7 +67,7 @@
        </widget>
       </item>
       <item row="2" column="1" colspan="2">
-       <widget class="QListWidget" name="y_loadcase_list">
+       <widget class="QListWidget" name="y_dynamic_loadcase_list">
         <property name="selectionMode">
          <enum>QAbstractItemView::MultiSelection</enum>
         </property>
@@ -151,7 +151,7 @@
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QComboBox" name="static_x"/>
+      <widget class="QComboBox" name="ex_combobox"/>
      </item>
      <item row="3" column="1">
       <widget class="QSpinBox" name="iteration">
@@ -220,7 +220,7 @@
       </widget>
      </item>
      <item row="1" column="2">
-      <widget class="QComboBox" name="static_y">
+      <widget class="QComboBox" name="ey_combobox">
        <property name="enabled">
         <bool>true</bool>
        </property>

@@ -26,7 +26,6 @@ class Form(QtWidgets.QWidget):
     
     def create_connections(self):
         self.form.run.clicked.connect(self.accept)
-        self.form.tab_widget.currentChanged.connect(self.tab_changed)
         self.form.create_t_file_box.clicked.connect(self.create_t_file_clicked)
 
     def create_t_file_clicked(self, check):
@@ -34,21 +33,6 @@ class Form(QtWidgets.QWidget):
 
     def load_config(self, d):
         civiltools_config.load(self.etabs, self.form, d)
-
-    def tab_changed(self, index: int):
-        if index == 1 and not self.dynamic_tab_clicked:
-            self.fill_dynamic_xy_loadcase_names()
-            self.dynamic_tab_clicked = True
-
-    def fill_dynamic_xy_loadcase_names(self):
-        x_specs, y_specs = self.etabs.load_cases.get_response_spectrum_xy_loadcases_names()
-        self.form.dynamic_x_loadcase_list.addItems(x_specs)
-        self.form.dynamic_y_loadcase_list.addItems(y_specs)
-        for lw in (self.form.dynamic_x_loadcase_list, self.form.dynamic_y_loadcase_list):
-            for i in range(lw.count()):
-                item = lw.item(i)
-                item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
-                item.setCheckState(Qt.Unchecked)
 
     def fill_angular_fields(self):
         lw = self.form.angular_specs
@@ -66,12 +50,12 @@ class Form(QtWidgets.QWidget):
     def reset_widget(self):
         if self.form.xy.isChecked():
             self.form.angular_specs.setEnabled(False)
-            self.form.dynamic_x_loadcase_list.setEnabled(True)
-            self.form.dynamic_y_loadcase_list.setEnabled(True)
+            self.form.x_dynamic_loadcase_list.setEnabled(True)
+            self.form.y_dynamic_loadcase_list.setEnabled(True)
         elif self.form.angular.isChecked():
             self.form.angular_specs.setEnabled(True)
-            self.form.dynamic_x_loadcase_list.setEnabled(False)
-            self.form.dynamic_y_loadcase_list.setEnabled(False)
+            self.form.x_dynamic_loadcase_list.setEnabled(False)
+            self.form.y_dynamic_loadcase_list.setEnabled(False)
 
     def accept(self):
         d = civiltools_config.get_settings_from_etabs(self.etabs)
@@ -165,12 +149,12 @@ class Form(QtWidgets.QWidget):
                     y_loadcases.append(item.text())
         elif tab == 1:
             if self.form.xy.isChecked():
-                lw = self.form.dynamic_x_loadcase_list
+                lw = self.form.x_dynamic_loadcase_list
                 for i in range(lw.count()):
                     item = lw.item(i)
                     if item.checkState() == Qt.Checked:
                         x_loadcases.append(item.text())
-                lw = self.form.dynamic_y_loadcase_list
+                lw = self.form.y_dynamic_loadcase_list
                 for i in range(lw.count()):
                     item = lw.item(i)
                     if item.checkState() == Qt.Checked:

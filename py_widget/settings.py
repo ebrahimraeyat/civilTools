@@ -272,6 +272,8 @@ class Form(QtWidgets.QWidget):
         ret = self.check_seismic_names()
         if not ret:
             return
+        if self.check_dynamic_loadcases() == False:
+            self.reject()
         self.save_config()
         # self.etabs.check_seismic_names(apply=True)
 
@@ -390,6 +392,56 @@ class Form(QtWidgets.QWidget):
                 QtWidgets.QMessageBox.critical(self, "ایراد در انتخاب سیستم دوم", title % direction + '\n' + str(err))
                 return False
         return True
+    
+    def check_dynamic_loadcases(self):
+        sx = self.form.sx_combobox.currentText()
+        sxe = self.form.sxe_combobox.currentText()
+        sy = self.form.sy_combobox.currentText()
+        sye = self.form.sye_combobox.currentText()
+        sx_drift = self.form.sx_drift_combobox.currentText()
+        sxe_drift = self.form.sxe_drift_combobox.currentText()
+        sy_drift = self.form.sy_drift_combobox.currentText()
+        sye_drift = self.form.sye_drift_combobox.currentText()
+        response_spectrum_loadcases = self.etabs.load_cases.get_response_spectrum_loadcase_name()
+        not_exists = [lc for lc in (sx, sxe, sy, sye, sx_drift, sxe_drift, sy_drift, sye_drift) 
+                      if lc not in response_spectrum_loadcases]
+        if len(not_exists) > 0:
+            funcs = self.etabs.func.response_spectrum_names()
+            loadcases = '<span style=" font-size:9pt; font-weight:600; color:#0000ff;">%s</span>'
+            if len(funcs) == 0:
+                message = '<html>You must define a spectrum function in your model and then assing it to %s' % loadcases % ', '.join(not_exists)
+                message += " Load Cases, do you want to continue?"
+                if QtWidgets.QMessageBox.question(None,
+                                              'Response Specturm',
+                                              message) == QtWidgets.QMessageBox.No:
+                    return False
+                func = None
+            elif len(funcs) == 1:
+                func = funcs[0]
+            else:
+                funcs_dialog = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'choose_spectrum.ui'))
+                funcs_dialog.spectrum_combobox.addItems(funcs)
+                message = '<html>Please Select Response Spectrums for %s' % loadcases % ', '.join(not_exists)
+                message += " Load Cases."
+                funcs_dialog.label.setText(message)
+                funcs_dialog.exec_()
+                func = funcs_dialog.spectrum_combobox.currentText()
+            ecc_dirs = {
+                sx:  (0, 'U1'),
+                sxe:  (0.05, 'U1'),
+                sy:  (0, 'U2'),
+                sye:  (0.05, 'U2'),
+                sx_drift:  (0, 'U1'),
+                sxe_drift:  (0.05, 'U1'),
+                sy_drift:  (0, 'U2'),
+                sye_drift:  (0.05, 'U2'),
+            }
+            for lc in not_exists:
+                ecc, dir_ = ecc_dirs.get(lc)
+                self.etabs.load_cases.add_response_spectrum_loadcases([lc], ecc)
+                if func is not None:
+                    args = [1, (dir_,), (func,), (1,), ('Global',), (0.0,)]
+                    self.etabs.SapModel.LoadCases.ResponseSpectrum.SetLoads(lc, *args)
     
     def check_seismic_names(self):
         # first system

@@ -1,22 +1,22 @@
 from pathlib import Path
 
-from PySide2 import  QtWidgets
+from PySide2 import  QtWidgets, QtCore
 import FreeCADGui as Gui
 from PySide2.QtWidgets import QMessageBox
 
 civiltools_path = Path(__file__).absolute().parent.parent
 
+from exporter import civiltools_config
+
 
 class Form(QtWidgets.QWidget):
-    def __init__(self, etabs_obj, show_message=True):
+    def __init__(self, etabs_obj, d):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'response_spectrum.ui'))
-        # self.setupUi(self)
-        # self.form = self
         self.etabs = etabs_obj
-        self.show_message = show_message
-        self.fill_100_30_fields()
-        self.select_spect_loadcases()
+        # self.fill_100_30_fields(d)
+        # self.select_spect_loadcases()
+        self.load_config(d)
         self.create_connections()
 
     def create_connections(self):
@@ -25,23 +25,26 @@ class Form(QtWidgets.QWidget):
         self.form.angular.clicked.connect(self.fill_angular_fields)
         self.form.run.clicked.connect(self.accept)
 
+    def load_config(self, d):
+        civiltools_config.load(self.etabs, self.form, d)
+
     def reset_widget(self):
         if self.form.combination.isChecked():
             self.form.angular_specs.setEnabled(False)
             self.form.section_cuts.setEnabled(False)
-            self.form.x_loadcase_list.setEnabled(True)
-            self.form.y_loadcase_list.setEnabled(True)
+            self.form.x_dynamic_loadcase_list.setEnabled(True)
+            self.form.y_dynamic_loadcase_list.setEnabled(True)
             self.form.y_scalefactor.setEnabled(True)
         elif self.form.angular.isChecked():
             self.form.angular_specs.setEnabled(True)
             self.form.section_cuts.setEnabled(True)
-            self.form.x_loadcase_list.setEnabled(False)
-            self.form.y_loadcase_list.setEnabled(False)
+            self.form.x_dynamic_loadcase_list.setEnabled(False)
+            self.form.y_dynamic_loadcase_list.setEnabled(False)
             self.form.y_scalefactor.setEnabled(False)
 
     def accept(self):
-        ex_name = self.form.static_x.currentText()
-        ey_name = self.form.static_y.currentText()
+        ex_name = self.form.ex_combobox.currentText()
+        ey_name = self.form.ey_combobox.currentText()
         x_scale_factor = self.form.x_scalefactor.value()
         y_scale_factor = self.form.y_scalefactor.value()
         num_iteration = self.form.iteration.value()
@@ -63,8 +66,7 @@ class Form(QtWidgets.QWidget):
                 analyze,
             )
         else:
-            x_specs = [item.text() for item in self.form.x_loadcase_list.selectedItems()]
-            y_specs = [item.text() for item in self.form.y_loadcase_list.selectedItems()]
+            x_specs, y_specs = self.get_load_cases()
             self.etabs.scale_response_spectrums(
                 ex_name,
                 ey_name,
@@ -77,17 +79,31 @@ class Form(QtWidgets.QWidget):
                 reset,
                 analyze,
             )
-        if self.show_message:
-            msg = "Done Response Spectrum Analysis."
-            QMessageBox.information(None, 'Successful', str(msg))
+        msg = "Done Response Spectrum Analysis."
+        QMessageBox.information(None, 'Successful', str(msg))
         self.form.close()
+
+    def get_load_cases(self):
+        x_loadcases = []
+        y_loadcases = []
+        lw = self.form.x_dynamic_loadcase_list
+        for i in range(lw.count()):
+            item = lw.item(i)
+            if item.checkState() == QtCore.Qt.Checked:
+                x_loadcases.append(item.text())
+        lw = self.form.y_dynamic_loadcase_list
+        for i in range(lw.count()):
+            item = lw.item(i)
+            if item.checkState() == QtCore.Qt.Checked:
+                y_loadcases.append(item.text())
+        return x_loadcases, y_loadcases
 
     def reject(self):
         import FreeCADGui as Gui
         Gui.Control.closeDialog()
 
     def select_spect_loadcases(self):
-        for lw in (self.form.x_loadcase_list, self.form.y_loadcase_list):
+        for lw in (self.form.x_dynamic_loadcase_list, self.form.y_dynamic_loadcase_list):
             for i in range(lw.count()):
                 item = lw.item(i)
                 item.setSelected(True)
@@ -98,18 +114,10 @@ class Form(QtWidgets.QWidget):
                 item = lw.item(i)
                 item.setSelected(True)
 
-    def fill_100_30_fields(self):
-        ex_name, ey_name = self.etabs.load_patterns.get_EX_EY_load_pattern()
-        x_names, y_names = self.etabs.load_cases.get_xy_seismic_load_cases()
-        self.form.static_x.addItems(x_names)
-        self.form.static_y.addItems(y_names)
-        if ex_name is not None:
-            self.form.static_x.setCurrentText(ex_name)
-        if ey_name is not None:
-            self.form.static_y.setCurrentText(ey_name)
-        x_specs, y_specs = self.etabs.load_cases.get_response_spectrum_xy_loadcases_names()
-        self.form.x_loadcase_list.addItems(x_specs)
-        self.form.y_loadcase_list.addItems(y_specs)
+    # def fill_100_30_fields(self):
+    #     sx, sxe, sy, sye = self.etabs.load_cases.get_sxye_seismic_load_cases()
+    #     self.form.x_dynamic_loadcase_list.addItems(sx.union(sxe))
+    #     self.form.y_dynamic_loadcase_list.addItems(sy.union(sye))
 
     def fill_angular_fields(self):
         section_cuts_angles = self.etabs.database.get_section_cuts_angle()

@@ -1,7 +1,9 @@
 
 from pathlib import Path
 
-from PySide2 import QtCore
+from PySide2 import QtCore, QtWidgets
+
+import FreeCADGui as Gui
 
 
 class CivilScaleResponseSpec:
@@ -40,9 +42,16 @@ class CivilScaleResponseSpec:
             filename is None
             ):
             return
+        from exporter import civiltools_config
+        d = civiltools_config.get_settings_from_etabs(etabs)
+        if len(d) == 0:
+            QtWidgets.QMessageBox.warning(None, 'Settings', 'Please Set Options First!')
+            Gui.runCommand("civiltools_settings")
+            d = civiltools_config.get_settings_from_etabs(etabs)
+            if len(d) == 0:
+                return
         from py_widget import response_spectrum
-        import FreeCADGui as Gui
-        win = response_spectrum.Form(etabs)
+        win = response_spectrum.Form(etabs, d)
         find_etabs.show_win(win, in_mdi=False)
         show_warning_about_number_of_use(check)
         

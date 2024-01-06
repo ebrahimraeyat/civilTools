@@ -4,15 +4,16 @@ from pathlib import Path
 import csv
 
 from PySide2 import QtCore
+from PySide2.QtCore import Qt
 
 from qt_models import treeview_system
 
 civiltools_path = Path(__file__).absolute().parent.parent
 
-from building.build import StructureSystem, Building
-from building import spectral
-from models import StructureModel
-from exporter import civiltools_config
+# from building.build import StructureSystem, Building
+# from building import spectral
+# from models import StructureModel
+# from exporter import civiltools_config
 from db import ostanha
 
 def save(etabs, widget):
@@ -63,6 +64,11 @@ def save(etabs, widget):
 		'eyn1_combobox',
 		'rhox1_combobox',
 		'rhoy1_combobox',
+		# Dynamic Seismic
+		'sx_combobox',
+		'sxe_combobox',
+		'sy_combobox',
+		'sye_combobox',
 		# Seismic Drifts
 		'ex_drift_combobox',
 		'exp_drift_combobox',
@@ -80,6 +86,11 @@ def save(etabs, widget):
 		'eyn1_drift_combobox',
 		'rhox1_drift_combobox',
 		'rhoy1_drift_combobox',
+		# Dynamic Seismic Drifts
+		'sx_drift_combobox',
+		'sxe_drift_combobox',
+		'sy_drift_combobox',
+		'sye_drift_combobox',
 		):
 		if hasattr(widget, key):
 			exec(f"new_d['{key}'] = widget.{key}.currentText()")
@@ -291,6 +302,47 @@ def load(
 				if ecombobox in keys:
 					exec(f"index = widget.{ecombobox}.findText(d['{ecombobox}'])")
 					exec(f"if index != -1: widget.{ecombobox}.setCurrentIndex(index)")
+	# Dynamic Seismic
+	sx, sxe, sy, sye = etabs.load_cases.get_response_spectrum_sxye_loadcases_names()
+	sx_drift = {i for i in sx if 'drift' in i.lower()}
+	sxe_drift = {i for i in sxe if 'drift' in i.lower()}
+	sy_drift = {i for i in sy if 'drift' in i.lower()}
+	sye_drift = {i for i in sye if 'drift' in i.lower()}
+	sx = sx.difference(sx_drift)
+	sxe = sxe.difference(sxe_drift)
+	sy = sy.difference(sy_drift)
+	sye = sye.difference(sye_drift)
+	for combobox, spectrum_lc in zip(
+		(
+			'sx_combobox',
+			'sxe_combobox',
+			'sy_combobox',
+			'sye_combobox',
+			'sx_drift_combobox',
+			'sxe_drift_combobox',
+			'sy_drift_combobox',
+			'sye_drift_combobox',
+			), (sx, sxe, sy, sye, sx_drift, sxe_drift, sy_drift, sye_drift)
+			):
+		if hasattr(widget, combobox):
+			if d.get(combobox, None):
+				spectrum_lc.add(d[combobox])
+			if spectrum_lc:
+				exec(f"widget.{combobox}.clear()")
+				exec(f"widget.{combobox}.addItems(spectrum_lc)")
+			if combobox in keys:
+				exec(f"index = widget.{combobox}.findText(d['{combobox}'])")
+				exec(f"if index != -1: widget.{combobox}.setCurrentIndex(index)")
+	# dynamic seismic 
+	if hasattr(widget, 'x_dynamic_loadcase_list') and hasattr(widget, 'y_dynamic_loadcase_list'):
+		sx, sxe, sy, sye = etabs.get_dynamic_loadcases(d)
+		widget.x_dynamic_loadcase_list.addItems((sx, sxe))
+		widget.y_dynamic_loadcase_list.addItems((sy, sye))
+		for lw in (widget.x_dynamic_loadcase_list, widget.y_dynamic_loadcase_list):
+			for i in range(lw.count()):
+				item = lw.item(i)
+				item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
+				item.setCheckState(Qt.Checked)
 	# Seismic Drifts
 	seismic_loads = etabs.load_patterns.get_seismic_load_patterns(drifts=True)
 	for (e1combobox, e2combobox), names in zip((
