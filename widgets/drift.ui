@@ -53,7 +53,7 @@
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QListWidget" name="y_loadcase_list">
+          <widget class="QListWidget" name="y_drift_loadcase_list">
            <property name="selectionMode">
             <enum>QAbstractItemView::NoSelection</enum>
            </property>
@@ -63,7 +63,7 @@
           </widget>
          </item>
          <item row="1" column="0">
-          <widget class="QListWidget" name="x_loadcase_list">
+          <widget class="QListWidget" name="x_drift_loadcase_list">
            <property name="selectionMode">
             <enum>QAbstractItemView::NoSelection</enum>
            </property>
@@ -111,7 +111,7 @@
            </widget>
           </item>
           <item row="2" column="0">
-           <widget class="QListWidget" name="x_dynamic_loadcase_list">
+           <widget class="QListWidget" name="x_dynamic_drift_loadcase_list">
             <property name="selectionMode">
              <enum>QAbstractItemView::MultiSelection</enum>
             </property>
@@ -121,7 +121,7 @@
            </widget>
           </item>
           <item row="2" column="1" colspan="2">
-           <widget class="QListWidget" name="y_dynamic_loadcase_list">
+           <widget class="QListWidget" name="y_dynamic_drift_loadcase_list">
             <property name="selectionMode">
              <enum>QAbstractItemView::MultiSelection</enum>
             </property>

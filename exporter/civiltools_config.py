@@ -279,7 +279,7 @@ def load(
 	fill_height_and_no_of_stories(etabs, widget)
 	fill_top_bot_stories(etabs, widget)
 	keys = d.keys()
-	# Seismic
+	# Static Seismic combobox
 	seismic_loads = etabs.load_patterns.get_seismic_load_patterns()
 	for (e1combobox, e2combobox), names in zip((
 		('ex_combobox', 'ex1_combobox'),
@@ -294,14 +294,43 @@ def load(
 				if d.get(ecombobox, None):
 					names.add(d[ecombobox])
 				if names:
-					# exec(f"all_item_text = [f'{widget.{ecombobox}.itemText('i')}' for i in range(widget.{ecombobox}.count())]")
-					# exec(f"add_names = {names}.difference(all_item_text)")
-					# exec("print(names, ecombobox)")
 					exec(f"widget.{ecombobox}.clear()")
 					exec(f"widget.{ecombobox}.addItems(names)")
 				if ecombobox in keys:
 					exec(f"index = widget.{ecombobox}.findText(d['{ecombobox}'])")
 					exec(f"if index != -1: widget.{ecombobox}.setCurrentIndex(index)")
+	# Static Seismic list
+	if hasattr(widget, 'x_loadcase_list') and hasattr(widget, 'y_loadcase_list'):
+		ex, exn, exp, ey, eyn, eyp = etabs.get_first_system_seismic(d)
+		x_loadcase = [ex, exn, exp]
+		y_loadcase = [ey, eyn, eyp]
+		if d.get('activate_second_system', False):
+			ex1, exn1, exp1, ey1, eyn1, eyp1 = etabs.get_second_system_seismic(d)
+			x_loadcase.extend([ex1, exn1, exp1])
+			y_loadcase.extend([ey1, eyn1, eyp1])
+		widget.x_loadcase_list.addItems(x_loadcase)
+		widget.y_loadcase_list.addItems(y_loadcase)
+		for lw in (widget.x_loadcase_list, widget.y_loadcase_list):
+			for i in range(lw.count()):
+				item = lw.item(i)
+				item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
+				item.setCheckState(Qt.Checked)
+	# Static Seismic drift list
+	if hasattr(widget, 'x_drift_loadcase_list') and hasattr(widget, 'y_drift_loadcase_list'):
+		ex, exn, exp, ey, eyn, eyp = etabs.get_first_system_seismic_drift(d)
+		x_loadcase = [ex, exn, exp]
+		y_loadcase = [ey, eyn, eyp]
+		if d.get('activate_second_system', False):
+			ex1, exn1, exp1, ey1, eyn1, eyp1 = etabs.get_second_system_seismic_drift(d)
+			x_loadcase.extend([ex1, exn1, exp1])
+			y_loadcase.extend([ey1, eyn1, eyp1])
+		widget.x_drift_loadcase_list.addItems(x_loadcase)
+		widget.y_drift_loadcase_list.addItems(y_loadcase)
+		for lw in (widget.x_drift_loadcase_list, widget.y_drift_loadcase_list):
+			for i in range(lw.count()):
+				item = lw.item(i)
+				item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
+				item.setCheckState(Qt.Checked)
 	# Dynamic Seismic
 	sx, sxe, sy, sye = etabs.load_cases.get_response_spectrum_sxye_loadcases_names()
 	sx_drift = {i for i in sx if 'drift' in i.lower()}
@@ -333,12 +362,22 @@ def load(
 			if combobox in keys:
 				exec(f"index = widget.{combobox}.findText(d['{combobox}'])")
 				exec(f"if index != -1: widget.{combobox}.setCurrentIndex(index)")
-	# dynamic seismic 
+	# dynamic seismic loadcase list
 	if hasattr(widget, 'x_dynamic_loadcase_list') and hasattr(widget, 'y_dynamic_loadcase_list'):
 		sx, sxe, sy, sye = etabs.get_dynamic_loadcases(d)
 		widget.x_dynamic_loadcase_list.addItems((sx, sxe))
 		widget.y_dynamic_loadcase_list.addItems((sy, sye))
 		for lw in (widget.x_dynamic_loadcase_list, widget.y_dynamic_loadcase_list):
+			for i in range(lw.count()):
+				item = lw.item(i)
+				item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
+				item.setCheckState(Qt.Checked)
+	# dynamic seismic loadcase drift list
+	if hasattr(widget, 'x_dynamic_drift_loadcase_list') and hasattr(widget, 'y_dynamic_drift_loadcase_list'):
+		sx, sxe, sy, sye = etabs.get_dynamic_drift_loadcases(d)
+		widget.x_dynamic_drift_loadcase_list.addItems((sx, sxe))
+		widget.y_dynamic_drift_loadcase_list.addItems((sy, sye))
+		for lw in (widget.x_dynamic_drift_loadcase_list, widget.y_dynamic_drift_loadcase_list):
 			for i in range(lw.count()):
 				item = lw.item(i)
 				item.setFlags(item.flags() | Qt.ItemIsUserCheckable)

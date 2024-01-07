@@ -20,7 +20,6 @@ class Form(QtWidgets.QWidget):
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'drift.ui'))
         self.etabs = etabs_obj
         self.dynamic_tab_clicked = False
-        self.fill_xy_loadcase_names(d)
         self.create_connections()
         self.load_config(d)
     
@@ -50,12 +49,12 @@ class Form(QtWidgets.QWidget):
     def reset_widget(self):
         if self.form.xy.isChecked():
             self.form.angular_specs.setEnabled(False)
-            self.form.x_dynamic_loadcase_list.setEnabled(True)
-            self.form.y_dynamic_loadcase_list.setEnabled(True)
+            self.form.x_dynamic_drift_loadcase_list.setEnabled(True)
+            self.form.y_dynamic_drift_loadcase_list.setEnabled(True)
         elif self.form.angular.isChecked():
             self.form.angular_specs.setEnabled(True)
-            self.form.x_dynamic_loadcase_list.setEnabled(False)
-            self.form.y_dynamic_loadcase_list.setEnabled(False)
+            self.form.x_dynamic_drift_loadcase_list.setEnabled(False)
+            self.form.y_dynamic_drift_loadcase_list.setEnabled(False)
 
     def accept(self):
         d = civiltools_config.get_settings_from_etabs(self.etabs)
@@ -70,6 +69,7 @@ class Form(QtWidgets.QWidget):
         cdy = d['cdy']
         two_system = d.get('activate_second_system', False)
         if create_t_file:
+            self.etabs.unlock_model()
             tx, ty, main_file = self.etabs.get_drift_periods(structure_type=structure_type)
             civiltools_config.save_analytical_periods(self.etabs, tx, ty)
             building = self.current_building(tx, ty)
@@ -137,24 +137,24 @@ class Form(QtWidgets.QWidget):
         loadcases = []
 
         if tab == 0:
-            lw = self.form.x_loadcase_list
+            lw = self.form.x_drift_loadcase_list
             for i in range(lw.count()):
                 item = lw.item(i)
                 if item.checkState() == Qt.Checked:
                     x_loadcases.append(item.text())
-            lw = self.form.y_loadcase_list
+            lw = self.form.y_drift_loadcase_list
             for i in range(lw.count()):
                 item = lw.item(i)
                 if item.checkState() == Qt.Checked:
                     y_loadcases.append(item.text())
         elif tab == 1:
             if self.form.xy.isChecked():
-                lw = self.form.x_dynamic_loadcase_list
+                lw = self.form.x_dynamic_drift_loadcase_list
                 for i in range(lw.count()):
                     item = lw.item(i)
                     if item.checkState() == Qt.Checked:
                         x_loadcases.append(item.text())
-                lw = self.form.y_dynamic_loadcase_list
+                lw = self.form.y_dynamic_drift_loadcase_list
                 for i in range(lw.count()):
                     item = lw.item(i)
                     if item.checkState() == Qt.Checked:
@@ -224,28 +224,6 @@ class Form(QtWidgets.QWidget):
                     noStory1,
                     )
         return build
-
-
-    def fill_xy_loadcase_names(self,
-                               d: dict,
-                               ):
-        '''
-        d: Configuration of civiltools
-        '''
-        ex, exn, exp, ey, eyn, eyp = self.etabs.get_first_system_seismic_drift(d)
-        x_names = [ex, exp, exn]
-        y_names = [ey, eyp, eyn]
-        if d.get('activate_second_system', False):
-            ex, exn, exp, ey, eyn, eyp = self.etabs.get_second_system_seismic_drift(d)
-            x_names.extend((ex, exp, exn))
-            y_names.extend((ey, eyp, eyn))
-        self.form.x_loadcase_list.addItems(x_names)
-        self.form.y_loadcase_list.addItems(y_names)
-        for lw in (self.form.x_loadcase_list, self.form.y_loadcase_list):
-            for i in range(lw.count()):
-                item = lw.item(i)
-                item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
-                item.setCheckState(Qt.Checked)
 
     def get_data_for_apply_earthquakes(self, building, d: dict):
         bot_1, top_1, bot_2, top_2 = self.etabs.get_top_bot_stories(d)
