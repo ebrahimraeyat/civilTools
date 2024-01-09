@@ -84,7 +84,7 @@ class Form(QtWidgets.QWidget):
                 'Story': [''] * n,
                 'Minus Length': [50] * n,
                 'Torsion Rebar':[True] * n,
-                'Add Rebar': [5] * n,
+                'Add Rebar': [0] * n,
                 'Cover': [6] * n,
                 'Width': [40] * n,
                 'Height': [50] * n,
