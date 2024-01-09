@@ -27,7 +27,7 @@
        <item>
         <layout class="QVBoxLayout" name="verticalLayout">
          <item>
-          <widget class="QListWidget" name="x_load_pattern_list">
+          <widget class="QListWidget" name="x_loadcase_list">
            <property name="enabled">
             <bool>true</bool>
            </property>
@@ -37,7 +37,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QListWidget" name="y_load_pattern_list">
+          <widget class="QListWidget" name="y_loadcase_list">
            <property name="enabled">
             <bool>true</bool>
            </property>
@@ -106,7 +106,7 @@
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_3">
          <item>
-          <widget class="QListWidget" name="x_loadcase_list">
+          <widget class="QListWidget" name="x_dynamic_loadcase_list">
            <property name="enabled">
             <bool>true</bool>
            </property>
@@ -116,7 +116,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QListWidget" name="y_loadcase_list">
+          <widget class="QListWidget" name="y_dynamic_loadcase_list">
            <property name="enabled">
             <bool>true</bool>
            </property>

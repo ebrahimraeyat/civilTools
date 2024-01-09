@@ -9,19 +9,19 @@ from PySide2.QtGui import QColor
 from PySide2 import  QtWidgets
 import FreeCADGui as Gui
 
+from exporter import civiltools_config
+
 
 civiltools_path = Path(__file__).absolute().parent.parent
 
 
 class Form(QtWidgets.QWidget):
-    def __init__(self, etabs_obj):
+    def __init__(self, etabs_obj, d):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'aj_correction.ui'))
-        # self.setupUi(self)
         self.etabs = etabs_obj
+        self.load_config(d)
         self.stories = self.etabs.SapModel.Story.GetStories()[1]
-        self.fill_xy_loadpattern_names()
-        self.fill_xy_loadcase_names()
         story_length = self.etabs.story.get_stories_length()
         self.data = [[key, value[0], value[1]] for key, value in story_length.items()]
         self.headers = ('story', 'x (Cm)', 'y (Cm)')
@@ -51,11 +51,14 @@ class Form(QtWidgets.QWidget):
         
         # self.form.model.dataChanged.connect(self.story_length_changed)
 
+    def load_config(self, d):
+        civiltools_config.load(self.etabs, self.form, d)
+
     def apply_static_aj(self):
         df = self.aj_apply_model_static.df.copy(deep=True)
         load_patterns = self.qlistwidgets_item_text((
-            self.form.x_load_pattern_list,
-            self.form.y_load_pattern_list,
+            self.form.x_loadcase_list,
+            self.form.y_loadcase_list,
         ))
         filt = df['OutputCase'].isin(load_patterns)
         df = df.loc[filt]
@@ -66,8 +69,8 @@ class Form(QtWidgets.QWidget):
     def apply_dynamic_aj(self):
         df = self.aj_apply_model_dynamic.df.copy(deep=True)
         loadcases = self.qlistwidgets_item_text((
-            self.form.x_loadcase_list,
-            self.form.y_loadcase_list,
+            self.form.x_dynamic_loadcase_list,
+            self.form.y_dynamic_loadcase_list,
             self.form.angular_loadcase_list,
         ))
         filt = df['OutputCase'].isin(loadcases)
@@ -104,29 +107,6 @@ class Form(QtWidgets.QWidget):
     #         self.form.aj_apply_model.df.iat[i, 3] = df[(df['Story'] == story) & (df['Dir'] == dir_)]['Ecc. Length (Cm)'].max()
     #         self.form.aj_apply_model.dataChanged.emit(index, index)
 
-    def fill_xy_loadpattern_names(self):
-        x_names, y_names = self.etabs.load_patterns.get_load_patterns_in_XYdirection(
-                only_ecc=True)
-        self.form.x_load_pattern_list.addItems(x_names)
-        self.form.y_load_pattern_list.addItems(y_names)
-        for lw in (self.form.x_load_pattern_list, self.form.y_load_pattern_list):
-            for i in range(lw.count()):
-                item = lw.item(i)
-                item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
-                item.setCheckState(Qt.Checked)
-
-    def fill_xy_loadcase_names(self):
-        x_names, y_names = self.etabs.load_cases.get_response_spectrum_xy_loadcases_names()
-        self.form.x_loadcase_list.addItems(x_names)
-        self.form.y_loadcase_list.addItems(y_names)
-        all_specs = self.etabs.load_cases.get_response_spectrum_loadcase_name()
-        angular_names = set(all_specs).difference(x_names + y_names)
-        self.form.angular_loadcase_list.addItems(angular_names)
-        for lw in (self.form.x_loadcase_list, self.form.y_loadcase_list, self.form.angular_loadcase_list):
-            for i in range(lw.count()):
-                item = lw.item(i)
-                item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
-                item.setCheckState(Qt.Checked)
 
     @staticmethod
     def qlistwidgets_item_text(qlistwidgets: Iterable):

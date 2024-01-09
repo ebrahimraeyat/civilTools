@@ -1,7 +1,9 @@
 
 from pathlib import Path
 
-from PySide2 import QtCore
+from PySide2 import QtCore, QtWidgets
+
+import FreeCADGui as Gui
 
 
 class CivilShowAj:
@@ -39,26 +41,22 @@ class CivilShowAj:
             filename is None
             ):
             return
+        from exporter import civiltools_config
+        d = civiltools_config.get_settings_from_etabs(etabs)
+        if len(d) == 0:
+            QtWidgets.QMessageBox.warning(None, 'Settings', 'Please Set Options First!')
+            Gui.runCommand("civiltools_settings")
+            d = civiltools_config.get_settings_from_etabs(etabs)
+            if len(d) == 0:
+                return
         from py_widget import aj_correction
-        win = aj_correction.Form(etabs)
+        win = aj_correction.Form(etabs, d)
         find_etabs.show_win(win, in_mdi=False)
         show_warning_about_number_of_use(check)
         
     def IsActive(self):
         return True
 
-def get_mdiarea():
-    """ Return FreeCAD MdiArea. """
-    import FreeCADGui as Gui
-    import PySide2
-    mw = Gui.getMainWindow()
-    if not mw:
-        return None
-    childs = mw.children()
-    for c in childs:
-        if isinstance(c, PySide2.QtWidgets.QMdiArea):
-            return c
-    return None
 
 
         
