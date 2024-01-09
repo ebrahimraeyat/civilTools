@@ -45,7 +45,7 @@ class Form(QtWidgets.QWidget):
         # self.fill_top_bot_stories()
         self.create_connections()
         self.load_config()
-        self.final_building = self.current_building()
+        self.final_building = civiltools_config.current_building_from_widget(self.form)
         if self.final_building.building2 is None:
             self.set_enabled_tan(False)
         self.structure_model = StructureModel(self.final_building)
@@ -293,7 +293,7 @@ class Form(QtWidgets.QWidget):
 
     def setSoilProperties(self, build=None):
         if not build:
-            build = self.current_building()
+            build = civiltools_config.current_building_from_widget(self.form)
         xrf = build.soil_reflection_prop_x
         yrf = build.soil_reflection_prop_y
         soil_prop = [build.soilType, xrf.T0, xrf.Ts, xrf.S, xrf.S0]
@@ -317,65 +317,8 @@ class Form(QtWidgets.QWidget):
             item.setTextAlignment(Qt.AlignCenter)
             self.form.soilPropertiesTable.setItem(row + len(soil_prop), 1, item)
 
-    def get_t_an(self):
-        tx_an_1 = self.form.tx_an.value()
-        ty_an_1 = self.form.ty_an.value()
-        tx_an_2 = self.form.tx1_an.value()
-        ty_an_2 = self.form.ty1_an.value()
-        tx_an_all = self.form.tx_all_an.value()
-        ty_an_all = self.form.ty_all_an.value()
-        return tx_an_1, ty_an_1, tx_an_2, ty_an_2, tx_an_all, ty_an_all
-
-    def current_building(self):
-        tx_an_1, ty_an_1, tx_an_2, ty_an_2, tx_an_all, ty_an_all = self.get_t_an()
-        risk_level = self.form.risk_level.currentText()
-        city = self.form.city.currentText()
-        soil = self.form.soil_type.currentText()
-        importance_factor = float(self.form.importance_factor.currentText())
-        height_x = self.form.height_x.value()
-        no_of_story = self.form.no_of_story_x.value()
-        is_infill = self.form.infill.isChecked()
-        x_system = self.get_system(self.form.x_treeview)
-        y_system = self.get_system(self.form.y_treeview)
-        x_system_2 = None
-        y_system_2 = None
-        height_2 = 0
-        no_of_story_2 = 0
-        is_infill_2 = False
-        if x_system is None or y_system is None:
-            return
-        if self.form.activate_second_system.isChecked():
-            x_system_2 = self.get_system(self.form.x_treeview_1)
-            y_system_2 = self.get_system(self.form.y_treeview_1)
-            height_2 = self.form.height_x1.value()
-            no_of_story_2 = self.form.no_of_story_x1.value()
-            is_infill_2 = self.form.infill_1.isChecked()
-        build = Building(
-                    risk_level,
-                    importance_factor,
-                    soil,
-                    city,
-                    no_of_story,
-                    height_x,
-                    is_infill,
-                    x_system,
-                    y_system,
-                    tx_an_1,
-                    ty_an_1,
-                    x_system_2,
-                    y_system_2,
-                    height_2,
-                    is_infill_2,
-                    no_of_story_2,
-                    tx_an_2,
-                    ty_an_2,
-                    tx_an_all,
-                    ty_an_all,
-                    )
-        return build
-
     def calculate(self):
-        self.final_building = self.current_building()
+        self.final_building = civiltools_config.current_building_from_widget(self.form)
         if not self.final_building:
             return
         # self.setSoilProperties(self.final_building)

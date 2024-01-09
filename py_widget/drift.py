@@ -72,7 +72,7 @@ class Form(QtWidgets.QWidget):
             self.etabs.unlock_model()
             tx, ty, main_file = self.etabs.get_drift_periods(structure_type=structure_type)
             civiltools_config.save_analytical_periods(self.etabs, tx, ty)
-            building = self.current_building(tx, ty)
+            building = civiltools_config.current_building_from_etabs(self.etabs)
             if two_system:
                 if building.building2.x_system.Ru >= building.x_system.Ru:
                     cdx = building.building2.x_system.cd
@@ -99,7 +99,7 @@ class Form(QtWidgets.QWidget):
                     if ruy1 >= ruy:
                         cdy = d.get('cdy1')
                 else:
-                    building = self.current_building(4, 4)
+                    building = civiltools_config.current_building_from_etabs(self.etabs)
                     if building.building2.x_system.Ru >= building.x_system.Ru:
                         cdx = building.building2.x_system.cd
                     if building.building2.y_system.Ru >= building.y_system.Ru:
@@ -170,60 +170,6 @@ class Form(QtWidgets.QWidget):
     
     def reject(self):
         Gui.Control.closeDialog()
-
-    def current_building(self, tx, ty):
-        d = civiltools_config.load(self.etabs)
-        risk_level = d['risk_level']
-        importance_factor = float(d['importance_factor'])
-        soil = d['soil_type']
-        city = d['city']
-        two_system = d.get('activate_second_system', False)
-        if two_system:
-            height_x1 = d['height_x1']
-            noStory1 = d['no_of_story_x1']
-            xSystemType1 = d['x_system_name_1']
-            xLateralType1 = d['x_lateral_name_1']
-            ySystemType1 = d['y_system_name_1']
-            yLateralType1 = d['y_lateral_name_1']
-            is_infill1= d['infill_1']
-            xSystem1 = StructureSystem(xSystemType1, xLateralType1, "X")
-            ySystem1 = StructureSystem(ySystemType1, yLateralType1, "Y")
-        else:
-            xSystem1 = None
-            ySystem1 = None
-            height_x1 = 0
-            is_infill1 = False
-            noStory1=0
-        #     if 
-        #     no_of_stories = d['no_of_story_x'] + d['no_of_story_x1']
-        height_x = d['height_x']
-        noStory = d['no_of_story_x']
-        xSystemType = d['x_system_name']
-        xLateralType = d['x_lateral_name']
-        ySystemType = d['y_system_name']
-        yLateralType = d['y_lateral_name']
-        is_infill = d['infill']
-        xSystem = StructureSystem(xSystemType, xLateralType, "X")
-        ySystem = StructureSystem(ySystemType, yLateralType, "Y")
-        build = Building(
-                    risk_level,
-                    importance_factor,
-                    soil,
-                    city,
-                    noStory,
-                    height_x,
-                    is_infill,
-                    xSystem,
-                    ySystem,
-                    tx,
-                    ty,
-                    xSystem1,
-                    ySystem1,
-                    height_x1,
-                    is_infill1,
-                    noStory1,
-                    )
-        return build
 
     def get_data_for_apply_earthquakes(self, building, d: dict):
         bot_1, top_1, bot_2, top_2 = self.etabs.get_top_bot_stories(d)

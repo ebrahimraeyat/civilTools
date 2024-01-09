@@ -312,61 +312,8 @@ class Form(QtWidgets.QWidget):
         except KeyError:
             pass
 
-    def current_building(self):
-        risk_level = self.form.risk_level.currentText()
-        city = self.form.city.currentText()
-        soil = self.form.soil_type.currentText()
-        importance_factor = float(self.form.importance_factor.currentText())
-        height_x = self.form.height_x.value()
-        no_of_story = self.form.no_of_story_x.value()
-        is_infill = self.form.infill.isChecked()
-        x_system = self.get_system(self.form.x_treeview)
-        y_system = self.get_system(self.form.y_treeview)
-        if x_system is None or y_system is None:
-            return None, None
-        build = Building(
-                    risk_level,
-                    importance_factor,
-                    soil,
-                    city,
-                    no_of_story,
-                    height_x,
-                    is_infill,
-                    x_system,
-                    y_system,
-                    4,
-                    4,
-                    )
-        # Second System
-        build1 = None
-        if self.form.activate_second_system.isChecked():
-            height_x = self.form.height_x1.value()
-            if height_x == 0:
-                return build, None
-            no_of_story = self.form.no_of_story_x1.value()
-            is_infill = self.form.infill_1.isChecked()
-            x_system = self.get_system(self.form.x_treeview_1)
-            y_system = self.get_system(self.form.y_treeview_1)
-            if x_system is None or y_system is None:
-                build1 = None
-            else:
-                build1 = Building(
-                            risk_level,
-                            importance_factor,
-                            soil,
-                            city,
-                            no_of_story,
-                            height_x,
-                            is_infill,
-                            x_system,
-                            y_system,
-                            4,
-                            4,
-                            )
-        return build, build1
-
     def check_inputs(self):
-        building, building1 = self.current_building()
+        building = civiltools_config.current_building_from_widget(self.form)
         if building is None:
             return False
         results = building.results
@@ -374,19 +321,19 @@ class Form(QtWidgets.QWidget):
             title, err, direction = results[1:]
             QtWidgets.QMessageBox.critical(self, "ایراد در انتخاب سیستم اول", title % direction + '\n' + str(err))
             return False
-        if building1 is not None:
+        if building.building2 is not None:
             if self.form.special_case.isChecked():
-                if (building.x_system.Ru != building1.x_system.Ru) or (
-                    building.y_system.Ru != building1.y_system.Ru):
+                if (building.x_system.Ru != building.building2.x_system.Ru) or (
+                    building.y_system.Ru != building.building2.y_system.Ru):
                     QtWidgets.QMessageBox.critical(self,  "سیستم دوگانه در ارتفاع" , 
                                                 "در حال حاضر نرم افزار نمیتواند سیستم های دوگانه خاص که ضریب رفتار سازه بالا و سازه پایینی برابر نیست را تحلیل کند.")
                     return False
-            if (building.x_system.Ru < building1.x_system.Ru) or (
-                building.y_system.Ru < building1.y_system.Ru):
+            if (building.x_system.Ru < building.building2.x_system.Ru) or (
+                building.y_system.Ru < building.building2.y_system.Ru):
                 QtWidgets.QMessageBox.critical(self,  "سیستم دوگانه در ارتفاع" , 
                                                "در حال حاضر نرم افزار نمیتواند سیستم های دوگانه که ضریب رفتار سازه بالا بیشتر از سازه پایینی است را تحلیل کند.")
                 return False
-            results = building1.results
+            results = building.building2.results
             if results[0] is False:
                 title, err, direction = results[1:]
                 QtWidgets.QMessageBox.critical(self, "ایراد در انتخاب سیستم دوم", title % direction + '\n' + str(err))
@@ -492,15 +439,3 @@ class Form(QtWidgets.QWidget):
                 QtWidgets.QMessageBox.warning(None, title2, warning2%('second system'))
                 return None
         return True
-
-    def get_system(self, view):
-        ret = civiltools_config.get_treeview_item_prop(view)
-        if ret is None:
-            return
-        system, lateral, *args = ret
-        if 'x' in view.objectName():
-            system = StructureSystem(system, lateral, 'X')
-        elif 'y' in view.objectName():
-            system = StructureSystem(system, lateral, 'Y')
-        return system
-

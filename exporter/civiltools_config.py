@@ -10,7 +10,7 @@ from qt_models import treeview_system
 
 civiltools_path = Path(__file__).absolute().parent.parent
 
-# from building.build import StructureSystem, Building
+from building.build import StructureSystem, Building
 # from building import spectral
 # from models import StructureModel
 # from exporter import civiltools_config
@@ -109,6 +109,8 @@ def save(etabs, widget):
 		'ty_an',
 		'tx1_an',
 		'ty1_an',
+		'tx_all_an',
+		'ty_all_an',
 		):
 		if hasattr(widget, key):
 			exec(f"new_d['{key}'] = widget.{key}.value()")
@@ -548,6 +550,8 @@ def load(
 		'ty_an',
 		'tx1_an',
 		'ty1_an',
+		'tx_all_an',
+		'ty_all_an',
 		):
 		if key in keys and hasattr(widget, key):
 			exec(f"widget.{key}.setValue(d['{key}'])")
@@ -679,5 +683,142 @@ def setA(widget):
 			widget.risk_level.setCurrentIndex(i)
 		except KeyError:
 			pass
+
+def current_building_from_etabs(etabs):
+	d = get_settings_from_etabs(etabs)
+	risk_level = d['risk_level']
+	importance_factor = float(d['importance_factor'])
+	soil = d['soil_type']
+	city = d['city']
+	height_x = d['height_x']
+	no_story = d['no_of_story_x']
+	x_systemtype = d['x_system_name']
+	x_lateraltype = d['x_lateral_name']
+	y_systemtype = d['y_system_name']
+	y_lateraltype = d['y_lateral_name']
+	is_infill = d['infill']
+	x_system = StructureSystem(x_systemtype, x_lateraltype, "X")
+	y_system = StructureSystem(y_systemtype, y_lateraltype, "Y")
+	# Second System
+	two_system = d.get('activate_second_system', False)
+	height_x1 = d.get('height_x1', 0)
+	no_story1 = d.get('no_of_story_x1', 0)
+	is_infill1= d.get('infill_1', False)
+	if two_system:
+		x_systemtype1 = d['x_system_name_1']
+		x_lateraltype1 = d['x_lateral_name_1']
+		y_systemtype1 = d['y_system_name_1']
+		y_lateraltype1 = d['y_lateral_name_1']
+		x_system1 = StructureSystem(x_systemtype1, x_lateraltype1, "X")
+		y_system1 = StructureSystem(y_systemtype1, y_lateraltype1, "Y")
+	else:
+		x_system1 = None
+		y_system1 = None
+	# Analytical Periods
+	tx = d.get('tx_an', d.get('t_an_x', 4))
+	ty = d.get('ty_an', d.get('t_an_y', 4))
+	tx1_an = d.get('tx1_an', d.get('t_an_x1', 4))
+	ty1_an = d.get('ty1_an', d.get('t_an_y1', 4))
+	tx_all_an = d.get('tx_all_an', 4)
+	ty_all_an = d.get('ty_all_an', 4)
+	#     if 
+	#     no_of_stories = d['no_of_story_x'] + d['no_of_story_x1']
+	build = Building(
+				risk_level,
+				importance_factor,
+				soil,
+				city,
+				no_story,
+				height_x,
+				is_infill,
+				x_system,
+				y_system,
+				tx,
+				ty,
+				x_system1,
+				y_system1,
+				height_x1,
+				is_infill1,
+				no_story1,
+				tx1_an,
+				ty1_an,
+				tx_all_an,
+				ty_all_an,
+				)
+	return build
+
+def current_building_from_widget(widget):
+	x_system = get_system(widget.x_treeview)
+	y_system = get_system(widget.y_treeview)
+	if x_system is None or y_system is None:
+		return None
+	risk_level = widget.risk_level.currentText()
+	city = widget.city.currentText()
+	soil = widget.soil_type.currentText()
+	importance_factor = float(widget.importance_factor.currentText())
+	height_x = widget.height_x.value()
+	no_of_story = widget.no_of_story_x.value()
+	is_infill = widget.infill.isChecked()
+	height_2 = widget.height_x1.value()
+	no_of_story_2 = widget.no_of_story_x1.value()
+	is_infill_2 = widget.infill_1.isChecked()
+	if widget.activate_second_system.isChecked():
+		x_system_2 = get_system(widget.x_treeview_1)
+		y_system_2 = get_system(widget.y_treeview_1)
+	else:
+		x_system_2, y_system_2 = (None, None)
+	tx_an = 4
+	ty_an = 4
+	tx1_an = 4
+	ty1_an = 4
+	tx_all_an = 4
+	ty_all_an = 4
+	if hasattr(widget, 'tx_an'):
+		tx_an = widget.tx_an.value()
+	if hasattr(widget, 'ty_an'):
+		ty_an = widget.ty_an.value()
+	if hasattr(widget, 'tx1_an'):
+		tx1_an = widget.tx1_an.value()
+	if hasattr(widget, 'ty1_an'):
+		ty1_an = widget.ty1_an.value()
+	if hasattr(widget, 'tx_all_an'):
+		tx_all_an = widget.tx_all_an.value()
+	if hasattr(widget, 'ty_all_an'):
+		ty_all_an = widget.ty_all_an.value()
+	build = Building(
+				risk_level,
+				importance_factor,
+				soil,
+				city,
+				no_of_story,
+				height_x,
+				is_infill,
+				x_system,
+				y_system,
+				tx_an,
+				ty_an,
+				# Second System
+				x_system_2= x_system_2,
+				y_system_2= y_system_2,
+				height_2 = height_2,
+				is_infill_2= is_infill_2,
+				number_of_story_2= no_of_story_2,
+				tx_an_2=tx1_an,
+				ty_an_2=ty1_an,
+				tx_an_all=tx_all_an,
+				ty_an_all=ty_all_an,
+	)
+	return build
+
+def get_system(view):
+	ret = get_treeview_item_prop(view)
+	if ret is None:
+		return
+	system, lateral, *_ = ret
+	if 'x' in view.objectName():
+		system = StructureSystem(system, lateral, 'X')
+	elif 'y' in view.objectName():
+		system = StructureSystem(system, lateral, 'Y')
+	return system
 
 
