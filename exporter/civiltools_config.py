@@ -16,7 +16,7 @@ from building.build import StructureSystem, Building
 # from exporter import civiltools_config
 from db import ostanha
 
-def save(etabs, widget):
+def get_prop_from_widget(etabs, widget):
 	new_d = {}
 	# comboboxes
 	for key in (
@@ -176,6 +176,10 @@ def save(etabs, widget):
 		new_d['Ruy1'] = RuTable.Ru[system][lateral][0]
 	d = get_settings_from_etabs(etabs)
 	d.update(new_d)
+	return d
+
+def save(etabs, widget):
+	d = get_prop_from_widget(etabs=etabs, widget=widget)
 	set_settings_to_etabs(etabs, d)
 	return d
 

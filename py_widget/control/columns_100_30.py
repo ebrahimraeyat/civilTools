@@ -5,38 +5,51 @@ import FreeCADGui as Gui
 
 civiltools_path = Path(__file__).absolute().parent.parent.parent
 
+from exporter import civiltools_config 
 
 class Form(QtWidgets.QWidget):
-    def __init__(self, etabs_model, ex, exn, exp, ey, eyn, eyp):
+    def __init__(self, etabs_model, d):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'control' / 'columns_100_30.ui'))
         self.etabs = etabs_model
-        self.ex = ex
-        self.exn = exn
-        self.exp = exp
-        self.ey = ey
-        self.eyn = eyn
-        self.eyp = eyp
+        self.load_config(d)
         self.create_connections()
-        self.fill_dynamic()
         self.set_code()
+
+    def load_config(self, d):
+        civiltools_config.load(self.etabs, self.form, d)
+        self.form.dynamic_groupbox.setChecked(False)
 
     def create_connections(self):
         self.form.browse.clicked.connect(self.get_filename)
-        self.form.structure_type.currentIndexChanged.connect(self.set_code)
+        self.form.concrete_radiobutton.clicked.connect(self.set_code)
+        self.form.steel_radiobutton.clicked.connect(self.set_code)
         self.form.check.clicked.connect(self.check)
-        self.form.cancel_button.clicked.connect(self.accept)
+        self.form.cancel_button.clicked.connect(self.reject)
+        self.form.static_groupbox.clicked.connect(self.groupbox_clicked)
+        self.form.dynamic_groupbox.clicked.connect(self.groupbox_clicked)
 
-    def fill_dynamic(self):
-        x_dynamics, y_dynamics = self.etabs.load_cases.get_response_spectrum_xy_loadcases_names()
-        self.form.sx_combobox.addItems(x_dynamics)
-        self.form.sxe_combobox.addItems(x_dynamics)
-        self.form.sy_combobox.addItems(y_dynamics)
-        self.form.sye_combobox.addItems(y_dynamics)
+    def groupbox_clicked(self, checked):
+        sender = self.sender()
+        if sender.objectName().startswith('static'):
+            self.form.static_group_x.setEnabled(checked)
+            self.form.static_group_y.setEnabled(checked)
+            self.form.dynamic_group_x.setEnabled(not checked)
+            self.form.dynamic_group_y.setEnabled(not checked)
+            self.form.dynamic_groupbox.setChecked(not checked)
+        elif sender.objectName().startswith('dynamic'):
+            self.form.static_group_x.setEnabled(not checked)
+            self.form.static_group_y.setEnabled(not checked)
+            self.form.dynamic_group_x.setEnabled(checked)
+            self.form.dynamic_group_y.setEnabled(checked)
+            self.form.static_groupbox.setChecked(not checked)
 
     def set_code(self):
-        self.type_ = self.form.structure_type.currentText()
-        self.code = self.etabs.design.get_code(self.type_)
+        if self.form.concrete_radiobutton.isChecked():
+            type_ = 'Concrete'
+        elif self.form.steel_radiobutton.isChecked():
+            type_ = 'Steel'
+        self.code = self.etabs.design.get_code(type_)
         self.form.design_code.setText(self.code)
 
     def get_filename(self):
@@ -54,11 +67,26 @@ class Form(QtWidgets.QWidget):
         file_path = Path(filename)
         if file_path.exists():
             filename = file_path
-        if self.form.dynamic_groupbox.isChecked():
-            sx = self.form.sx_combobox.currentText()
-            sxe = self.form.sxe_combobox.currentText()
-            sy = self.form.sy_combobox.currentText()
-            sye = self.form.sye_combobox.currentText()
+        d = civiltools_config.get_prop_from_widget(self.etabs, self.form)
+        if self.form.concrete_radiobutton.isChecked():
+            type_ = 'Concrete'
+        elif self.form.steel_radiobutton.isChecked():
+            type_ = 'Steel'
+        if self.form.static_groupbox.isChecked():
+            ex, exn, exp, ey, eyn, eyp = self.etabs.get_first_system_seismic(d)
+            data = self.etabs.frame_obj.require_100_30(
+                ex,
+                exn,
+                exp,
+                ey,
+                eyn,
+                eyp,
+                filename,
+                type_,
+                self.code,
+            )
+        elif self.form.dynamic_groupbox.isChecked():
+            sx, sxe, sy, sye = self.etabs.get_dynamic_loadcases(d)
             data = self.etabs.frame_obj.require_100_30(
                 sx,
                 sxe,
@@ -67,19 +95,7 @@ class Form(QtWidgets.QWidget):
                 sye,
                 None,
                 filename,
-                self.type_,
-                self.code,
-            )
-        else:
-            data = self.etabs.frame_obj.require_100_30(
-                self.ex,
-                self.exn,
-                self.exp,
-                self.ey,
-                self.eyn,
-                self.eyp,
-                filename,
-                self.type_,
+                type_,
                 self.code,
             )
         import table_model
@@ -107,7 +123,7 @@ class Form(QtWidgets.QWidget):
         
         self.etabs.view.show_frames(ignore_frame_names)
         create_load_combinations = self.form.create_100_30.isChecked()
-        Gui.Control.closeDialog()
+        self.reject()
         if create_load_combinations:
             # Gui.runCommand('civiltools_load_combinations')
             import find_etabs
@@ -116,9 +132,8 @@ class Form(QtWidgets.QWidget):
             win.form.separate_direction.setChecked(True)
             find_etabs.show_win(win, in_mdi=False)
 
-
-    def accept(self):
-        Gui.Control.closeDialog()
+    def reject(self):
+        self.form.close()
 
     def getStandardButtons(self):
         return 0

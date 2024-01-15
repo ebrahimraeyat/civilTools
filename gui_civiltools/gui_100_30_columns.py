@@ -63,14 +63,9 @@ class CivilTools100_30Columns:
             "Model has Horizontal Irregularity, Do you want to continue?",
             ) == QMessageBox.No:
             return
-        etabs.lock_and_unlock_model()
-        ex, exn, exp, ey, eyn, eyp = etabs.load_patterns.get_seismic_load_patterns()
-        if not all([ex, exn, exp, ey, eyn, eyp]):
-            QMessageBox.warning(None, 'ETABS', 'Please Define EX, EXN, EXP, EY, EYN, EYP in ETABS Model.')
-            return False
         from py_widget.control import columns_100_30
-        win = columns_100_30.Form(etabs, list(ex)[0], list(exn)[0], list(exp)[0], list(ey)[0], list(eyn)[0], list(eyp)[0])
-        Gui.Control.showDialog(win)
+        win = columns_100_30.Form(etabs, d)
+        find_etabs.show_win(win, in_mdi=False)
         show_warning_about_number_of_use(check)
         
     def IsActive(self):

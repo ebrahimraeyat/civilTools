@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>433</width>
-    <height>535</height>
+    <height>558</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,16 +23,9 @@
   <property name="modal">
    <bool>false</bool>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Structure Type</string>
-       </property>
-      </widget>
-     </item>
      <item row="0" column="0">
       <widget class="QLabel" name="label">
        <property name="text">
@@ -40,17 +33,10 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="0">
+     <item row="1" column="0">
       <widget class="QLabel" name="label_3">
        <property name="text">
         <string>Design Code</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QLineEdit" name="filename">
-       <property name="text">
-        <string>100-30</string>
        </property>
       </widget>
      </item>
@@ -61,7 +47,7 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
+     <item row="1" column="1">
       <widget class="QLineEdit" name="design_code">
        <property name="text">
         <string/>
@@ -71,21 +57,14 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
-      <widget class="QComboBox" name="structure_type">
-       <item>
-        <property name="text">
-         <string>Concrete</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Steel</string>
-        </property>
-       </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="filename">
+       <property name="text">
+        <string>100-30</string>
+       </property>
       </widget>
      </item>
-     <item row="3" column="0" colspan="2">
+     <item row="2" column="0" colspan="2">
       <widget class="QCheckBox" name="create_100_30">
        <property name="text">
         <string>Create Load Combinations Without 100-30 at end</string>
@@ -93,6 +72,188 @@
       </widget>
      </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_9">
+     <property name="title">
+      <string>Structure Type</string>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_11">
+      <item>
+       <widget class="QRadioButton" name="concrete_radiobutton">
+        <property name="text">
+         <string>Concrete</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="steel_radiobutton">
+        <property name="text">
+         <string>Steel</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="static_groupbox">
+     <property name="title">
+      <string>Static</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QGroupBox" name="static_group_x">
+        <property name="title">
+         <string>X</string>
+        </property>
+        <layout class="QFormLayout" name="formLayout_13">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_56">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="text">
+            <string>EX</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QComboBox" name="ex_combobox">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="editable">
+            <bool>true</bool>
+           </property>
+           <item>
+            <property name="text">
+             <string>EX</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_57">
+           <property name="text">
+            <string>EXP</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QComboBox" name="exp_combobox">
+           <property name="editable">
+            <bool>true</bool>
+           </property>
+           <item>
+            <property name="text">
+             <string>EXP</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_58">
+           <property name="text">
+            <string>EXN</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QComboBox" name="exn_combobox">
+           <property name="editable">
+            <bool>true</bool>
+           </property>
+           <item>
+            <property name="text">
+             <string>EXN</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="static_group_y">
+        <property name="title">
+         <string>Y</string>
+        </property>
+        <layout class="QFormLayout" name="formLayout_14">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_59">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="text">
+            <string>EY</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QComboBox" name="ey_combobox">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="editable">
+            <bool>true</bool>
+           </property>
+           <item>
+            <property name="text">
+             <string>EY</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_60">
+           <property name="text">
+            <string>EYP</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QComboBox" name="eyp_combobox">
+           <property name="editable">
+            <bool>true</bool>
+           </property>
+           <item>
+            <property name="text">
+             <string>EYP</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_61">
+           <property name="text">
+            <string>EYN</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QComboBox" name="eyn_combobox">
+           <property name="editable">
+            <bool>true</bool>
+           </property>
+           <item>
+            <property name="text">
+             <string>EYN</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </item>
    <item>
     <widget class="QGroupBox" name="dynamic_groupbox">
@@ -106,54 +267,110 @@
       <bool>true</bool>
      </property>
      <property name="checked">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QGroupBox" name="groupBox_5">
+       <widget class="QGroupBox" name="dynamic_group_x">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
         <property name="title">
          <string>X</string>
         </property>
-        <layout class="QFormLayout" name="formLayout">
-         <item row="2" column="0">
-          <widget class="QLabel" name="label_12">
-           <property name="text">
-            <string>SXE</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QComboBox" name="sxe_combobox">
-           <property name="editable">
+        <layout class="QFormLayout" name="formLayout_9">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_20">
+           <property name="enabled">
             <bool>true</bool>
+           </property>
+           <property name="text">
+            <string>SX</string>
            </property>
           </widget>
          </item>
          <item row="0" column="1">
           <widget class="QComboBox" name="sx_combobox">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
            <property name="editable">
             <bool>true</bool>
            </property>
+           <item>
+            <property name="text">
+             <string>SX</string>
+            </property>
+           </item>
           </widget>
          </item>
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_13">
-           <property name="text">
-            <string>SX</string>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_31">
+           <property name="enabled">
+            <bool>true</bool>
            </property>
+           <property name="text">
+            <string>SXE</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QComboBox" name="sxe_combobox">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="editable">
+            <bool>true</bool>
+           </property>
+           <item>
+            <property name="text">
+             <string>SXE</string>
+            </property>
+           </item>
           </widget>
          </item>
         </layout>
        </widget>
       </item>
       <item>
-       <widget class="QGroupBox" name="groupBox_6">
+       <widget class="QGroupBox" name="dynamic_group_y">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
         <property name="title">
          <string>Y</string>
         </property>
-        <layout class="QFormLayout" name="formLayout_2">
+        <layout class="QFormLayout" name="formLayout_10">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_34">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="text">
+            <string>SY</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QComboBox" name="sy_combobox">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="editable">
+            <bool>true</bool>
+           </property>
+           <item>
+            <property name="text">
+             <string>SY</string>
+            </property>
+           </item>
+          </widget>
+         </item>
          <item row="1" column="0">
-          <widget class="QLabel" name="label_16">
+          <widget class="QLabel" name="label_35">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
            <property name="text">
             <string>SYE</string>
            </property>
@@ -161,23 +378,17 @@
          </item>
          <item row="1" column="1">
           <widget class="QComboBox" name="sye_combobox">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
            <property name="editable">
             <bool>true</bool>
            </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QComboBox" name="sy_combobox">
-           <property name="editable">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_17">
-           <property name="text">
-            <string>SY</string>
-           </property>
+           <item>
+            <property name="text">
+             <string>SYE</string>
+            </property>
+           </item>
           </widget>
          </item>
         </layout>
