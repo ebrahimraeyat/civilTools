@@ -287,6 +287,9 @@ class Form(QtWidgets.QWidget):
         ret = self.show_etabs_warning()
         if not ret:
             return
+        if self.form.purge_checkbox.isChecked():
+            self.etabs.purge_model()
+            self.etabs.view.refresh_view()
         self.etabs.set_current_unit('N', 'mm')
         self.etabs.unlock_model()
         g1 = self.export_axes_to_etabs()

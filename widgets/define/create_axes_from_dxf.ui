@@ -319,12 +319,15 @@
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="append_checkbox">
+         <widget class="QCheckBox" name="purge_checkbox">
           <property name="enabled">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <property name="text">
-           <string>Append</string>
+           <string>Purge Model</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
