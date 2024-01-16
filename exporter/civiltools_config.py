@@ -545,20 +545,29 @@ def load(
 		'no_of_story_x',
 		'height_x1',
 		'no_of_story_x1',
+		):
+		if key in keys and hasattr(widget, key):
+			exec(f"widget.{key}.setValue(d['{key}'])")
+	for key, key2 in zip((
 		't_an_x',
 		't_an_y',
 		't_an_x1',
 		't_an_y1',
-		# New version
+	), (
 		'tx_an',
 		'ty_an',
 		'tx1_an',
 		'ty1_an',
 		'tx_all_an',
 		'ty_all_an',
-		):
-		if key in keys and hasattr(widget, key):
-			exec(f"widget.{key}.setValue(d['{key}'])")
+		)):
+		if (key in keys): # Old version
+			if hasattr(widget, key):
+				exec(f"widget.{key}.setValue(d['{key}'])")
+			elif hasattr(widget, key2):
+				exec(f"widget.{key2}.setValue(d['{key}'])")
+		if (key2 in keys) and hasattr(widget, key2):  # New version
+				exec(f"widget.{key2}.setValue(d['{key2}'])")
 	# TreeViewes
 	set_system_treeview(widget)
 	if hasattr(widget, 'x_treeview') and hasattr(widget, 'y_treeview'):
