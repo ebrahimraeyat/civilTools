@@ -82,7 +82,7 @@ class StructureModel(QAbstractTableModel):
                 c_drift = self.build.building2.results_drift[2]
         if role == Qt.DisplayRole:
             if row == HMAX:
-                return str(system.maxHeight)
+                return str(system.max_height)
             if row == RU:
                 return str(system.Ru)
             if row == OMEGA0:

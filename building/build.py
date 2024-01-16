@@ -134,8 +134,8 @@ class Building(object):
             return alpha * height ** power
 
     def max_allowed_height_systems(self, x_system, y_system):
-        x_max_allowed_height = x_system.maxHeight
-        y_max_allowed_height = y_system.maxHeight
+        x_max_allowed_height = x_system.max_height
+        y_max_allowed_height = y_system.max_height
         if (x_max_allowed_height and y_max_allowed_height) is None:
             max_allowed_height = 200
         elif x_max_allowed_height is None:
@@ -147,7 +147,7 @@ class Building(object):
         return max_allowed_height
     
     def max_allowed_height_system(self, system):
-        x_max_allowed_height = system.maxHeight
+        x_max_allowed_height = system.max_height
         if x_max_allowed_height is None:
             x_max_allowed_height = 200
         return x_max_allowed_height
@@ -194,10 +194,10 @@ class Building(object):
         for direction in ("X", "Y"):
             if direction == "X":
                 ID = x_system.ID
-                lateral_type = x_system.lateralType
+                lateral_type = x_system.lateral_type
             else:
                 ID = y_system.ID
-                lateral_type = y_system.lateralType
+                lateral_type = y_system.lateral_type
             try:
                 if direction == 'X' and height > max_height_x:
                     raise StructureSystemError(e6 % max_height_x)
@@ -250,7 +250,7 @@ class StructureSystem(object):
 
     def __init__(self, system, lateral, direction='X'):
         self.systemType = system
-        self.lateralType = lateral
+        self.lateral_type = lateral
         self.direction = direction
         rFactorTable = RFactorTable()
         rTable = rFactorTable.structureSystems
@@ -258,7 +258,7 @@ class StructureSystem(object):
         self.Ru = Rus[0]
         self.phi0 = Rus[1]
         self.cd = Rus[2]
-        self.maxHeight = Rus[3]
+        self.max_height = Rus[3]
         self.alpha = Rus[4]
         self.pow = Rus[5]
         self.is_infill = Rus[6]
@@ -266,18 +266,18 @@ class StructureSystem(object):
 
     def __eq__(self, another):
         if self.systemType == another.systemType and \
-                self.lateralType == another.lateralType:
+                self.lateral_type == another.lateral_type:
             return True
         return False
 
     def __str__(self):
         return f'''
             system type is {self.systemType}\n
-            lateral system is {self.lateralType}\n
+            lateral system is {self.lateral_type}\n
             Ru = {self.Ru}\n
             omega = {self.phi0}\n
             cd = {self.cd}\n
-            maximum height = {self.maxHeight}\n
+            maximum height = {self.max_height}\n
             '''
 
 

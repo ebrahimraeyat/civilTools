@@ -12,7 +12,7 @@ import os
 cfactor_path = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
 
 
-def export(building=None, filename=None):
+def get_data_from_model(building, etabs=None):
     if not building:
         return None
 
@@ -27,29 +27,32 @@ def export(building=None, filename=None):
             'ارتفاع ساختمان  )متر(': building.height,
             'سطح خطر نسبی': building.risk_level,
             'شتاب مبنای طرح': building.acc,
-            'نوع خاک': building.soilType}
+            'نوع خاک': building.soil_type}
     if X == Y:
-        prop['سیستم سازه ای در دو راستا'] = X.lateralType
+        prop['سیستم سازه ای در دو راستا'] = X.lateral_type
     else:
-        prop['سیستم سازه ای در راستای x'] = X.lateralType
-        prop['سیستم سازه ای در راستای y'] = Y.lateralType
+        prop['سیستم سازه ای در راستای x'] = X.lateral_type
+        prop['سیستم سازه ای در راستای y'] = Y.lateral_type
 
     struc = {'': ('راستای x', 'راستای y'),
-             'سیستم سازه': (X.lateralType, Y.lateralType),
+             'سیستم سازه': (X.lateral_type, Y.lateral_type),
              'ضریب رفتار': (X.Ru, Y.Ru),
              'ضریب اضافه مقاومت': (X.phi0, Y.phi0),
              'ضریب بزرگنمایی جابجایی': (X.cd, Y.cd),
-             'ارتفاع مجاز  )متر(': (X.maxHeight, Y.maxHeight)}
+             'ارتفاع مجاز  )متر(': (X.max_height, Y.max_height)}
 
     result = {'زمان تناوب تجربی': (building.tx_exp, building.ty_exp),
               'زمان تناوب تحلیلی': (building.tx_an, building.ty_an),
               'ضریب بازتاب': (building.bx, building.by),
-              'C': (building.results[1], building.results[2]),
-              'K': (building.kx, building.ky),
-              'C_drift': (building.results_drift[1], building.results_drift[2]),
-              'K_drift': (building.kx_drift, building.ky_drift),
+              'ضریب زلزله': (building.results[1], building.results[2]),
+              'ضریب توزیع': (building.kx, building.ky),
+              'ضریب زلزله دریفت': (building.results_drift[1], building.results_drift[2]),
+              'ضریب توزیع دریفت': (building.kx_drift, building.ky_drift),
               }
+    return prop, struc, result
 
+def export(building=None, filename=None, etabs=None):
+    prop, struc, result = get_data_from_model(building=building, etabs=etabs)
     doc = Document(os.path.join(cfactor_path, 'exporter', 'template.docx'))
     doc.add_heading('محاسبه ضریب زلزله', level=0)
     doc.add_heading('مشخصات پروژه', level=1)
