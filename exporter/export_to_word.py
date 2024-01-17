@@ -45,9 +45,9 @@ def get_data_from_model(building, etabs=None):
               'زمان تناوب تحلیلی': (building.tx_an, building.ty_an),
               'ضریب بازتاب': (building.bx, building.by),
               'ضریب زلزله': (building.results[1], building.results[2]),
-              'ضریب توزیع': (building.kx, building.ky),
+              'ضریب توزیع در ارتفاع': (building.kx, building.ky),
               'ضریب زلزله دریفت': (building.results_drift[1], building.results_drift[2]),
-              'ضریب توزیع دریفت': (building.kx_drift, building.ky_drift),
+              'ضریب توزیع در ارتفاع دریفت': (building.kx_drift, building.ky_drift),
               }
     return prop, struc, result
 
