@@ -70,10 +70,15 @@ class Form(QtWidgets.QWidget):
     def create_connections(self):
         self.form.initial_checkbox.stateChanged.connect(self.set_initial_j)
         self.form.run.clicked.connect(self.accept)
+        self.form.help.clicked.connect(self.show_help)
 
     def set_initial_j(self):
         if self.form.initial_checkbox.isChecked():
             self.form.initial_spinbox.setEnabled(True)
         else:
             self.form.initial_spinbox.setEnabled(False)
+
+    def show_help(self):
+        from freecad_funcs import show_help
+        show_help('j.html', 'civilTools')
 

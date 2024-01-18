@@ -90,23 +90,23 @@ class Form(QtWidgets.QWidget):
                 'Height': [50] * n,
                 'Result': [''] * n,
             })
-            
-            def fill_props(row):
-                beam_name = row['Name']
-                section_name = self.etabs.SapModel.FrameObj.GetSection(beam_name)[0]
-                try:
-                    _, _, h, b, *_ = self.etabs.SapModel.PropFrame.GetRectangle(section_name)
-                except:
-                    h, b = (0, 0)
-                label, story, *_ = self.etabs.SapModel.FrameObj.GetLabelFromName(beam_name)
-                row['Label'] = label
-                row['Story'] = story
-                row['Height'] = h
-                row['Width'] = b
-                return row
-            
-            new_rows = new_rows.apply(fill_props, axis=1)
             df = df.append(new_rows, ignore_index=True)
+            
+        def fill_props(row):
+            beam_name = row['Name']
+            section_name = self.etabs.SapModel.FrameObj.GetSection(beam_name)[0]
+            try:
+                _, _, h, b, *_ = self.etabs.SapModel.PropFrame.GetRectangle(section_name)
+            except:
+                h, b = (0, 0)
+            label, story, *_ = self.etabs.SapModel.FrameObj.GetLabelFromName(beam_name)
+            row['Label'] = label
+            row['Story'] = story
+            row['Height'] = h
+            row['Width'] = b
+            return row
+            
+        df = df.apply(fill_props, axis=1)
         filt = df['Name'].isin(beam_names)
         df = df.loc[filt]
         self.result_table = table_model.ResultWidget(
