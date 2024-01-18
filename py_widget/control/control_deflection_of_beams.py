@@ -118,6 +118,7 @@ class Form(QtWidgets.QWidget):
     def create_connections(self):
         self.form.check_button.clicked.connect(self.check)
         self.form.cancel_button.clicked.connect(self.reject)
+        self.form.help.clicked.connect(self.show_help)
         self.form.open_main_file_button.clicked.connect(self.open_main_file)
         self.form.short_term_combobox.currentIndexChanged.connect(self.check_result)
         self.form.long_term_combobox.currentIndexChanged.connect(self.check_result)
@@ -330,6 +331,10 @@ class Form(QtWidgets.QWidget):
             # Set the brush on the polygon item
             item.setBrush(brush)
         self.form.graphicsview.fitInView(self.scene.sceneRect(), QtCore.Qt.KeepAspectRatio)
+
+    def show_help(self):
+        from freecad_funcs import show_help
+        show_help('beams_deflection.html', 'civilTools')
 
 
 def convert5Pointto8Point(cx_, cy_, w_, h_, a_):
