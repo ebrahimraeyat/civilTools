@@ -25,7 +25,7 @@ class Form(QtWidgets.QWidget):
     def __init__(self,
     etabs_model,
     beam_names,
-    d: dict={},
+    d: dict,
     ):
         '''
         d: dictionary of model properties
@@ -52,8 +52,7 @@ class Form(QtWidgets.QWidget):
             self.etabs.get_filename()
         except:
             return
-        if len(d) == 0:
-            d = civiltools_config.load(self.etabs, self.form)
+        civiltools_config.load(self.etabs, self.form, d)
         p = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools")
         live_load_percentage = p.GetFloat('civiltools_live_load_percentage_deflection', 0.25)
         self.form.live_percentage_spinbox.setValue(live_load_percentage)
