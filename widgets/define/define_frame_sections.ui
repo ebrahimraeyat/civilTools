@@ -199,7 +199,7 @@
                <bool>false</bool>
               </property>
               <property name="currentRow">
-               <number>3</number>
+               <number>-1</number>
               </property>
               <property name="sortingEnabled">
                <bool>false</bool>
@@ -332,6 +332,56 @@
               <item>
                <property name="text">
                 <string>150</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>155</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>160</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>165</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>170</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>175</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>180</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>185</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>190</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>195</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>200</string>
                </property>
               </item>
              </widget>
@@ -374,7 +424,7 @@
                <bool>false</bool>
               </property>
               <property name="currentRow">
-               <number>3</number>
+               <number>-1</number>
               </property>
               <property name="sortingEnabled">
                <bool>false</bool>
@@ -507,6 +557,56 @@
               <item>
                <property name="text">
                 <string>150</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>155</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>160</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>165</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>170</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>175</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>180</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>185</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>190</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>195</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>200</string>
                </property>
               </item>
              </widget>
@@ -597,7 +697,7 @@
                    <enum>QAbstractItemView::ExtendedSelection</enum>
                   </property>
                   <property name="currentRow">
-                   <number>0</number>
+                   <number>-1</number>
                   </property>
                   <item>
                    <property name="text">
@@ -657,6 +757,86 @@
                   <item>
                    <property name="text">
                     <string>14</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>15</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>16</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>17</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>18</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>19</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>20</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>21</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>22</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>23</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>24</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>25</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>26</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>27</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>28</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>29</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>30</string>
                    </property>
                   </item>
                  </widget>
@@ -667,7 +847,7 @@
                    <enum>QAbstractItemView::ExtendedSelection</enum>
                   </property>
                   <property name="currentRow">
-                   <number>1</number>
+                   <number>-1</number>
                   </property>
                   <item>
                    <property name="text">
@@ -727,6 +907,86 @@
                   <item>
                    <property name="text">
                     <string>14</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>15</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>16</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>17</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>18</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>19</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>20</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>21</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>22</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>23</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>24</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>25</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>26</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>27</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>28</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>29</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>30</string>
                    </property>
                   </item>
                  </widget>
@@ -1246,7 +1506,7 @@
           </size>
          </property>
          <property name="flat">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
         </widget>
        </item>
