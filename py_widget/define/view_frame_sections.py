@@ -82,6 +82,8 @@ class Form(QtWidgets.QWidget):
         import freecad_funcs
         if freecad_funcs.ask_to_unlock(self.etabs) == 'NO':
             return
+        units = self.etabs.get_current_unit()
+        self.etabs.set_current_unit('N', 'mm')
         i = self.form.tabWidget.currentIndex()
         use_concrete_mat = self.form.concrete_checkbox.isChecked()
         concrete_mat = self.form.concrete_mats.currentText()
@@ -139,6 +141,7 @@ class Form(QtWidgets.QWidget):
                     tie_mat = section.Tie_Bars_Name,
                     cover = section.cover,
                 )
+        self.etabs.set_current_unit(*units)
         QMessageBox.information(None, '', f'{len(selected_rows)} Sections Imported into {self.etabs.get_filename()} ETABS Model.')
         
     def reject(self):
