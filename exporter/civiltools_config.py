@@ -339,14 +339,14 @@ def load(
 				item.setCheckState(Qt.Checked)
 	# Dynamic Seismic
 	sx, sxe, sy, sye = etabs.load_cases.get_response_spectrum_sxye_loadcases_names()
-	sx_drift = {i for i in sx if 'drift' in i.lower()}
-	sxe_drift = {i for i in sxe if 'drift' in i.lower()}
-	sy_drift = {i for i in sy if 'drift' in i.lower()}
-	sye_drift = {i for i in sye if 'drift' in i.lower()}
-	sx = sx.difference(sx_drift)
-	sxe = sxe.difference(sxe_drift)
-	sy = sy.difference(sy_drift)
-	sye = sye.difference(sye_drift)
+	sx_drift = sx
+	sxe_drift = sxe
+	sy_drift = sy
+	sye_drift = sye
+	# sx = sx.difference(sx_drift)
+	# sxe = sxe.difference(sxe_drift)
+	# sy = sy.difference(sy_drift)
+	# sye = sye.difference(sye_drift)
 	for combobox, spectrum_lc in zip(
 		(
 			'sx_combobox',
