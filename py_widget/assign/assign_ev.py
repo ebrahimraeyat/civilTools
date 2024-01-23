@@ -10,16 +10,19 @@ from exporter import civiltools_config
 civiltools_path = Path(__file__).absolute().parent.parent.parent
 
 class Form(QtWidgets.QWidget):
-    def __init__(self, etabs_model):
+    def __init__(self, etabs_model, d):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'assign' / 'assign_ev.ui'))
         self.etabs = etabs_model
         self.fill_load_patterns()
         self.create_connections()
-        self.load_config()
+        self.load_config(d)
 
     def export_to_etabs(self):
         frames = self.etabs.select_obj.get_selected_obj_type(2)
+        if len(frames) == 0:
+            QMessageBox.warning(None, 'Selection', 'Please Select beam / beams in etabs model.')
+            return
         load_patterns = []
         dead = self.form.dead_combobox.currentText()
         load_patterns.append(dead)
@@ -100,8 +103,8 @@ class Form(QtWidgets.QWidget):
         else:
             self.form.partition_dead_checkbox.setChecked(False)
 
-    def load_config(self):
-        civiltools_config.load(self.etabs, self.form)
+    def load_config(self, d):
+        civiltools_config.load(self.etabs, self.form, d)
 
     def reject(self):
         self.form.close()    

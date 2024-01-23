@@ -62,7 +62,7 @@ class CivilToolsAssignEv:
             return
         
         from py_widget.assign import assign_ev
-        win = assign_ev.Form(etabs)
+        win = assign_ev.Form(etabs, d)
         find_etabs.show_win(win, in_mdi=False)
         show_warning_about_number_of_use(check)
         
