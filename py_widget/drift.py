@@ -83,8 +83,8 @@ class Form(QtWidgets.QWidget):
             if tab == 1:
                 # execute scale response spectrum
                 x_specs, y_specs, _ = self.get_load_cases(tab=1)
-                ex_name = d.get('ex_combobox')
-                ey_name = d.get('ey_combobox')
+                ex_name = d.get('ex_drift_combobox')
+                ey_name = d.get('ey_drift_combobox')
                 x_scale_factor = float(self.form.x_scalefactor_combobox.currentText())
                 y_scale_factor = float(self.form.y_scalefactor_combobox.currentText())
                 self.etabs.scale_response_spectrums(
