@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>478</width>
-    <height>604</height>
+    <height>738</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -87,6 +87,19 @@
           <string/>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
+          <item row="7" column="0" colspan="3">
+           <widget class="QListWidget" name="angular_specs">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="selectionMode">
+             <enum>QAbstractItemView::MultiSelection</enum>
+            </property>
+            <property name="sortingEnabled">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
           <item row="0" column="0">
            <widget class="QRadioButton" name="xy">
             <property name="text">
@@ -110,13 +123,13 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
-           <widget class="QListWidget" name="x_dynamic_drift_loadcase_list">
-            <property name="selectionMode">
-             <enum>QAbstractItemView::MultiSelection</enum>
-            </property>
-            <property name="sortingEnabled">
+          <item row="5" column="0">
+           <widget class="QRadioButton" name="angular">
+            <property name="enabled">
              <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>Angular</string>
             </property>
            </widget>
           </item>
@@ -143,17 +156,71 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
-           <widget class="QRadioButton" name="angular">
-            <property name="enabled">
-             <bool>false</bool>
+          <item row="2" column="0">
+           <widget class="QListWidget" name="x_dynamic_drift_loadcase_list">
+            <property name="selectionMode">
+             <enum>QAbstractItemView::MultiSelection</enum>
             </property>
-            <property name="text">
-             <string>Angular</string>
+            <property name="sortingEnabled">
+             <bool>false</bool>
             </property>
            </widget>
           </item>
-          <item row="4" column="0" colspan="2">
+          <item row="4" column="0">
+           <widget class="QComboBox" name="x_scalefactor_combobox">
+            <property name="currentIndex">
+             <number>1</number>
+            </property>
+            <item>
+             <property name="text">
+              <string>0.85</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>0.90</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>1.0</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="4" column="1" colspan="2">
+           <widget class="QComboBox" name="y_scalefactor_combobox">
+            <property name="currentIndex">
+             <number>1</number>
+            </property>
+            <item>
+             <property name="text">
+              <string>0.85</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>0.90</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>1.0</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="3" column="0" colspan="3">
+           <widget class="QLabel" name="label_33">
+            <property name="text">
+             <string>Scale Factor</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0" colspan="3">
            <widget class="QLabel" name="label_5">
             <property name="layoutDirection">
              <enum>Qt::LeftToRight</enum>
@@ -163,19 +230,6 @@
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0" colspan="3">
-           <widget class="QListWidget" name="angular_specs">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="selectionMode">
-             <enum>QAbstractItemView::MultiSelection</enum>
-            </property>
-            <property name="sortingEnabled">
-             <bool>false</bool>
             </property>
            </widget>
           </item>

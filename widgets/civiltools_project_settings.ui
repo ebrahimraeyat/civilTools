@@ -2007,38 +2007,6 @@
                </property>
               </widget>
              </item>
-             <item row="1" column="2">
-              <widget class="QDoubleSpinBox" name="y_scalefactor">
-               <property name="minimum">
-                <double>0.850000000000000</double>
-               </property>
-               <property name="maximum">
-                <double>1.000000000000000</double>
-               </property>
-               <property name="singleStep">
-                <double>0.050000000000000</double>
-               </property>
-               <property name="value">
-                <double>0.900000000000000</double>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QDoubleSpinBox" name="x_scalefactor">
-               <property name="minimum">
-                <double>0.850000000000000</double>
-               </property>
-               <property name="maximum">
-                <double>1.000000000000000</double>
-               </property>
-               <property name="singleStep">
-                <double>0.050000000000000</double>
-               </property>
-               <property name="value">
-                <double>0.900000000000000</double>
-               </property>
-              </widget>
-             </item>
              <item row="0" column="1">
               <widget class="QLabel" name="label_11">
                <property name="layoutDirection">
@@ -2060,6 +2028,50 @@
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QComboBox" name="x_scalefactor_combobox">
+               <property name="currentIndex">
+                <number>1</number>
+               </property>
+               <item>
+                <property name="text">
+                 <string>0.85</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>0.90</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>1.0</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="1" column="2">
+              <widget class="QComboBox" name="y_scalefactor_combobox">
+               <property name="currentIndex">
+                <number>1</number>
+               </property>
+               <item>
+                <property name="text">
+                 <string>0.85</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>0.90</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>1.0</string>
+                </property>
+               </item>
               </widget>
              </item>
             </layout>

@@ -91,6 +91,8 @@ def get_prop_from_widget(etabs, widget):
 		'sxe_drift_combobox',
 		'sy_drift_combobox',
 		'sye_drift_combobox',
+		'x_scalefactor_combobox',
+		'y_scalefactor_combobox',
 		):
 		if hasattr(widget, key):
 			exec(f"new_d['{key}'] = widget.{key}.currentText()")
@@ -445,6 +447,8 @@ def load(
 		'rhoy_combobox',
 		'rhox1_combobox',
 		'rhoy1_combobox',
+		'x_scalefactor_combobox',
+		'y_scalefactor_combobox',
 		):
 		if key in keys and hasattr(widget, key):
 			exec(f"index = widget.{key}.findText(d['{key}'])")

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>430</width>
-    <height>736</height>
+    <height>759</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -239,22 +239,6 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="2">
-      <widget class="QDoubleSpinBox" name="y_scalefactor">
-       <property name="minimum">
-        <double>0.850000000000000</double>
-       </property>
-       <property name="maximum">
-        <double>1.000000000000000</double>
-       </property>
-       <property name="singleStep">
-        <double>0.050000000000000</double>
-       </property>
-       <property name="value">
-        <double>0.900000000000000</double>
-       </property>
-      </widget>
-     </item>
      <item row="4" column="1">
       <widget class="QDoubleSpinBox" name="tolerance">
        <property name="minimum">
@@ -271,22 +255,6 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
-      <widget class="QDoubleSpinBox" name="x_scalefactor">
-       <property name="minimum">
-        <double>0.850000000000000</double>
-       </property>
-       <property name="maximum">
-        <double>1.000000000000000</double>
-       </property>
-       <property name="singleStep">
-        <double>0.050000000000000</double>
-       </property>
-       <property name="value">
-        <double>0.900000000000000</double>
-       </property>
-      </widget>
-     </item>
      <item row="6" column="0" colspan="3">
       <widget class="QCheckBox" name="reset">
        <property name="text">
@@ -295,6 +263,50 @@
        <property name="checked">
         <bool>true</bool>
        </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QComboBox" name="x_scalefactor_combobox">
+       <property name="currentIndex">
+        <number>1</number>
+       </property>
+       <item>
+        <property name="text">
+         <string>0.85</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>0.90</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>1.0</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="2" column="2">
+      <widget class="QComboBox" name="y_scalefactor_combobox">
+       <property name="currentIndex">
+        <number>1</number>
+       </property>
+       <item>
+        <property name="text">
+         <string>0.85</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>0.90</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>1.0</string>
+        </property>
+       </item>
       </widget>
      </item>
     </layout>
@@ -310,27 +322,14 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>40</width>
-       <height>40</height>
+       <width>60</width>
+       <height>60</height>
       </size>
      </property>
      <property name="shortcut">
       <string>Ctrl+S</string>
      </property>
     </widget>
-   </item>
-   <item>
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
    </item>
   </layout>
  </widget>

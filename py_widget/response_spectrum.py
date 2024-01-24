@@ -34,19 +34,19 @@ class Form(QtWidgets.QWidget):
             self.form.section_cuts.setEnabled(False)
             self.form.x_dynamic_loadcase_list.setEnabled(True)
             self.form.y_dynamic_loadcase_list.setEnabled(True)
-            self.form.y_scalefactor.setEnabled(True)
+            self.form.y_scalefactor_combobox.setEnabled(True)
         elif self.form.angular.isChecked():
             self.form.angular_specs.setEnabled(True)
             self.form.section_cuts.setEnabled(True)
             self.form.x_dynamic_loadcase_list.setEnabled(False)
             self.form.y_dynamic_loadcase_list.setEnabled(False)
-            self.form.y_scalefactor.setEnabled(False)
+            self.form.y_scalefactor_combobox.setEnabled(False)
 
     def accept(self):
         ex_name = self.form.ex_combobox.currentText()
         ey_name = self.form.ey_combobox.currentText()
-        x_scale_factor = self.form.x_scalefactor.value()
-        y_scale_factor = self.form.y_scalefactor.value()
+        x_scale_factor = float(self.form.x_scalefactor_combobox.currentIndex())
+        y_scale_factor = float(self.form.y_scalefactor_combobox.currentIndex())
         num_iteration = self.form.iteration.value()
         tolerance = self.form.tolerance.value()
         reset = self.form.reset.isChecked()

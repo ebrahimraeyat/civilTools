@@ -82,10 +82,19 @@ class Form(QtWidgets.QWidget):
             self.etabs.apply_cfactors_to_edb(data, d=d)
             if tab == 1:
                 # execute scale response spectrum
-                import find_etabs
-                from py_widget import response_spectrum
-                win = response_spectrum.Form(self.etabs, show_message=False)
-                find_etabs.show_win(win, in_mdi=False)
+                x_specs, y_specs, _ = self.get_load_cases(tab=1)
+                ex_name = d.get('ex_combobox')
+                ey_name = d.get('ey_combobox')
+                x_scale_factor = float(self.form.x_scalefactor_combobox.currentText())
+                y_scale_factor = float(self.form.y_scalefactor_combobox.currentText())
+                self.etabs.scale_response_spectrums(
+                    ex_name,
+                    ey_name,
+                    x_specs,
+                    y_specs,
+                    x_scale_factor,
+                    y_scale_factor,
+                )
         # For two systems that not ticks the create t file, Temporary
         else:
             if two_system:
