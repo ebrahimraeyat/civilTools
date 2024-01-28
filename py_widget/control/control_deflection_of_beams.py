@@ -134,7 +134,7 @@ class Form(QtWidgets.QWidget):
         self.form.check_button.clicked.connect(self.check)
         self.form.cancel_button.clicked.connect(self.reject)
         self.form.help.clicked.connect(self.show_help)
-        self.form.open_main_file_button.clicked.connect(self.open_main_file)
+        self.form.create_report_button.clicked.connect(self.create_report)
         self.form.continues_short_term_combobox.currentIndexChanged.connect(self.check_result)
         self.form.continues_long_term_combobox.currentIndexChanged.connect(self.check_result)
         self.form.console_short_term_combobox.currentIndexChanged.connect(self.check_result)
@@ -168,6 +168,36 @@ class Form(QtWidgets.QWidget):
         text = f"Beam Name = {beam_name}, "
         text += get_deflection_check_result(def1, def2, ln, short_term, long_term)
         self.form.check_results.setText(text)
+    
+    def create_report(self):
+        if self.results is None:
+            return
+        from freecad_funcs import get_file_name, open_file
+        filename = get_file_name(suffix='docx', etabs=self.etabs)
+        from report import beam_deflection_report as report
+        doc = None
+        for row in range(len(self.results[0])):
+            beam_name = str(self.result_table.model.data(self.result_table.model.index(row, 0)))
+            text1 = self.results[2][row]
+            # check results
+            is_console = self.result_table.model.df['Console'].iloc[row]
+            ln_str = 'Ln / '
+            if is_console:
+                short_term = int(self.form.console_short_term_combobox.currentText().lstrip(ln_str))
+                long_term = int(self.form.console_long_term_combobox.currentText().lstrip(ln_str))
+            else:
+                short_term = int(self.form.continues_short_term_combobox.currentText().lstrip(ln_str))
+                long_term = int(self.form.continues_long_term_combobox.currentText().lstrip(ln_str))
+            def1 = self.results[0][row]
+            def2 = self.results[1][row]
+            minus_length = self.result_table.model.df['Minus Length'].iloc[row]
+            ln = self.etabs.frame_obj.get_length_of_frame(beam_name) - minus_length
+            text2 = get_deflection_check_result(def1, def2, ln, short_term, long_term)
+            print(f'{beam_name=}, {doc=}')
+            doc = report.create_report(self.etabs, text1, text2, beam_name, doc=doc)
+            doc.add_page_break()
+        doc.save(filename)
+        open_file(filename)
 
     def get_file_name(self):
         return str(self.etabs.get_filename_path_with_suffix(".EDB"))
@@ -196,9 +226,9 @@ class Form(QtWidgets.QWidget):
             lives_percentage=live_percentage,
             filename=filename,
         )
-        self.form.open_main_file_button.setEnabled(True)
         self.form.check_button.setEnabled(False)
         # self.emit_row_clicked()
+        self.open_main_file()
         QMessageBox.information(None, "Complete", "Beam Deflection Check Complete.")
 
     def emit_row_clicked(self):
@@ -251,7 +281,6 @@ class Form(QtWidgets.QWidget):
 
     def open_main_file(self):
         self.etabs.SapModel.File.OpenFile(str(self.main_file_path))
-        self.accept()
     
     def get_equivalent_loads(self):
         load_patterns = self.etabs.load_patterns.get_load_patterns()
