@@ -193,7 +193,6 @@ class Form(QtWidgets.QWidget):
             minus_length = self.result_table.model.df['Minus Length'].iloc[row]
             ln = self.etabs.frame_obj.get_length_of_frame(beam_name) - minus_length
             text2 = get_deflection_check_result(def1, def2, ln, short_term, long_term)
-            print(f'{beam_name=}, {doc=}')
             doc = report.create_report(self.etabs, text1, text2, beam_name, doc=doc)
             doc.add_page_break()
         doc.save(filename)
@@ -339,7 +338,6 @@ class Form(QtWidgets.QWidget):
         return equivalent_loads
     
     def accept(self):
-        print('accept')
         self.form.close()
 
     def closeEvent(self, event):
