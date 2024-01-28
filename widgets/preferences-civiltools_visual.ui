@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>654</width>
+    <width>792</width>
     <height>715</height>
    </rect>
   </property>
@@ -370,6 +370,143 @@
              </widget>
             </item>
            </layout>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="groupBox_3">
+            <property name="title">
+             <string>Check</string>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_4">
+             <item row="0" column="1">
+              <widget class="QLabel" name="label_21">
+               <property name="text">
+                <string>Continues Beams</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="label_20">
+               <property name="text">
+                <string>Short Term</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="label_22">
+               <property name="text">
+                <string>Long Term</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="2">
+              <widget class="QLabel" name="label_23">
+               <property name="text">
+                <string>Console Beams</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="Gui::PrefComboBox" name="continues_short_term_combobox">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+               <property name="currentIndex">
+                <number>1</number>
+               </property>
+               <property name="prefEntry" stdset="0">
+                <cstring>continues_short_term_combobox</cstring>
+               </property>
+               <property name="prefPath" stdset="0">
+                <cstring>Mod/civilTools</cstring>
+               </property>
+               <item>
+                <property name="text">
+                 <string>Ln / 180</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Ln / 360</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="Gui::PrefComboBox" name="continues_long_term_combobox">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+               <property name="prefEntry" stdset="0">
+                <cstring>continues_long_term_combobox</cstring>
+               </property>
+               <property name="prefPath" stdset="0">
+                <cstring>Mod/civilTools</cstring>
+               </property>
+               <item>
+                <property name="text">
+                 <string>Ln / 240</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Ln / 480</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="3" column="2">
+              <widget class="Gui::PrefComboBox" name="console_long_term_combobox">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+               <property name="prefEntry" stdset="0">
+                <cstring>console_long_term_combobox</cstring>
+               </property>
+               <property name="prefPath" stdset="0">
+                <cstring>Mod/civilTools</cstring>
+               </property>
+               <item>
+                <property name="text">
+                 <string>Ln / 120</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Ln / 240</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Ln / 480</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="2" column="2">
+              <widget class="Gui::PrefComboBox" name="console_short_term_combobox">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+               <property name="prefEntry" stdset="0">
+                <cstring>console_short_term_combobox</cstring>
+               </property>
+               <property name="prefPath" stdset="0">
+                <cstring>Mod/civilTools</cstring>
+               </property>
+               <item>
+                <property name="text">
+                 <string>Ln / 180</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Ln / 360</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+            </layout>
+           </widget>
           </item>
           <item>
            <spacer name="verticalSpacer">

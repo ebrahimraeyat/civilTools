@@ -332,32 +332,52 @@
      <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="results_vertical_layout">
        <item>
-        <widget class="QGroupBox" name="groupBox_3">
+        <widget class="QGroupBox" name="groupBox_4">
          <property name="title">
           <string>Check</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout_4">
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_20">
+         <layout class="QGridLayout" name="gridLayout_5">
+          <item row="0" column="1">
+           <widget class="QLabel" name="label_31">
+            <property name="text">
+             <string>Continues Beams</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_32">
             <property name="text">
              <string>Short Term</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_22">
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_34">
             <property name="text">
              <string>Long Term</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QComboBox" name="short_term_combobox">
-            <property name="editable">
+          <item row="0" column="2">
+           <widget class="QLabel" name="label_35">
+            <property name="text">
+             <string>Console Beams</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="Gui::PrefComboBox" name="continues_short_term_combobox">
+            <property name="enabled">
              <bool>true</bool>
             </property>
             <property name="currentIndex">
              <number>1</number>
+            </property>
+            <property name="prefEntry" stdset="0">
+             <cstring>continues_short_term_combobox</cstring>
+            </property>
+            <property name="prefPath" stdset="0">
+             <cstring>Mod/civilTools</cstring>
             </property>
             <item>
              <property name="text">
@@ -371,13 +391,39 @@
             </item>
            </widget>
           </item>
-          <item row="1" column="1">
-           <widget class="QComboBox" name="long_term_combobox">
-            <property name="editable">
+          <item row="3" column="1">
+           <widget class="Gui::PrefComboBox" name="continues_long_term_combobox">
+            <property name="enabled">
              <bool>true</bool>
             </property>
-            <property name="currentIndex">
-             <number>1</number>
+            <property name="prefEntry" stdset="0">
+             <cstring>continues_long_term_combobox</cstring>
+            </property>
+            <property name="prefPath" stdset="0">
+             <cstring>Mod/civilTools</cstring>
+            </property>
+            <item>
+             <property name="text">
+              <string>Ln / 240</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Ln / 480</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="3" column="2">
+           <widget class="Gui::PrefComboBox" name="console_long_term_combobox">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="prefEntry" stdset="0">
+             <cstring>console_long_term_combobox</cstring>
+            </property>
+            <property name="prefPath" stdset="0">
+             <cstring>Mod/civilTools</cstring>
             </property>
             <item>
              <property name="text">
@@ -392,6 +438,29 @@
             <item>
              <property name="text">
               <string>Ln / 480</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="2" column="2">
+           <widget class="Gui::PrefComboBox" name="console_short_term_combobox">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="prefEntry" stdset="0">
+             <cstring>console_short_term_combobox</cstring>
+            </property>
+            <property name="prefPath" stdset="0">
+             <cstring>Mod/civilTools</cstring>
+            </property>
+            <item>
+             <property name="text">
+              <string>Ln / 180</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Ln / 360</string>
              </property>
             </item>
            </widget>
@@ -425,6 +494,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Gui::PrefComboBox</class>
+   <extends>QComboBox</extends>
+   <header>Gui/PrefWidgets.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>dead_combobox</tabstop>
   <tabstop>sdead_combobox</tabstop>

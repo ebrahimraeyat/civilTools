@@ -55,7 +55,23 @@ class Form(QtWidgets.QWidget):
         civiltools_config.load(self.etabs, self.form, d)
         p = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools")
         live_load_percentage = p.GetFloat('civiltools_live_load_percentage_deflection', 0.25)
+        continues_short_term = p.GetInt('continues_short_term_combobox', 1)
+        continues_long_term = p.GetInt('continues_long_term_combobox', 0)
+        console_short_term = p.GetInt('console_short_term_combobox', 0)
+        console_long_term = p.GetInt('console_long_term_combobox', 0)
         self.form.live_percentage_spinbox.setValue(live_load_percentage)
+        for combobox, index in zip(
+            (self.form.continues_short_term_combobox,
+             self.form.continues_long_term_combobox,
+             self.form.console_short_term_combobox,
+             self.form.console_long_term_combobox,
+            ),(
+                continues_short_term,
+                continues_long_term,
+                console_short_term,
+                console_long_term,
+            )):
+            combobox.setCurrentIndex(index)
         self.populate_table(beam_names, d)
 
     def populate_table(self,
@@ -119,8 +135,10 @@ class Form(QtWidgets.QWidget):
         self.form.cancel_button.clicked.connect(self.reject)
         self.form.help.clicked.connect(self.show_help)
         self.form.open_main_file_button.clicked.connect(self.open_main_file)
-        self.form.short_term_combobox.currentIndexChanged.connect(self.check_result)
-        self.form.long_term_combobox.currentIndexChanged.connect(self.check_result)
+        self.form.continues_short_term_combobox.currentIndexChanged.connect(self.check_result)
+        self.form.continues_long_term_combobox.currentIndexChanged.connect(self.check_result)
+        self.form.console_short_term_combobox.currentIndexChanged.connect(self.check_result)
+        self.form.console_long_term_combobox.currentIndexChanged.connect(self.check_result)
         # self.form.table_view.selectionModel().selectionChanged.connect(self.row_clicked)
 
     def result_table_clicked(self, beam_name):
@@ -135,8 +153,13 @@ class Form(QtWidgets.QWidget):
         beam_name = str(self.result_table.model.data(self.result_table.model.index(row, 0)))
         self.form.results.setText(self.results[2][row])
         # check results
-        short_term = int(self.form.short_term_combobox.currentText().lstrip('Ln / '))
-        long_term = int(self.form.long_term_combobox.currentText().lstrip('Ln / '))
+        is_console = self.result_table.model.df['Console'].iloc[row]
+        if is_console:
+            short_term = int(self.form.console_short_term_combobox.currentText().lstrip('Ln / '))
+            long_term = int(self.form.console_long_term_combobox.currentText().lstrip('Ln / '))
+        else:
+            short_term = int(self.form.continues_short_term_combobox.currentText().lstrip('Ln / '))
+            long_term = int(self.form.continues_long_term_combobox.currentText().lstrip('Ln / '))
         def1 = self.results[0][row]
         def2 = self.results[1][row]
         minus_length = self.result_table.model.df['Minus Length'].iloc[row]
