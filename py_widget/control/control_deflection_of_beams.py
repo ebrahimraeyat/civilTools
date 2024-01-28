@@ -154,12 +154,13 @@ class Form(QtWidgets.QWidget):
         self.form.results.setText(self.results[2][row])
         # check results
         is_console = self.result_table.model.df['Console'].iloc[row]
+        ln_str = 'Ln / '
         if is_console:
-            short_term = int(self.form.console_short_term_combobox.currentText().lstrip('Ln / '))
-            long_term = int(self.form.console_long_term_combobox.currentText().lstrip('Ln / '))
+            short_term = int(self.form.console_short_term_combobox.currentText().lstrip(ln_str))
+            long_term = int(self.form.console_long_term_combobox.currentText().lstrip(ln_str))
         else:
-            short_term = int(self.form.continues_short_term_combobox.currentText().lstrip('Ln / '))
-            long_term = int(self.form.continues_long_term_combobox.currentText().lstrip('Ln / '))
+            short_term = int(self.form.continues_short_term_combobox.currentText().lstrip(ln_str))
+            long_term = int(self.form.continues_long_term_combobox.currentText().lstrip(ln_str))
         def1 = self.results[0][row]
         def2 = self.results[1][row]
         minus_length = self.result_table.model.df['Minus Length'].iloc[row]
