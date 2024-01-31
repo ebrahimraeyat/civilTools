@@ -91,7 +91,6 @@ class Form(QtWidgets.QWidget):
         additional_names = list(set(beam_names).difference(current_names))
         n = len(additional_names)
         if n > 0:
-            self.etabs.set_current_unit('kgf', 'cm')
             new_rows = pd.DataFrame({
                 'Name': additional_names,
                 'Console': [False] * n,
@@ -121,7 +120,10 @@ class Form(QtWidgets.QWidget):
             row['Width'] = b
             return row
             
+        units = self.etabs.get_current_unit()
+        self.etabs.set_current_unit('kgf', 'cm')
         df = df.apply(fill_props, axis=1)
+        self.etabs.set_current_unit(*units)
         filt = df['Name'].isin(beam_names)
         df = df.loc[filt]
         self.result_table = table_model.ResultWidget(
