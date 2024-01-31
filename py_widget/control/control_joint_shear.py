@@ -21,6 +21,18 @@ class Form(QtWidgets.QWidget):
         self.form.check.clicked.connect(self.check)
         self.form.cancel_button.clicked.connect(self.reject)
         self.form.open_main_file_button.clicked.connect(self.open_main_file)
+        self.form.structure_type_combobox.currentIndexChanged.connect(self.set_open_main_file)
+
+    def set_open_main_file(self, index):
+        st_type = self.form.structure_type_combobox.currentText()
+        if st_type == 'Sway Special':
+            self.form.open_main_file.setEnabled(False)
+            self.form.open_main_file.setChecked(False)
+        else:
+            self.form.open_main_file.setEnabled(True)
+            self.form.open_main_file.setChecked(True)
+
+        
 
     def open_main_file(self):
         self.etabs.SapModel.File.OpenFile(str(self.main_file_path))
@@ -58,7 +70,8 @@ class Form(QtWidgets.QWidget):
 
     def reject(self):
         if (
-            self.main_file_path is not None and 
+            self.main_file_path is not None and
+            self.main_file_path != self.get_file_name() and
             QtWidgets.QMessageBox.question(
             None,
             'Open Main File',
