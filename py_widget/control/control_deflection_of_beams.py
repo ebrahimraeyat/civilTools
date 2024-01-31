@@ -134,7 +134,6 @@ class Form(QtWidgets.QWidget):
 
     def create_connections(self):
         self.form.check_button.clicked.connect(self.check)
-        self.form.cancel_button.clicked.connect(self.reject)
         self.form.help.clicked.connect(self.show_help)
         self.form.create_report_button.clicked.connect(self.create_report)
         self.form.continues_short_term_combobox.currentIndexChanged.connect(self.check_result)
@@ -347,22 +346,7 @@ class Form(QtWidgets.QWidget):
     
     def accept(self):
         self.form.close()
-
-    def closeEvent(self, event):
-        print("you just closed the pyqt window!!! you are awesome!!!")
-        self.reject()
-    
-    def reject(self):
-        if (
-            self.main_file_path is not None and 
-            QMessageBox.question(
-            None,
-            'Open Main File',
-            'Do you want to Open Main File?',)
-            ) == QMessageBox.Yes:
-            self.open_main_file()
-        self.form.close()
-        
+     
     def draw_beams_columns(self, beam_name:str):
         story = self.etabs.SapModel.FrameObj.GetLabelFromName(beam_name)[1]
         beams, columns = self.beam_columns[story]
