@@ -145,8 +145,11 @@ class Form(QtWidgets.QWidget):
 
     def result_table_clicked(self, beam_name):
         self.etabs.view.show_frame(beam_name)
+        units = self.etabs.get_current_unit()
+        self.etabs.set_current_unit('N', 'cm')
         self.draw_beams_columns(beam_name)
         self.check_result()
+        self.etabs.set_current_unit(*units)
     
     def check_result(self):
         if self.results is None:
@@ -174,6 +177,8 @@ class Form(QtWidgets.QWidget):
     def create_report(self):
         if self.results is None:
             return
+        units = self.etabs.get_current_unit()
+        self.etabs.set_current_unit('N', 'cm')
         from freecad_funcs import get_file_name, open_file
         filename = get_file_name(suffix='docx', etabs=self.etabs)
         from report import beam_deflection_report as report
@@ -197,6 +202,7 @@ class Form(QtWidgets.QWidget):
             text2 = get_deflection_check_result(def1, def2, ln, short_term, long_term)
             doc = report.create_report(self.etabs, text1, text2, beam_name, doc=doc)
             doc.add_page_break()
+        self.etabs.set_current_unit(*units)
         doc.save(filename)
         open_file(filename)
 
