@@ -346,29 +346,13 @@ class Form(QtWidgets.QWidget):
 
     def apply_factors_to_etabs(self):
         d = civiltools_config.save(self.etabs, self.form)
-        # second_system = d.get('activate_second_system', False)
-        # special_case = d.get('special_case', False)
-        # if second_system:
-        #     rux = self.final_building.x_system.Ru
-        #     rux2 = self.final_building.building2.x_system.Ru
-        #     ruy = self.final_building.y_system.Ru
-        #     ruy2 = self.final_building.building2.y_system.Ru
-        #     if special_case:
-        #         if rux != rux2 or ruy != ruy2:
-        #             QMessageBox.warning(None, 'Not Implemented', "Can not apply earthquake for not equal Ru systems.")
-        #             return
-        #     else:
-        #         if 
-        #             cdx = self.final_building.x_system2.cd
-        #         if self.final_building.y_system2.Ru >= self.final_building.y_system.Ru:
-        #             cdy = self.final_building.y_system2.cd
         ret = self.check_analytical_period()
         if not ret:
             return
         data = self.get_data_for_apply_earthquakes(d)
         if data is None:
             return
-        ret = self.etabs.apply_cfactors_to_edb(data)
+        ret = self.etabs.apply_cfactors_to_edb(data, d=d)
         if ret == 1:
             msg = "Data can not be written to your Etabs file,\n If you want to correct this problem, try Run analysis."
             title = "Remove Error?"
@@ -378,42 +362,14 @@ class Form(QtWidgets.QWidget):
         QMessageBox.information(None, "done", msg)
 
     def get_data_for_apply_earthquakes(self, d: dict):
-        bot_1, top_1, bot_2, top_2 = self.etabs.get_top_bot_stories(d)
-        # get bottom system data
-        first_system_seismic = self.etabs.get_first_system_seismic(d)
-        cx_1, cy_1 = self.final_building.results[1:]
-        kx_1, ky_1 = self.final_building.kx, self.final_building.ky
-        data = []
-        # Check if second system is active
-        if self.form.activate_second_system.isChecked():
-            # get top system data
-            second_system_seismic = self.etabs.get_second_system_seismic(d)
-            cx_2, cy_2 = self.final_building.building2.results[1:]
-            kx_2, ky_2 = self.final_building.building2.kx, self.final_building.building2.ky
-            # Special case with Ru_bot = Ru_top
-            if self.form.special_case.isChecked() and \
-            self.final_building.x_system.Ru == self.final_building.building2.x_system.Ru and \
-            self.final_building.y_system.Ru == self.final_building.building2.y_system.Ru:
-                # get bottom system data
-                data.append((first_system_seismic[:3], [top_1, bot_1, str(cx_1), str(kx_1)]))
-                data.append((first_system_seismic[3:], [top_1, bot_1, str(cy_1), str(ky_1)]))
-                # get top system data
-                data.append((second_system_seismic[:3], [top_2, bot_2, str(cx_2), str(kx_2)]))
-                data.append((second_system_seismic[3:], [top_2, bot_2, str(cy_2), str(ky_2)]))
-            # case B, Ru_bot >= Ru_top
-            elif self.final_building.x_system.Ru >= self.final_building.building2.x_system.Ru and \
-            self.final_building.y_system.Ru >= self.final_building.building2.y_system.Ru:
-                cx_all, cy_all = self.final_building.results_all_top[1:]
-                kx_all, ky_all = self.final_building.kx_all, self.final_building.ky_all
-                data.append((first_system_seismic[:3], [top_2, bot_1, str(cx_all), str(kx_all)]))
-                data.append((first_system_seismic[3:], [top_2, bot_1, str(cy_all), str(ky_all)]))
-            else:
-                QMessageBox.warning(None, "Not Implemented", "Can not apply earthquake for your systems")
-                return None
-        else:
-            # get bottom system data
-            data.append((first_system_seismic[:3], [top_1, bot_1, str(cx_1), str(kx_1)]))
-            data.append((first_system_seismic[3:], [top_1, bot_1, str(cy_1), str(ky_1)]))
+        data = civiltools_config.get_data_for_apply_earthquakes(
+            self.final_building,
+            etabs=self.etabs,
+            d=d,
+            )
+        if data is None:
+            QMessageBox.warning(None, "Not Implemented", "Can not apply earthquake for your systems")
+            return None
         return data
 
     def exportBCurveToImage(self):

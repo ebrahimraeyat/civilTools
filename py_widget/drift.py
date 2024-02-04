@@ -189,40 +189,12 @@ class Form(QtWidgets.QWidget):
         Gui.Control.closeDialog()
 
     def get_data_for_apply_earthquakes(self, building, d: dict):
-        bot_1, top_1, bot_2, top_2 = self.etabs.get_top_bot_stories(d)
-        # get bottom system data
-        first_system_seismic = self.etabs.get_first_system_seismic_drift(d)
-        cx_1, cy_1 = building.results_drift[1:]
-        kx_1, ky_1 = building.kx_drift, building.ky_drift
-        data = []
-        # Check if second system is active
-        if d.get('activate_second_system', False):
-            # get top system data
-            second_system_seismic = self.etabs.get_second_system_seismic_drift(d)
-            cx_2, cy_2 = building.building2.results_drift[1:]
-            kx_2, ky_2 = building.building2.kx_drift, building.building2.ky_drift
-            # Special case with Ru_bot = Ru_top
-            if d.get('special_case', False) and \
-            building.x_system.Ru == building.building2.x_system.Ru and \
-            building.y_system.Ru == building.building2.y_system.Ru:
-                # get bottom system data
-                data.append((first_system_seismic[:3], [top_1, bot_1, str(cx_1), str(kx_1)]))
-                data.append((first_system_seismic[3:], [top_1, bot_1, str(cy_1), str(ky_1)]))
-                # get top system data
-                data.append((second_system_seismic[:3], [top_2, bot_2, str(cx_2), str(kx_2)]))
-                data.append((second_system_seismic[3:], [top_2, bot_2, str(cy_2), str(ky_2)]))
-            # case B, Ru_bot >= Ru_top
-            elif building.x_system.Ru >= building.building2.x_system.Ru and \
-            building.y_system.Ru >= building.building2.y_system.Ru:
-                cx_all, cy_all = building.results_drift_all_top[1:]
-                kx_all, ky_all = building.kx_drift_all, building.ky_drift_all
-                data.append((first_system_seismic[:3], [top_2, bot_1, str(cx_all), str(kx_all)]))
-                data.append((first_system_seismic[3:], [top_2, bot_1, str(cy_all), str(ky_all)]))
-            else:
-                QMessageBox.warning(None, "Not Implemented", "Can not apply earthquake for your systems")
-                return None
-        else:
-            # get bottom system data
-            data.append((first_system_seismic[:3], [top_1, bot_1, str(cx_1), str(kx_1)]))
-            data.append((first_system_seismic[3:], [top_1, bot_1, str(cy_1), str(ky_1)]))
+        data = civiltools_config.get_data_for_apply_earthquakes_drift(
+            self.final_building,
+            etabs=self.etabs,
+            d=d,
+            )
+        if data is None:
+            QMessageBox.warning(None, "Not Implemented", "Can not apply earthquake for your systems")
+            return None
         return data

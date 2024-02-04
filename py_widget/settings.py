@@ -392,23 +392,12 @@ class Form(QtWidgets.QWidget):
     
     def check_seismic_names(self):
         # first system
-        ex = self.form.ex_combobox.currentText()
-        exp = self.form.exp_combobox.currentText()
-        exn = self.form.exn_combobox.currentText()
-        ey = self.form.ey_combobox.currentText()
-        eyp = self.form.eyp_combobox.currentText()
-        eyn = self.form.eyn_combobox.currentText()
-        ex_drift = self.form.ex_drift_combobox.currentText()
-        exp_drift = self.form.exp_drift_combobox.currentText()
-        exn_drift = self.form.exn_drift_combobox.currentText()
-        ey_drift = self.form.ey_drift_combobox.currentText()
-        eyp_drift = self.form.eyp_drift_combobox.currentText()
-        eyn_drift = self.form.eyn_drift_combobox.currentText()
+        first_system_names = civiltools_config.get_first_system_seismic(self.form) + \
+            civiltools_config.get_first_system_seismic_drift(self.form)
         title1 = 'Empty earthquake name'
         warning1 = 'Earthquake names can not be empty, correct the  %s earthquake names.'
         title2 = 'Similar earthquake name'
         warning2 = 'Earthquake names can not be similar, correct the  %s earthquake names.'
-        first_system_names = (ex, exp, exn, ey, eyp, eyn, ex_drift, exp_drift, exn_drift, ey_drift, eyp_drift, eyn_drift)
         for e in first_system_names:
             if e.strip(' ') == '':
                 QtWidgets.QMessageBox.warning(None, title1, warning1%('first system') )
@@ -418,19 +407,8 @@ class Form(QtWidgets.QWidget):
             return None
         # Second system
         if self.form.activate_second_system.isChecked():
-            ex1 = self.form.ex1_combobox.currentText()
-            exp1 = self.form.exp1_combobox.currentText()
-            exn1 = self.form.exn1_combobox.currentText()
-            ey1 = self.form.ey1_combobox.currentText()
-            eyp1 = self.form.eyp1_combobox.currentText()
-            eyn1 = self.form.eyn1_combobox.currentText()
-            ex1_drift = self.form.ex1_drift_combobox.currentText()
-            exp1_drift = self.form.exp1_drift_combobox.currentText()
-            exn1_drift = self.form.exn1_drift_combobox.currentText()
-            ey1_drift = self.form.ey1_drift_combobox.currentText()
-            eyp1_drift = self.form.eyp1_drift_combobox.currentText()
-            eyn1_drift = self.form.eyn1_drift_combobox.currentText()
-            second_system_names = (ex1, exp1, exn1, ey1, eyp1, eyn1, ex1_drift, exp1_drift, exn1_drift, ey1_drift, eyp1_drift, eyn1_drift)
+            second_system_names = civiltools_config.get_second_system_seismic(self.form) + \
+                civiltools_config.get_second_system_seismic_drift(self.form)
             for e in second_system_names:
                 if e.strip(' ') == '':
                     QtWidgets.QMessageBox.warning(None, title1, warning1%('second system') )

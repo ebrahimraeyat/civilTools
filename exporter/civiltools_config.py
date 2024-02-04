@@ -3,11 +3,6 @@ from typing import Union
 from pathlib import Path
 import csv
 
-from PySide2 import QtCore
-from PySide2.QtCore import Qt
-
-from qt_models import treeview_system
-
 civiltools_path = Path(__file__).absolute().parent.parent
 
 from building.build import StructureSystem, Building
@@ -283,6 +278,7 @@ def load(
 		d = get_settings_from_etabs(etabs)
 	if widget is None:
 		return d
+	from PySide2.QtCore import Qt
 	fill_cities(widget)
 	fill_height_and_no_of_stories(etabs, widget)
 	fill_top_bot_stories(etabs, widget)
@@ -587,6 +583,7 @@ def load(
 	return d
 
 def select_treeview_item(view, i, n):
+	from PySide2 import QtCore
 	root_index = view.model().index(i, 0, QtCore.QModelIndex())
 	child_index = view.model().index(n, 0, root_index)
 	view.clearSelection()
@@ -594,6 +591,7 @@ def select_treeview_item(view, i, n):
 	view.setExpanded(child_index, True)
 
 def set_system_treeview(widget):
+	from qt_models import treeview_system
 	items = {}
 
 	# Set some random data:
@@ -827,6 +825,114 @@ def current_building_from_widget(widget):
 	)
 	return build
 
+def get_data_for_apply_earthquakes(building, etabs=None, d=None, widget=None):
+	if widget is None:
+		if d is None:
+			d = get_settings_from_etabs(etabs)
+		bot_1, top_1, bot_2, top_2 = etabs.get_top_bot_stories(d)
+		# get bottom system data
+		first_system_seismic = etabs.get_first_system_seismic(d)
+		activate_second_system = d.get('activate_second_system', False)
+		if activate_second_system:
+			special_case = d.get('special_case', False)
+			second_system_seismic = etabs.get_second_system_seismic(d)
+	else:
+		bot_1 = widget.bot_x_combo.currentText()
+		top_1 = widget.top_x_combo.currentText()
+		bot_2 = widget.bot_x1_combo.currentText()
+		top_2 = widget.top_x1_combo.currentText()
+		first_system_seismic = get_first_system_seismic(widget)
+		activate_second_system = widget.activate_second_system.isChecked()
+		if activate_second_system:
+			special_case = widget.special_case.isChecked()
+			second_system_seismic = get_second_system_seismic(widget)
+	cx_1, cy_1 = building.results[1:]
+	kx_1, ky_1 = building.kx, building.ky
+	data = []
+	# Check if second system is active
+	if activate_second_system:
+		# get top system data
+		cx_2, cy_2 = building.building2.results[1:]
+		kx_2, ky_2 = building.building2.kx, building.building2.ky
+		# Special case with Ru_bot = Ru_top
+		if special_case and \
+		building.x_system.Ru == building.building2.x_system.Ru and \
+		building.y_system.Ru == building.building2.y_system.Ru:
+			# get bottom system data
+			data.append((first_system_seismic[:3], [top_1, bot_1, str(cx_1), str(kx_1)]))
+			data.append((first_system_seismic[3:], [top_1, bot_1, str(cy_1), str(ky_1)]))
+			# get top system data
+			data.append((second_system_seismic[:3], [top_2, bot_2, str(cx_2), str(kx_2)]))
+			data.append((second_system_seismic[3:], [top_2, bot_2, str(cy_2), str(ky_2)]))
+		# case B, Ru_bot >= Ru_top
+		elif building.x_system.Ru >= building.building2.x_system.Ru and \
+		building.y_system.Ru >= building.building2.y_system.Ru:
+			cx_all, cy_all = building.results_all_top[1:]
+			kx_all, ky_all = building.kx_all, building.ky_all
+			data.append((first_system_seismic[:3], [top_2, bot_1, str(cx_all), str(kx_all)]))
+			data.append((first_system_seismic[3:], [top_2, bot_1, str(cy_all), str(ky_all)]))
+		else:
+			return None
+	else:
+		# get bottom system data
+		data.append((first_system_seismic[:3], [top_1, bot_1, str(cx_1), str(kx_1)]))
+		data.append((first_system_seismic[3:], [top_1, bot_1, str(cy_1), str(ky_1)]))
+	return data
+
+def get_data_for_apply_earthquakes_drift(building, etabs=None, d=None, widget=None):
+	if widget is None:
+		if d is None:
+			d = get_settings_from_etabs(etabs)
+		bot_1, top_1, bot_2, top_2 = etabs.get_top_bot_stories(d)
+		# get bottom system data
+		first_system_seismic_drift = etabs.get_first_system_seismic_drift(d)
+		activate_second_system = d.get('activate_second_system', False)
+		if activate_second_system:
+			special_case = d.get('special_case', False)
+			second_system_seismic_drift = etabs.get_second_system_seismic_drift(d)
+	else:
+		bot_1 = widget.bot_x_combo.currentText()
+		top_1 = widget.top_x_combo.currentText()
+		bot_2 = widget.bot_x1_combo.currentText()
+		top_2 = widget.top_x1_combo.currentText()
+		first_system_seismic_drift = get_first_system_seismic_drift(widget)
+		activate_second_system = widget.activate_second_system.isChecked()
+		if activate_second_system:
+			special_case = widget.special_case.isChecked()
+			second_system_seismic_drift = get_second_system_seismic_drift(widget)
+	cx_1, cy_1 = building.results_drift[1:]
+	kx_1, ky_1 = building.kx_drift, building.ky_drift
+	data = []
+	# Check if second system is active
+	if activate_second_system:
+		# get top system data
+		cx_2, cy_2 = building.building2.results_drift[1:]
+		kx_2, ky_2 = building.building2.kx_drift, building.building2.ky_drift
+		# Special case with Ru_bot = Ru_top
+		if special_case and \
+		building.x_system.Ru == building.building2.x_system.Ru and \
+		building.y_system.Ru == building.building2.y_system.Ru:
+			# get bottom system data
+			data.append((first_system_seismic_drift[:3], [top_1, bot_1, str(cx_1), str(kx_1)]))
+			data.append((first_system_seismic_drift[3:], [top_1, bot_1, str(cy_1), str(ky_1)]))
+			# get top system data
+			data.append((second_system_seismic_drift[:3], [top_2, bot_2, str(cx_2), str(kx_2)]))
+			data.append((second_system_seismic_drift[3:], [top_2, bot_2, str(cy_2), str(ky_2)]))
+		# case B, Ru_bot >= Ru_top
+		elif building.x_system.Ru >= building.building2.x_system.Ru and \
+		building.y_system.Ru >= building.building2.y_system.Ru:
+			cx_all, cy_all = building.results_drift_all_top[1:]
+			kx_all, ky_all = building.kx_drift_all, building.ky_drift_all
+			data.append((first_system_seismic_drift[:3], [top_2, bot_1, str(cx_all), str(kx_all)]))
+			data.append((first_system_seismic_drift[3:], [top_2, bot_1, str(cy_all), str(ky_all)]))
+		else:
+			return None
+	else:
+		# get bottom system data
+		data.append((first_system_seismic_drift[:3], [top_1, bot_1, str(cx_1), str(kx_1)]))
+		data.append((first_system_seismic_drift[3:], [top_1, bot_1, str(cy_1), str(ky_1)]))
+	return data
+
 def get_system(view):
 	ret = get_treeview_item_prop(view)
 	if ret is None:
@@ -838,4 +944,40 @@ def get_system(view):
 		system = StructureSystem(system, lateral, 'Y')
 	return system
 
+def get_first_system_seismic(widget):
+	# first system
+	ex = widget.ex_combobox.currentText()
+	exp = widget.exp_combobox.currentText()
+	exn = widget.exn_combobox.currentText()
+	ey = widget.ey_combobox.currentText()
+	eyp = widget.eyp_combobox.currentText()
+	eyn = widget.eyn_combobox.currentText()
+	return ex, exn, exp, ey, eyn, eyp
+
+def get_first_system_seismic_drift(widget):
+	ex_drift = widget.ex_drift_combobox.currentText()
+	exp_drift = widget.exp_drift_combobox.currentText()
+	exn_drift = widget.exn_drift_combobox.currentText()
+	ey_drift = widget.ey_drift_combobox.currentText()
+	eyp_drift = widget.eyp_drift_combobox.currentText()
+	eyn_drift = widget.eyn_drift_combobox.currentText()
+	return ex_drift, exn_drift, exp_drift, ey_drift, eyn_drift, eyp_drift
+
+def get_second_system_seismic(widget):
+	ex1 = widget.ex1_combobox.currentText()
+	exp1 = widget.exp1_combobox.currentText()
+	exn1 = widget.exn1_combobox.currentText()
+	ey1 = widget.ey1_combobox.currentText()
+	eyp1 = widget.eyp1_combobox.currentText()
+	eyn1 = widget.eyn1_combobox.currentText()
+	return ex1, exn1, exp1, ey1, eyn1, eyp1
+
+def get_second_system_seismic_drift(widget):
+	ex1_drift = widget.ex1_drift_combobox.currentText()
+	exp1_drift = widget.exp1_drift_combobox.currentText()
+	exn1_drift = widget.exn1_drift_combobox.currentText()
+	ey1_drift = widget.ey1_drift_combobox.currentText()
+	eyp1_drift = widget.eyp1_drift_combobox.currentText()
+	eyn1_drift = widget.eyn1_drift_combobox.currentText()
+	return ex1_drift, exn1_drift, exp1_drift, ey1_drift, eyn1_drift, eyp1_drift
 
