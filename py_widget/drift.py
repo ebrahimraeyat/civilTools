@@ -190,7 +190,7 @@ class Form(QtWidgets.QWidget):
 
     def get_data_for_apply_earthquakes(self, building, d: dict):
         data = civiltools_config.get_data_for_apply_earthquakes_drift(
-            self.final_building,
+            building,
             etabs=self.etabs,
             d=d,
             )

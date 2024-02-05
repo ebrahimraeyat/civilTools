@@ -223,11 +223,6 @@
                    <property name="editable">
                     <bool>true</bool>
                    </property>
-                   <item>
-                    <property name="text">
-                     <string>EX</string>
-                    </property>
-                   </item>
                   </widget>
                  </item>
                  <item row="1" column="0">
@@ -242,11 +237,6 @@
                    <property name="editable">
                     <bool>true</bool>
                    </property>
-                   <item>
-                    <property name="text">
-                     <string>EXP</string>
-                    </property>
-                   </item>
                   </widget>
                  </item>
                  <item row="2" column="0">
@@ -261,11 +251,6 @@
                    <property name="editable">
                     <bool>true</bool>
                    </property>
-                   <item>
-                    <property name="text">
-                     <string>EXN</string>
-                    </property>
-                   </item>
                   </widget>
                  </item>
                  <item row="3" column="1">
@@ -316,11 +301,6 @@
                    <property name="editable">
                     <bool>true</bool>
                    </property>
-                   <item>
-                    <property name="text">
-                     <string>EY</string>
-                    </property>
-                   </item>
                   </widget>
                  </item>
                  <item row="1" column="0">
@@ -335,11 +315,6 @@
                    <property name="editable">
                     <bool>true</bool>
                    </property>
-                   <item>
-                    <property name="text">
-                     <string>EYP</string>
-                    </property>
-                   </item>
                   </widget>
                  </item>
                  <item row="2" column="0">
@@ -354,11 +329,6 @@
                    <property name="editable">
                     <bool>true</bool>
                    </property>
-                   <item>
-                    <property name="text">
-                     <string>EYN</string>
-                    </property>
-                   </item>
                   </widget>
                  </item>
                  <item row="3" column="0">
@@ -426,11 +396,6 @@
                     <property name="editable">
                      <bool>true</bool>
                     </property>
-                    <item>
-                     <property name="text">
-                      <string>EX(Drift)</string>
-                     </property>
-                    </item>
                    </widget>
                   </item>
                   <item row="1" column="0">
@@ -445,11 +410,6 @@
                     <property name="editable">
                      <bool>true</bool>
                     </property>
-                    <item>
-                     <property name="text">
-                      <string>EXP(Drift)</string>
-                     </property>
-                    </item>
                    </widget>
                   </item>
                   <item row="2" column="0">
@@ -464,11 +424,6 @@
                     <property name="editable">
                      <bool>true</bool>
                     </property>
-                    <item>
-                     <property name="text">
-                      <string>EXN(Drift)</string>
-                     </property>
-                    </item>
                    </widget>
                   </item>
                  </layout>
@@ -498,11 +453,6 @@
                     <property name="editable">
                      <bool>true</bool>
                     </property>
-                    <item>
-                     <property name="text">
-                      <string>EY(Drift)</string>
-                     </property>
-                    </item>
                    </widget>
                   </item>
                   <item row="1" column="0">
@@ -517,11 +467,6 @@
                     <property name="editable">
                      <bool>true</bool>
                     </property>
-                    <item>
-                     <property name="text">
-                      <string>EYP(Drift)</string>
-                     </property>
-                    </item>
                    </widget>
                   </item>
                   <item row="2" column="0">
@@ -536,11 +481,6 @@
                     <property name="editable">
                      <bool>true</bool>
                     </property>
-                    <item>
-                     <property name="text">
-                      <string>EYN(Drift)</string>
-                     </property>
-                    </item>
                    </widget>
                   </item>
                  </layout>
@@ -877,11 +817,6 @@
                      <property name="editable">
                       <bool>true</bool>
                      </property>
-                     <item>
-                      <property name="text">
-                       <string>EX1</string>
-                      </property>
-                     </item>
                     </widget>
                    </item>
                    <item row="1" column="0">
@@ -902,11 +837,6 @@
                      <property name="editable">
                       <bool>true</bool>
                      </property>
-                     <item>
-                      <property name="text">
-                       <string>EXP1</string>
-                      </property>
-                     </item>
                     </widget>
                    </item>
                    <item row="2" column="0">
@@ -927,11 +857,6 @@
                      <property name="editable">
                       <bool>true</bool>
                      </property>
-                     <item>
-                      <property name="text">
-                       <string>EXN1</string>
-                      </property>
-                     </item>
                     </widget>
                    </item>
                    <item row="3" column="0">
@@ -988,11 +913,6 @@
                      <property name="editable">
                       <bool>true</bool>
                      </property>
-                     <item>
-                      <property name="text">
-                       <string>EY1</string>
-                      </property>
-                     </item>
                     </widget>
                    </item>
                    <item row="1" column="0">
@@ -1013,11 +933,6 @@
                      <property name="editable">
                       <bool>true</bool>
                      </property>
-                     <item>
-                      <property name="text">
-                       <string>EYP1</string>
-                      </property>
-                     </item>
                     </widget>
                    </item>
                    <item row="2" column="0">
@@ -1038,11 +953,6 @@
                      <property name="editable">
                       <bool>true</bool>
                      </property>
-                     <item>
-                      <property name="text">
-                       <string>EYN1</string>
-                      </property>
-                     </item>
                     </widget>
                    </item>
                    <item row="3" column="0">
@@ -1120,11 +1030,6 @@
                      <property name="editable">
                       <bool>true</bool>
                      </property>
-                     <item>
-                      <property name="text">
-                       <string>EX1(Drift)</string>
-                      </property>
-                     </item>
                     </widget>
                    </item>
                    <item row="1" column="0">
@@ -1145,11 +1050,6 @@
                      <property name="editable">
                       <bool>true</bool>
                      </property>
-                     <item>
-                      <property name="text">
-                       <string>EXP1(Drift)</string>
-                      </property>
-                     </item>
                     </widget>
                    </item>
                    <item row="2" column="0">
@@ -1170,11 +1070,6 @@
                      <property name="editable">
                       <bool>true</bool>
                      </property>
-                     <item>
-                      <property name="text">
-                       <string>EXN1(Drift)</string>
-                      </property>
-                     </item>
                     </widget>
                    </item>
                   </layout>
@@ -1207,11 +1102,6 @@
                      <property name="editable">
                       <bool>true</bool>
                      </property>
-                     <item>
-                      <property name="text">
-                       <string>EY1(Drift)</string>
-                      </property>
-                     </item>
                     </widget>
                    </item>
                    <item row="1" column="0">
@@ -1232,11 +1122,6 @@
                      <property name="editable">
                       <bool>true</bool>
                      </property>
-                     <item>
-                      <property name="text">
-                       <string>EYP1(Drift)</string>
-                      </property>
-                     </item>
                     </widget>
                    </item>
                    <item row="2" column="0">
@@ -1257,11 +1142,6 @@
                      <property name="editable">
                       <bool>true</bool>
                      </property>
-                     <item>
-                      <property name="text">
-                       <string>EYN1(Drift)</string>
-                      </property>
-                     </item>
                     </widget>
                    </item>
                   </layout>

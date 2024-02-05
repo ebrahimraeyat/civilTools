@@ -354,8 +354,8 @@ class Form(QtWidgets.QWidget):
             return
         ret = self.etabs.apply_cfactors_to_edb(data, d=d)
         if ret == 1:
-            msg = "Data can not be written to your Etabs file,\n If you want to correct this problem, try Run analysis."
-            title = "Remove Error?"
+            msg = "Data can not be written to your Etabs file,\nIf you want to correct this problem, try Run analysis."
+            title = "Remove Error!"
             QMessageBox.information(None, title, msg)
             return
         msg = "Successfully written to Etabs."

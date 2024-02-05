@@ -13,6 +13,8 @@ from exporter import civiltools_config
 
 from building.build import StructureSystem, Building
 
+from python_functions import flatten_set
+
 civiltools_path = Path(__file__).absolute().parent.parent
 
 
@@ -22,13 +24,9 @@ class Form(QtWidgets.QWidget):
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'civiltools_project_settings.ui'))
         self.etabs = etabs_model
         self.stories = self.etabs.SapModel.Story.GetStories()[1]
-        # self.set_system_treeview()
-        # self.fill_cities()
         self.create_connections()
-        # self.fill_top_bot_stories()
-        self.fill_load_cases()
+        self.seismic_load_patterns = self.fill_load_cases()
         self.load_config()
-        # self.fill_height_and_no_of_stories()
 
     def fill_load_cases(self):
         load_patterns = self.etabs.load_patterns.get_load_patterns()
@@ -98,7 +96,8 @@ class Form(QtWidgets.QWidget):
                     'qz' in lp.lower(),
                     )):
                     self.form.ev_combobox.setCurrentIndex(j)
-        xdir, xdir_minus, xdir_plus, ydir, ydir_minus, ydir_plus = self.etabs.load_patterns.get_seismic_load_patterns()
+        seismic_load_patterns = self.etabs.load_patterns.get_seismic_load_patterns()
+        seismic_load_patterns_drift = self.etabs.load_patterns.get_seismic_load_patterns(drifts=True)
         for combobox, name, dir_ in zip(
                 (self.form.ex_combobox,
                 self.form.exn_combobox,
@@ -106,12 +105,38 @@ class Form(QtWidgets.QWidget):
                 self.form.ey_combobox,
                 self.form.eyn_combobox,
                 self.form.eyp_combobox,
+                self.form.ex1_combobox,
+                self.form.exn1_combobox,
+                self.form.exp1_combobox,
+                self.form.ey1_combobox,
+                self.form.eyn1_combobox,
+                self.form.eyp1_combobox,
+                # Drifts
+                self.form.ex_drift_combobox,
+                self.form.exn_drift_combobox,
+                self.form.exp_drift_combobox,
+                self.form.ey_drift_combobox,
+                self.form.eyn_drift_combobox,
+                self.form.eyp_drift_combobox,
+                self.form.ex1_drift_combobox,
+                self.form.exn1_drift_combobox,
+                self.form.exp1_drift_combobox,
+                self.form.ey1_drift_combobox,
+                self.form.eyn1_drift_combobox,
+                self.form.eyp1_drift_combobox,
                 ),
-                ('EX', 'EXN', 'EXP', 'EY', 'EYN', 'EYP'),
-                (xdir, xdir_minus, xdir_plus, ydir, ydir_minus, ydir_plus),
+                ('EX', 'EXN', 'EXP', 'EY', 'EYN', 'EYP',
+                 'EX1', 'EXN1', 'EXP1', 'EY1', 'EYN1', 'EYP1',
+                 'EX(drift)', 'EXN(drift)', 'EXP(drift)', 'EY(drift)', 'EYN(drift)', 'EYP(drift)',
+                 'EX1(drift)', 'EXN1(drift)', 'EXP1(drift)', 'EY1(drift)', 'EYN1(drift)', 'EYP1(Drift)'),
+                seismic_load_patterns * 2 + seismic_load_patterns_drift * 2,
             ):
-            dir_.add(name)
-            combobox.addItems(dir_)
+            s = copy.deepcopy(dir_)
+            s.add(name)
+            combobox.addItems(s)
+        print(f'{seismic_load_patterns=}')
+        print(f'{seismic_load_patterns_drift=}')
+        return list(flatten_set(seismic_load_patterns)) + list(flatten_set(seismic_load_patterns_drift))
 
     def fill_cities(self):
         ostans = ostanha.ostans.keys()
@@ -266,21 +291,38 @@ class Form(QtWidgets.QWidget):
         civiltools_config.load(self.etabs, self.form)
         
     def save(self):
-        ret = self.check_inputs()
-        if not ret:
+        building = self.check_inputs()
+        if not building:
             return
         ret = self.check_seismic_names()
         if not ret:
             return
-        if self.check_dynamic_loadcases() == False:
-            self.reject()
-        self.save_config()
+        d = self.save_config()
+        self.write_not_exists_earthquake_loads(building, d)
+        self.check_dynamic_loadcases()
+        self.reject()
         # self.etabs.check_seismic_names(apply=True)
 
+    def write_not_exists_earthquake_loads(self, building, d:dict={}):
+        data = civiltools_config.get_data_for_apply_earthquakes(building, self.etabs, widget=self.form)
+        data2 = civiltools_config.get_data_for_apply_earthquakes_drift(building, self.etabs, widget=self.form)
+        if data is None:
+            data = []
+        if data2 is None:
+            data2 = []
+        data.extend(data2)
+        loads = [eq for eqs, _ in data for eq in eqs]
+        print(f'{self.seismic_load_patterns=}')
+        print(f'{loads=}')
+        for load in loads:
+            if load not in self.seismic_load_patterns:
+                if not d:   
+                    d = civiltools_config.get_settings_from_etabs(self.etabs)
+                self.etabs.apply_cfactors_to_edb(data, d=d)
+                return
+
     def save_config(self):
-        # tx, ty, tx1, ty1 = civiltools_config.get_analytical_periods(self.etabs)
-        civiltools_config.save(self.etabs, self.form)
-        # civiltools_config.save_analytical_periods(self.etabs, tx, ty, tx1, ty1)
+        d = civiltools_config.save(self.etabs, self.form)
         param = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools")
         show_at_startup = self.form.show_at_startup.isChecked()
         param.SetBool("FirstTime", show_at_startup)
@@ -288,7 +330,7 @@ class Form(QtWidgets.QWidget):
         city = self.get_current_city()
         param.SetString("ostan", ostan)
         param.SetString("city", city)
-        self.reject()
+        return d
 
     def reject(self):
         self.form.reject()
@@ -338,7 +380,7 @@ class Form(QtWidgets.QWidget):
                 title, err, direction = results[1:]
                 QtWidgets.QMessageBox.critical(self, "ایراد در انتخاب سیستم دوم", title % direction + '\n' + str(err))
                 return False
-        return True
+        return building
     
     def check_dynamic_loadcases(self):
         sx = self.form.sx_combobox.currentText()
