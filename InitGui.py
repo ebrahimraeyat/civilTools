@@ -6,7 +6,7 @@ class CivilToolsWorkbench(Workbench):
 
         from pathlib import Path
         import civiltoolswelcome
-        self.__class__.Icon = str(Path(civiltoolswelcome.__file__).parent.absolute() / 'images' / 'civil-engineering.png')
+        self.__class__.Icon = str(Path(civiltoolswelcome.__file__).parent / 'images' / 'civiltools.svg')
         self.__class__.MenuText = "civilTools"
         self.__class__.ToolTip = "civilTools Workbench"
 
