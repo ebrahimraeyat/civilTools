@@ -3,6 +3,8 @@ from pathlib import Path
 from PySide2 import  QtWidgets
 import FreeCADGui as Gui
 
+import table_model
+
 civiltools_path = Path(__file__).absolute().parent.parent.parent
 
 
@@ -32,8 +34,6 @@ class Form(QtWidgets.QWidget):
             self.form.open_main_file.setEnabled(True)
             self.form.open_main_file.setChecked(True)
 
-        
-
     def open_main_file(self):
         self.etabs.SapModel.File.OpenFile(str(self.main_file_path))
         self.accept()
@@ -53,12 +53,26 @@ class Form(QtWidgets.QWidget):
             )
         if df is None:
             return
-        import table_model
-        table_model.show_results(
-            df,
-            model=table_model.JointShearBCC,
-            function=self.etabs.view.show_frame,
-            )
+        show_js = self.form.show_js_table.isChecked()
+        show_bc = self.form.show_bc_table.isChecked()
+        if show_js and show_bc:
+            table_model.show_results(
+                df,
+                model=table_model.JointShearBCC,
+                function=self.etabs.view.show_frame,
+                )
+        elif show_js:
+            table_model.show_results(
+                df[['Story', 'Label', 'UniqueName', 'JSMajRatio', 'JSMinRatio']],
+                model=table_model.JointShearBCC,
+                function=self.etabs.view.show_frame,
+                )
+        elif show_bc:
+            table_model.show_results(
+                df[['Story', 'Label', 'UniqueName', 'BCMajRatio', 'BCMinRatio']],
+                model=table_model.JointShearBCC,
+                function=self.etabs.view.show_frame,
+                )
         if open_main_file:
             self.open_main_file()
         else:

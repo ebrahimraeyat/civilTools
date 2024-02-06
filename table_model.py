@@ -487,10 +487,18 @@ class JointShearBCC(PandasModel):
     def __init__(self, data):
         super(JointShearBCC, self).__init__(data)
         headers = tuple(self.df.columns)
-        self.i_maj_js = headers.index('JSMajRatio')
-        self.i_min_js = headers.index('JSMinRatio')
-        self.i_maj_bc = headers.index('BCMajRatio')
-        self.i_min_bc = headers.index('BCMinRatio')
+        try:
+            self.i_maj_js = headers.index('JSMajRatio')
+            self.i_min_js = headers.index('JSMinRatio')
+        except ValueError:
+            self.i_maj_js = -2
+            self.i_min_js = -2
+        try:
+            self.i_maj_bc = headers.index('BCMajRatio')
+            self.i_min_bc = headers.index('BCMinRatio')
+        except ValueError:
+            self.i_maj_bc = -2
+            self.i_min_bc = -2
         self.col_function = (2,)
 
     def data(self, index, role=Qt.DisplayRole):

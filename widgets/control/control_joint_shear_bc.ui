@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>348</width>
-    <height>220</height>
+    <height>274</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -75,6 +75,26 @@
       </widget>
      </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="show_js_table">
+     <property name="text">
+      <string>Show JS Table</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="show_bc_table">
+     <property name="text">
+      <string>Show BC Table</string>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
+    </widget>
    </item>
    <item>
     <layout class="QGridLayout" name="gridLayout">
