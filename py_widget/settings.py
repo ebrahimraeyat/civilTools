@@ -1,7 +1,6 @@
 from pathlib import Path
 import copy
 
-import pandas as pd
 from PySide2 import  QtWidgets
 from PySide2 import QtCore
 

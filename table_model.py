@@ -11,14 +11,18 @@ import civiltools_rc
 # import matplotlib.cm as cm
 # from matplotlib.colors import Normalize
 # import matplotlib
-import FreeCADGui as Gui
+import FreeCAD
+
+from freecad_funcs import open_file, get_color
 
 civiltools_path = Path(__file__).absolute().parent
 
-low = 'cyan'
-intermediate = 'yellow'
-high = 'red'
+param = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools")
 
+low = get_color(param, 'low_result_colors', 16777215)
+intermediate = get_color(param, 'medium_result_colors', 4294934527)
+high = get_color(param, 'high_result_colors', 4283793407)
+open_results_file = param.GetBool('open_results_file', True)
 # def color_map_color(value, norm, cmap_name='rainbow'):
 #     cmap = cm.get_cmap(cmap_name)  # PiYG
 #     rgb = cmap(norm(abs(value)))[:3]  # will return rgba, we take only first 3 so we get rgb
@@ -120,9 +124,9 @@ class DriftModel(PandasModel):
             elif role == Qt.BackgroundColorRole:
                 if col in (self.avg_i, self.max_i):
                     if float(value) > allow_drift:
-                        return QColor(high)
+                        return QColor(*high)
                     else:
-                        return QColor(low)
+                        return QColor(*low)
             elif role == Qt.TextAlignmentRole:
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
             
@@ -162,11 +166,11 @@ class TorsionModel(PandasModel):
                 # if col == i_ratio:
                     # value = float(value)
                 if value <= 1.2:
-                    return QColor(low)
+                    return QColor(*low)
                 elif 1.2 < value < 1.4:
-                    return QColor(intermediate)
+                    return QColor(*intermediate)
                 elif value > 1.4:
-                    return QColor(high)
+                    return QColor(*high)
             elif role == Qt.TextAlignmentRole:
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
             
@@ -200,9 +204,9 @@ class StoryForcesModel(PandasModel):
                 fx_percentage = float(self.df.iloc[row][self.i_vx])
                 fy_percentage = float(self.df.iloc[row][self.i_vy])
                 if max(fx_percentage, fy_percentage) >= .35:
-                    return QColor(intermediate)
+                    return QColor(*intermediate)
                 else:
-                    return QColor(low)
+                    return QColor(*low)
             elif role == Qt.TextAlignmentRole:
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
             
@@ -227,9 +231,9 @@ class ColumnsRatioModel(PandasModel):
             elif role == Qt.BackgroundColorRole:
                 ratio = float(self.df.iloc[row]['Ratio'])
                 if ratio > 1:
-                    return QColor(high)
+                    return QColor(*high)
                 else:
-                    return QColor(low)
+                    return QColor(*low)
             elif role == Qt.TextAlignmentRole:
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
             
@@ -276,19 +280,19 @@ class BeamsRebarsModel(PandasModel):
             elif role == Qt.BackgroundColorRole:
                 if col in (self.i_ta1, self.i_ta2):
                     if float(self.df.iloc[row][self.i_ta2]) > float(self.df.iloc[row][self.i_ta1]) * 1.02:
-                        return QColor(high)
+                        return QColor(*high)
                     else:
-                        return QColor(low)
+                        return QColor(*low)
                 if col in (self.i_ba1, self.i_ba2):
                     if float(self.df.iloc[row][self.i_ba2]) > float(self.df.iloc[row][self.i_ba1]) * 1.02:
-                        return QColor(high)
+                        return QColor(*high)
                     else:
-                        return QColor(low)
+                        return QColor(*low)
                 if col in (self.i_v1, self.i_v2):
                     if float(self.df.iloc[row][self.i_v2]) > float(self.df.iloc[row][self.i_v1]) * 1.02:
-                        return QColor(high)
+                        return QColor(*high)
                     else:
-                        return QColor(low)
+                        return QColor(*low)
             elif role == Qt.TextAlignmentRole:
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
             
@@ -317,9 +321,9 @@ class IrregularityOfMassModel(PandasModel):
                 if col in (self.i_below, self.i_above):
                     if float(self.df.iloc[row][self.i_mass_x]) > \
                         float(self.df.iloc[row][col]):
-                        return QColor(high)
+                        return QColor(*high)
                     else:
-                        return QColor(low)
+                        return QColor(*low)
             elif role == Qt.TextAlignmentRole:
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
             
@@ -379,11 +383,11 @@ class StoryStiffnessModel(PandasModel):
             return None
         k = float(k)
         if k < a:
-            return QColor(high)
+            return QColor(*high)
         elif k < b:
-            return QColor(intermediate)
+            return QColor(*intermediate)
         else:
-            return QColor(low)
+            return QColor(*low)
 
 
 class BeamsJModel(PandasModel):
@@ -411,9 +415,9 @@ class BeamsJModel(PandasModel):
                 # if col == i_ratio:
                     # value = float(value)
                 if j == j_init:
-                    return QColor(low)
+                    return QColor(*low)
                 else:
-                    return QColor(intermediate)
+                    return QColor(*intermediate)
             elif role == Qt.TextAlignmentRole:
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
             
@@ -443,9 +447,9 @@ class HighPressureColumnModel(PandasModel):
                 return str(value)
             elif role == Qt.BackgroundColorRole:
                 if self.df.iloc[row][self.i_hp]:
-                    return QColor(intermediate)
+                    return QColor(*intermediate)
                 else:
-                    return QColor(low)
+                    return QColor(*low)
             elif role == Qt.TextAlignmentRole:
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
             
@@ -473,9 +477,9 @@ class Column100_30Model(PandasModel):
                 return str(value)
             elif role == Qt.BackgroundColorRole:
                 if self.df.iloc[row][self.i_result]:
-                    return QColor(low)
+                    return QColor(*low)
                 else:
-                    return QColor(high)
+                    return QColor(*high)
             elif role == Qt.TextAlignmentRole:
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
             
@@ -519,11 +523,11 @@ class JointShearBCC(PandasModel):
                     try:
                         value = float(value)
                         if value <= 1:
-                            return QColor(low)
+                            return QColor(*low)
                         else:
-                            return QColor(high)
+                            return QColor(*high)
                     except (ValueError, TypeError):
-                        return QColor(intermediate)
+                        return QColor(*intermediate)
             elif role == Qt.TextAlignmentRole:
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
             
@@ -625,6 +629,8 @@ class ResultWidget(QtWidgets.QDialog):
         self.push_button_to_excel.setIcon(QIcon(str(civiltools_path / 'images' / 'xlsx.png')))
         self.push_button_to_word = QtWidgets.QPushButton()
         self.push_button_to_word.setIcon(QIcon(str(civiltools_path / 'images' / 'word.png')))
+        self.open_exported_file = QtWidgets.QCheckBox("Open")
+        self.open_exported_file.setChecked(open_results_file)
         label = QtWidgets.QLabel("Filter")
         self.lineEdit = QtWidgets.QLineEdit()
         label2 = QtWidgets.QLabel("By Column:")
@@ -636,6 +642,7 @@ class ResultWidget(QtWidgets.QDialog):
         hbox.addWidget(self.comboBox)
         hbox.addWidget(self.push_button_to_word)
         hbox.addWidget(self.push_button_to_excel)
+        hbox.addWidget(self.open_exported_file)
         self.vbox = QtWidgets.QVBoxLayout()
         self.vbox.addLayout(hbox)
         self.result_table_view = QtWidgets.QTableView()
@@ -698,7 +705,9 @@ class ResultWidget(QtWidgets.QDialog):
         else:
             with pd.ExcelWriter(filename) as writer:
                     self.model.df.to_excel(writer)
-    
+        if self.open_exported_file.isChecked():
+            open_file(filename)
+
     def export_to_word(self,
                        ali='',
                        doc=None,
@@ -746,11 +755,10 @@ class ResultWidget(QtWidgets.QDialog):
                 if color:
                     shading_elm = parse_xml(r'<w:shd {} w:fill="{}"/>'.format(nsdecls('w'), color.name()))
                     cell._tc.get_or_add_tcPr().append(shading_elm)
-
-
         # save the document
         doc.save(filename)
-        # self.model.df.to_excel()
+        if self.open_exported_file.isChecked():
+            open_file(filename)
 
     def resize_columns(self):
         self.result_table_view.resizeColumnsToContents()

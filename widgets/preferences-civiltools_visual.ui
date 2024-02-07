@@ -20,296 +20,445 @@
       <bool>true</bool>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab">
       <property name="enabled">
-       <bool>false</bool>
+       <bool>true</bool>
       </property>
       <attribute name="title">
        <string>Display</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout">
-       <item row="2" column="3">
-        <widget class="Gui::PrefDoubleSpinBox" name="beam_line_width">
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QGroupBox" name="groupBox_2">
          <property name="enabled">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
-         <property name="decimals">
-          <number>0</number>
+         <property name="title">
+          <string>Result Tables</string>
          </property>
-         <property name="minimum">
-          <double>1.000000000000000</double>
-         </property>
-         <property name="maximum">
-          <double>7.000000000000000</double>
-         </property>
-         <property name="singleStep">
-          <double>1.000000000000000</double>
-         </property>
-         <property name="value">
-          <double>3.000000000000000</double>
-         </property>
-         <property name="prefEntry" stdset="0">
-          <cstring>beam_line_width</cstring>
-         </property>
-         <property name="prefPath" stdset="0">
-          <cstring>Mod/civilTools</cstring>
-         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QGroupBox" name="groupBox_4">
+            <property name="title">
+             <string>Colors</string>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_2">
+             <item row="2" column="1">
+              <widget class="Gui::PrefColorButton" name="high_result_colors">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+               <property name="color" stdset="0">
+                <color>
+                 <red>255</red>
+                 <green>85</green>
+                 <blue>127</blue>
+                </color>
+               </property>
+               <property name="prefEntry" stdset="0">
+                <cstring>high_result_colors</cstring>
+               </property>
+               <property name="prefPath" stdset="0">
+                <cstring>Mod/civilTools</cstring>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_7">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+               <property name="text">
+                <string>Medium</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="label_8">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+               <property name="text">
+                <string>High</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_6">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+               <property name="text">
+                <string>low</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="Gui::PrefColorButton" name="low_result_colors">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+               <property name="color" stdset="0">
+                <color>
+                 <red>0</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </property>
+               <property name="prefEntry" stdset="0">
+                <cstring>low_result_colors</cstring>
+               </property>
+               <property name="prefPath" stdset="0">
+                <cstring>Mod/civilTools</cstring>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="Gui::PrefColorButton" name="medium_result_colors">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+               <property name="color" stdset="0">
+                <color>
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>127</blue>
+                </color>
+               </property>
+               <property name="prefEntry" stdset="0">
+                <cstring>medium_result_colors</cstring>
+               </property>
+               <property name="prefPath" stdset="0">
+                <cstring>Mod/civilTools</cstring>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="2">
+              <spacer name="horizontalSpacer">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="Gui::PrefCheckBox" name="open_results_file">
+            <property name="text">
+             <string>Open Files</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+            <property name="prefEntry" stdset="0">
+             <cstring>open_results_file</cstring>
+            </property>
+            <property name="prefPath" stdset="0">
+             <cstring>Mod/civilTools</cstring>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
-       <item row="1" column="1">
-        <widget class="QLabel" name="label_24">
-         <property name="text">
-          <string>Shape</string>
+       <item>
+        <widget class="QGroupBox" name="groupBox_5">
+         <property name="title">
+          <string>ETABS Model</string>
          </property>
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="0" column="1">
+           <widget class="QLabel" name="label_24">
+            <property name="text">
+             <string>Shape</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLabel" name="label_46">
+            <property name="text">
+             <string>Line</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QLabel" name="label_38">
+            <property name="text">
+             <string>Line Width</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="4">
+           <widget class="QLabel" name="label_25">
+            <property name="text">
+             <string>Transparency</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="5">
+           <widget class="QLabel" name="label_47">
+            <property name="text">
+             <string>Display Mode</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_5">
+            <property name="text">
+             <string>Beam</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="Gui::PrefColorButton" name="beam_shape_color">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="color" stdset="0">
+             <color>
+              <red>255</red>
+              <green>255</green>
+              <blue>0</blue>
+             </color>
+            </property>
+            <property name="prefEntry" stdset="0">
+             <cstring>beam_shape_color</cstring>
+            </property>
+            <property name="prefPath" stdset="0">
+             <cstring>Mod/civilTools</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="Gui::PrefColorButton" name="beam_line_color">
+            <property name="color" stdset="0">
+             <color>
+              <red>255</red>
+              <green>255</green>
+              <blue>0</blue>
+             </color>
+            </property>
+            <property name="prefEntry" stdset="0">
+             <cstring>beam_line_color</cstring>
+            </property>
+            <property name="prefPath" stdset="0">
+             <cstring>Mod/civilTools</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3">
+           <widget class="Gui::PrefDoubleSpinBox" name="beam_line_width">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="decimals">
+             <number>0</number>
+            </property>
+            <property name="minimum">
+             <double>1.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>7.000000000000000</double>
+            </property>
+            <property name="singleStep">
+             <double>1.000000000000000</double>
+            </property>
+            <property name="value">
+             <double>3.000000000000000</double>
+            </property>
+            <property name="prefEntry" stdset="0">
+             <cstring>beam_line_width</cstring>
+            </property>
+            <property name="prefPath" stdset="0">
+             <cstring>Mod/civilTools</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="4">
+           <widget class="Gui::PrefDoubleSpinBox" name="beam_transparency">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="decimals">
+             <number>0</number>
+            </property>
+            <property name="maximum">
+             <double>100.000000000000000</double>
+            </property>
+            <property name="singleStep">
+             <double>10.000000000000000</double>
+            </property>
+            <property name="value">
+             <double>0.000000000000000</double>
+            </property>
+            <property name="prefEntry" stdset="0">
+             <cstring>beam_transparency</cstring>
+            </property>
+            <property name="prefPath" stdset="0">
+             <cstring>Mod/civilTools</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="5">
+           <widget class="Gui::PrefComboBox" name="beam_display_mode">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="prefEntry" stdset="0">
+             <cstring>beam_display_mode</cstring>
+            </property>
+            <property name="prefPath" stdset="0">
+             <cstring>Mod/civilTools</cstring>
+            </property>
+            <item>
+             <property name="text">
+              <string>Flat Lines</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Shaded</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Wireframe</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_17">
+            <property name="text">
+             <string>Column</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="Gui::PrefColorButton" name="column_shape_color">
+            <property name="color" stdset="0">
+             <color>
+              <red>0</red>
+              <green>255</green>
+              <blue>0</blue>
+             </color>
+            </property>
+            <property name="prefEntry" stdset="0">
+             <cstring>column_shape_color</cstring>
+            </property>
+            <property name="prefPath" stdset="0">
+             <cstring>Mod/civilTools</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2">
+           <widget class="Gui::PrefColorButton" name="column_line_color">
+            <property name="color" stdset="0">
+             <color>
+              <red>0</red>
+              <green>255</green>
+              <blue>0</blue>
+             </color>
+            </property>
+            <property name="prefEntry" stdset="0">
+             <cstring>column_line_color</cstring>
+            </property>
+            <property name="prefPath" stdset="0">
+             <cstring>Mod/civilTools</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="3">
+           <widget class="Gui::PrefDoubleSpinBox" name="column_line_width">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="decimals">
+             <number>0</number>
+            </property>
+            <property name="minimum">
+             <double>1.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>7.000000000000000</double>
+            </property>
+            <property name="singleStep">
+             <double>1.000000000000000</double>
+            </property>
+            <property name="value">
+             <double>1.000000000000000</double>
+            </property>
+            <property name="prefEntry" stdset="0">
+             <cstring>column_line_width</cstring>
+            </property>
+            <property name="prefPath" stdset="0">
+             <cstring>Mod/civilTools</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="4">
+           <widget class="Gui::PrefDoubleSpinBox" name="column_transparency">
+            <property name="decimals">
+             <number>0</number>
+            </property>
+            <property name="maximum">
+             <double>100.000000000000000</double>
+            </property>
+            <property name="singleStep">
+             <double>10.000000000000000</double>
+            </property>
+            <property name="value">
+             <double>20.000000000000000</double>
+            </property>
+            <property name="prefEntry" stdset="0">
+             <cstring>column_transparency</cstring>
+            </property>
+            <property name="prefPath" stdset="0">
+             <cstring>Mod/civilTools</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="5">
+           <widget class="Gui::PrefComboBox" name="column_display_mode">
+            <property name="currentIndex">
+             <number>0</number>
+            </property>
+            <property name="prefEntry" stdset="0">
+             <cstring>column_display_mode</cstring>
+            </property>
+            <property name="prefPath" stdset="0">
+             <cstring>Mod/civilTools</cstring>
+            </property>
+            <item>
+             <property name="text">
+              <string>Flat Lines</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Shaded</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Wireframe</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
-       <item row="2" column="4">
-        <widget class="Gui::PrefDoubleSpinBox" name="beam_transparency">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="decimals">
-          <number>0</number>
-         </property>
-         <property name="maximum">
-          <double>100.000000000000000</double>
-         </property>
-         <property name="singleStep">
-          <double>10.000000000000000</double>
-         </property>
-         <property name="value">
-          <double>0.000000000000000</double>
-         </property>
-         <property name="prefEntry" stdset="0">
-          <cstring>beam_transparency</cstring>
-         </property>
-         <property name="prefPath" stdset="0">
-          <cstring>Mod/civilTools</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="5">
-        <widget class="QLabel" name="label_47">
-         <property name="text">
-          <string>Display Mode</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1">
-        <widget class="Gui::PrefColorButton" name="column_shape_color">
-         <property name="color" stdset="0">
-          <color>
-           <red>0</red>
-           <green>255</green>
-           <blue>0</blue>
-          </color>
-         </property>
-         <property name="prefEntry" stdset="0">
-          <cstring>column_shape_color</cstring>
-         </property>
-         <property name="prefPath" stdset="0">
-          <cstring>Mod/civilTools</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="2">
-        <widget class="Gui::PrefColorButton" name="beam_line_color">
-         <property name="color" stdset="0">
-          <color>
-           <red>255</red>
-           <green>255</green>
-           <blue>0</blue>
-          </color>
-         </property>
-         <property name="prefEntry" stdset="0">
-          <cstring>beam_line_color</cstring>
-         </property>
-         <property name="prefPath" stdset="0">
-          <cstring>Mod/civilTools</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="2">
-        <widget class="Gui::PrefColorButton" name="column_line_color">
-         <property name="color" stdset="0">
-          <color>
-           <red>0</red>
-           <green>255</green>
-           <blue>0</blue>
-          </color>
-         </property>
-         <property name="prefEntry" stdset="0">
-          <cstring>column_line_color</cstring>
-         </property>
-         <property name="prefPath" stdset="0">
-          <cstring>Mod/civilTools</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="3" rowspan="2" colspan="2">
-        <widget class="QLabel" name="label_38">
-         <property name="text">
-          <string>Line Width</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="2">
-        <widget class="QLabel" name="label_46">
-         <property name="text">
-          <string>Line</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="label_5">
-         <property name="text">
-          <string>Beam</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="5">
-        <widget class="Gui::PrefComboBox" name="column_display_mode">
-         <property name="currentIndex">
-          <number>2</number>
-         </property>
-         <property name="prefEntry" stdset="0">
-          <cstring>column_display_mode</cstring>
-         </property>
-         <property name="prefPath" stdset="0">
-          <cstring>Mod/civilTools</cstring>
-         </property>
-         <item>
-          <property name="text">
-           <string>Flat Lines</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Shaded</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Wireframe</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item row="3" column="4">
-        <widget class="Gui::PrefDoubleSpinBox" name="column_transparency">
-         <property name="decimals">
-          <number>0</number>
-         </property>
-         <property name="maximum">
-          <double>100.000000000000000</double>
-         </property>
-         <property name="singleStep">
-          <double>10.000000000000000</double>
-         </property>
-         <property name="value">
-          <double>20.000000000000000</double>
-         </property>
-         <property name="prefEntry" stdset="0">
-          <cstring>column_transparency</cstring>
-         </property>
-         <property name="prefPath" stdset="0">
-          <cstring>Mod/civilTools</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="4">
-        <widget class="QLabel" name="label_25">
-         <property name="text">
-          <string>Transparency</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="label_17">
-         <property name="text">
-          <string>Column</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="Gui::PrefColorButton" name="beam_shape_color">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="color" stdset="0">
-          <color>
-           <red>255</red>
-           <green>0</green>
-           <blue>0</blue>
-          </color>
-         </property>
-         <property name="prefEntry" stdset="0">
-          <cstring>beam_shape_color</cstring>
-         </property>
-         <property name="prefPath" stdset="0">
-          <cstring>Mod/civilTools</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="5">
-        <widget class="Gui::PrefComboBox" name="beam_display_mode">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="prefEntry" stdset="0">
-          <cstring>beam_display_mode</cstring>
-         </property>
-         <property name="prefPath" stdset="0">
-          <cstring>Mod/civilTools</cstring>
-         </property>
-         <item>
-          <property name="text">
-           <string>Flat Lines</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Shaded</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Wireframe</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item row="3" column="3">
-        <widget class="Gui::PrefDoubleSpinBox" name="column_line_width">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="decimals">
-          <number>0</number>
-         </property>
-         <property name="minimum">
-          <double>1.000000000000000</double>
-         </property>
-         <property name="maximum">
-          <double>7.000000000000000</double>
-         </property>
-         <property name="singleStep">
-          <double>1.000000000000000</double>
-         </property>
-         <property name="value">
-          <double>1.000000000000000</double>
-         </property>
-         <property name="prefEntry" stdset="0">
-          <cstring>column_line_width</cstring>
-         </property>
-         <property name="prefPath" stdset="0">
-          <cstring>Mod/civilTools</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="1">
+       <item>
         <spacer name="verticalSpacer_3">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
