@@ -183,6 +183,21 @@ class Form(QtWidgets.QWidget):
         self.form.slabs_v23_checkbox.stateChanged.connect(self.slabs_v23_checkbox_clicked)
         self.form.slabs_mass_checkbox.stateChanged.connect(self.slabs_mass_checkbox_clicked)
         self.form.slabs_weight_checkbox.stateChanged.connect(self.slabs_weight_checkbox_clicked)
+        # mass & weight value check if above 1 or not
+        self.form.beam_mass_spinbox.valueChanged.connect(self.set_beam_mass_spinbox_changed)
+        self.form.beam_weight_spinbox.valueChanged.connect(self.set_beam_weight_spinbox_changed)
+
+    def set_beam_weight_spinbox_changed(self):
+        if self.form.beam_weight_spinbox.value() > 1:
+            self.form.beam_weight_spinbox.setSuffix(" Cm")
+        else:
+            self.form.beam_weight_spinbox.setSuffix("")
+            
+    def set_beam_mass_spinbox_changed(self):
+        if self.form.beam_mass_spinbox.value() > 1:
+            self.form.beam_mass_spinbox.setSuffix(" Cm")
+        else:
+            self.form.beam_mass_spinbox.setSuffix("")
 
     def tab_changed(self, index: int):
         tab_text = self.form.tabwidget.tabText(index)

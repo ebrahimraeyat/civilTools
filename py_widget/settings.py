@@ -10,7 +10,6 @@ import FreeCADGui as Gui
 from db import ostanha
 from exporter import civiltools_config
 
-from building.build import StructureSystem, Building
 
 from python_functions import flatten_set
 
