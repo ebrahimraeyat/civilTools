@@ -308,6 +308,7 @@ class IrregularityOfMassModel(PandasModel):
         self.i_mass_x = headers.index('Mass X')
         self.i_below = headers.index('1.5 * Below')
         self.i_above = headers.index('1.5 * Above')
+        self.i_story = headers.index('Story')
         # self.col_function = (0, 4)
 
     def data(self, index, role=Qt.DisplayRole):
@@ -316,7 +317,9 @@ class IrregularityOfMassModel(PandasModel):
         if index.isValid():
             value = self.df.iloc[row][col]
             if role == Qt.DisplayRole:
-                return str(value)
+                if col == self.i_story:
+                    return str(value)
+                return f'{float(value):.0f}'
             elif role == Qt.BackgroundColorRole:
                 if col in (self.i_below, self.i_above):
                     if float(self.df.iloc[row][self.i_mass_x]) > \
