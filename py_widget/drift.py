@@ -2,14 +2,13 @@ from pathlib import Path
 
 import pandas as pd
 
-from PySide2 import  QtWidgets
+from PySide2 import QtWidgets
 from PySide2.QtWidgets import QMessageBox
 from PySide2.QtCore import Qt
 
 import FreeCADGui as Gui
 
 from exporter import civiltools_config
-from building.build import StructureSystem, Building
 
 civiltools_path = Path(__file__).absolute().parent.parent
 
@@ -17,12 +16,12 @@ civiltools_path = Path(__file__).absolute().parent.parent
 class Form(QtWidgets.QWidget):
     def __init__(self, etabs_obj, d):
         super(Form, self).__init__()
-        self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'drift.ui'))
+        self.form = Gui.PySideUic.loadUi(str(civiltools_path / "widgets" / "drift.ui"))
         self.etabs = etabs_obj
         self.dynamic_tab_clicked = False
         self.create_connections()
         self.load_config(d)
-    
+
     def create_connections(self):
         self.form.run.clicked.connect(self.accept)
         self.form.create_t_file_box.clicked.connect(self.create_t_file_clicked)
@@ -60,17 +59,19 @@ class Form(QtWidgets.QWidget):
         d = civiltools_config.get_settings_from_etabs(self.etabs)
         tab = self.form.tab_widget.currentIndex()
         create_t_file = self.form.create_t_file_box.isChecked()
-        structure_type = 'concrete'
+        structure_type = "concrete"
         if self.form.steel_radiobutton.isChecked():
-            structure_type = 'steel'
+            structure_type = "steel"
         #     no_of_stories = d['no_of_story_x'] + d['no_of_story_x1']
-        no_of_stories = d['no_of_story_x']
-        cdx = d['cdx']
-        cdy = d['cdy']
-        two_system = d.get('activate_second_system', False)
+        no_of_stories = d["no_of_story_x"]
+        cdx = d["cdx"]
+        cdy = d["cdy"]
+        two_system = d.get("activate_second_system", False)
         if create_t_file:
             self.etabs.unlock_model()
-            tx, ty, main_file = self.etabs.get_drift_periods(structure_type=structure_type)
+            tx, ty, main_file = self.etabs.get_drift_periods(
+                structure_type=structure_type
+            )
             civiltools_config.save_analytical_periods(self.etabs, tx, ty)
             building = civiltools_config.current_building_from_etabs(self.etabs)
             if two_system:
@@ -83,8 +84,8 @@ class Form(QtWidgets.QWidget):
             if tab == 1:
                 # execute scale response spectrum
                 x_specs, y_specs, _ = self.get_load_cases(tab=1)
-                ex_name = d.get('ex_drift_combobox')
-                ey_name = d.get('ey_drift_combobox')
+                ex_name = d.get("ex_drift_combobox")
+                ey_name = d.get("ey_drift_combobox")
                 x_scale_factor = float(self.form.x_scalefactor_combobox.currentText())
                 y_scale_factor = float(self.form.y_scalefactor_combobox.currentText())
                 self.etabs.scale_response_spectrums(
@@ -98,15 +99,15 @@ class Form(QtWidgets.QWidget):
         # For two systems that not ticks the create t file, Temporary
         else:
             if two_system:
-                rux = d.get('Rux', None)
+                rux = d.get("Rux", None)
                 if rux:
-                    ruy = d.get('Ruy', None)
-                    rux1 = d.get('Rux1', None)
-                    ruy1 = d.get('Ruy1', None)
+                    ruy = d.get("Ruy", None)
+                    rux1 = d.get("Rux1", None)
+                    ruy1 = d.get("Ruy1", None)
                     if rux1 >= rux:
-                        cdx = d.get('cdx1')
+                        cdx = d.get("cdx1")
                     if ruy1 >= ruy:
-                        cdy = d.get('cdy1')
+                        cdy = d.get("cdy1")
                 else:
                     building = civiltools_config.current_building_from_etabs(self.etabs)
                     if building.building2.x_system.Ru >= building.x_system.Ru:
@@ -124,24 +125,25 @@ class Form(QtWidgets.QWidget):
             loadcases,
             x_loadcases,
             y_loadcases,
-            )
-        if create_t_file and structure_type == 'steel':
+        )
+        if create_t_file and structure_type == "steel":
             print(f"Opening file {main_file}\n")
             self.etabs.SapModel.File.OpenFile(str(main_file))
             data = self.get_data_for_apply_earthquakes(building, d)
             self.etabs.apply_cfactors_to_edb(data, d=d)
         if ret is None:
-            QMessageBox.warning(None,
-                                'Diphragm',
-                                'Please Check that you assigned diaphragm to stories.')
+            QMessageBox.warning(
+                None, "Diphragm", "Please Check that you assigned diaphragm to stories."
+            )
             return
         import table_model
+
         df = pd.DataFrame(ret[0], columns=ret[1])
         if self.form.show_separate_checkbox.isChecked():
-            filt = df['OutputCase'].isin(x_loadcases)
+            filt = df["OutputCase"].isin(x_loadcases)
             df1 = df.loc[filt]
             table_model.show_results(df1, table_model.DriftModel)
-            filt = df['OutputCase'].isin(y_loadcases)
+            filt = df["OutputCase"].isin(y_loadcases)
             df1 = df.loc[filt]
             table_model.show_results(df1, table_model.DriftModel)
         else:
@@ -184,7 +186,7 @@ class Form(QtWidgets.QWidget):
                     if item.checkState() == Qt.Checked:
                         loadcases.append(item.text())
         return x_loadcases, y_loadcases, loadcases
-    
+
     def reject(self):
         Gui.Control.closeDialog()
 
@@ -193,8 +195,10 @@ class Form(QtWidgets.QWidget):
             building,
             etabs=self.etabs,
             d=d,
-            )
+        )
         if data is None:
-            QMessageBox.warning(None, "Not Implemented", "Can not apply earthquake for your systems")
+            QMessageBox.warning(
+                None, "Not Implemented", "Can not apply earthquake for your systems"
+            )
             return None
         return data
