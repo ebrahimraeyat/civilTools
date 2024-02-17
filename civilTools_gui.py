@@ -42,6 +42,7 @@ from gui_civiltools.assign import (
     gui_assign_ev,
     gui_assign_modifiers,
     gui_assigns,
+    gui_update_commands,
 )
 from gui_civiltools.define import (
     gui_create_load_combinations,
@@ -218,6 +219,7 @@ civiltools_assign = [
             "civilTools_assign_modifiers",
             "civiltools_wall_load",
             "civilTools_assign_ev",
+            "civiltools_update_wall_load_on_frames",
             ]
 
 civiltools_tools = [
