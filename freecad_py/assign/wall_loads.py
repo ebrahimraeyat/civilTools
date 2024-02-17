@@ -226,10 +226,15 @@ def assign_wall_loads_to_etabs(
     wall_weight: float = 0,
     walls: list = [],
     ):
+    from exporter import civiltools_config
+    d = civiltools_config.get_settings_from_etabs(etabs)
+    beam_wall_props_key = 'beams_wall_loads'
+    beams_props = d.get(beam_wall_props_key, {})
     names = set()
     etabs.set_current_unit('kgf', 'm')
     if not walls:
         walls = FreeCAD.ActiveDocument.Objects
+    etabs.unlock_model()
     for obj in walls:
         if (
             hasattr(obj, 'IfcType') and
@@ -252,10 +257,24 @@ def assign_wall_loads_to_etabs(
                 elif hasattr(obj, 'Base'):
                     label, story = obj.Base.Label.split('_')[:2]
                 name = etabs.SapModel.FrameObj.GetNameFromLabel(label, story)[0]
-            height = equivalent_height_in_meter(obj)
+            height, percent = equivalent_height_in_meter(obj)
             load_value = math.ceil(height * weight)
             dist1, dist2 = get_relative_dists(obj)
-            etabs.unlock_model()
+            wall_loads_dict = {
+                'wall_loadpat': loadpat,
+                'wall_weight_per_area': weight,
+                'wall_opening_ratio': percent,
+                'wall_dist1': dist1,
+                'wall_dist2': dist2,
+                }
+            for key, value in wall_loads_dict.items():
+                props = beams_props.get(key, {})
+                if props:
+                    props[name] = value
+                else:
+                    props[name] = value
+                    beams_props[key] = props
+
             etabs.frame_obj.assign_gravity_load(
                 name=name,
                 loadpat=loadpat,
@@ -267,6 +286,7 @@ def assign_wall_loads_to_etabs(
                 replace=name not in names,
             )
             names.add(name)
+    civiltools_config.update_setting(etabs, [beam_wall_props_key], [beams_props])
 
 def get_relative_dists(wall):
     wall_trace = wall.Base
@@ -290,17 +310,20 @@ def get_relative_dists(wall):
 def equivalent_height_in_meter(wall):
     inlists = wall.InList
     if not inlists:
-        return wall.Height.getValueAs('m') 
+        return wall.Height.getValueAs('m'), 0
     win = None
     for o in inlists:
         if hasattr(o, 'IfcType') and o.IfcType == 'Window':
             win = o
             break
     if win is None:
-        return wall.Height.getValueAs('m')
-    area = (wall.Height * wall.Length) -  (win.Height * win.Width)
+        return wall.Height.getValueAs('m'), 0
+    wall_area = wall.Height * wall.Length
+    window_area = win.Height * win.Width
+    area = (wall_area) -  (window_area)
+    percent = window_area / wall_area
     height = (area / wall.Length).getValueAs('m')
-    return height
+    return height, percent
 
 def update_levels(etabs,
                   freecad_document=None,
