@@ -85,6 +85,8 @@ def add_wall_on_beams(
             wall = create_wall(base, dist1, dist2, relative)
             wall.loadpat = loadpat
             wall.weight = mass_per_area
+            wall.none_beam_h = none_beam_h
+            wall.parapet = parapet
             if height is None:
                 next_beam = get_above_beam(beam, all_stories)
                 if next_beam is None:
@@ -152,6 +154,8 @@ def create_wall(
     wall.Length = length
     wall.addProperty('App::PropertyInteger', 'weight', 'Wall')
     wall.addProperty('App::PropertyString', 'loadpat', 'Wall')
+    wall.addProperty('App::PropertyString', 'none_beam_h', 'Wall')
+    wall.addProperty('App::PropertyString', 'parapet', 'Wall')
     wall.addProperty('App::PropertyLink', 'base', 'Wall').base = base
     if FreeCAD.GuiUp:
         wall.ViewObject.Transparency = 40
@@ -260,20 +264,6 @@ def assign_wall_loads_to_etabs(
             height, percent = equivalent_height_in_meter(obj)
             load_value = math.ceil(height * weight)
             dist1, dist2 = get_relative_dists(obj)
-            wall_loads_dict = {
-                'wall_loadpat': loadpat,
-                'wall_weight_per_area': weight,
-                'wall_opening_ratio': percent,
-                'wall_dist1': dist1,
-                'wall_dist2': dist2,
-                }
-            for key, value in wall_loads_dict.items():
-                props = beams_props.get(key, {})
-                if props:
-                    props[name] = value
-                else:
-                    props[name] = value
-                    beams_props[key] = props
 
             etabs.frame_obj.assign_gravity_load(
                 name=name,
@@ -286,6 +276,23 @@ def assign_wall_loads_to_etabs(
                 replace=name not in names,
             )
             names.add(name)
+            wall_loads_dict = {
+                'wall_loadpat': loadpat,
+                'wall_weight_per_area': weight,
+                'wall_opening_ratio': percent,
+                'wall_dist1': dist1,
+                'wall_dist2': dist2,
+                'height_from_below': False,
+                'parapet': obj.parapet,
+                'none_beam_h': obj.none_beam_h,
+                }
+            for key, value in wall_loads_dict.items():
+                props = beams_props.get(key, {})
+                if props:
+                    props[name] = value
+                else:
+                    props[name] = value
+                    beams_props[key] = props
     civiltools_config.update_setting(etabs, [beam_wall_props_key], [beams_props])
 
 def get_relative_dists(wall):
