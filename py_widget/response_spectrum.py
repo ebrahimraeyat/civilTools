@@ -45,8 +45,8 @@ class Form(QtWidgets.QWidget):
     def accept(self):
         ex_name = self.form.ex_combobox.currentText()
         ey_name = self.form.ey_combobox.currentText()
-        x_scale_factor = float(self.form.x_scalefactor_combobox.currentIndex())
-        y_scale_factor = float(self.form.y_scalefactor_combobox.currentIndex())
+        x_scale_factor = float(self.form.x_scalefactor_combobox.currentText())
+        y_scale_factor = float(self.form.y_scalefactor_combobox.currentText())
         num_iteration = self.form.iteration.value()
         tolerance = self.form.tolerance.value()
         reset = self.form.reset.isChecked()
