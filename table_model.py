@@ -177,6 +177,29 @@ class TorsionModel(PandasModel):
     def setData(self, index, value, role=Qt.EditRole):
         return None
 
+class BaseShearModel(PandasModel):
+    def __init__(self, data):
+        super(BaseShearModel, self).__init__(data)        
+
+    def data(self, index, role=Qt.DisplayRole):
+        row = index.row()
+        col = index.column()
+        if index.isValid():
+            value = self.df.iloc[row][col]
+            if role == Qt.DisplayRole:
+                if col == 0:
+                    return str(value)
+                elif col == 1:
+                    return f"{value:.0f}"
+                elif col == 2:
+                    return f"{value:.2f}"
+                
+            elif role == Qt.BackgroundColorRole:
+                return QColor(*low)
+            
+    def setData(self, index, value, role=Qt.EditRole):
+        return None
+
 
 class StoryForcesModel(PandasModel):
     def __init__(self, data):

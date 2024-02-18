@@ -67,7 +67,7 @@ class Form(QtWidgets.QWidget):
             )
         else:
             x_specs, y_specs = self.get_load_cases()
-            self.etabs.scale_response_spectrums(
+            _, _, df = self.etabs.scale_response_spectrums(
                 ex_name,
                 ey_name,
                 x_specs,
@@ -79,8 +79,8 @@ class Form(QtWidgets.QWidget):
                 reset,
                 analyze,
             )
-        msg = "Done Response Spectrum Analysis."
-        QMessageBox.information(None, 'Successful', str(msg))
+        import table_model
+        table_model.show_results(df, table_model.BaseShearModel)
         self.form.close()
 
     def get_load_cases(self):
