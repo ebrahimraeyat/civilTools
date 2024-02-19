@@ -701,6 +701,9 @@ def setA(widget):
 
 def current_building_from_etabs(etabs):
 	d = get_settings_from_etabs(etabs)
+	return current_building_from_config(d)
+
+def current_building_from_config(d):
 	risk_level = d['risk_level']
 	importance_factor = float(d['importance_factor'])
 	soil = d['soil_type']
