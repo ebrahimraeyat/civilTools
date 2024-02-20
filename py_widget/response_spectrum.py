@@ -51,6 +51,7 @@ class Form(QtWidgets.QWidget):
         tolerance = self.form.tolerance.value()
         reset = self.form.reset.isChecked()
         analyze = self.form.analyze.isChecked()
+        consider_min_static_base_shear = self.form.consider_min_static_base_shear.isChecked()
         if self.form.angular.isChecked():
             angular_specs = [item.text() for item in self.form.angular_specs.selectedItems()]
             section_cuts = [item.text() for item in self.form.section_cuts.selectedItems()]
@@ -78,6 +79,7 @@ class Form(QtWidgets.QWidget):
                 tolerance,
                 reset,
                 analyze,
+                consider_min_static_base_shear,
             )
         import table_model
         table_model.show_results(df, table_model.BaseShearModel)
