@@ -73,35 +73,20 @@ class Form(QtWidgets.QWidget):
         elif self.form.steel_radiobutton.isChecked():
             type_ = 'Steel'
         if self.form.static_groupbox.isChecked():
-            ex, exn, exp, ey, eyn, eyp = self.etabs.get_first_system_seismic(d)
-            data = self.etabs.frame_obj.require_100_30(
-                ex,
-                exn,
-                exp,
-                ey,
-                eyn,
-                eyp,
-                filename,
-                type_,
-                self.code,
-            )
+            load_names = self.etabs.get_first_system_seismic(d)
         elif self.form.dynamic_groupbox.isChecked():
-            sx, sxe, sy, sye = self.etabs.get_dynamic_loadcases(d)
-            data = self.etabs.frame_obj.require_100_30(
-                sx,
-                sxe,
-                None,
-                sy,
-                sye,
-                None,
-                filename,
-                type_,
-                self.code,
-            )
+            load_names = self.etabs.get_dynamic_loadcases(d)
+        data = self.etabs.frame_obj.require_100_30(
+            load_names,
+            filename,
+            type_,
+            self.code,
+        )
         import table_model
         table_model.show_results(
             data,
             model=table_model.Column100_30Model,
+            function=self.etabs.view.show_frame,
             )
         def get_100_30_names(ignore_100_30: bool=True):
             filt = data['Result'] == ignore_100_30

@@ -491,6 +491,7 @@ class Column100_30Model(PandasModel):
         self.i_mminor = headers.index('MMinor')
         self.i_ratio = headers.index('Ratio')
         self.i_result = headers.index('Result')
+        self.col_function = (2,)
 
     def data(self, index, role=Qt.DisplayRole):
         row = index.row()
