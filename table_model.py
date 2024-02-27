@@ -191,7 +191,7 @@ class BaseShearModel(PandasModel):
                     return str(value)
                 elif col == 1:
                     return f"{value:.0f}"
-                elif col == 2:
+                elif col in (2, 3):
                     return f"{value:.2f}"
                 
             elif role == Qt.BackgroundColorRole:
