@@ -188,15 +188,15 @@ class Form(QtWidgets.QWidget):
         self.form.beam_weight_spinbox.valueChanged.connect(self.set_beam_weight_spinbox_changed)
 
     def set_beam_weight_spinbox_changed(self):
-        if self.form.beam_weight_spinbox.value() > 1:
+        if self.form.beam_weight_spinbox.value() > 1 and "cm" not in self.form.beam_weight_spinbox.suffix().lower():
             self.form.beam_weight_spinbox.setSuffix(" Cm")
-        else:
+        elif self.form.beam_weight_spinbox.value() <= 1  and "cm" in self.form.beam_weight_spinbox.suffix().lower():
             self.form.beam_weight_spinbox.setSuffix("")
             
     def set_beam_mass_spinbox_changed(self):
-        if self.form.beam_mass_spinbox.value() > 1:
+        if self.form.beam_mass_spinbox.value() > 1 and "cm" not in self.form.beam_mass_spinbox.suffix().lower():
             self.form.beam_mass_spinbox.setSuffix(" Cm")
-        else:
+        elif self.form.beam_mass_spinbox.value() <= 1  and "cm" in self.form.beam_mass_spinbox.suffix().lower():
             self.form.beam_mass_spinbox.setSuffix("")
 
     def tab_changed(self, index: int):
