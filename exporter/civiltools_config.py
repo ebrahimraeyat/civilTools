@@ -448,6 +448,7 @@ def load(
 		):
 		if key in keys and hasattr(widget, key):
 			exec(f"index = widget.{key}.findText(d['{key}'])")
+			exec(f"if index == -1: widget.{key}.addItem(d['{key}']); index = widget.{key}.findText(d['{key}'])")
 			exec(f"widget.{key}.setCurrentIndex(index)")
 		elif key in ('ostan', 'city') and hasattr(widget, key):
 			exec(f"index = widget.{key}.findText('قم')")
