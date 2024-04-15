@@ -522,6 +522,12 @@ def load(
 		checked = d.get(key, False)
 		widget.activate_second_system.setChecked(checked)
 		for w in (
+			'ex1_combobox',
+			'ey1_combobox',
+			'exp1_combobox',
+			'eyp1_combobox',
+			'exn1_combobox',
+			'eyn1_combobox',
 			'x_system_label',
 			'y_system_label',
 			'x_treeview_1',
