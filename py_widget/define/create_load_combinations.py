@@ -50,6 +50,7 @@ class Form(QtWidgets.QWidget):
         add_notional = self.form.add_notional.isChecked()
         A = self.get_acc(self.form.risk_level.currentText())
         I = float(self.form.importance_factor.currentText())
+        code = self.form.code_combobox.currentText()
         sequence_numbering = self.form.sequence_numbering.isChecked()
         if self.form.lrfd.isChecked():
             design_type = "LRFD"
@@ -86,6 +87,7 @@ class Form(QtWidgets.QWidget):
             rho_y1=rho_y1,
             omega_x1=omega_x1,
             omega_y1=omega_y1,
+            code=code,
         )
         items=  {}
         for i in range(0, len(self.data), 4):
