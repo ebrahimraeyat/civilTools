@@ -73,8 +73,8 @@ class Form(QtWidgets.QWidget):
                 model=table_model.JointShearBCC,
                 function=self.etabs.view.show_frame,
                 )
-        if open_main_file:
-            self.open_main_file()
+        if open_main_file or structure_type == 'Sway Special':
+            self.accept()
         else:
             self.form.open_main_file_button.setEnabled(True)
             self.form.check.setEnabled(False)
