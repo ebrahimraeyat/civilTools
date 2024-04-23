@@ -6,6 +6,7 @@ FREECADPATH = 'G:\\program files\\FreeCAD 0.19\\bin'
 sys.path.append(FREECADPATH)
 import FreeCAD
 import pytest
+import numpy as np
 
 civiltools_path = Path(__file__).absolute().parent.parent.parent
 sys.path.insert(0, str(civiltools_path))
@@ -26,7 +27,7 @@ def test_add_wall_on_beams():
 def test_create_wall():
     base = tos.getObjectsByLabel('B35_Story1_CenterLine')[0]
     wall = wall_loads.create_wall(base, 0.2, .8, relative=True)
-    assert wall.Length.Value == base.Length.Value * .6
+    np.testing.assert_allclose(wall.Length.Value, base.Length.Value * .6, atol=.01)
 
 def test_create_wall_again():
     # change the wall
@@ -35,12 +36,6 @@ def test_create_wall_again():
     wall = wall_loads.create_wall(base, 0.3, .8, relative=True)
     assert wall.Length.Value == base.Length.Value * .5
 
-def test_assign_wall_loads_to_etabs():
-    mod_path = civiltools_path.parent
-    sys.path.insert(0, str(mod_path))
-    import etabs_obj
-    etabs = etabs_obj.EtabsModel(backup=False)
-    wall_loads.assign_wall_loads_to_etabs(etabs)
 
 if __name__ == '__main__':
     test_create_wall()

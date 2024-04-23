@@ -84,7 +84,7 @@ def add_wall_on_beams(
                 remove_wall(base)
             wall = create_wall(base, dist1, dist2, relative)
             wall.loadpat = loadpat
-            wall.weight = mass_per_area
+            wall.weight = f"{mass_per_area} kg/(m*s^2)"
             wall.none_beam_h = none_beam_h
             wall.parapet = parapet
             if height is None:
@@ -152,10 +152,10 @@ def create_wall(
     wall_trace.addGeometry(trace)
     wall = Arch.makeWall(wall_trace)
     wall.Length = length
-    wall.addProperty('App::PropertyInteger', 'weight', 'Wall')
     wall.addProperty('App::PropertyString', 'loadpat', 'Wall')
-    wall.addProperty('App::PropertyString', 'none_beam_h', 'Wall')
-    wall.addProperty('App::PropertyString', 'parapet', 'Wall')
+    wall.addProperty('App::PropertyPressure', 'weight', 'Wall')
+    wall.addProperty('App::PropertyLength', 'none_beam_h', 'Wall')
+    wall.addProperty('App::PropertyLength', 'parapet', 'Wall')
     wall.addProperty('App::PropertyLink', 'base', 'Wall').base = base
     if FreeCAD.GuiUp:
         wall.ViewObject.Transparency = 40
@@ -223,114 +223,6 @@ def has_wall(base):
         if hasattr(o, 'IfcType') and o.IfcType == 'Wall':
             return True
     return False
-
-def assign_wall_loads_to_etabs(
-    etabs = None,
-    wall_loadpat: str = '',
-    wall_weight: float = 0,
-    walls: list = [],
-    ):
-    from exporter import civiltools_config
-    d = civiltools_config.get_settings_from_etabs(etabs)
-    beam_wall_props_key = 'beams_wall_loads'
-    beams_props = d.get(beam_wall_props_key, {})
-    names = set()
-    etabs.set_current_unit('kgf', 'm')
-    if not walls:
-        walls = FreeCAD.ActiveDocument.Objects
-    etabs.unlock_model()
-    for obj in walls:
-        if (
-            hasattr(obj, 'IfcType') and
-            obj.IfcType == 'Wall'
-        ):
-            if hasattr(obj, 'loadpat') and hasattr(obj, 'weight'):
-                loadpat = obj.loadpat
-                weight = obj.weight
-            elif wall_loadpat and wall_weight:
-                loadpat = wall_loadpat
-                weight = wall_weight
-            else:
-                continue
-            name = ''
-            if hasattr(obj, 'base'):
-                name = obj.base.Label2
-            if not name:
-                if hasattr(obj, 'base'):
-                    label, story = obj.base.Label.split('_')[:2]
-                elif hasattr(obj, 'Base'):
-                    label, story = obj.Base.Label.split('_')[:2]
-                name = etabs.SapModel.FrameObj.GetNameFromLabel(label, story)[0]
-            height, percent = equivalent_height_in_meter(obj)
-            load_value = math.ceil(height * weight)
-            dist1, dist2 = get_relative_dists(obj)
-
-            etabs.frame_obj.assign_gravity_load(
-                name=name,
-                loadpat=loadpat,
-                val1=load_value,
-                val2=load_value,
-                dist1=dist1,
-                dist2=dist2,
-                relative=True,
-                replace=name not in names,
-            )
-            names.add(name)
-            wall_loads_dict = {
-                'wall_loadpat': loadpat,
-                'wall_weight_per_area': weight,
-                'wall_opening_ratio': percent,
-                'wall_dist1': dist1,
-                'wall_dist2': dist2,
-                'height_from_below': False,
-                'parapet': obj.parapet,
-                'none_beam_h': obj.none_beam_h,
-                }
-            for key, value in wall_loads_dict.items():
-                props = beams_props.get(key, {})
-                if props:
-                    props[name] = value
-                else:
-                    props[name] = value
-                    beams_props[key] = props
-    civiltools_config.update_setting(etabs, [beam_wall_props_key], [beams_props])
-
-def get_relative_dists(wall):
-    wall_trace = wall.Base
-    if hasattr(wall, 'base'):
-        base = wall.base
-    else: # wall load created with user
-        return 0, 1
-    e1 = wall_trace.Shape.Edges[0]
-    e2 = base.Shape.Edges[0]
-    p1 = e2.firstVertex().Point
-    p2 = e1.firstVertex().Point + wall.Placement.Base
-    p3 = e1.lastVertex().Point + wall.Placement.Base
-    v1 = p2.sub(p1)
-    v2 = p3.sub(p1)
-    dist1 = round((v1.Length / base.Length).Value, 3)
-    dist2 = round((v2.Length / base.Length).Value, 3)
-    assert max(dist1, dist2) <= 1
-    return dist1, dist2
-
-
-def equivalent_height_in_meter(wall):
-    inlists = wall.InList
-    if not inlists:
-        return wall.Height.getValueAs('m'), 0
-    win = None
-    for o in inlists:
-        if hasattr(o, 'IfcType') and o.IfcType == 'Window':
-            win = o
-            break
-    if win is None:
-        return wall.Height.getValueAs('m'), 0
-    wall_area = wall.Height * wall.Length
-    window_area = win.Height * win.Width
-    area = (wall_area) -  (window_area)
-    percent = window_area / wall_area
-    height = (area / wall.Length).getValueAs('m')
-    return height, percent
 
 def update_levels(etabs,
                   freecad_document=None,

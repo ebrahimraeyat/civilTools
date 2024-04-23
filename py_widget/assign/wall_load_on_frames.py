@@ -131,7 +131,6 @@ class Form(QtWidgets.QWidget):
         dist1 = self.form.dist1.value()
         dist2 = self.form.dist2.value()
         relative = self.form.relative.isChecked()
-        # load_type = Form.LOADTYPE[self.form.load_type.currentText()]
         load_type = 1
         replace = self.form.replace.isChecked()
         parapet_wall_height = self.form.parapet_wall_height.value()
@@ -198,11 +197,7 @@ class Form(QtWidgets.QWidget):
                 walls = Gui.Selection.getSelection()
             else:
                 walls = []
-            from freecad_py.assign import wall_loads
-            wall_loads.assign_wall_loads_to_etabs(
-                self.etabs,
-                wall_loadpat=loadpat,
-                wall_weight=mass_per_area,
+            self.etabs.frame_obj.assign_wall_loads_to_etabs(
                 walls=walls,
                 )
             QMessageBox.information(None, 'Applied', 'Wall loads applied in ETABS Model.')
