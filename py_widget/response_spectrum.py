@@ -55,7 +55,7 @@ class Form(QtWidgets.QWidget):
         if self.form.angular.isChecked():
             angular_specs = [item.text() for item in self.form.angular_specs.selectedItems()]
             section_cuts = [item.text() for item in self.form.section_cuts.selectedItems()]
-            self.etabs.angles_response_spectrums_analysis(
+            _, df = self.etabs.angles_response_spectrums_analysis(
                 ex_name,
                 ey_name,
                 angular_specs,

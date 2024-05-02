@@ -179,7 +179,9 @@ class TorsionModel(PandasModel):
 
 class BaseShearModel(PandasModel):
     def __init__(self, data):
-        super(BaseShearModel, self).__init__(data)        
+        super(BaseShearModel, self).__init__(data)
+        self.i_ratio = list(self.df.columns).index('Ratio')
+        self.i_scale = list(self.df.columns).index('Scale')
 
     def data(self, index, role=Qt.DisplayRole):
         row = index.row()
@@ -189,10 +191,10 @@ class BaseShearModel(PandasModel):
             if role == Qt.DisplayRole:
                 if col == 0:
                     return str(value)
-                elif col == 1:
-                    return f"{value:.0f}"
-                elif col in (2, 3):
+                elif col in (self.i_ratio, self.i_scale):
                     return f"{value:.2f}"
+                else:
+                    return f"{value:.0f}"
                 
             elif role == Qt.BackgroundColorRole:
                 return QColor(*low)
