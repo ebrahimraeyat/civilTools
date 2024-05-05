@@ -124,9 +124,15 @@ class Form(QtWidgets.QWidget):
     def fill_angular_fields(self):
         section_cuts_angles = self.etabs.database.get_section_cuts_angle()
         angles = list(section_cuts_angles.values())
-        section_cuts = list(section_cuts_angles.keys())
         angles_spectral = self.etabs.load_cases.get_spectral_with_angles(angles)
-        specs = list(angles_spectral.values())
+        section_cuts = []
+        specs = []
+        for angle, spec in angles_spectral.items():
+            for sec_cut, ang in section_cuts_angles.items():
+                if int(angle) == int(ang):
+                    specs.append(spec)
+                    section_cuts.append(sec_cut)
+                    break
         self.form.angular_specs.clear()
         self.form.section_cuts.clear()
         self.form.angular_specs.addItems(specs)
