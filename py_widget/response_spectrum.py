@@ -2,11 +2,14 @@ from pathlib import Path
 
 from PySide2 import  QtWidgets, QtCore
 import FreeCADGui as Gui
-from PySide2.QtWidgets import QMessageBox
+from PySide2.QtWidgets import QComboBox, QItemDelegate
+from PySide2.QtCore import QAbstractTableModel, Qt, QSize, QModelIndex
 
 civiltools_path = Path(__file__).absolute().parent.parent
 
 from exporter import civiltools_config
+
+
 
 
 class Form(QtWidgets.QWidget):
@@ -14,6 +17,7 @@ class Form(QtWidgets.QWidget):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'response_spectrum.ui'))
         self.etabs = etabs_obj
+        self.angular_model = None
         # self.fill_100_30_fields(d)
         # self.select_spect_loadcases()
         self.load_config(d)
@@ -28,19 +32,20 @@ class Form(QtWidgets.QWidget):
     def load_config(self, d):
         civiltools_config.load(self.etabs, self.form, d)
 
-    def reset_widget(self):
-        if self.form.combination.isChecked():
-            self.form.angular_specs.setEnabled(False)
-            self.form.section_cuts.setEnabled(False)
-            self.form.x_dynamic_loadcase_list.setEnabled(True)
-            self.form.y_dynamic_loadcase_list.setEnabled(True)
-            self.form.y_scalefactor_combobox.setEnabled(True)
-        elif self.form.angular.isChecked():
-            self.form.angular_specs.setEnabled(True)
-            self.form.section_cuts.setEnabled(True)
-            self.form.x_dynamic_loadcase_list.setEnabled(False)
-            self.form.y_dynamic_loadcase_list.setEnabled(False)
-            self.form.y_scalefactor_combobox.setEnabled(False)
+    def reset_widget(self, checked):
+        sender = self.sender()
+        if sender == self.form.combination:
+            self.form.tableView.setEnabled(not checked)
+            self.form.angular.setChecked(not checked)
+            self.form.x_dynamic_loadcase_list.setEnabled(checked)
+            self.form.y_dynamic_loadcase_list.setEnabled(checked)
+            self.form.y_scalefactor_combobox.setEnabled(checked)
+        elif sender == self.form.angular:
+            self.form.combination.setChecked(not checked)
+            self.form.tableView.setEnabled(checked)
+            self.form.x_dynamic_loadcase_list.setEnabled(not checked)
+            self.form.y_dynamic_loadcase_list.setEnabled(not checked)
+            self.form.y_scalefactor_combobox.setEnabled(not checked)
 
     def accept(self):
         ex_name = self.form.ex_combobox.currentText()
@@ -53,8 +58,15 @@ class Form(QtWidgets.QWidget):
         analyze = self.form.analyze.isChecked()
         consider_min_static_base_shear = self.form.consider_min_static_base_shear.isChecked()
         if self.form.angular.isChecked():
-            angular_specs = [item.text() for item in self.form.angular_specs.selectedItems()]
-            section_cuts = [item.text() for item in self.form.section_cuts.selectedItems()]
+            angular_specs = []
+            section_cuts = []
+            for row in range(self.angular_model.rowCount()):
+                index = self.angular_model.index(row, 1)
+                spec = self.angular_model.data(index)
+                angular_specs.append(spec)
+                index = self.angular_model.index(row, 2)
+                sec_cut = self.angular_model.data(index)
+                section_cuts.append(sec_cut)
             _, df = self.etabs.angles_response_spectrums_analysis(
                 ex_name,
                 ey_name,
@@ -110,18 +122,10 @@ class Form(QtWidgets.QWidget):
                 item = lw.item(i)
                 item.setSelected(True)
     
-    def select_angular_list(self):
-        for lw in (self.form.angular_specs, self.form.section_cuts):
-            for i in range(lw.count()):
-                item = lw.item(i)
-                item.setSelected(True)
-
-    # def fill_100_30_fields(self):
-    #     sx, sxe, sy, sye = self.etabs.load_cases.get_sxye_seismic_load_cases()
-    #     self.form.x_dynamic_loadcase_list.addItems(sx.union(sxe))
-    #     self.form.y_dynamic_loadcase_list.addItems(sy.union(sye))
-
     def fill_angular_fields(self):
+        if self.angular_model is not None:
+            return
+        all_response_spectrums = self.etabs.load_cases.get_response_spectrum_loadcase_name()
         section_cuts_angles = self.etabs.database.get_section_cuts_angle()
         angles = list(section_cuts_angles.values())
         angles_spectral = self.etabs.load_cases.get_spectral_with_angles(angles)
@@ -133,8 +137,151 @@ class Form(QtWidgets.QWidget):
                     specs.append(spec)
                     section_cuts.append(sec_cut)
                     break
-        self.form.angular_specs.clear()
-        self.form.section_cuts.clear()
-        self.form.angular_specs.addItems(specs)
-        self.form.section_cuts.addItems(section_cuts)
-        self.select_angular_list()
+        self.angular_model = AngularTableModel(
+            angles=angles,
+            specs=specs,
+            section_cuts=section_cuts,
+            all_response_spectrums=all_response_spectrums,
+            )
+        self.form.tableView.setModel(self.angular_model)
+        self.form.tableView.setItemDelegate(AngularDelegate(self.form))
+
+
+class AngularTableModel(QAbstractTableModel):
+
+    def __init__(self,
+                 angles: list,
+                 specs: list,
+                 section_cuts: list,
+                 all_response_spectrums: list,
+                 ):
+        super().__init__()
+        self.angles = angles
+        self.specs = specs
+        self.section_cuts = section_cuts
+        self.all_response_spectrums = all_response_spectrums
+        self.columns = {
+            0: "Angle",
+            1: "Spec",
+            2: "Section Cut"
+        }
+        self.check_state = [True] * len(angles)
+
+    def headerData(self, section, orientation, role=Qt.DisplayRole):
+        if role == Qt.TextAlignmentRole:
+            if orientation == Qt.Horizontal:
+                return int(Qt.AlignHCenter | Qt.AlignVCenter)
+            return int(Qt.AlignRight | Qt.AlignVCenter)
+        if role != Qt.DisplayRole:
+            return
+
+        if orientation == Qt.Horizontal:
+            return self.columns[section]
+        # if orientation == Qt.Vertical:
+        #     return ""
+
+    def checkState(self, row):
+        if self.check_state[row]:
+            return Qt.Checked
+        else:
+            return Qt.Unchecked
+
+    def flags(self, index):
+        if not index.isValid():
+            return Qt.ItemIsEnabled
+        col = index.column()
+        if col == 0:
+            return Qt.ItemIsEnabled | Qt.ItemIsUserCheckable
+
+        return Qt.ItemFlags(
+            QAbstractTableModel.flags(self, index) | Qt.ItemIsEditable)
+
+    def data(self, index, role=Qt.DisplayRole):
+
+        if not index.isValid():
+            return
+        row = index.row()
+        col = index.column()
+        if role == Qt.DisplayRole:
+            if col == 0:
+                return self.angles[row]
+            elif col == 1:
+                return self.specs[row]
+            elif col == 2:
+                return self.section_cuts[row]
+        if role == Qt.CheckStateRole and col == 0:
+            return self.checkState(row)
+        return None
+
+    def setData(self, index, value, role=Qt.EditRole):
+        if not index.isValid():
+            return False
+        col = index.column()
+        row = index.row()
+        if role == Qt.CheckStateRole and col == 0:
+            self.check_state[row] = value
+            self.dataChanged.emit(index, index)
+            return True
+        if role == Qt.EditRole:
+            if col == 1:
+                self.specs[row] = str(value)
+                self.dataChanged.emit(index, index)
+                return True
+            elif col == 2:
+                self.section_cuts[row] = str(value)
+                self.dataChanged.emit(index, index)
+                return True
+        return False
+
+    def rowCount(self, index=QModelIndex()):
+        return len(self.angles)
+
+    def columnCount(self, index=QModelIndex()):
+        return 3
+
+
+
+class AngularDelegate(QItemDelegate):
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.ui = parent
+
+    def createEditor(self, parent, option, index):
+        col = index.column()
+        if col == 1:
+            spec = index.model().data(index)
+            combobox = QComboBox(parent)
+            all_response_spectrums = index.model().all_response_spectrums
+            combobox.addItems(all_response_spectrums)
+            spec_index = combobox.findText(spec)
+            combobox.setCurrentIndex(spec_index)
+            # combobox.setEditable(True)
+            return combobox
+        if col == 2:
+            sec_cut = index.model().data(index)
+            combobox = QComboBox(parent)
+            section_cuts = index.model().section_cuts
+            combobox.addItems(section_cuts)
+            # combobox.setEditable(True)
+            sec_cut_index = combobox.findText(sec_cut)
+            combobox.setCurrentIndex(sec_cut_index)
+            return combobox
+        else:
+            return QItemDelegate.createEditor(self, parent, option, index)
+
+    # def setEditorData(self, editor, index):
+    #     row = index.row()
+    #     col = index.column()
+    #     # value = index.model().items[row][column]
+    #         editor.setCurrentIndex(index.row())
+
+    def setModelData(self, editor, model, index):
+        col = index.column()
+        if col in (1, 2):
+            model.setData(index, editor.currentText())
+
+    def sizeHint(self, option, index):
+        fm = option.fontMetrics
+        return QSize(fm.width("2IPE14FPL200X10WP"), fm.height())
+
