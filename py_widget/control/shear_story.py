@@ -30,7 +30,7 @@ class Form(QtWidgets.QWidget):
                 loadcases=loadcases)
         df = pd.DataFrame(data, columns=headers)
         import table_model
-        table_model.show_results(df, table_model.StoryForcesModel)
+        table_model.show_results(df, table_model.StoryForcesModel, etabs=self.etabs)
     
     def reject(self):
         Gui.Control.closeDialog()

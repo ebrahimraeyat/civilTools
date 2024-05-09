@@ -142,12 +142,12 @@ class Form(QtWidgets.QWidget):
         if self.form.show_separate_checkbox.isChecked():
             filt = df["OutputCase"].isin(x_loadcases)
             df1 = df.loc[filt]
-            table_model.show_results(df1, table_model.DriftModel)
+            table_model.show_results(df1, table_model.DriftModel, etabs=self.etabs)
             filt = df["OutputCase"].isin(y_loadcases)
             df1 = df.loc[filt]
-            table_model.show_results(df1, table_model.DriftModel)
+            table_model.show_results(df1, table_model.DriftModel, etabs=self.etabs)
         else:
-            table_model.show_results(df, table_model.DriftModel)
+            table_model.show_results(df, table_model.DriftModel, etabs=self.etabs)
         self.form.close()
 
     def get_load_cases(self, tab):

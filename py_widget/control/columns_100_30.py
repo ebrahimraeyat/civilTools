@@ -87,6 +87,7 @@ class Form(QtWidgets.QWidget):
             data,
             model=table_model.Column100_30Model,
             function=self.etabs.view.show_frame,
+            etabs=self.etabs,
             )
         def get_100_30_names(ignore_100_30: bool=True):
             filt = data['Result'] == ignore_100_30

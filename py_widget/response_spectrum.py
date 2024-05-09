@@ -94,7 +94,7 @@ class Form(QtWidgets.QWidget):
                 consider_min_static_base_shear,
             )
         import table_model
-        table_model.show_results(df, table_model.BaseShearModel)
+        table_model.show_results(df, table_model.BaseShearModel, etabs=self.etabs)
         self.form.close()
 
     def get_load_cases(self):

@@ -32,5 +32,5 @@ class Form(QtWidgets.QWidget):
             return None
         import table_model
         df = pd.DataFrame(ret[0], columns=ret[1])
-        table_model.show_results(df, table_model.StoryStiffnessModel)
+        table_model.show_results(df, table_model.StoryStiffnessModel, etabs=self.etabs)
         self.form.close()

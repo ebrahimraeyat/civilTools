@@ -61,7 +61,8 @@ class Form(QtWidgets.QWidget):
                     import table_model
 
                     table_model.show_results(
-                        ret, table_model.BeamsJModel, self.etabs.view.show_frame
+                        ret, table_model.BeamsJModel, self.etabs.view.show_frame,
+                        etabs=self.etabs,
                     )
         except StopIteration:
             self.form.close()

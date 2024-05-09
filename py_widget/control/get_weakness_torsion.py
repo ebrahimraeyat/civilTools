@@ -70,7 +70,7 @@ class Form(QtWidgets.QWidget):
             if item.checkState() == Qt.Checked:
                 loadcases.append(item.text())
         df = self.etabs.get_diaphragm_max_over_avg_drifts(loadcases=loadcases)
-        table_model.show_results(df, table_model.TorsionModel, self.etabs.view.show_point)
+        table_model.show_results(df, table_model.TorsionModel, self.etabs.view.show_point, etabs=self.etabs)
         self.etabs.SapModel.File.OpenFile(str(asli_file_path))
         self.form.close()
 

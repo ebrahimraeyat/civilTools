@@ -200,6 +200,19 @@ def set_settings_to_etabs(etabs, d: dict):
 	json_str = json.dumps(d)
 	etabs.SapModel.SetProjectInfo("Company Name", json_str)
 	etabs.SapModel.File.Save()
+	# Save table as json
+	try:
+		if etabs is not None:
+			table_result_path = etabs.get_filepath() / "table_results"
+			if not table_result_path.exists():
+				table_result_path.mkdir()
+			name = etabs.get_file_name_without_suffix()
+			name = f'{name}_model_settings.json'
+			filename = table_result_path / name
+			with open(filename, "w") as f:
+				json.dump(d, f, indent=4)
+	except PermissionError:
+		pass
 
 def get_treeview_item_prop(view):
 	indexes = view.selectedIndexes()

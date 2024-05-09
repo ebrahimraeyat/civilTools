@@ -1,6 +1,7 @@
 from pathlib import Path
 import random
 import colorsys
+import json
 
 import pandas as pd
 from PySide2.QtCore import QAbstractTableModel, Qt, QModelIndex, QItemSelection
@@ -695,6 +696,7 @@ class ResultWidget(QtWidgets.QDialog):
         self.resize_columns()
         if self.function:
             self.result_table_view.clicked.connect(self.row_clicked)
+        
 
     def get_current_row_col(self, index=None):
         '''
@@ -712,6 +714,28 @@ class ResultWidget(QtWidgets.QDialog):
             value = str(self.model.data(self.model.index(row, col)))
             args.append(value)
         self.function(*args)
+
+    def save_table_to_json(self,
+                           filename: str='',
+                           ):
+        
+        data = []
+        # Header data
+        for col in range(self.model.columnCount()):
+            text = self.model.headerData(col, Qt.Horizontal, Qt.DisplayRole)
+            data.append({"row": 0, "col": col, "text": text, "color": ""})
+        for row in range(self.model.rowCount()):
+            for col in range(self.model.columnCount()):
+                index = self.model.index(row, col)
+                text = self.model.data(index)
+                color = self.model.data(index, Qt.BackgroundColorRole)
+                if color is None:
+                    color = ""
+                else:
+                    color = color.name()
+                data.append({"row": row + 1, "col": col, "text": text, "color": color})
+        with open(filename, "w") as f:
+            json.dump(data, f, indent=4)
 
     def export_to_excel(self):
         filename, _ = QtWidgets.QFileDialog.getSaveFileName(self, 'export to excel',
@@ -779,7 +803,7 @@ class ResultWidget(QtWidgets.QDialog):
                 index = self.model.index(row, col)
                 text = self.model.data(index)
                 color = self.model.data(index, Qt.BackgroundColorRole)
-                cell = table_docx.cell(row+1, col)
+                cell = table_docx.cell(row + 1, col)
                 cell.text = text
                 if color:
                     shading_elm = parse_xml(r'<w:shd {} w:fill="{}"/>'.format(nsdecls('w'), color.name()))
@@ -884,7 +908,7 @@ class ExpandedLoadSetsResults(ResultWidget):
         self.vbox.addLayout(hbox)
 
 
-def show_results(data, model, function=None):
+def show_results(data, model, function=None, etabs=None):
     win = ResultWidget(data, model, function)
     # Gui.Control.showDialog(win)
     mdi = get_mdiarea()
@@ -892,6 +916,15 @@ def show_results(data, model, function=None):
         return None
     sub = mdi.addSubWindow(win)
     sub.show()
+    # Save table as json
+    if etabs is not None:
+        table_result_path = etabs.get_filepath() / "table_results"
+        if not table_result_path.exists():
+            table_result_path.mkdir()
+        name = etabs.get_file_name_without_suffix()
+        name = f'{name}_{model.__name__}.json'
+        filename = table_result_path / name
+        win.save_table_to_json(filename=filename)
 
 def get_mdiarea():
     """ Return FreeCAD MdiArea. """

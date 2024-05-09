@@ -60,18 +60,21 @@ class Form(QtWidgets.QWidget):
                 df,
                 model=table_model.JointShearBCC,
                 function=self.etabs.view.show_frame,
+                etabs=self.etabs,
                 )
         elif show_js:
             table_model.show_results(
                 df[['Story', 'Label', 'UniqueName', 'JSMajRatio', 'JSMinRatio']],
                 model=table_model.JointShearBCC,
                 function=self.etabs.view.show_frame,
+                etabs=self.etabs,
                 )
         elif show_bc:
             table_model.show_results(
                 df[['Story', 'Label', 'UniqueName', 'BCMajRatio', 'BCMinRatio']],
                 model=table_model.JointShearBCC,
                 function=self.etabs.view.show_frame,
+                etabs=self.etabs,
                 )
         if open_main_file or structure_type == 'Sway Special':
             self.accept()

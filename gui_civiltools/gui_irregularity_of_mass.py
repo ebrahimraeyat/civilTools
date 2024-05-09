@@ -33,7 +33,7 @@ class CivilIrregularityOfMass:
         data, headers = etabs.get_irregularity_of_mass()
         df = pd.DataFrame(data, columns=headers)
         import table_model
-        table_model.show_results(df, table_model.IrregularityOfMassModel)
+        table_model.show_results(df, table_model.IrregularityOfMassModel, etabs=etabs)
         
     def IsActive(self):
         return True
