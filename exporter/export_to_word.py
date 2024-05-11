@@ -51,12 +51,14 @@ def get_data_from_model(building, etabs=None):
               }
     return prop, struc, result
 
-def export(building=None, filename=None, etabs=None):
+def export(building=None, filename=None, etabs=None, doc=None):
     prop, struc, result = get_data_from_model(building=building, etabs=etabs)
-    doc = Document(os.path.join(cfactor_path, 'exporter', 'template.docx'))
+    if doc is None:
+        doc = Document(os.path.join(cfactor_path, 'exporter', 'template.docx'))
     doc.add_heading('محاسبه ضریب زلزله', level=0)
     doc.add_heading('مشخصات پروژه', level=1)
-    table_prop = doc.add_table(rows=0, cols=2, style=doc.styles['List Table 4 Accent 5'])
+    table_style = 'vazhgooni'
+    table_prop = doc.add_table(rows=0, cols=2, style=doc.styles[table_style])
     table_prop.direction = WD_TABLE_DIRECTION.RTL
     for key, value in prop.items():
         row_cells = table_prop.add_row().cells
@@ -64,7 +66,7 @@ def export(building=None, filename=None, etabs=None):
         row_cells[1].text = str(value)
 
     doc.add_heading('مشخصات سیستم سازه ای', level=1)
-    struc_table = doc.add_table(rows=0, cols=3, style=doc.styles['List Table 4 Accent 5'])
+    struc_table = doc.add_table(rows=0, cols=3, style=doc.styles[table_style])
     for key, value in struc.items():
         row_cells = struc_table.add_row().cells
         row_cells[0].text = key
@@ -72,7 +74,7 @@ def export(building=None, filename=None, etabs=None):
         row_cells[2].text = str(value[1])
 
     doc.add_heading('ضریب زلزله', level=1)
-    result_table = doc.add_table(rows=1, cols=3, style=doc.styles['List Table 4 Accent 5'])
+    result_table = doc.add_table(rows=1, cols=3, style=doc.styles[table_style])
     hdr_cells = result_table.rows[0].cells
     hdr_cells[1].text = 'راستای x'
     hdr_cells[2].text = 'راستای y'
@@ -84,3 +86,4 @@ def export(building=None, filename=None, etabs=None):
 
     if filename:
         doc.save(filename)
+    return doc
