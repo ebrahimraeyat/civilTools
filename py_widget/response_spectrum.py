@@ -131,11 +131,13 @@ class Form(QtWidgets.QWidget):
         angles_spectral = self.etabs.load_cases.get_spectral_with_angles(angles)
         section_cuts = []
         specs = []
+        angles = []
         for angle, spec in angles_spectral.items():
             for sec_cut, ang in section_cuts_angles.items():
                 if int(angle) == int(ang):
                     specs.append(spec)
                     section_cuts.append(sec_cut)
+                    angles.append(ang)
                     break
         self.angular_model = AngularTableModel(
             angles=angles,
