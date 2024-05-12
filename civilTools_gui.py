@@ -260,4 +260,5 @@ civiltools_help = [
 civiltools_import_export = [
     "civiltools_import_model",
     "civiltools_import_dxf",
+    "civiltools_create_report",
 ]

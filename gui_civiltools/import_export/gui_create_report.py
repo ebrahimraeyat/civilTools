@@ -6,6 +6,8 @@ from PySide2 import QtCore, QtWidgets
 
 import FreeCADGui as Gui
 
+import python_functions
+
 
 
 class CiviltoolsCreateReport:
@@ -18,7 +20,7 @@ class CiviltoolsCreateReport:
             "civiltools",
             "Create a word document report")
         path = str(
-                   Path(__file__).parent.absolute().parent / "images" / "word.svg"
+                   Path(__file__).parent.absolute().parent.parent / "images" / "word.svg"
                    )
         return {'Pixmap': path,
                 'MenuText': menu_text,
@@ -47,11 +49,12 @@ class CiviltoolsCreateReport:
         results_path = etabs.get_filepath() / "table_results"
         filename = results_path / 'all_reports.docx'
         doc = report.create_report(etabs=etabs, results_path=results_path, doc=doc)
+        python_functions.open_file(filename)
         # doc.save(str(filename))
         
         
     def IsActive(self):
         return True
     
-Gui.addCommand("civilTools_create_report", CiviltoolsCreateReport())
+Gui.addCommand("civiltools_create_report", CiviltoolsCreateReport())
         
