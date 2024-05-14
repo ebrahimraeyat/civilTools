@@ -918,11 +918,11 @@ def show_results(data, model, function=None, etabs=None):
     sub.show()
     # Save table as json
     if etabs is not None:
-        table_result_path = etabs.get_filepath() / "table_results"
+        name = etabs.get_file_name_without_suffix()
+        table_result_path = etabs.get_filepath() / f"{name}_table_results"
         if not table_result_path.exists():
             table_result_path.mkdir()
-        name = etabs.get_file_name_without_suffix()
-        name = f'{name}_{model.__name__}.json'
+        name = model.__name__ + '.json'
         filename = table_result_path / name
         win.save_table_to_json(filename=filename)
 
