@@ -134,7 +134,10 @@ def import_model(
                 if structure is None:
                     continue
                 structure.Base = profile
-                line = FreeCAD.ActiveDocument.getObjectsByLabel(f'{label}_{story}_CenterLine')[0]
+                lines = FreeCAD.ActiveDocument.getObjectsByLabel(f'{label}_{story}_CenterLine')
+                if len(lines) == 0:
+                    continue
+                line = lines[0]
             else:
                 structure = Arch.makeStructure(profile)
                 line = Draft.make_line(v1, v2)
