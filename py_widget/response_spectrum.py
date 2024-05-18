@@ -58,6 +58,7 @@ class Form(QtWidgets.QWidget):
         analyze = self.form.analyze.isChecked()
         consider_min_static_base_shear = self.form.consider_min_static_base_shear.isChecked()
         if self.form.angular.isChecked():
+            way = "angular"
             angular_specs = []
             section_cuts = []
             for row in range(self.angular_model.rowCount()):
@@ -80,6 +81,7 @@ class Form(QtWidgets.QWidget):
             )
         else:
             x_specs, y_specs = self.get_load_cases()
+            way = "100-30"
             _, _, df = self.etabs.scale_response_spectrums(
                 ex_name,
                 ey_name,
@@ -94,7 +96,9 @@ class Form(QtWidgets.QWidget):
                 consider_min_static_base_shear,
             )
         import table_model
-        table_model.show_results(df, table_model.BaseShearModel, etabs=self.etabs)
+        table_model.show_results(df, table_model.BaseShearModel,
+                                 etabs=self.etabs,
+                                 json_file_name=f"BaseShear{way.capitalize()}")
         self.form.close()
 
     def get_load_cases(self):

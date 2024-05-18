@@ -51,9 +51,13 @@ class Form(QtWidgets.QWidget):
             QMessageBox.critical(self, "Error", str(err))
             return None
         df = pd.DataFrame(ret[0], columns=ret[1])
-        table_model.show_results(df, table_model.ColumnsRatioModel, etabs=self.etabs)
+        table_model.show_results(df, table_model.ColumnsRatioModel,
+        etabs=self.etabs,
+        json_file_name=f"ColumnsRatio{dir_.upper()}")
         df = pd.DataFrame(ret[2], columns=ret[3])
-        table_model.show_results(df, table_model.BeamsRebarsModel, etabs=self.etabs)
+        table_model.show_results(df, table_model.BeamsRebarsModel,
+        etabs=self.etabs,
+        json_file_name=f"BeamsRebars{dir_.upper()}")
         self.form.close()
 
     def fill_selected_beams(self):

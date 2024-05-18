@@ -908,7 +908,13 @@ class ExpandedLoadSetsResults(ResultWidget):
         self.vbox.addLayout(hbox)
 
 
-def show_results(data, model, function=None, etabs=None):
+def show_results(
+        data,
+        model,
+        function=None,
+        etabs=None,
+        json_file_name:str='',
+        ):
     win = ResultWidget(data, model, function)
     # Gui.Control.showDialog(win)
     mdi = get_mdiarea()
@@ -918,13 +924,14 @@ def show_results(data, model, function=None, etabs=None):
     sub.show()
     # Save table as json
     if etabs is not None:
-        name = etabs.get_file_name_without_suffix()
-        table_result_path = etabs.get_filepath() / f"{name}_table_results"
-        if not table_result_path.exists():
-            table_result_path.mkdir()
-        name = model.__name__ + '.json'
-        filename = table_result_path / name
+        filename = etabs.get_json_file_path_for_table_results(json_filename=json_file_name)
+    else:
+        filename = ""
+    if filename and isinstance(filename, Path):
+        if not filename.parent.exists():
+            filename.parent.mkdir(parents=True)
         win.save_table_to_json(filename=filename)
+
 
 def get_mdiarea():
     """ Return FreeCAD MdiArea. """
@@ -971,6 +978,6 @@ if __name__ == "__main__":
         'result': [''] * 2,
         })
         df = df.append(new_rows, ignore_index=True)
-        widget = ResultWidget(df, headers=None, model=BeamDeflectionTableModel)
+        widget = ResultWidget(df, model=BeamDeflectionTableModel)
         widget.show()
         app.exec_()

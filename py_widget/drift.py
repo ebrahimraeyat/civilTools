@@ -139,15 +139,19 @@ class Form(QtWidgets.QWidget):
         import table_model
 
         df = pd.DataFrame(ret[0], columns=ret[1])
+        model_name = table_model.DriftModel.__name__
         if self.form.show_separate_checkbox.isChecked():
             filt = df["OutputCase"].isin(x_loadcases)
             df1 = df.loc[filt]
-            table_model.show_results(df1, table_model.DriftModel, etabs=self.etabs)
+            table_model.show_results(df1, table_model.DriftModel, etabs=self.etabs,
+                                     json_file_name=f"{model_name}X")
             filt = df["OutputCase"].isin(y_loadcases)
             df1 = df.loc[filt]
-            table_model.show_results(df1, table_model.DriftModel, etabs=self.etabs)
+            table_model.show_results(df1, table_model.DriftModel, etabs=self.etabs,
+                                     json_file_name=f"{model_name}Y")
         else:
-            table_model.show_results(df, table_model.DriftModel, etabs=self.etabs)
+            table_model.show_results(df, table_model.DriftModel, etabs=self.etabs,
+                                     json_file_name=model_name)
         self.form.close()
 
     def get_load_cases(self, tab):

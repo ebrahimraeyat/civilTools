@@ -63,6 +63,7 @@ class Form(QtWidgets.QWidget):
                     table_model.show_results(
                         ret, table_model.BeamsJModel, self.etabs.view.show_frame,
                         etabs=self.etabs,
+                        json_file_name="BeamsJ",
                     )
         except StopIteration:
             self.form.close()

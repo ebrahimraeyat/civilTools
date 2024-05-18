@@ -31,9 +31,9 @@ class Form(QtWidgets.QWidget):
             import table_model
             ret = self.etabs.load_from_json(json_file)
             df = pd.DataFrame(ret[0], columns=ret[1])
-            table_model.show_results(df, table_model.ColumnsRatioModel, etabs=self.etabs)
+            table_model.show_results(df, table_model.ColumnsRatioModel)
             df = pd.DataFrame(ret[2], columns=ret[3])
-            table_model.show_results(df, table_model.BeamsRebarsModel, etabs=self.etabs)
+            table_model.show_results(df, table_model.BeamsRebarsModel)
         else:
             err = "Please first get weakness ratio, then show it!"
             QMessageBox.critical(self, "Error", err)

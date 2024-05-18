@@ -30,6 +30,7 @@ class Form(QtWidgets.QWidget):
             model=table_model.HighPressureColumnModel,
             function=self.etabs.view.show_frame,
             etabs=self.etabs,
+            json_file_name="HighPressureColumn"
             )
         def get_high_pressure_names():
             filt = data['Result'] == True

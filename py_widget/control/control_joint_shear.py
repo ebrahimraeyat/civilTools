@@ -61,6 +61,7 @@ class Form(QtWidgets.QWidget):
                 model=table_model.JointShearBCC,
                 function=self.etabs.view.show_frame,
                 etabs=self.etabs,
+                json_file_name="JointShearAndBeamColumnCapcity",
                 )
         elif show_js:
             table_model.show_results(
@@ -68,6 +69,7 @@ class Form(QtWidgets.QWidget):
                 model=table_model.JointShearBCC,
                 function=self.etabs.view.show_frame,
                 etabs=self.etabs,
+                json_file_name="JointShear",
                 )
         elif show_bc:
             table_model.show_results(
@@ -75,6 +77,7 @@ class Form(QtWidgets.QWidget):
                 model=table_model.JointShearBCC,
                 function=self.etabs.view.show_frame,
                 etabs=self.etabs,
+                json_file_name="BeamColumnCapcity",
                 )
         if open_main_file or structure_type == 'Sway Special':
             self.accept()
