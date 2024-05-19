@@ -44,10 +44,8 @@ class CiviltoolsCreateReport:
             return
         build = civiltools_config.current_building_from_config(d)
         from report import all_report as report
-        doc = report.create_doc()
+        doc = report.create_doc(table_of_content=True)
         doc = export_to_word.export(build, doc=doc)
-        # results_path = etabs.get_filepath() / "table_results"
-        # filename = results_path / 'all_reports.docx'
         doc, doc_file = report.create_report(etabs=etabs, doc=doc)
         python_functions.open_file(doc_file)
         # doc.save(str(filename))
