@@ -921,6 +921,8 @@ def show_results(
     if not mdi:
         return None
     sub = mdi.addSubWindow(win)
+    if json_file_name:
+        sub.setWindowTitle(json_file_name.rstrip(".json"))
     sub.show()
     # Save table as json
     if etabs is not None:
