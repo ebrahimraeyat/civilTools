@@ -40,10 +40,13 @@ class Form(QtWidgets.QWidget):
 
     def check(self):
         self.main_file_path = self.get_file_name()
-        filename = self.form.filename.text()
-        file_path = Path(filename)
-        if file_path.exists():
-            filename = file_path
+        show_js = self.form.show_js_table.isChecked()
+        show_bc = self.form.show_bc_table.isChecked()
+        filename = ""
+        if show_js:
+            filename += "js"
+        if show_bc:
+            filename += "bc"
         open_main_file = self.form.open_main_file.isChecked()
         structure_type = self.form.structure_type_combobox.currentText()
         df = self.etabs.create_joint_shear_bcc_file(
@@ -53,8 +56,6 @@ class Form(QtWidgets.QWidget):
             )
         if df is None:
             return
-        show_js = self.form.show_js_table.isChecked()
-        show_bc = self.form.show_bc_table.isChecked()
         if show_js and show_bc:
             table_model.show_results(
                 df,
