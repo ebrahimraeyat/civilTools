@@ -11,6 +11,8 @@ import FreeCADGui as Gui
 
 from exporter import civiltools_config
 
+from python_functions import change_unit
+
 
 civiltools_path = Path(__file__).absolute().parent.parent
 
@@ -54,6 +56,7 @@ class Form(QtWidgets.QWidget):
     def load_config(self, d):
         civiltools_config.load(self.etabs, self.form, d)
 
+    @change_unit('N', 'cm')
     def apply_static_aj(self):
         df = self.aj_apply_model_static.df.copy(deep=True)
         load_patterns = self.qlistwidgets_item_text((
@@ -66,6 +69,7 @@ class Form(QtWidgets.QWidget):
         msg = "Successfully written to Etabs."
         QMessageBox.information(None, "done", msg)
     
+    @change_unit('N', 'cm')    
     def apply_dynamic_aj(self):
         df = self.aj_apply_model_dynamic.df.copy(deep=True)
         loadcases = self.qlistwidgets_item_text((
