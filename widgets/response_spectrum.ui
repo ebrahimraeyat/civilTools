@@ -6,34 +6,24 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>745</width>
-    <height>629</height>
+    <width>779</width>
+    <height>617</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Response Spectrum Analysis</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3">
+  <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
     <widget class="QSplitter" name="splitter">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <layout class="QGridLayout" name="gridLayout_3">
          <item row="2" column="0">
-          <widget class="QLabel" name="label_2">
-           <property name="text">
-            <string>Static EQ.</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
           <widget class="QLabel" name="label_7">
            <property name="text">
             <string>Scale Factor</string>
@@ -43,7 +33,7 @@
            </property>
           </widget>
          </item>
-         <item row="4" column="0">
+         <item row="3" column="0">
           <widget class="QLabel" name="label_8">
            <property name="text">
             <string>Num. Iter</string>
@@ -53,10 +43,17 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="1">
-          <widget class="QComboBox" name="ex_combobox"/>
+         <item row="4" column="0">
+          <widget class="QLabel" name="label_9">
+           <property name="text">
+            <string>Tolerance</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
          </item>
-         <item row="4" column="1">
+         <item row="3" column="1">
           <widget class="QSpinBox" name="iteration">
            <property name="minimum">
             <number>1</number>
@@ -67,7 +64,7 @@
           </widget>
          </item>
          <item row="1" column="2">
-          <widget class="QLabel" name="label_6">
+          <widget class="QLabel" name="y_label">
            <property name="enabled">
             <bool>true</bool>
            </property>
@@ -79,7 +76,7 @@
            </property>
           </widget>
          </item>
-         <item row="6" column="0" colspan="3">
+         <item row="5" column="0" colspan="3">
           <widget class="QCheckBox" name="analyze">
            <property name="layoutDirection">
             <enum>Qt::LeftToRight</enum>
@@ -92,24 +89,7 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="2">
-          <widget class="QComboBox" name="ey_combobox">
-           <property name="enabled">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="0">
-          <widget class="QLabel" name="label_9">
-           <property name="text">
-            <string>Tolerance</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="1">
+         <item row="4" column="1">
           <widget class="QDoubleSpinBox" name="tolerance">
            <property name="minimum">
             <double>0.000000000000000</double>
@@ -125,7 +105,20 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="1">
+         <item row="1" column="1">
+          <widget class="QLabel" name="x_label">
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+           <property name="text">
+            <string>Direction X</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
           <widget class="QComboBox" name="x_scalefactor_combobox">
            <property name="currentIndex">
             <number>1</number>
@@ -147,7 +140,7 @@
            </item>
           </widget>
          </item>
-         <item row="7" column="0" colspan="3">
+         <item row="6" column="0" colspan="3">
           <widget class="QCheckBox" name="reset">
            <property name="text">
             <string>Reset All Scale Values</string>
@@ -157,20 +150,7 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="1">
-          <widget class="QLabel" name="label">
-           <property name="layoutDirection">
-            <enum>Qt::LeftToRight</enum>
-           </property>
-           <property name="text">
-            <string>Direction X</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="2">
+         <item row="2" column="2">
           <widget class="QComboBox" name="y_scalefactor_combobox">
            <property name="currentIndex">
             <number>1</number>
@@ -192,7 +172,7 @@
            </item>
           </widget>
          </item>
-         <item row="8" column="0" colspan="3">
+         <item row="7" column="0" colspan="3">
           <widget class="QCheckBox" name="consider_min_static_base_shear">
            <property name="text">
             <string>Consider Minimum Static Base Shear</string>
@@ -214,50 +194,85 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_3">
-             <property name="layoutDirection">
-              <enum>Qt::LeftToRight</enum>
+           <item row="1" column="0" colspan="2">
+            <widget class="QTabWidget" name="tabwidget">
+             <property name="currentIndex">
+              <number>0</number>
              </property>
-             <property name="text">
-              <string>X Response Spectrum Loadcases</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLabel" name="label_4">
-             <property name="layoutDirection">
-              <enum>Qt::LeftToRight</enum>
-             </property>
-             <property name="text">
-              <string>Y Response Spectrum Loadcases</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QListWidget" name="x_dynamic_loadcase_list">
-             <property name="selectionMode">
-              <enum>QAbstractItemView::MultiSelection</enum>
-             </property>
-             <property name="sortingEnabled">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QListWidget" name="y_dynamic_loadcase_list">
-             <property name="selectionMode">
-              <enum>QAbstractItemView::MultiSelection</enum>
-             </property>
-             <property name="sortingEnabled">
-              <bool>false</bool>
-             </property>
+             <widget class="QWidget" name="tab">
+              <attribute name="title">
+               <string>Main Loadcase</string>
+              </attribute>
+              <layout class="QGridLayout" name="gridLayout_2">
+               <item row="0" column="0">
+                <widget class="QListWidget" name="x_dynamic_loadcase_list">
+                 <property name="selectionMode">
+                  <enum>QAbstractItemView::MultiSelection</enum>
+                 </property>
+                 <property name="sortingEnabled">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QListWidget" name="y_dynamic_loadcase_list">
+                 <property name="selectionMode">
+                  <enum>QAbstractItemView::MultiSelection</enum>
+                 </property>
+                 <property name="sortingEnabled">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QComboBox" name="ex_combobox"/>
+               </item>
+               <item row="1" column="1">
+                <widget class="QComboBox" name="ey_combobox">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+             <widget class="QWidget" name="tab_2">
+              <attribute name="title">
+               <string>Drift Loadcase</string>
+              </attribute>
+              <layout class="QGridLayout" name="gridLayout_4">
+               <item row="0" column="0">
+                <widget class="QListWidget" name="x_dynamic_drift_loadcase_list">
+                 <property name="selectionMode">
+                  <enum>QAbstractItemView::MultiSelection</enum>
+                 </property>
+                 <property name="sortingEnabled">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QListWidget" name="y_dynamic_drift_loadcase_list">
+                 <property name="selectionMode">
+                  <enum>QAbstractItemView::MultiSelection</enum>
+                 </property>
+                 <property name="sortingEnabled">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QComboBox" name="ex_drift_combobox"/>
+               </item>
+               <item row="1" column="1">
+                <widget class="QComboBox" name="ey_drift_combobox">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
             </widget>
            </item>
           </layout>
@@ -286,7 +301,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <widget class="QRadioButton" name="angular">

@@ -18,8 +18,6 @@ class Form(QtWidgets.QWidget):
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'response_spectrum.ui'))
         self.etabs = etabs_obj
         self.angular_model = None
-        # self.fill_100_30_fields(d)
-        # self.select_spect_loadcases()
         self.load_config(d)
         self.create_connections()
 
@@ -40,16 +38,29 @@ class Form(QtWidgets.QWidget):
             self.form.x_dynamic_loadcase_list.setEnabled(checked)
             self.form.y_dynamic_loadcase_list.setEnabled(checked)
             self.form.y_scalefactor_combobox.setEnabled(checked)
+            self.form.x_label.setEnabled(checked)
+            self.form.y_label.setEnabled(checked)
         elif sender == self.form.angular:
             self.form.combination.setChecked(not checked)
             self.form.tableView.setEnabled(checked)
             self.form.x_dynamic_loadcase_list.setEnabled(not checked)
             self.form.y_dynamic_loadcase_list.setEnabled(not checked)
             self.form.y_scalefactor_combobox.setEnabled(not checked)
+            self.form.tabwidget.setCurrentIndex(0)
+            self.form.x_label.setEnabled(not checked)
+            self.form.y_label.setEnabled(not checked)
 
     def accept(self):
-        ex_name = self.form.ex_combobox.currentText()
-        ey_name = self.form.ey_combobox.currentText()
+        index = self.form.tabwidget.currentIndex()
+        tab_text = self.form.tabwidget.tabText(index)
+        if 'main' in tab_text or self.form.angular.isChecked():
+            ex_name = self.form.ex_combobox.currentText()
+            ey_name = self.form.ey_combobox.currentText()
+            lws = [self.form.x_dynamic_loadcase_list, self.form.y_dynamic_loadcase_list]
+        elif 'drift' in tab_text.lower():
+            ex_name = self.form.ex_drift_combobox.currentText()
+            ey_name = self.form.ey_drift_combobox.currentText()
+            lws = [self.form.x_dynamic_drift_loadcase_list, self.form.y_dynamic_drift_loadcase_list]
         x_scale_factor = float(self.form.x_scalefactor_combobox.currentText())
         y_scale_factor = float(self.form.y_scalefactor_combobox.currentText())
         num_iteration = self.form.iteration.value()
@@ -80,7 +91,7 @@ class Form(QtWidgets.QWidget):
                 analyze,
             )
         else:
-            x_specs, y_specs = self.get_load_cases()
+            x_specs, y_specs = self.get_load_cases(*lws)
             way = "100-30"
             _, _, df = self.etabs.scale_response_spectrums(
                 ex_name,
@@ -101,17 +112,15 @@ class Form(QtWidgets.QWidget):
                                  json_file_name=f"BaseShear{way.capitalize()}")
         self.form.close()
 
-    def get_load_cases(self):
+    def get_load_cases(self, lwx, lwy):
         x_loadcases = []
         y_loadcases = []
-        lw = self.form.x_dynamic_loadcase_list
-        for i in range(lw.count()):
-            item = lw.item(i)
+        for i in range(lwx.count()):
+            item = lwx.item(i)
             if item.checkState() == QtCore.Qt.Checked:
                 x_loadcases.append(item.text())
-        lw = self.form.y_dynamic_loadcase_list
-        for i in range(lw.count()):
-            item = lw.item(i)
+        for i in range(lwy.count()):
+            item = lwy.item(i)
             if item.checkState() == QtCore.Qt.Checked:
                 y_loadcases.append(item.text())
         return x_loadcases, y_loadcases
