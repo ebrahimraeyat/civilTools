@@ -52,12 +52,11 @@ class Form(QtWidgets.QWidget):
 
     def accept(self):
         index = self.form.tabwidget.currentIndex()
-        tab_text = self.form.tabwidget.tabText(index)
-        if 'main' in tab_text or self.form.angular.isChecked():
+        if index == 0 or self.form.angular.isChecked():
             ex_name = self.form.ex_combobox.currentText()
             ey_name = self.form.ey_combobox.currentText()
             lws = [self.form.x_dynamic_loadcase_list, self.form.y_dynamic_loadcase_list]
-        elif 'drift' in tab_text.lower():
+        elif index == 1:
             ex_name = self.form.ex_drift_combobox.currentText()
             ey_name = self.form.ey_drift_combobox.currentText()
             lws = [self.form.x_dynamic_drift_loadcase_list, self.form.y_dynamic_drift_loadcase_list]
