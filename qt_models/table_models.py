@@ -1,7 +1,12 @@
 from pathlib import Path
-from PySide2.QtCore import QAbstractTableModel, Qt 
+from PySide2.QtCore import (
+    QAbstractTableModel,
+    Qt,
+    QModelIndex,
+    QSize,
+)
 from PySide2.QtGui import QColor #, QIcon
-from PySide2.QtCore import QModelIndex #, QIcon
+from PySide2.QtWidgets import QComboBox, QItemDelegate
 
 from qt_models import table_models
 
@@ -241,6 +246,147 @@ class ConcreteBeamSectionTableModel(QAbstractTableModel):
 
     def columnCount(self, index=QModelIndex()):
         return beam_column_count
+    
+
+class AngularTableModel(QAbstractTableModel):
+
+    def __init__(self,
+                 angles: list,
+                 specs: list,
+                 section_cuts: list,
+                 all_response_spectrums: list,
+                 ):
+        super().__init__()
+        self.angles = angles
+        self.specs = specs
+        self.section_cuts = section_cuts
+        self.all_response_spectrums = all_response_spectrums
+        self.columns = {
+            0: "Angle",
+            1: "Spec",
+            2: "Section Cut"
+        }
+        self.check_state = [True] * len(angles)
+
+    def headerData(self, section, orientation, role=Qt.DisplayRole):
+        if role == Qt.TextAlignmentRole:
+            if orientation == Qt.Horizontal:
+                return int(Qt.AlignHCenter | Qt.AlignVCenter)
+            return int(Qt.AlignRight | Qt.AlignVCenter)
+        if role != Qt.DisplayRole:
+            return
+
+        if orientation == Qt.Horizontal:
+            return self.columns[section]
+        # if orientation == Qt.Vertical:
+        #     return ""
+
+    def checkState(self, row):
+        if self.check_state[row]:
+            return Qt.Checked
+        else:
+            return Qt.Unchecked
+
+    def flags(self, index):
+        if not index.isValid():
+            return Qt.ItemIsEnabled
+        col = index.column()
+        if col == 0:
+            return Qt.ItemIsEnabled | Qt.ItemIsUserCheckable
+
+        return Qt.ItemFlags(
+            QAbstractTableModel.flags(self, index) | Qt.ItemIsEditable)
+
+    def data(self, index, role=Qt.DisplayRole):
+
+        if not index.isValid():
+            return
+        row = index.row()
+        col = index.column()
+        if role == Qt.DisplayRole:
+            if col == 0:
+                return self.angles[row]
+            elif col == 1:
+                return self.specs[row]
+            elif col == 2:
+                return self.section_cuts[row]
+        if role == Qt.CheckStateRole and col == 0:
+            return self.checkState(row)
+        return None
+
+    def setData(self, index, value, role=Qt.EditRole):
+        if not index.isValid():
+            return False
+        col = index.column()
+        row = index.row()
+        if role == Qt.CheckStateRole and col == 0:
+            self.check_state[row] = value
+            self.dataChanged.emit(index, index)
+            return True
+        if role == Qt.EditRole:
+            if col == 1:
+                self.specs[row] = str(value)
+                self.dataChanged.emit(index, index)
+                return True
+            elif col == 2:
+                self.section_cuts[row] = str(value)
+                self.dataChanged.emit(index, index)
+                return True
+        return False
+
+    def rowCount(self, index=QModelIndex()):
+        return len(self.angles)
+
+    def columnCount(self, index=QModelIndex()):
+        return 3
+
+
+
+class AngularDelegate(QItemDelegate):
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.ui = parent
+
+    def createEditor(self, parent, option, index):
+        col = index.column()
+        if col == 1:
+            spec = index.model().data(index)
+            combobox = QComboBox(parent)
+            all_response_spectrums = index.model().all_response_spectrums
+            combobox.addItems(all_response_spectrums)
+            spec_index = combobox.findText(spec)
+            combobox.setCurrentIndex(spec_index)
+            # combobox.setEditable(True)
+            return combobox
+        if col == 2:
+            sec_cut = index.model().data(index)
+            combobox = QComboBox(parent)
+            section_cuts = index.model().section_cuts
+            combobox.addItems(section_cuts)
+            # combobox.setEditable(True)
+            sec_cut_index = combobox.findText(sec_cut)
+            combobox.setCurrentIndex(sec_cut_index)
+            return combobox
+        else:
+            return QItemDelegate.createEditor(self, parent, option, index)
+
+    # def setEditorData (self, editor, index):
+    #     row = index.row()
+    #     col = index.column()
+    #     # value = index.model().items[row][column]
+    #         editor.setCurrentIndex(index.row())
+
+    def setModelData(self, editor, model, index):
+        col = index.column()
+        if col in (1, 2):
+            model.setData(index, editor.currentText())
+
+    def sizeHint(self, option, index):
+        fm = option.fontMetrics
+        return QSize(fm.width("2IPE14FPL200X10WP"), fm.height())
+
+
 
     # def setData(self, index, value, role=Qt.EditRole):
     #     if index.isValid() and 0 <= index.row() < len(self.sections):
