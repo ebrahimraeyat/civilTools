@@ -137,20 +137,7 @@ class Form(QtWidgets.QWidget):
     def fill_angular_fields(self):
         if self.angular_model is not None:
             return
-        all_response_spectrums = self.etabs.load_cases.get_response_spectrum_loadcase_name()
-        section_cuts_angles = self.etabs.database.get_section_cuts_angle()
-        angles = list(section_cuts_angles.values())
-        angles_spectral = self.etabs.load_cases.get_spectral_with_angles(angles)
-        section_cuts = []
-        specs = []
-        angles = []
-        for angle, spec in angles_spectral.items():
-            for sec_cut, ang in section_cuts_angles.items():
-                if int(angle) == int(ang):
-                    specs.append(spec)
-                    section_cuts.append(sec_cut)
-                    angles.append(ang)
-                    break
+        angles, section_cuts, specs, all_response_spectrums = self.etabs.load_cases.get_angular_response_spectrum_with_section_cuts()
         self.angular_model = AngularTableModel(
             angles=angles,
             specs=specs,
