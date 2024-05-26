@@ -119,6 +119,7 @@ def get_prop_from_widget(etabs, widget):
 		'infill_1',
 		'activate_second_system',
 		'special_case',
+		'dynamic_analysis_groupbox',
 		'partition_dead_checkbox',
 		# Irregularity
 		'torsional_irregularity_groupbox',
@@ -399,6 +400,11 @@ def load(
 				item = lw.item(i)
 				item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
 				item.setCheckState(Qt.Checked)
+	# Dynamic load case activate
+	key = 'dynamic_analysis_groupbox'
+	if key in keys and hasattr(widget, key):
+		checked = d.get(key, False)
+		widget.dynamic_analysis_groupbox.setChecked(checked)
 	# Seismic Drifts
 	seismic_loads = etabs.load_patterns.get_seismic_load_patterns(drifts=True)
 	for (e1combobox, e2combobox), names in zip((

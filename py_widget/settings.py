@@ -381,6 +381,8 @@ class Form(QtWidgets.QWidget):
         return building
     
     def check_dynamic_loadcases(self):
+        if not self.form.dynamic_analysis_groupbox.isChecked():
+            return
         sx = self.form.sx_combobox.currentText()
         sxe = self.form.sxe_combobox.currentText()
         sy = self.form.sy_combobox.currentText()
