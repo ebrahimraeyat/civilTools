@@ -405,8 +405,6 @@ class Form(QtWidgets.QWidget):
                                               message) == QtWidgets.QMessageBox.No:
                     return False
                 func = None
-            elif len(funcs) == 1:
-                func = funcs[0]
             else:
                 funcs_dialog = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'choose_spectrum.ui'))
                 funcs_dialog.spectrum_combobox.addItems(funcs)
