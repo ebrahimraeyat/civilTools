@@ -2,6 +2,7 @@ import json
 from typing import Union
 from pathlib import Path
 import csv
+import copy
 
 civiltools_path = Path(__file__).absolute().parent.parent
 
@@ -10,6 +11,9 @@ from building.build import StructureSystem, Building
 # from models import StructureModel
 # from exporter import civiltools_config
 from db import ostanha
+
+from qt_models.table_models import AngularTableModel, AngularDelegate
+from qt_models.qt_functions import set_children_enabled
 
 def get_prop_from_widget(etabs, widget):
 	new_d = {}
@@ -139,9 +143,25 @@ def get_prop_from_widget(etabs, widget):
 		# System type
 		'concrete_radiobutton',
 		'steel_radiobutton',
+		# response spectrum
+		'combination_response_spectrum_checkbox',
+		'angular_response_spectrum_checkbox',
 		):
 		if hasattr(widget, key):
 			exec(f"new_d['{key}'] = widget.{key}.isChecked()")
+	# angular tableview
+	if hasattr(widget, "angular_tableview"):
+		angular_model = widget.angular_tableview.model()
+		dic = {}
+		for row in range(angular_model.rowCount()):
+			index = angular_model.index(row, 0)
+			angle = angular_model.data(index)
+			index = angular_model.index(row, 1)
+			spec = angular_model.data(index)
+			index = angular_model.index(row, 2)
+			sec_cut = angular_model.data(index)
+			dic[angle] = (sec_cut, spec)
+		new_d["angular_tableview"] = dic
 	from building import RuTable
 	if hasattr(widget, 'x_treeview'):
 		system, lateral, i, n = get_treeview_item_prop(widget.x_treeview)
@@ -428,6 +448,8 @@ def load(
 				if ecombobox in keys:
 					exec(f"index = widget.{ecombobox}.findText(d['{ecombobox}'])")
 					exec(f"if index != -1: widget.{ecombobox}.setCurrentIndex(index)")
+	# Angular response spectrum
+	fill_angular_fields(widget, etabs, d)
 	for key in (
 		'ostan',
 		'city',
@@ -536,6 +558,37 @@ def load(
 		widget.partition_dead_combobox.setEnabled(checked)
 		widget.partition_live_checkbox.setChecked(not checked)
 		widget.partition_live_combobox.setEnabled(not checked)
+	# response spectrum
+	## 100-30
+	key = 'combination_response_spectrum_checkbox'
+	if key in keys and hasattr(widget, key):
+		checked = d.get(key, True)
+		widget.combination_response_spectrum_checkbox.setChecked(checked)
+		key = 'dynamic_group_x'
+		if hasattr(widget, key):
+			exec(f"widget.{key}.setEnabled(checked)")
+			set_children_enabled(widget.dynamic_group_x, checked)
+		key = 'dynamic_group_y'
+		if hasattr(widget, key):
+			exec(f"widget.{key}.setEnabled(checked)")
+			set_children_enabled(widget.dynamic_group_y, checked)
+		for w in (
+			'y_scalefactor_combobox',
+			):
+			if hasattr(widget, w):
+				exec(f"widget.{w}.setEnabled(checked)")
+		for w in (
+			'angular_tableview',
+			):
+			if hasattr(widget, w):
+				exec(f"widget.{w}.setEnabled(not checked)")
+	## Angular
+	key = 'angular_response_spectrum_checkbox'
+	if key in keys and hasattr(widget, key):
+		checked = d.get(key, False)
+		widget.angular_response_spectrum_checkbox.setChecked(checked)
+	
+	# Second system
 	key = 'activate_second_system'
 	if key in keys and hasattr(widget, key):
 		checked = d.get(key, False)
@@ -1009,4 +1062,27 @@ def get_second_system_seismic_drift(widget):
 	eyp1_drift = widget.eyp1_drift_combobox.currentText()
 	eyn1_drift = widget.eyn1_drift_combobox.currentText()
 	return ex1_drift, exn1_drift, exp1_drift, ey1_drift, eyn1_drift, eyp1_drift
+
+def fill_angular_fields(widget, etabs, d):
+	key = "angular_tableview"
+	if  hasattr(widget, key):
+		angles, section_cuts, specs, all_response_spectrums = etabs.load_cases.get_angular_response_spectrum_with_section_cuts()
+		all_section_cuts = copy.deepcopy(section_cuts)
+		dic = d.get(key, None)
+		if dic is not None:
+			for angle, cut_spec in dic.items():
+				print(section_cuts, cut_spec, specs)
+				if float(angle) in angles:
+					index = angles.index(float(angle))
+					section_cuts[index] = cut_spec[0]
+					specs[index] = cut_spec[1]
+		angular_model = AngularTableModel(
+			angles=angles,
+			specs=specs,
+			section_cuts=section_cuts,
+			all_response_spectrums=all_response_spectrums,
+			all_section_cuts=all_section_cuts,
+			)
+		widget.angular_tableview.setModel(angular_model)
+		widget.angular_tableview.setItemDelegate(AngularDelegate(widget))
 

@@ -9,6 +9,8 @@ import FreeCADGui as Gui
 
 from db import ostanha
 from exporter import civiltools_config
+from qt_models.table_models import AngularTableModel, AngularDelegate
+from qt_models.qt_functions import set_children_enabled
 
 
 from python_functions import flatten_set
@@ -22,8 +24,10 @@ class Form(QtWidgets.QWidget):
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'civiltools_project_settings.ui'))
         self.etabs = etabs_model
         self.stories = self.etabs.SapModel.Story.GetStories()[1]
+        self.angular_model = None
         self.create_connections()
         self.seismic_load_patterns = self.fill_load_cases()
+        # self.fill_angular_fields()
         self.load_config()
 
     def fill_load_cases(self):
@@ -245,6 +249,9 @@ class Form(QtWidgets.QWidget):
         self.form.x_treeview_1.clicked.connect(self.check_inputs)
         self.form.y_treeview_1.clicked.connect(self.check_inputs)
         self.form.activate_second_system.clicked.connect(self.check_inputs)
+        # self.form.dynamic_analysis_groupbox.clicked.connect(self.fill_angular_fields)
+        self.form.combination_response_spectrum_checkbox.clicked.connect(self.reset_response_spectrum_widget)
+        self.form.angular_response_spectrum_checkbox.clicked.connect(self.reset_response_spectrum_widget)
 
     def partition_dead_clicked(self, checked):
         self.form.partition_live_checkbox.setChecked(not checked)
@@ -253,6 +260,25 @@ class Form(QtWidgets.QWidget):
     def partition_live_clicked(self, checked):
         self.form.partition_dead_checkbox.setChecked(not checked)
         self.form.partition_dead_combobox.setEnabled(not checked)
+
+    def reset_response_spectrum_widget(self, checked):
+        sender = self.sender()
+        if sender == self.form.combination_response_spectrum_checkbox:
+            self.form.angular_tableview.setEnabled(not checked)
+            self.form.angular_response_spectrum_checkbox.setChecked(not checked)
+            self.form.dynamic_group_x.setEnabled(checked)
+            self.form.dynamic_group_y.setEnabled(checked)
+            set_children_enabled(self.form.dynamic_group_x, checked)
+            set_children_enabled(self.form.dynamic_group_y, checked)
+            self.form.y_scalefactor_combobox.setEnabled(checked)
+        elif sender == self.form.angular_response_spectrum_checkbox:
+            self.form.combination_response_spectrum_checkbox.setChecked(not checked)
+            self.form.angular_tableview.setEnabled(checked)
+            self.form.dynamic_group_x.setEnabled(not checked)
+            self.form.dynamic_group_y.setEnabled(not checked)
+            set_children_enabled(self.form.dynamic_group_x, not checked)
+            set_children_enabled(self.form.dynamic_group_y, not checked)
+            self.form.y_scalefactor_combobox.setEnabled(not checked)
 
     def second_system_clicked(self, checked:bool):
         self.form.x_system_label.setEnabled(checked)
@@ -380,6 +406,17 @@ class Form(QtWidgets.QWidget):
                 return False
         return building
     
+    def check_angular_dynamic_loadcases(self):
+        angular_specs = []
+        section_cuts = []
+        for row in range(self.angular_model.rowCount()):
+            index = self.angular_model.index(row, 1)
+            spec = self.angular_model.data(index)
+            angular_specs.append(spec)
+            index = self.angular_model.index(row, 2)
+            sec_cut = self.angular_model.data(index)
+            section_cuts.append(sec_cut)
+    
     def check_dynamic_loadcases(self):
         if not self.form.dynamic_analysis_groupbox.isChecked():
             return
@@ -457,3 +494,18 @@ class Form(QtWidgets.QWidget):
                 QtWidgets.QMessageBox.warning(None, title2, warning2%('second system'))
                 return None
         return True
+    
+    def fill_angular_fields(self):
+        if self.angular_model is not None:
+            return
+        if not self.form.dynamic_analysis_groupbox.isChecked():
+            return
+        angles, section_cuts, specs, all_response_spectrums = self.etabs.load_cases.get_angular_response_spectrum_with_section_cuts()
+        self.angular_model = AngularTableModel(
+            angles=angles,
+            specs=specs,
+            section_cuts=section_cuts,
+            all_response_spectrums=all_response_spectrums,
+            )
+        self.form.angular_tableview.setModel(self.angular_model)
+        self.form.angular_tableview.setItemDelegate(AngularDelegate(self.form))

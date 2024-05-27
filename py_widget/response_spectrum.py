@@ -22,9 +22,8 @@ class Form(QtWidgets.QWidget):
         self.create_connections()
 
     def create_connections(self):
-        self.form.combination.clicked.connect(self.reset_widget)
-        self.form.angular.clicked.connect(self.reset_widget)
-        self.form.angular.clicked.connect(self.fill_angular_fields)
+        self.form.combination_response_spectrum_checkbox.clicked.connect(self.reset_widget)
+        self.form.angular_response_spectrum_checkbox.clicked.connect(self.reset_widget)
         self.form.run.clicked.connect(self.accept)
 
     def load_config(self, d):
@@ -32,17 +31,17 @@ class Form(QtWidgets.QWidget):
 
     def reset_widget(self, checked):
         sender = self.sender()
-        if sender == self.form.combination:
-            self.form.tableView.setEnabled(not checked)
-            self.form.angular.setChecked(not checked)
+        if sender == self.form.combination_response_spectrum_checkbox:
+            self.form.angular_tableview.setEnabled(not checked)
+            self.form.angular_response_spectrum_checkbox.setChecked(not checked)
             self.form.x_dynamic_loadcase_list.setEnabled(checked)
             self.form.y_dynamic_loadcase_list.setEnabled(checked)
             self.form.y_scalefactor_combobox.setEnabled(checked)
             self.form.x_label.setEnabled(checked)
             self.form.y_label.setEnabled(checked)
-        elif sender == self.form.angular:
-            self.form.combination.setChecked(not checked)
-            self.form.tableView.setEnabled(checked)
+        elif sender == self.form.angular_response_spectrum_checkbox:
+            self.form.combination_response_spectrum_checkbox.setChecked(not checked)
+            self.form.angular_tableview.setEnabled(checked)
             self.form.x_dynamic_loadcase_list.setEnabled(not checked)
             self.form.y_dynamic_loadcase_list.setEnabled(not checked)
             self.form.y_scalefactor_combobox.setEnabled(not checked)
@@ -52,7 +51,7 @@ class Form(QtWidgets.QWidget):
 
     def accept(self):
         index = self.form.tabwidget.currentIndex()
-        if index == 0 or self.form.angular.isChecked():
+        if index == 0 or self.form.angular_response_spectrum_checkbox.isChecked():
             ex_name = self.form.ex_combobox.currentText()
             ey_name = self.form.ey_combobox.currentText()
             lws = [self.form.x_dynamic_loadcase_list, self.form.y_dynamic_loadcase_list]
@@ -67,7 +66,7 @@ class Form(QtWidgets.QWidget):
         reset = self.form.reset.isChecked()
         analyze = self.form.analyze.isChecked()
         consider_min_static_base_shear = self.form.consider_min_static_base_shear.isChecked()
-        if self.form.angular.isChecked():
+        if self.form.angular_response_spectrum_checkbox.isChecked():
             way = "angular"
             angular_specs = []
             section_cuts = []
@@ -144,7 +143,7 @@ class Form(QtWidgets.QWidget):
             section_cuts=section_cuts,
             all_response_spectrums=all_response_spectrums,
             )
-        self.form.tableView.setModel(self.angular_model)
-        self.form.tableView.setItemDelegate(AngularDelegate(self.form))
+        self.form.angular_tableview.setModel(self.angular_model)
+        self.form.angular_tableview.setItemDelegate(AngularDelegate(self.form))
 
 

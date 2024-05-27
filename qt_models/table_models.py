@@ -1,4 +1,6 @@
 from pathlib import Path
+from typing import Union
+
 from PySide2.QtCore import (
     QAbstractTableModel,
     Qt,
@@ -255,12 +257,14 @@ class AngularTableModel(QAbstractTableModel):
                  specs: list,
                  section_cuts: list,
                  all_response_spectrums: list,
+                 all_section_cuts: Union[list, None]=None,
                  ):
         super().__init__()
         self.angles = angles
         self.specs = specs
         self.section_cuts = section_cuts
         self.all_response_spectrums = all_response_spectrums
+        self.all_section_cuts = all_section_cuts
         self.columns = {
             0: "Angle",
             1: "Spec",
@@ -362,8 +366,10 @@ class AngularDelegate(QItemDelegate):
         if col == 2:
             sec_cut = index.model().data(index)
             combobox = QComboBox(parent)
-            section_cuts = index.model().section_cuts
-            combobox.addItems(section_cuts)
+            all_section_cuts = index.model().all_section_cuts
+            if not all_section_cuts:
+                all_section_cuts = index.model().section_cuts
+            combobox.addItems(all_section_cuts)
             # combobox.setEditable(True)
             sec_cut_index = combobox.findText(sec_cut)
             combobox.setCurrentIndex(sec_cut_index)
