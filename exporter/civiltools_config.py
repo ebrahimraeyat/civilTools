@@ -1071,7 +1071,6 @@ def fill_angular_fields(widget, etabs, d):
 		dic = d.get(key, None)
 		if dic is not None:
 			for angle, cut_spec in dic.items():
-				print(section_cuts, cut_spec, specs)
 				if float(angle) in angles:
 					index = angles.index(float(angle))
 					section_cuts[index] = cut_spec[0]

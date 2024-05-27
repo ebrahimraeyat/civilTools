@@ -321,9 +321,11 @@ class Form(QtWidgets.QWidget):
         ret = self.check_seismic_names()
         if not ret:
             return
+        ret = self.check_dynamic_loadcases()
+        if ret is None:
+            return
         d = self.save_config()
         self.write_not_exists_earthquake_loads(building, d)
-        self.check_dynamic_loadcases()
         self.reject()
         # self.etabs.check_seismic_names(apply=True)
 
@@ -428,9 +430,14 @@ class Form(QtWidgets.QWidget):
         sxe_drift = self.form.sxe_drift_combobox.currentText()
         sy_drift = self.form.sy_drift_combobox.currentText()
         sye_drift = self.form.sye_drift_combobox.currentText()
+        all_names = (sx, sxe, sy, sye, sx_drift, sxe_drift, sy_drift, sye_drift)
+        title = 'Dynamic Loadcase'
+        warning = 'Dynamic Loadcase names can not be similar, correct the dynamic loadcase names.'
+        if len(set(all_names)) != 8:
+            QtWidgets.QMessageBox.warning(None, title, warning)
+            return None
         response_spectrum_loadcases = self.etabs.load_cases.get_response_spectrum_loadcase_name()
-        not_exists = [lc for lc in (sx, sxe, sy, sye, sx_drift, sxe_drift, sy_drift, sye_drift) 
-                      if lc not in response_spectrum_loadcases]
+        not_exists = [lc for lc in  all_names if lc not in response_spectrum_loadcases]
         if len(not_exists) > 0:
             funcs = self.etabs.func.response_spectrum_names()
             loadcases = '<span style=" font-size:9pt; font-weight:600; color:#0000ff;">%s</span>'
@@ -466,6 +473,7 @@ class Form(QtWidgets.QWidget):
                 if func is not None:
                     args = [1, (dir_,), (func,), (1,), ('Global',), (0.0,)]
                     self.etabs.SapModel.LoadCases.ResponseSpectrum.SetLoads(lc, *args)
+        return True
     
     def check_seismic_names(self):
         # first system
