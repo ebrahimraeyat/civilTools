@@ -15,6 +15,8 @@ from db import ostanha
 from qt_models.table_models import AngularTableModel, AngularDelegate
 from qt_models.qt_functions import set_children_enabled
 
+from python_functions import has_attribs
+
 def get_prop_from_widget(etabs, widget):
 	new_d = {}
 	# comboboxes
@@ -318,25 +320,32 @@ def load(
 	fill_top_bot_stories(etabs, widget)
 	keys = d.keys()
 	# Static Seismic combobox
-	seismic_loads = etabs.load_patterns.get_seismic_load_patterns()
-	for (e1combobox, e2combobox), names in zip((
-		('ex_combobox', 'ex1_combobox'),
-		('exn_combobox', 'exn1_combobox'),
-		('exp_combobox', 'exp1_combobox'),
-		('ey_combobox', 'ey1_combobox'),
-		('eyn_combobox', 'eyn1_combobox'),
-		('eyp_combobox', 'eyp1_combobox')), seismic_loads
-	):
-		for ecombobox in (e1combobox, e2combobox):
-			if hasattr(widget, ecombobox):
-				if d.get(ecombobox, None):
-					names.add(d[ecombobox])
-				if names:
-					exec(f"widget.{ecombobox}.clear()")
-					exec(f"widget.{ecombobox}.addItems(names)")
-				if ecombobox in keys:
-					exec(f"index = widget.{ecombobox}.findText(d['{ecombobox}'])")
-					exec(f"if index != -1: widget.{ecombobox}.setCurrentIndex(index)")
+	attribs = ('ex_combobox', 'ex1_combobox',
+	'exn_combobox', 'exn1_combobox',
+	'exp_combobox', 'exp1_combobox',
+	'ey_combobox', 'ey1_combobox',
+	'eyn_combobox', 'eyn1_combobox',
+	'eyp_combobox', 'eyp1_combobox')
+	if has_attribs(widget, attribs):
+		seismic_loads = etabs.load_patterns.get_seismic_load_patterns()
+		for (e1combobox, e2combobox), names in zip((
+			('ex_combobox', 'ex1_combobox'),
+			('exn_combobox', 'exn1_combobox'),
+			('exp_combobox', 'exp1_combobox'),
+			('ey_combobox', 'ey1_combobox'),
+			('eyn_combobox', 'eyn1_combobox'),
+			('eyp_combobox', 'eyp1_combobox')), seismic_loads
+		):
+			for ecombobox in (e1combobox, e2combobox):
+				if hasattr(widget, ecombobox):
+					if d.get(ecombobox, None):
+						names.add(d[ecombobox])
+					if names:
+						exec(f"widget.{ecombobox}.clear()")
+						exec(f"widget.{ecombobox}.addItems(names)")
+					if ecombobox in keys:
+						exec(f"index = widget.{ecombobox}.findText(d['{ecombobox}'])")
+						exec(f"if index != -1: widget.{ecombobox}.setCurrentIndex(index)")
 	# Static Seismic list
 	if hasattr(widget, 'x_loadcase_list') and hasattr(widget, 'y_loadcase_list'):
 		ex, exn, exp, ey, eyn, eyp = etabs.get_first_system_seismic(d)
@@ -370,17 +379,7 @@ def load(
 				item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
 				item.setCheckState(Qt.Checked)
 	# Dynamic Seismic
-	sx, sxe, sy, sye = etabs.load_cases.get_response_spectrum_sxye_loadcases_names()
-	sx_drift = sx
-	sxe_drift = sxe
-	sy_drift = sy
-	sye_drift = sye
-	# sx = sx.difference(sx_drift)
-	# sxe = sxe.difference(sxe_drift)
-	# sy = sy.difference(sy_drift)
-	# sye = sye.difference(sye_drift)
-	for combobox, spectrum_lc in zip(
-		(
+	dynamic_load_cases = (
 			'sx_combobox',
 			'sxe_combobox',
 			'sy_combobox',
@@ -389,17 +388,30 @@ def load(
 			'sxe_drift_combobox',
 			'sy_drift_combobox',
 			'sye_drift_combobox',
-			), (sx, sxe, sy, sye, sx_drift, sxe_drift, sy_drift, sye_drift)
-			):
-		if hasattr(widget, combobox):
-			if d.get(combobox, None):
-				spectrum_lc.add(d[combobox])
-			if spectrum_lc:
-				exec(f"widget.{combobox}.clear()")
-				exec(f"widget.{combobox}.addItems(spectrum_lc)")
-			if combobox in keys:
-				exec(f"index = widget.{combobox}.findText(d['{combobox}'])")
-				exec(f"if index != -1: widget.{combobox}.setCurrentIndex(index)")
+			)
+	if has_attribs(widget, attribs):
+		sx, sxe, sy, sye = etabs.load_cases.get_response_spectrum_sxye_loadcases_names()
+		sx_drift = sx
+		sxe_drift = sxe
+		sy_drift = sy
+		sye_drift = sye
+		# sx = sx.difference(sx_drift)
+		# sxe = sxe.difference(sxe_drift)
+		# sy = sy.difference(sy_drift)
+		# sye = sye.difference(sye_drift)
+		for combobox, spectrum_lc in zip(
+			dynamic_load_cases,
+			(sx, sxe, sy, sye, sx_drift, sxe_drift, sy_drift, sye_drift)
+				):
+			if hasattr(widget, combobox):
+				if d.get(combobox, None):
+					spectrum_lc.add(d[combobox])
+				if spectrum_lc:
+					exec(f"widget.{combobox}.clear()")
+					exec(f"widget.{combobox}.addItems(spectrum_lc)")
+				if combobox in keys:
+					exec(f"index = widget.{combobox}.findText(d['{combobox}'])")
+					exec(f"if index != -1: widget.{combobox}.setCurrentIndex(index)")
 	# dynamic seismic loadcase list
 	if hasattr(widget, 'x_dynamic_loadcase_list') and hasattr(widget, 'y_dynamic_loadcase_list'):
 		sx, sxe, sy, sye = etabs.get_dynamic_loadcases(d)
@@ -426,28 +438,35 @@ def load(
 		checked = d.get(key, False)
 		widget.dynamic_analysis_groupbox.setChecked(checked)
 	# Seismic Drifts
-	seismic_loads = etabs.load_patterns.get_seismic_load_patterns(drifts=True)
-	for (e1combobox, e2combobox), names in zip((
-		('ex_drift_combobox', 'ex1_drift_combobox'),
-		('exn_drift_combobox', 'exn1_drift_combobox'),
-		('exp_drift_combobox', 'exp1_drift_combobox'),
-		('ey_drift_combobox', 'ey1_drift_combobox'),
-		('eyn_drift_combobox', 'eyn1_drift_combobox'),
-		('eyp_drift_combobox', 'eyp1_drift_combobox')), seismic_loads
-	):
-		for ecombobox in (e1combobox, e2combobox):
-			if hasattr(widget, ecombobox):
-				if d.get(ecombobox, None):
-					names.add(d[ecombobox])
-				if names:
-					# exec(f"all_item_text = [f'{widget.{ecombobox}.itemText('i')}' for i in range(widget.{ecombobox}.count())]")
-					# exec(f"add_names = {names}.difference(all_item_text)")
-					# exec("print(names, ecombobox)")
-					# exec(f"widget.{ecombobox}.clear()")
-					exec(f"widget.{ecombobox}.addItems(names)")
-				if ecombobox in keys:
-					exec(f"index = widget.{ecombobox}.findText(d['{ecombobox}'])")
-					exec(f"if index != -1: widget.{ecombobox}.setCurrentIndex(index)")
+	attribs = ('ex_combobox', 'ex1_combobox',
+	'exn_drift_combobox', 'exn1_drift_combobox',
+	'exp_drift_combobox', 'exp1_drift_combobox',
+	'ey_drift_combobox', 'ey1_drift_combobox',
+	'eyn_drift_combobox', 'eyn1_drift_combobox',
+	'eyp_drift_combobox', 'eyp1_drift_combobox')
+	if has_attribs(widget, attribs):
+		seismic_loads = etabs.load_patterns.get_seismic_load_patterns(drifts=True)
+		for (e1combobox, e2combobox), names in zip((
+			('ex_drift_combobox', 'ex1_drift_combobox'),
+			('exn_drift_combobox', 'exn1_drift_combobox'),
+			('exp_drift_combobox', 'exp1_drift_combobox'),
+			('ey_drift_combobox', 'ey1_drift_combobox'),
+			('eyn_drift_combobox', 'eyn1_drift_combobox'),
+			('eyp_drift_combobox', 'eyp1_drift_combobox')), seismic_loads
+		):
+			for ecombobox in (e1combobox, e2combobox):
+				if hasattr(widget, ecombobox):
+					if d.get(ecombobox, None):
+						names.add(d[ecombobox])
+					if names:
+						# exec(f"all_item_text = [f'{widget.{ecombobox}.itemText('i')}' for i in range(widget.{ecombobox}.count())]")
+						# exec(f"add_names = {names}.difference(all_item_text)")
+						# exec("print(names, ecombobox)")
+						# exec(f"widget.{ecombobox}.clear()")
+						exec(f"widget.{ecombobox}.addItems(names)")
+					if ecombobox in keys:
+						exec(f"index = widget.{ecombobox}.findText(d['{ecombobox}'])")
+						exec(f"if index != -1: widget.{ecombobox}.setCurrentIndex(index)")
 	# Angular response spectrum
 	fill_angular_fields(widget, etabs, d)
 	for key in (

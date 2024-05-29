@@ -108,8 +108,3 @@ class Form(QtWidgets.QWidget):
 
     def reject(self):
         self.form.close()    
-
-    def getStandardButtons(self):
-        return 0
-
-    
