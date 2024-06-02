@@ -67,6 +67,7 @@ from gui_civiltools.tools import (
 from gui_civiltools.import_export import (
     gui_dxf,
     gui_create_report,
+    gui_export_plans_to_dxf,
 )
 
 from freecad_py import civiltools_views
@@ -261,4 +262,5 @@ civiltools_import_export = [
     "civiltools_import_model",
     "civiltools_import_dxf",
     "civiltools_create_report",
+    "civiltoos_export_plans_to_dxf",
 ]
