@@ -1744,7 +1744,7 @@
                      </property>
                      <item>
                       <property name="text">
-                       <string>SX(Drift)</string>
+                       <string>SX_drift</string>
                       </property>
                      </item>
                     </widget>
@@ -1769,7 +1769,7 @@
                      </property>
                      <item>
                       <property name="text">
-                       <string>SXE(Drift)</string>
+                       <string>SXE_drift</string>
                       </property>
                      </item>
                     </widget>
@@ -1901,7 +1901,7 @@
                      </property>
                      <item>
                       <property name="text">
-                       <string>SY(Drift)</string>
+                       <string>SY_drift</string>
                       </property>
                      </item>
                     </widget>
@@ -1926,7 +1926,7 @@
                      </property>
                      <item>
                       <property name="text">
-                       <string>SYE(Drift)</string>
+                       <string>SYE_drift</string>
                       </property>
                      </item>
                     </widget>

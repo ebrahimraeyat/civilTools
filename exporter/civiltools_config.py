@@ -379,7 +379,7 @@ def load(
 				item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
 				item.setCheckState(Qt.Checked)
 	# Dynamic Seismic
-	dynamic_load_cases = (
+	dynamic_load_case_comboboxes = (
 			'sx_combobox',
 			'sxe_combobox',
 			'sy_combobox',
@@ -389,22 +389,24 @@ def load(
 			'sy_drift_combobox',
 			'sye_drift_combobox',
 			)
-	if has_attribs(widget, attribs):
+	if has_attribs(widget, dynamic_load_case_comboboxes):
 		sx, sxe, sy, sye = etabs.load_cases.get_response_spectrum_sxye_loadcases_names()
+		all_response_spectrum_loadcases = sx.union(sxe).union(sy).union(sye)
 		sx_drift = sx
 		sxe_drift = sxe
 		sy_drift = sy
 		sye_drift = sye
-		# sx = sx.difference(sx_drift)
-		# sxe = sxe.difference(sxe_drift)
-		# sy = sy.difference(sy_drift)
-		# sye = sye.difference(sye_drift)
 		for combobox, spectrum_lc in zip(
-			dynamic_load_cases,
-			(sx, sxe, sy, sye, sx_drift, sxe_drift, sy_drift, sye_drift)
+			dynamic_load_case_comboboxes,
+			(sx, sxe, sy, sye, sx_drift, sxe_drift, sy_drift, sye_drift),
 				):
-			if hasattr(widget, combobox):
-				if d.get(combobox, None):
+			if hasattr(widget, combobox) and len(spectrum_lc) > 0:
+				if 'drift' in combobox and len(spectrum_lc) == 1:
+					name = spectrum_lc.pop()
+					exec(f"widget.{combobox}.clear()")
+					exec(f"widget.{combobox}.addItem('{name}_drift')")
+					continue
+				if d.get(combobox, None) and d[combobox] in all_response_spectrum_loadcases:
 					spectrum_lc.add(d[combobox])
 				if spectrum_lc:
 					exec(f"widget.{combobox}.clear()")
