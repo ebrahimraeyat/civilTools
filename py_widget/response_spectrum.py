@@ -3,7 +3,6 @@ from pathlib import Path
 from PySide2 import  QtWidgets, QtCore
 import FreeCADGui as Gui
 
-from qt_models.table_models import AngularTableModel, AngularDelegate
 
 civiltools_path = Path(__file__).absolute().parent.parent
 
@@ -70,12 +69,13 @@ class Form(QtWidgets.QWidget):
             way = "angular"
             angular_specs = []
             section_cuts = []
-            for row in range(self.angular_model.rowCount()):
-                index = self.angular_model.index(row, 1)
-                spec = self.angular_model.data(index)
+            angular_model = self.form.angular_tableview.model()
+            for row in range(angular_model.rowCount()):
+                index = angular_model.index(row, 1)
+                spec = angular_model.data(index)
                 angular_specs.append(spec)
-                index = self.angular_model.index(row, 2)
-                sec_cut = self.angular_model.data(index)
+                index = angular_model.index(row, 2)
+                sec_cut = angular_model.data(index)
                 section_cuts.append(sec_cut)
             _, df = self.etabs.angles_response_spectrums_analysis(
                 ex_name,
@@ -132,18 +132,4 @@ class Form(QtWidgets.QWidget):
             for i in range(lw.count()):
                 item = lw.item(i)
                 item.setSelected(True)
-    
-    def fill_angular_fields(self):
-        if self.angular_model is not None:
-            return
-        angles, section_cuts, specs, all_response_spectrums = self.etabs.load_cases.get_angular_response_spectrum_with_section_cuts()
-        self.angular_model = AngularTableModel(
-            angles=angles,
-            specs=specs,
-            section_cuts=section_cuts,
-            all_response_spectrums=all_response_spectrums,
-            )
-        self.form.angular_tableview.setModel(self.angular_model)
-        self.form.angular_tableview.setItemDelegate(AngularDelegate(self.form))
-
 
