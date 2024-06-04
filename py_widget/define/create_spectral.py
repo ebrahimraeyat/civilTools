@@ -1,11 +1,8 @@
-import csv
 from pathlib import Path
 
 import numpy as np
 
 from PySide2 import  QtWidgets
-# from PySide2.QtCore import Qt
-# from PySide2 import QtCore
 from PySide2.QtWidgets import QFileDialog
 
 try:
@@ -23,7 +20,6 @@ import FreeCADGui as Gui
 
 from db import ostanha
 from exporter import civiltools_config
-from qt_models import treeview_system
 from building import spectral
 
 civiltools_path = Path(__file__).absolute().parent.parent.parent
@@ -37,13 +33,8 @@ class Form(QtWidgets.QWidget):
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'define' / 'create_spectral.ui'))
         self.etabs = etabs_model
         self.set_plot_widget()
-        self.set_system_treeview()
-        self.fill_cities()
         self.create_connections()
         self.load_config()
-        self.setA()
-        self.set_x_system_property()
-        self.set_y_system_property()
         self.update_sa_plot()
         self.text_pos = None
         self.line_x = None
@@ -56,8 +47,6 @@ class Form(QtWidgets.QWidget):
         self.form.risk_level.currentIndexChanged.connect(self.update_sa_plot)
         self.form.importance_factor.currentIndexChanged.connect(self.update_sa_plot)
         self.form.soil_type.currentIndexChanged.connect(self.update_sa_plot)
-        self.form.x_treeview.clicked.connect(self.set_x_system_property)
-        self.form.y_treeview.clicked.connect(self.set_y_system_property)
         self.form.create_pushbutton.clicked.connect(self.create_spectral)
         self.form.cancel_pushbutton.clicked.connect(self.reject)
     
@@ -75,8 +64,8 @@ class Form(QtWidgets.QWidget):
         g = 981
         c_min = 0.12 * A * g * I
         t = np.array(self.b_curve.xData)
-
-        if Rux == Ruy:
+        only_ab =self.form.only_ab_checkbox.isChecked()
+        if Rux == Ruy or only_ab:
             Rs = (Rux,)
             dirs = ('',)
         else:
@@ -84,7 +73,10 @@ class Form(QtWidgets.QWidget):
             dirs = ('_x', '_y')
         for R, dir_ in zip(Rs, dirs):
             fname = f'{filename[:-4]}{dir_}{filename[-4:]}'
-            sa = [A * g * B * I / R  if B / R >= 0.12 else c_min for B in self.b_curve.yData]
+            if only_ab:
+                sa = [A * B for B in self.b_curve.yData]
+            else:
+                sa = [A * g * B * I / R  if B / R >= 0.12 else c_min for B in self.b_curve.yData]
             sa = np.array(sa)
             data = np.column_stack([t, sa])
             np.savetxt(fname , data, fmt=['%0.10g','%0.10g'])
@@ -118,46 +110,6 @@ class Form(QtWidgets.QWidget):
             # self.line_y = self.graphWidget.addLine(y=sa, pen=penTx)
             self.circle = pg.CircleROI([x - .01, sa - .01], [.02, .02], pen=pg.mkPen('b',width=2))
             self.graphWidget.addItem(self.circle)
-            
-
-    def fill_cities(self):
-        ostans = ostanha.ostans.keys()
-        self.form.ostan.addItems(ostans)
-        self.set_citys_of_current_ostan()
-    
-    def set_x_system_property(self):
-        index = self.form.x_treeview.selectedIndexes()[0]
-        if index.isValid():
-            data = index.internalPointer()._data
-            if len(data) == 1:
-                return
-            try:
-                r = float(data[1])
-                # omega = float(data[3])
-                # cd = float(data[4])
-                self.form.rux.setValue(r)
-                # if self.form.simtValue(r)
-
-                # self.omega.setValue(omega)
-                # self.cd.setValue(cd)
-            except:
-                pass
-    
-    def set_y_system_property(self):
-        index = self.form.y_treeview.selectedIndexes()[0]
-        if index.isValid():
-            data = index.internalPointer()._data
-            if len(data) == 1:
-                return
-            try:
-                r = float(data[1])
-                # omega = float(data[3])
-                # cd = float(data[4])
-                self.form.ruy.setValue(r)
-                # self.omega.setValue(omega)
-                # self.cd.setValue(cd)
-            except:
-                pass
 
     def get_current_ostan(self):
         return self.form.ostan.currentText()
@@ -189,7 +141,6 @@ class Form(QtWidgets.QWidget):
         soil_type = self.form.soil_type.currentText()
         sath = self.form.risk_level.currentText()
         acc = self.get_acc(sath)
-        # importance_factor = self.form.importance_factor.currentText()
         self.reflection_factor = spectral.ReflectionFactor(soilType=soil_type, acc=acc)
 
         self.graphWidget.clear()
@@ -224,35 +175,6 @@ class Form(QtWidgets.QWidget):
                 'کم' : 0.20,
                 }
         return sotoh[sath]
-    
-    def set_system_treeview(self):
-        items = {}
-
-        # Set some random data:
-        csv_path =  civiltools_path / 'db' / 'systems.csv'
-        with open(csv_path, 'r', encoding='utf-8') as f:
-            reader = csv.reader(f, delimiter=',')
-            for row in reader:
-                if (
-                    row[0][1] in ['ا', 'ب', 'پ', 'ت', 'ث'] or
-                    row[0][0] in ['ا', 'ب', 'پ', 'ت', 'ث']
-                    ):
-                    i = row[0]
-                    # root = items.get(i, None)
-                    # if root is None:
-                    root = treeview_system.CustomNode(i)
-                    items[i] = root
-                else:
-                    root.addChild(treeview_system.CustomNode(row))
-        headers = ('System', 'Ru', 'Omega', 'Cd', 'H_max', 'alpha', 'beta', 'note', 'ID')
-        self.form.x_treeview.setModel(treeview_system.CustomModel(list(items.values()), headers=headers))
-        self.form.x_treeview.setColumnWidth(0, 400)
-        for i in range(1,len(headers)):
-            self.form.x_treeview.setColumnWidth(i, 40)
-        self.form.y_treeview.setModel(treeview_system.CustomModel(list(items.values()), headers=headers))
-        self.form.y_treeview.setColumnWidth(0, 400)
-        for i in range(1,len(headers)):
-            self.form.y_treeview.setColumnWidth(i, 40)
 
 if __name__ == "__main__":
     import sys

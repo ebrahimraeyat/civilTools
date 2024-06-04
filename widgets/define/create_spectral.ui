@@ -261,6 +261,16 @@
          </layout>
         </item>
         <item>
+         <widget class="QCheckBox" name="only_ab_checkbox">
+          <property name="text">
+           <string>A*B</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
          <spacer name="verticalSpacer">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
