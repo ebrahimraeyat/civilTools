@@ -27,14 +27,15 @@ civiltools_path = Path(__file__).absolute().parent.parent.parent
 
 class Form(QtWidgets.QWidget):
     def __init__(self,
-        etabs_model=None,
+        etabs_model,
+        d: dict,
         ):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'define' / 'create_spectral.ui'))
         self.etabs = etabs_model
         self.set_plot_widget()
         self.create_connections()
-        self.load_config()
+        self.load_config(d)
         self.update_sa_plot()
         self.text_pos = None
         self.line_x = None
@@ -48,8 +49,19 @@ class Form(QtWidgets.QWidget):
         self.form.importance_factor.currentIndexChanged.connect(self.update_sa_plot)
         self.form.soil_type.currentIndexChanged.connect(self.update_sa_plot)
         self.form.create_pushbutton.clicked.connect(self.create_spectral)
+        self.form.abir_groupbox.clicked.connect(self.abir_groupbox_clicked)
         self.form.cancel_pushbutton.clicked.connect(self.reject)
     
+    def abir_groupbox_clicked(self, check):
+        self.form.importance_factor_label.setEnabled(check)
+        self.form.rux_label.setEnabled(check)
+        self.form.ruy_label.setEnabled(check)
+        self.form.importance_factor.setEnabled(check)
+        self.form.rux.setEnabled(check)
+        self.form.ruy.setEnabled(check)
+        self.form.tabWidget.setEnabled(check)
+
+
     def create_spectral(self):
         filters = "txt(*.txt)"
         filename, _ = QFileDialog.getSaveFileName(self.form, u'Export Spectrum',
@@ -58,25 +70,25 @@ class Form(QtWidgets.QWidget):
         if filename == '':
             return
         A = self.get_acc(self.form.risk_level.currentText())
-        I = float(self.form.importance_factor.currentText())
-        Rux = self.form.rux.value()
-        Ruy = self.form.ruy.value()
+        importance_factor = float(self.form.importance_factor.currentText())
+        rux = self.form.rux.value()
+        ruy = self.form.ruy.value()
         g = 981
-        c_min = 0.12 * A * g * I
+        c_min = 0.12 * A * g * importance_factor
         t = np.array(self.b_curve.xData)
-        only_ab =self.form.only_ab_checkbox.isChecked()
-        if Rux == Ruy or only_ab:
-            Rs = (Rux,)
+        abir = self.form.abir_groupbox.isChecked()
+        if rux == ruy or not abir:
+            Rs = (rux,)
             dirs = ('',)
         else:
-            Rs = (Rux, Ruy)
+            Rs = (rux, ruy)
             dirs = ('_x', '_y')
         for R, dir_ in zip(Rs, dirs):
             fname = f'{filename[:-4]}{dir_}{filename[-4:]}'
-            if only_ab:
+            if not abir:
                 sa = [A * B for B in self.b_curve.yData]
             else:
-                sa = [A * g * B * I / R  if B / R >= 0.12 else c_min for B in self.b_curve.yData]
+                sa = [A * g * B * importance_factor / R  if B / R >= 0.12 else c_min for B in self.b_curve.yData]
             sa = np.array(sa)
             data = np.column_stack([t, sa])
             np.savetxt(fname , data, fmt=['%0.10g','%0.10g'])
@@ -128,14 +140,8 @@ class Form(QtWidgets.QWidget):
         # citys.sort()
         self.form.city.addItems(citys)
         
-    def load_config(self):
-        if self.etabs is None:
-            return
-        try:
-            etabs_filename = self.etabs.get_filename()
-        except:
-            return
-        civiltools_config.load(self.etabs, self.form)
+    def load_config(self, d):
+        civiltools_config.load(self.etabs, self.form, d)
 
     def update_sa_plot(self):
         soil_type = self.form.soil_type.currentText()
