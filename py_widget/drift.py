@@ -137,21 +137,24 @@ class Form(QtWidgets.QWidget):
             )
             return
         import table_model
-
+        if tab == 1:
+            analysis_type = 'Dynamic'
+        else:
+            analysis_type = 'Static'
         df = pd.DataFrame(ret[0], columns=ret[1])
-        model_name = table_model.DriftModel.__name__
+        model_name = "Drift"
         if self.form.show_separate_checkbox.isChecked():
             filt = df["OutputCase"].isin(x_loadcases)
             df1 = df.loc[filt]
             table_model.show_results(df1, table_model.DriftModel, etabs=self.etabs,
-                                     json_file_name=f"{model_name}X")
+                                     json_file_name=f"{analysis_type}{model_name}XDir")
             filt = df["OutputCase"].isin(y_loadcases)
             df1 = df.loc[filt]
             table_model.show_results(df1, table_model.DriftModel, etabs=self.etabs,
-                                     json_file_name=f"{model_name}Y")
+                                     json_file_name=f"{analysis_type}{model_name}YDir")
         else:
             table_model.show_results(df, table_model.DriftModel, etabs=self.etabs,
-                                     json_file_name=model_name)
+                                     json_file_name=f"{analysis_type}{model_name}")
         self.form.close()
 
     def get_load_cases(self, tab):

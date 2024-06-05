@@ -51,7 +51,7 @@ class Form(QtWidgets.QWidget):
         df = self.etabs.get_diaphragm_max_over_avg_drifts(loadcases=loadcases)
         table_model.show_results(df, table_model.TorsionModel, self.etabs.view.show_point,
                                  self.etabs,
-                                 json_file_name="TorsionModel",
+                                 json_file_name="Torsion",
                                  )
         self.form.close()
 
