@@ -33,7 +33,7 @@ class CivilSectionCuts:
             return
         from py_widget.define import create_section_cuts
         win = create_section_cuts.Form(etabs)
-        Gui.Control.showDialog(win)
+        find_etabs.show_win(win, in_mdi=False)
         
     def IsActive(self):
         return True
