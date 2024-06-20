@@ -608,9 +608,9 @@ def load(
 	if key in keys and hasattr(widget, key):
 		checked = d.get(key, False)
 		widget.angular_response_spectrum_checkbox.setChecked(checked)
-		if has_attribs(widget, "x_dynamic_loadcase_list"):
+		if hasattr(widget, "x_dynamic_loadcase_list"):
 			widget.x_dynamic_loadcase_list.setEnabled(not checked)
-		if has_attribs(widget, "y_dynamic_loadcase_list"):
+		if hasattr(widget, "y_dynamic_loadcase_list"):
 			widget.y_dynamic_loadcase_list.setEnabled(not checked)
 	
 	# Second system
