@@ -226,12 +226,14 @@ def set_settings_to_etabs(etabs, d: dict):
 	# Save table as json
 	try:
 		if etabs is not None:
-			table_result_path = etabs.get_filepath() / "table_results"
-			if not table_result_path.exists():
-				table_result_path.mkdir()
 			name = etabs.get_file_name_without_suffix()
-			name = f'{name}_model_settings.json'
-			filename = table_result_path / name
+			json_file_name = f'{name}_model_settings.json'
+			filename = etabs.get_json_file_path_for_table_results(json_filename=json_file_name)
+		else:
+			filename = ""
+		if filename and isinstance(filename, Path):
+			if not filename.parent.exists():
+				filename.parent.mkdir(parents=True)
 			with open(filename, "w") as f:
 				json.dump(d, f, indent=4)
 	except PermissionError:
