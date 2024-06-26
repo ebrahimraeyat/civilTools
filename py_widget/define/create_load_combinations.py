@@ -40,6 +40,12 @@ class Form(QtWidgets.QWidget):
     def create(self):
         self.etabs.unlock_model()
         equivalent_loads = self.get_equivalent_loads()
+        dynamic = ''
+        if self.form.dynamic_analysis_groupbox.isChecked():
+            if self.form.combination_response_spectrum_checkbox.isChecked():
+                dynamic = "100-30"
+            elif self.form.angular_response_spectrum_checkbox.isChecked():
+                dynamic = "angular"
         rho_x = float(self.form.rhox_combobox.currentText())
         rho_y = float(self.form.rhoy_combobox.currentText())
         rho_x1 = float(self.form.rhox1_combobox.currentText())
@@ -88,6 +94,7 @@ class Form(QtWidgets.QWidget):
             omega_x1=omega_x1,
             omega_y1=omega_y1,
             code=code,
+            dynamic=dynamic,
         )
         items=  {}
         for i in range(0, len(self.data), 4):
@@ -461,6 +468,21 @@ class Form(QtWidgets.QWidget):
                 equivalent_loads['EYN1'] = [eyn1]
                 if eyn1 not in load_patterns:
                     self.etabs.SapModel.LoadPatterns.Add(eyn1, 5)
+        # Response Spectrum load cases
+        if self.form.dynamic_analysis_groupbox.isChecked():
+            if self.form.combination_response_spectrum_checkbox.isChecked():
+                specs = self.etabs.get_dynamic_loadcases()
+                for sp, spec in zip(
+                    ('SX', 'SXE', 'SY', 'SYE'), specs):
+                    equivalent_loads[sp] = [spec]
+            if self.form.angular_response_spectrum_checkbox.isChecked():
+                angle_specs = self.etabs.get_angular_dynamic_loadcases()
+                equivalent_loads["AngularDynamic"] = [i[1] for i in angle_specs.values()]
+
+
+
+        #     ## SX
+        #         exec(f"spec = self.form.{sp}_combobox.currentText()")
         # # mass
         # masses = None
         # mass = self.form.mass_combobox.currentText()
