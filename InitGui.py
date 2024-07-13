@@ -21,6 +21,7 @@ class CivilToolsWorkbench(Workbench):
         # assign_list = civilTools_gui.assign_list
         civiltools_list = civilTools_gui.civiltools_list
         civiltools_assign = civilTools_gui.civiltools_assign
+        civiltools_edit = civilTools_gui.civiltools_edit
         civiltools_tools = civilTools_gui.civiltools_tools
         civiltools_define = civilTools_gui.civiltools_define
         civiltools_import_export = civilTools_gui.civiltools_import_export
@@ -30,12 +31,14 @@ class CivilToolsWorkbench(Workbench):
         # self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Civil Assign")), assign_list)
         self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("civiltools", "Controls")), civiltools_list)
         self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("civiltools", "Assign")), civiltools_assign)
+        self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("civiltools", "civiltools Edit")), civiltools_edit)
         self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("civiltools", "Tools")), civiltools_tools[1:])
         self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("civiltools", "Define")), civiltools_define)
         self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("civiltools", "Import & Export")), civiltools_import_export)
 
         self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("civiltools", "Controls")), civiltools_list)
         self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("civiltools", "Assign")), civiltools_assign)
+        self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("civiltools", "civiltools Edit")), civiltools_edit)
         self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("civiltools", "&Tools")), civiltools_tools)
         self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("civiltools", "Define")), civiltools_define)
         self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("civiltools", "&Help")), civilTools_gui.civiltools_help)

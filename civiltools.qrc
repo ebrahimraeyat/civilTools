@@ -2,7 +2,12 @@
   <qresource prefix="civiltools">
     <file>images/refresh.svg</file>
     <file>images/import_dxf.svg</file>
+    <file>images/columns.svg</file>
+    <file>images/beams.svg</file>
+    <file>images/select-area-icon.svg</file>
+    <file>images/edit-clear.svg</file>
     <file>images/deflection_of_slab.png</file>
+    <file>images/property_editor.svg</file>
     <file>images/waffle_slab.svg</file>
     <file>images/console.svg</file>
     <file>images/deflection.svg</file>
@@ -13,7 +18,6 @@
     <file>images/save.svg</file>
     <file>images/save.png</file>
     <file>images/spectral.svg</file>
-    <file>images/refresh.svg</file>
     <file>images/dxf.svg</file>
     <file>images/grid_lines.svg</file>
     <file>images/automatic.svg</file>

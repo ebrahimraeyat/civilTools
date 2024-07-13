@@ -44,6 +44,10 @@ from gui_civiltools.assign import (
     gui_assigns,
     gui_update_commands,
 )
+
+from gui_civiltools.edit import (
+    gui_edit_frame_sections_props,
+)
 from gui_civiltools.define import (
     gui_create_load_combinations,
     gui_frame_sections,
@@ -263,4 +267,8 @@ civiltools_import_export = [
     "civiltools_import_dxf",
     "civiltools_create_report",
     "civiltoos_export_plans_to_dxf",
+]
+
+civiltools_edit = [
+    "civiltools_edit_frame_sections_props",
 ]
