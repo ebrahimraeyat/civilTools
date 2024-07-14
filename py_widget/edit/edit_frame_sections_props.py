@@ -54,23 +54,29 @@ class Form(QtWidgets.QWidget):
         conc_name = self.form.concrete_mats.currentText()
         suffix = self.form.concrete_suffix.text()
         clean_names = self.form.clean_names_checkbox.isChecked()
-        ret, convert_names = self.etabs.prop_frame.change_columns_section_fc(names, conc_name, suffix, clean_names)
+        ret, convert_names, section_that_corner_bars_is_different = self.etabs.prop_frame.change_columns_section_fc(names, conc_name, suffix, clean_names)
         if ret:
             self.etabs.view.refresh_view()
             msg = f"{len(convert_names)} Sections replaced:\n"
             for key, value in convert_names.items():
-                msg += f"{key}\t ==> {value}\n"
+                msg += f"{key}\t\t ==> {value}\n"
                 title = 'Done'
         else:
             msg = "Some Error Occured, Please try againg."
             title = 'Failed'
         QtWidgets.QMessageBox.information(None, title, str(msg))
+        if len(section_that_corner_bars_is_different) > 0:
+            print(f"{section_that_corner_bars_is_different=}")
+            msg = f"{len(section_that_corner_bars_is_different)} Sections have different Corner Bar Size, Edit those in Etabs Model Manually:\n"
+            for i, sec in enumerate(section_that_corner_bars_is_different):
+                msg += f"{i + 1} ==> \t\t{sec}\n"
+                title = 'Change Corner Bar Size'
+            QtWidgets.QMessageBox.information(None, title, str(msg))
+
         # lens = [len(name) for name in convert_names.values()]
         # if max(lens) > 12:
         #     msg = "Some Sections have more than 12 Charachter, maybe error occured in drawing with SAZE 90"
         #     QtWidgets.QMessageBox.information(None, "Max Section Name", str(msg))
-
-        
 
     def getStandardButtons(self):
         return 0
