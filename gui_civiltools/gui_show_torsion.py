@@ -44,6 +44,9 @@ class CivilShowTorsion:
             filename is None
             ):
             return
+        if not etabs.diaphragm.is_diaphragm_assigned():
+            QMessageBox.warning(None, 'Diaphragm Assignment', "Please Assign Diaphragm to model.")
+            return
         from exporter import civiltools_config
         d = civiltools_config.get_settings_from_etabs(etabs)
         if len(d) == 0:

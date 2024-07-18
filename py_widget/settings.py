@@ -324,11 +324,11 @@ class Form(QtWidgets.QWidget):
         ret = self.check_seismic_names()
         if not ret:
             return
-        ret = self.check_dynamic_loadcases()
-        if ret is None:
-            return
         ret = self.check_modal_loadcases()
         if not ret:
+            return
+        ret = self.check_dynamic_loadcases()
+        if ret is None:
             return
         d = self.save_config()
         self.write_not_exists_earthquake_loads(building, d)
