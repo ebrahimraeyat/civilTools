@@ -136,6 +136,9 @@ class Form(QtWidgets.QWidget):
             s = copy.deepcopy(dir_)
             s.add(name)
             combobox.addItems(s)
+        # Modal Loadcase
+        modals = self.etabs.load_cases.get_loadcase_withtype(3)
+        self.form.modal_combobox.addItems(modals)
         print(f'{seismic_load_patterns=}')
         print(f'{seismic_load_patterns_drift=}')
         return list(flatten_set(seismic_load_patterns)) + list(flatten_set(seismic_load_patterns_drift))
@@ -324,6 +327,9 @@ class Form(QtWidgets.QWidget):
         ret = self.check_dynamic_loadcases()
         if ret is None:
             return
+        ret = self.check_modal_loadcases()
+        if not ret:
+            return
         d = self.save_config()
         self.write_not_exists_earthquake_loads(building, d)
         self.reject()
@@ -435,6 +441,7 @@ class Form(QtWidgets.QWidget):
         warning = 'Dynamic Loadcase names can not be similar, correct the dynamic loadcase names.'
         if len(set(all_names)) != 8:
             QtWidgets.QMessageBox.warning(None, title, warning)
+            self.form.tabWidget.setCurrentIndex(3)
             return None
         response_spectrum_loadcases = self.etabs.load_cases.get_response_spectrum_loadcase_name()
         not_exists = [lc for lc in  all_names if lc not in response_spectrum_loadcases]
@@ -475,6 +482,16 @@ class Form(QtWidgets.QWidget):
                     self.etabs.SapModel.LoadCases.ResponseSpectrum.SetLoads(lc, *args)
         return True
     
+    def check_modal_loadcases(self):
+        modal = self.form.modal_combobox.currentText()
+        if modal == "":
+            message = 'You must define a Modal Case in your model'
+            QtWidgets.QMessageBox.warning(None,
+                                            'Modal LoadCase',
+                                            message)
+            return False
+        return True
+
     def check_seismic_names(self):
         # first system
         first_system_names = civiltools_config.get_first_system_seismic(self.form) + \
