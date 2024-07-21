@@ -51,12 +51,11 @@ class Building(object):
 
         self.tx_exp = self.period(x_system_1, height_1, is_infill_1)
         self.ty_exp = self.period(y_system_1, height_1, is_infill_1)
-        if np.isclose(importance_factor, 1.4, atol=.01):
-            self.tx_an = self.tx_exp
-            self.ty_an = self.ty_exp
         self.tx = max(min(self.tx_an, 1.25 * self.tx_exp), self.tx_exp)
         self.ty = max(min(self.ty_an, 1.25 * self.ty_exp), self.ty_exp)
-
+        if np.isclose(importance_factor, 1.4, atol=.01):
+            self.tx_an = self.tx
+            self.ty_an = self.ty
         self.soil_reflection_prop_x = ReflectionFactor(self.soil_type, self.acc, self.tx)
         self.soil_reflection_prop_y = ReflectionFactor(self.soil_type, self.acc, self.ty)
         self.bx = self.soil_reflection_prop_x.B
