@@ -1,9 +1,12 @@
 <RCC>
   <qresource prefix="civiltools">
+    <file>images/mode_shapes.png</file>
+    <file>images/mode_shapes.gif</file>
     <file>images/refresh.svg</file>
     <file>images/import_dxf.svg</file>
     <file>images/columns.svg</file>
     <file>images/beams.svg</file>
+    <file>images/2800.jpeg</file>
     <file>images/select-area-icon.svg</file>
     <file>images/edit-clear.svg</file>
     <file>images/deflection_of_slab.png</file>

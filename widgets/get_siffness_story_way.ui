@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>682</width>
-    <height>691</height>
+    <width>768</width>
+    <height>612</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -27,7 +27,7 @@
   <property name="windowTitle">
    <string>Calculating Story Stiffness</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QHBoxLayout" name="horizontalLayout_2">
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
@@ -45,9 +45,68 @@
            <enum>QLayout::SetDefaultConstraint</enum>
           </property>
           <item>
-           <widget class="QRadioButton" name="radio_button_2800">
+           <widget class="QRadioButton" name="radio_button_earthquake">
+            <property name="toolTip">
+             <string>Ex, Ey</string>
+            </property>
             <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../civiltools.qrc">
+              <normaloff>:/civiltools/images/etabs.png</normaloff>:/civiltools/images/etabs.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>120</width>
+              <height>120</height>
+             </size>
+            </property>
+            <property name="shortcut">
+             <string>Ctrl+S</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="radio_button_modal">
+            <property name="toolTip">
+             <string>Modal</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../civiltools.qrc">
+              <normaloff>:/civiltools/images/mode_shapes.png</normaloff>:/civiltools/images/mode_shapes.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>140</width>
+              <height>140</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="radio_button_2800">
+            <property name="toolTip">
              <string>2800</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../civiltools.qrc">
+              <normaloff>:/civiltools/images/2800.jpeg</normaloff>:/civiltools/images/2800.jpeg</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>140</width>
+              <height>140</height>
+             </size>
             </property>
             <property name="checked">
              <bool>false</bool>
@@ -55,44 +114,31 @@
            </widget>
           </item>
           <item>
-           <widget class="QRadioButton" name="radio_button_modal">
+           <widget class="QPushButton" name="run">
             <property name="text">
-             <string>Modal</string>
+             <string/>
             </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QRadioButton" name="radio_button_earthquake">
-            <property name="text">
-             <string>Ex, Ey</string>
+            <property name="icon">
+             <iconset resource="../civiltools.qrc">
+              <normaloff>:/civiltools/images/run.svg</normaloff>:/civiltools/images/run.svg</iconset>
             </property>
-            <property name="checked">
-             <bool>true</bool>
+            <property name="iconSize">
+             <size>
+              <width>120</width>
+              <height>120</height>
+             </size>
             </property>
            </widget>
           </item>
          </layout>
         </item>
-        <item>
-         <widget class="QPushButton" name="run">
-          <property name="text">
-           <string>Run</string>
-          </property>
-          <property name="icon">
-           <iconset resource="../civiltools.qrc">
-            <normaloff>:/civiltools/images/run.svg</normaloff>:/civiltools/images/run.svg</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>60</width>
-            <height>60</height>
-           </size>
-          </property>
-         </widget>
-        </item>
        </layout>
       </widget>
      </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
       <widget class="QTextBrowser" name="textBrowser">
        <property name="sizePolicy">
@@ -100,6 +146,12 @@
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>120</height>
+        </size>
        </property>
        <property name="frameShape">
         <enum>QFrame::Box</enum>
@@ -121,48 +173,37 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#ff0000;&quot;&gt;Notes&lt;/span&gt;:&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;- In &lt;span style=&quot; color:#ff0000;&quot;&gt;2800&lt;/span&gt; and &lt;span style=&quot; color:#ff0000;&quot;&gt;Modal&lt;/span&gt; way, you must activate &lt;span style=&quot; font-weight:600; font-style:italic;&quot;&gt;Calculate Diaphragm Centers of Rigidity&lt;/span&gt; from:&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600; font-style:italic;&quot;&gt;Analyze &amp;gt; Set Load Cases to Run&lt;/span&gt; in ETABS.&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;- In &lt;span style=&quot; color:#ff0000;&quot;&gt;Ex, Ey&lt;/span&gt; way, you must at least define one earthquake in X and Y without eccentricity for exmple&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;EX and EY, the name is not matter.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600; font-style:italic;&quot;&gt;Analyze &amp;gt; Set Load Cases to Run&lt;/span&gt; in ETABS.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="frameShape">
+        <enum>QFrame::Box</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="lineWidth">
+        <number>1</number>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap resource="../civiltools.qrc">:/civiltools/images/calculate_center_of_rigidity.jpeg</pixmap>
+       </property>
+       <property name="scaledContents">
+        <bool>false</bool>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
        </property>
       </widget>
      </item>
     </layout>
-   </item>
-   <item>
-    <widget class="QLabel" name="label">
-     <property name="frameShape">
-      <enum>QFrame::Box</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Plain</enum>
-     </property>
-     <property name="lineWidth">
-      <number>1</number>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="pixmap">
-      <pixmap resource="../civiltools.qrc">:/civiltools/images/calculate_center_of_rigidity.jpeg</pixmap>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>12</height>
-      </size>
-     </property>
-    </spacer>
    </item>
   </layout>
  </widget>
