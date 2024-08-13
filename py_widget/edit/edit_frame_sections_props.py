@@ -40,8 +40,9 @@ class Form(QtWidgets.QWidget):
         self.form.selection_checkbox.clicked.connect(self.selection_clicked)
 
     def selection_clicked(self, checked):
-        self.form.columns.setEnabled(not checked)
-        # self.form.beams.setEnabled(not checked)
+        if checked:
+            self.form.columns.setChecked(True)
+            self.form.beams.setChecked(True)
         self.form.stories.setEnabled(not checked)
 
     def assign(self):
@@ -51,10 +52,19 @@ class Form(QtWidgets.QWidget):
         else:
             stories = [item.text() for item in self.form.stories.selectedItems()]
             beams, names = self.etabs.frame_obj.get_beams_columns(type_=2, stories=stories)
+            names.extend(beams)
+        frame_types = []
+        if self.form.columns.isChecked():
+            frame_types.append('column')
+        if self.form.beams.isChecked():
+            frame_types.append('beam')
+        if len(frame_types) == 0:
+            QtWidgets.QMessageBox.warning(None, 'Selection ', 'Please Select type of frames.')
+            return
         conc_name = self.form.concrete_mats.currentText()
         suffix = self.form.concrete_suffix.text()
         clean_names = self.form.clean_names_checkbox.isChecked()
-        ret, convert_names, section_that_corner_bars_is_different = self.etabs.prop_frame.change_columns_section_fc(names, conc_name, suffix, clean_names)
+        ret, convert_names, section_that_corner_bars_is_different = self.etabs.prop_frame.change_beams_columns_section_fc(names, conc_name, suffix, clean_names, frame_types)
         if ret:
             self.etabs.view.refresh_view()
             msg = f"{len(convert_names)} Sections replaced:\n"
