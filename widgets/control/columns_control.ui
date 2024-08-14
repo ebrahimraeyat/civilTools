@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>about</class>
+ <widget class="QDialog" name="about">
+  <property name="windowModality">
+   <enum>Qt::NonModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>348</width>
+    <height>158</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Columns Control</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../../civiltools.qrc">
+    <normaloff>:/civiltools/images/columns_control.svg</normaloff>:/civiltools/images/columns_control.svg</iconset>
+  </property>
+  <property name="modal">
+   <bool>false</bool>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QCheckBox" name="show_js_table">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>Area</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="check">
+     <property name="text">
+      <string>Check</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../../civiltools.qrc">
+       <normaloff>:/civiltools/images/tick.svg</normaloff>:/civiltools/images/tick.svg</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>100</width>
+       <height>100</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../../civiltools.qrc"/>
+ </resources>
+ <connections/>
+</ui>
