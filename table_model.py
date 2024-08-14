@@ -2,6 +2,7 @@ from pathlib import Path
 import random
 import colorsys
 import json
+from typing import Union
 
 import pandas as pd
 from PySide2.QtCore import QAbstractTableModel, Qt, QModelIndex, QItemSelection
@@ -39,10 +40,12 @@ class PandasModel(QAbstractTableModel):
 
     def __init__(self,
                  data,
+                 kwargs: Union[dict, None] = None,
                  negative_value: bool=False,
                  ):
         QAbstractTableModel.__init__(self)
         self.df = data
+        self.kwargs = kwargs
         self.negative_value = negative_value
 
     def rowCount(self, parent=None):
@@ -94,8 +97,8 @@ class PandasModel(QAbstractTableModel):
 
 
 class DriftModel(PandasModel):
-    def __init__(self, df):
-        super(DriftModel, self).__init__(df)
+    def __init__(self, df, kwargs=None):
+        super(DriftModel, self).__init__(df, kwargs)
         max_drift = 'Max Drift'
         avg_drift = 'Avg Drift'
         allowable_drift = 'Allowable Drift'
@@ -135,8 +138,8 @@ class DriftModel(PandasModel):
         return None
 
 class TorsionModel(PandasModel):
-    def __init__(self, data):
-        super(TorsionModel, self).__init__(data)
+    def __init__(self, data, kwargs=None):
+        super(TorsionModel, self).__init__(data, kwargs)
         headers = [
             'Story',
             'Label',
@@ -179,8 +182,8 @@ class TorsionModel(PandasModel):
         return None
 
 class BaseShearModel(PandasModel):
-    def __init__(self, data):
-        super(BaseShearModel, self).__init__(data)
+    def __init__(self, data, kwargs=None):
+        super(BaseShearModel, self).__init__(data, kwargs)
         self.i_ratio = list(self.df.columns).index('Ratio')
         self.i_scale = list(self.df.columns).index('Scale')
 
@@ -205,8 +208,8 @@ class BaseShearModel(PandasModel):
 
 
 class StoryForcesModel(PandasModel):
-    def __init__(self, data):
-        super(StoryForcesModel, self).__init__(data)
+    def __init__(self, data, kwargs=None):
+        super(StoryForcesModel, self).__init__(data, kwargs)
         self.df = self.df[[
             'Story',
             'OutputCase',
@@ -241,8 +244,8 @@ class StoryForcesModel(PandasModel):
 
 
 class ColumnsRatioModel(PandasModel):
-    def __init__(self, data):
-        super(ColumnsRatioModel, self).__init__(data)
+    def __init__(self, data, kwargs=None):
+        super(ColumnsRatioModel, self).__init__(data, kwargs)
         all_cols = list(self.df)
         self.df[all_cols] = self.df[all_cols].astype(str)
 
@@ -268,8 +271,8 @@ class ColumnsRatioModel(PandasModel):
 
 
 class BeamsRebarsModel(PandasModel):
-    def __init__(self, data):
-        super(BeamsRebarsModel, self).__init__(data)
+    def __init__(self, data, kwargs=None):
+        super(BeamsRebarsModel, self).__init__(data, kwargs)
         all_cols = list(self.df)
         self.df[all_cols] = self.df[all_cols].astype(str)
         headers = tuple(self.df.columns)
@@ -327,8 +330,8 @@ class BeamsRebarsModel(PandasModel):
 
 
 class IrregularityOfMassModel(PandasModel):
-    def __init__(self, data):
-        super(IrregularityOfMassModel, self).__init__(data)
+    def __init__(self, data, kwargs=None):
+        super(IrregularityOfMassModel, self).__init__(data, kwargs)
         headers = list(self.df.columns)
         self.df[headers] = self.df[headers].astype(str)
         self.i_mass_x = headers.index('Mass X')
@@ -360,8 +363,8 @@ class IrregularityOfMassModel(PandasModel):
         return None
 
 class StoryStiffnessModel(PandasModel):
-    def __init__(self, data):
-        super(StoryStiffnessModel, self).__init__(data)
+    def __init__(self, data, kwargs=None):
+        super(StoryStiffnessModel, self).__init__(data, kwargs)
         headers = list(self.df.columns)
         self.df[headers] = self.df[headers].astype(str)
         self.i_kx = headers.index('Kx')
@@ -420,8 +423,8 @@ class StoryStiffnessModel(PandasModel):
 
 
 class BeamsJModel(PandasModel):
-    def __init__(self, data):
-        super(BeamsJModel, self).__init__(data)
+    def __init__(self, data, kwargs=None):
+        super(BeamsJModel, self).__init__(data, kwargs)
         headers = tuple(self.df.columns)
         self.i_T = headers.index('T')
         self.i_Tcr = headers.index('phi_Tcr')
@@ -454,8 +457,8 @@ class BeamsJModel(PandasModel):
         return False
 
 class HighPressureColumnModel(PandasModel):
-    def __init__(self, data):
-        super(HighPressureColumnModel, self).__init__(data)
+    def __init__(self, data, kwargs=None):
+        super(HighPressureColumnModel, self).__init__(data, kwargs)
         headers = tuple(self.df.columns)
         self.i_p = headers.index('P')
         self.i_t2 = headers.index('t2')
@@ -486,8 +489,8 @@ class HighPressureColumnModel(PandasModel):
         return None
 
 class Column100_30Model(PandasModel):
-    def __init__(self, data):
-        super(Column100_30Model, self).__init__(data)
+    def __init__(self, data, kwargs=None):
+        super(Column100_30Model, self).__init__(data, kwargs)
         headers = tuple(self.df.columns)
         self.i_p = headers.index('P')
         self.i_mmajor = headers.index('MMajor')
@@ -518,8 +521,8 @@ class Column100_30Model(PandasModel):
 
 
 class JointShearBCC(PandasModel):
-    def __init__(self, data):
-        super(JointShearBCC, self).__init__(data)
+    def __init__(self, data, kwargs=None):
+        super(JointShearBCC, self).__init__(data, kwargs)
         headers = tuple(self.df.columns)
         try:
             self.i_maj_js = headers.index('JSMajRatio')
@@ -563,13 +566,52 @@ class JointShearBCC(PandasModel):
             
     def setData(self, index, value, role=Qt.EditRole):
         return None
+    
+
+class ControlColumns(PandasModel):
+    def __init__(self, data, kwargs=None):
+        super(ControlColumns, self).__init__(data, kwargs)
+        self.section_areas = self.kwargs['section_areas']
+
+    def data(self, index, role=Qt.DisplayRole):
+        row = index.row()
+        col = index.column()
+        if index.isValid():
+            value = self.df.iloc[row][col]
+            if role == Qt.DisplayRole:
+                return str(value)
+            elif role == Qt.BackgroundColorRole:
+                if row != (self.rowCount() - 1) and value is not None:
+                    below_sec = self.df.iloc[row + 1][col]
+                    if below_sec is not None:
+                        below_area = self.section_areas.get(below_sec, None)
+                        above_area = self.section_areas.get(value, None)
+                        if above_area > below_area:
+                            return QColor(*high)
+                        else:
+                            return QColor(*low)
+                else:
+                    return QColor(*low)
+                # return QColor(*low)
+            elif role == Qt.TextAlignmentRole:
+                return int(Qt.AlignCenter | Qt.AlignVCenter)
+            
+    def headerData(self, col, orientation, role):
+        if role != Qt.DisplayRole:
+            return
+        if orientation == Qt.Horizontal:
+            return self.df.columns[col]
+        return self.df.index[col]
+            
+    def setData(self, index, value, role=Qt.EditRole):
+        return None
+
 
 class ExpandLoadSets(PandasModel):
-    def __init__(self, data):
-        super(ExpandLoadSets, self).__init__(data)
+    def __init__(self, data, kwargs=None):
+        super(ExpandLoadSets, self).__init__(data, kwargs)
         headers = tuple(self.df.columns)
         self.i_uniquename = headers.index('UniqueName')
-        
         unique_names = self.df['UniqueName'].unique()
         self.colors = {}
         for name in unique_names:
@@ -594,11 +636,11 @@ class ExpandLoadSets(PandasModel):
 
 class BeamDeflectionTableModel(PandasModel):
 
-    def __init__(self, df, parent=None):
+    def __init__(self, df, kwargs=None, parent=None):
         '''
         beam_data : dict with keys = beam_name and value is dict of properties
         '''
-        super().__init__(df)
+        super().__init__(df, kwargs)
         self.col_function = (0,)
         
     def data(self, index, role=Qt.DisplayRole):
@@ -652,7 +694,13 @@ class BeamDeflectionTableModel(PandasModel):
 
 class ResultWidget(QtWidgets.QDialog):
     # main widget for user interface
-    def __init__(self, data, model, function=None, parent=None):
+    def __init__(self,
+                 data,
+                 model,
+                 function=None,
+                 parent=None,
+                 kwargs: Union[None, dict]=None,
+                ):
         super(ResultWidget, self).__init__(parent)
         self.setObjectName('result_widget')
         self.push_button_to_excel = QtWidgets.QPushButton()
@@ -681,7 +729,8 @@ class ResultWidget(QtWidgets.QDialog):
         self.setLayout(self.vbox)
         self.function = function
         self.data = data
-        self.model = model(data)
+        self.model = model(data, kwargs)
+        
         # self.result_table_view.setModel(self.model)
         self.proxy = QtCore.QSortFilterProxyModel(self)
         self.proxy.setSourceModel(self.model)
@@ -821,7 +870,6 @@ class ResultWidget(QtWidgets.QDialog):
         #     width += self.result_table_view.columnWidth(col)
         # self.result_table_view.setFixedWidth(width)
 
-
     # @QtCore.Slot(int)
     # def on_view_horizontalHeader_sectionClicked(self, logicalIndex):
     #     self.logicalIndex   = logicalIndex
@@ -890,7 +938,25 @@ class ResultWidget(QtWidgets.QDialog):
     @QtCore.Slot(int)
     def on_comboBox_currentIndexChanged(self, index):
         self.proxy.setFilterKeyColumn(index)
+        
 
+class ControlColumnResultWidget(ResultWidget):
+
+    def __init__(self,
+                data,
+                model,
+                function=None,
+                parent=None,
+                kwargs: Union[None, dict]=None,
+            ):
+        super(ControlColumnResultWidget, self).__init__(data, model, function, parent, kwargs)
+
+    def row_clicked(self, index):
+        row, col = self.get_current_row_col(index)
+        col_label = self.model.headerData(col, orientation=Qt.Horizontal, role=Qt.DisplayRole)
+        story = self.model.headerData(row, orientation=Qt.Vertical, role=Qt.DisplayRole)
+        args = [col_label, story]
+        self.function(*args)
 
 class ExpandedLoadSetsResults(ResultWidget):
     def __init__(self, data, model, function=None, parent=None):
@@ -914,8 +980,10 @@ def show_results(
         function=None,
         etabs=None,
         json_file_name:str='',
+        kwargs: Union[None, dict]=None,
+        result_widget=ResultWidget,
         ):
-    win = ResultWidget(data, model, function)
+    win = result_widget(data, model, function, kwargs=kwargs)
     # Gui.Control.showDialog(win)
     mdi = get_mdiarea()
     if not mdi:

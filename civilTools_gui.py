@@ -60,6 +60,7 @@ from gui_civiltools.control import (
     gui_check_deflection,
     gui_check_deflection_of_beams,
     gui_check_deflection_of_slab,
+    gui_columns_control,
 )
 from gui_civiltools.tools import (
     gui_discretize, 
@@ -219,6 +220,7 @@ civiltools_list = [
             "civiltools_100_30",
             "civil_earthquake_factor",
             "civiltools_create_spectral",
+            "civilTools_columns_control",
             ]
 civiltools_assign = [
             "civilTools_assigns",
