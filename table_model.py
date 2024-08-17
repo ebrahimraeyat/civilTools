@@ -566,45 +566,6 @@ class JointShearBCC(PandasModel):
             
     def setData(self, index, value, role=Qt.EditRole):
         return None
-    
-
-class ControlColumns(PandasModel):
-    def __init__(self, data, kwargs=None):
-        super(ControlColumns, self).__init__(data, kwargs)
-        self.section_areas = self.kwargs['section_areas']
-
-    def data(self, index, role=Qt.DisplayRole):
-        row = index.row()
-        col = index.column()
-        if index.isValid():
-            value = self.df.iloc[row][col]
-            if role == Qt.DisplayRole:
-                return str(value)
-            elif role == Qt.BackgroundColorRole:
-                if row != (self.rowCount() - 1) and value is not None:
-                    below_sec = self.df.iloc[row + 1][col]
-                    if below_sec is not None:
-                        below_area = self.section_areas.get(below_sec, None)
-                        above_area = self.section_areas.get(value, None)
-                        if above_area > below_area:
-                            return QColor(*high)
-                        else:
-                            return QColor(*low)
-                else:
-                    return QColor(*low)
-                # return QColor(*low)
-            elif role == Qt.TextAlignmentRole:
-                return int(Qt.AlignCenter | Qt.AlignVCenter)
-            
-    def headerData(self, col, orientation, role):
-        if role != Qt.DisplayRole:
-            return
-        if orientation == Qt.Horizontal:
-            return self.df.columns[col]
-        return self.df.index[col]
-            
-    def setData(self, index, value, role=Qt.EditRole):
-        return None
 
 
 class ExpandLoadSets(PandasModel):
@@ -730,11 +691,14 @@ class ResultWidget(QtWidgets.QDialog):
         self.function = function
         self.data = data
         self.model = model(data, kwargs)
-        
         # self.result_table_view.setModel(self.model)
         self.proxy = QtCore.QSortFilterProxyModel(self)
         self.proxy.setSourceModel(self.model)
         self.result_table_view.setModel(self.proxy)
+        if kwargs is not None:
+            custom_delegate = kwargs.get('custom_delegate', None)
+            if custom_delegate is not None:
+                self.result_table_view.setItemDelegate(custom_delegate(self))
         self.comboBox.addItems(self.model.df.columns)
         self.lineEdit.textChanged.connect(self.on_lineEdit_textChanged)
         self.comboBox.currentIndexChanged.connect(self.on_comboBox_currentIndexChanged)
@@ -950,6 +914,7 @@ class ControlColumnResultWidget(ResultWidget):
                 kwargs: Union[None, dict]=None,
             ):
         super(ControlColumnResultWidget, self).__init__(data, model, function, parent, kwargs)
+        # self.result_table_view.setItemDelegate(ColumnsControlDelegate(self))
 
     def row_clicked(self, index):
         row, col = self.get_current_row_col(index)
