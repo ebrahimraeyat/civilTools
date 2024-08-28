@@ -34,6 +34,14 @@ class Form(QtWidgets.QWidget):
             self.form.wc.setEnabled(not check)
 
     def create_materials(self):
+        if self.etabs.SapModel.GetModelIsLocked():
+            if QtWidgets.QMessageBox.question(
+                None,
+                "Open Model?",
+                "The model is lock, do you want to Unlock model?",
+                ) == QtWidgets.QMessageBox.No:
+                return
+            self.etabs.unlock_model()
         name = self.form.fc_name.text()
         fc = self.form.fc_spinbox.value()
         if self.form.ec1.isChecked():
