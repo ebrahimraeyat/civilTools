@@ -37,8 +37,8 @@ class Form(QtWidgets.QWidget):
         if self.etabs.SapModel.GetModelIsLocked():
             if QtWidgets.QMessageBox.question(
                 None,
-                "Open Model?",
-                "The model is lock, do you want to Unlock model?",
+                "Unlock Model?",
+                "The model is lock, do you want to unlock model?",
                 ) == QtWidgets.QMessageBox.No:
                 return
             self.etabs.unlock_model()
