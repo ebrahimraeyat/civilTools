@@ -50,6 +50,13 @@
     <file>images/cancel.svg</file>
     <file>images/Register.png</file>
   </qresource>
+  <qresource prefix="creates">
+    <file>images/rebars.svg</file>
+    <file>images/ec1.svg</file>
+    <file>images/concrete-truck.svg</file>
+    <file>images/ec2.svg</file>
+    <file>images/materials.svg</file>
+  </qresource>
   <qresource prefix="assigns">
     <file>images/assigns.svg</file>
   </qresource>

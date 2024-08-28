@@ -53,6 +53,7 @@ from gui_civiltools.define import (
     gui_frame_sections,
     gui_define_axes,
     gui_create_spectral,
+    gui_create_materials,
 )
 from gui_civiltools.control import (
     gui_get_weakness_torsion,
@@ -256,6 +257,7 @@ civiltools_define = [
             "civiltools_load_combinations",
             "civiltools_frame_sections",
             "civil_create_section_cuts",
+            "civilTools_create_materials",
             ]
 
 civiltools_help = [
