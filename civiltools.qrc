@@ -59,5 +59,6 @@
   </qresource>
   <qresource prefix="assigns">
     <file>images/assigns.svg</file>
+    <file>images/brick-wall.svg</file>
   </qresource>
 </RCC>

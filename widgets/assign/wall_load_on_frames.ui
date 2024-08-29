@@ -14,8 +14,8 @@
    <string>Assign Wall Loads on Frames</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normaloff>:/cfactor/images/wall.svg</normaloff>:/cfactor/images/wall.svg</iconset>
+   <iconset resource="../../civiltools.qrc">
+    <normaloff>:/assigns/images/brick-wall.svg</normaloff>:/assigns/images/brick-wall.svg</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_4">
    <item>

@@ -18,7 +18,7 @@ class CivilWallLoadOnFrames:
             "civiltools",
             "Wall Load on Frames")
         path = str(
-                   Path(__file__).parent.absolute().parent / "images" / "wall.svg"
+                   Path(__file__).parent.absolute().parent / "images" / "brick-wall.svg"
                    )
         return {'Pixmap': path,
                 'MenuText': menu_text,
