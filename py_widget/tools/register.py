@@ -6,6 +6,8 @@ import subprocess
 
 import civiltools_rc
 
+from freecad_funcs import add_to_clipboard
+
 
 civiltools_path = Path(__file__).absolute().parent.parent.parent
 
@@ -19,7 +21,12 @@ class Form(QtWidgets.QWidget):
         
     def create_connections(self):
         self.form.submit_button.clicked.connect(self.register)
+        self.form.copy_serial.clicked.connect(self.copy_to_clipboard)
 
+    def copy_to_clipboard(self):
+        serial = self.form.serial.text()
+        add_to_clipboard(serial)
+        QMessageBox.information(None, "Copy", "Serial number copied to clipboard.")
 
     def fill_serial(self):
         serial = str(subprocess.check_output("wmic csproduct get uuid")).split("\\r\\r\\n")[1].split()[0]
@@ -43,9 +50,7 @@ class Form(QtWidgets.QWidget):
             msg = "Congrajulation! You are now registered, enjoy using CivilTools."
         QMessageBox.information(None, 'Registeration', msg)
 
-
-    def accept(self):
-        Gui.Control.closeDialog()
-
+    def reject(self):
+        self.form.close()
 
 

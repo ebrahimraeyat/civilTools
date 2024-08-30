@@ -7,6 +7,8 @@ import FreeCADGui as Gui
 
 civiltools_path = Path(__file__).absolute().parent.parent
 
+import find_etabs
+
 
 def allowed_to_continue(
                         filename,
@@ -97,7 +99,7 @@ class CivilToolsRegister:
     def Activated(self):
         from py_widget.tools import register
         win = register.Form()
-        Gui.Control.showDialog(win)
+        find_etabs.show_win(win, in_mdi=False)
         
     def IsActive(self):
         return True

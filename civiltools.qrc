@@ -1,6 +1,8 @@
 <RCC>
   <qresource prefix="civiltools">
     <file>images/mode_shapes.png</file>
+    <file>images/civiltools.svg</file>
+    <file>images/copy.svg</file>
     <file>images/refresh.svg</file>
     <file>images/import_dxf.svg</file>
     <file>images/columns_control.svg</file>
@@ -49,6 +51,12 @@
     <file>images/run.svg</file>
     <file>images/cancel.svg</file>
     <file>images/Register.png</file>
+  </qresource>
+  <qresource prefix="general">
+    <file>images/general/Telegram_logo.svg</file>
+    <file>images/general/Instagram_logo.svg</file>
+    <file>images/general/Yahoo_Mail_icon.png</file>
+    <file>images/general/Gmail_icon.svg</file>
   </qresource>
   <qresource prefix="creates">
     <file>images/rebars.svg</file>
