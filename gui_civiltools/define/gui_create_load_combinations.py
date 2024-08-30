@@ -26,18 +26,18 @@ class CivilToolsCreateLoadCombinations:
     
     def Activated(self):
         
-        # from gui_civiltools.gui_check_legal import (
-        #         allowed_to_continue,
-        #         show_warning_about_number_of_use,
-        #         )
-        # allow, check = allowed_to_continue(
-        #     '100-30.bin',
-        #     'https://gist.githubusercontent.com/ebrahimraeyat/bbfab4efcc50cbcfeba7288339b68c90/raw',
-        #     'cfactor',
-        #     n=2,
-        #     )
-        # if not allow:
-        #     return
+        from gui_civiltools.gui_check_legal import (
+                allowed_to_continue,
+                show_warning_about_number_of_use,
+                )
+        allow, check = allowed_to_continue(
+            'load_combinations.bin',
+            'https://gist.githubusercontent.com/ebrahimraeyat/d0c061f13255754fb427e1c9fcc9a630/raw',
+            'cfactor',
+            n=5,
+            )
+        if not allow:
+            return
         import find_etabs
         etabs, filename = find_etabs.find_etabs(run=False, backup=False)
         if (
@@ -56,8 +56,7 @@ class CivilToolsCreateLoadCombinations:
         from py_widget.define import create_load_combinations
         win = create_load_combinations.Form(etabs)
         find_etabs.show_win(win, in_mdi=False)
-        # Gui.Control.showDialog(win)
-        # show_warning_about_number_of_use(check)
+        show_warning_about_number_of_use(check)
         
     def IsActive(self):
         return True
@@ -80,6 +79,18 @@ class CivilToolsCreatePushLoadCombination:
                 'ToolTip': tooltip}
     
     def Activated(self):
+        from gui_civiltools.gui_check_legal import (
+                allowed_to_continue,
+                show_warning_about_number_of_use,
+                )
+        allow, check = allowed_to_continue(
+            'load_combinations.bin',
+            'https://gist.githubusercontent.com/ebrahimraeyat/d0c061f13255754fb427e1c9fcc9a630/raw',
+            'cfactor',
+            n=5,
+            )
+        if not allow:
+            return
         import find_etabs
         etabs, filename = find_etabs.find_etabs(run=False, backup=False)
         if (
@@ -90,7 +101,7 @@ class CivilToolsCreatePushLoadCombination:
         from py_widget.define import create_load_combination
         win = create_load_combination.Form(etabs)
         find_etabs.show_win(win, in_mdi=False)
-        # show_warning_about_number_of_use(check)
+        show_warning_about_number_of_use(check)
         
     def IsActive(self):
         return True
@@ -113,6 +124,18 @@ class CivilToolsAddLoadCombinationsToF2k:
                 'ToolTip': tooltip}
     
     def Activated(self):
+        from gui_civiltools.gui_check_legal import (
+                allowed_to_continue,
+                show_warning_about_number_of_use,
+                )
+        allow, check = allowed_to_continue(
+            'load_combinations.bin',
+            'https://gist.githubusercontent.com/ebrahimraeyat/d0c061f13255754fb427e1c9fcc9a630/raw',
+            'cfactor',
+            n=5,
+            )
+        if not allow:
+            return
         import find_etabs
         etabs, filename = find_etabs.find_etabs(run=False, backup=False)
         if (
@@ -123,7 +146,7 @@ class CivilToolsAddLoadCombinationsToF2k:
         from py_widget.define import load_combinations_to_f2k
         win = load_combinations_to_f2k.Form(etabs)
         find_etabs.show_win(win, in_mdi=False)
-        # show_warning_about_number_of_use(check)
+        show_warning_about_number_of_use(check)
         
     def IsActive(self):
         return True

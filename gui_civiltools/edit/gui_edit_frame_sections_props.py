@@ -25,17 +25,17 @@ class CivilToolsEditFrameSectionsProps:
     
     def Activated(self):
         
-        # from gui_civiltools.gui_check_legal import (
-        #         allowed_to_continue,
-        #         show_warning_about_number_of_use,
-        #         )
-        # allow, check = allowed_to_continue(
-        #     'assign_ev.bin',
-        #     'https://gist.githubusercontent.com/ebrahimraeyat/20078f898b9c4a99bd5c8dd14ef7d012/raw',
-        #     'cfactor'
-        #     )
-        # if not allow:
-        #     return
+        from gui_civiltools.gui_check_legal import (
+                allowed_to_continue,
+                show_warning_about_number_of_use,
+                )
+        allow, check = allowed_to_continue(
+            'edit_frame_props.bin',
+            'https://gist.githubusercontent.com/ebrahimraeyat/ea2d41b5035c0fb1182b290411766364/raw',
+            'cfactor'
+            )
+        if not allow:
+            return
         import find_etabs
         etabs, filename = find_etabs.find_etabs(run=False, backup=True)
         if (
@@ -43,28 +43,11 @@ class CivilToolsEditFrameSectionsProps:
             filename is None
             ):
             return
-        # from exporter import civiltools_config
-        # d = civiltools_config.load(etabs)
-        # if len(d) == 0:
-        #     QMessageBox.warning(None, 'Settings', 'Please Set Options First!')
-        #     Gui.runCommand("civiltools_settings")
-        #     d = civiltools_config.load(etabs)
-        #     if len(d) == 0:
-        #         return
-        # risk_level = d.get('risk_level', None)
-        # if risk_level  is not None and \
-        #     risk_level == 'خیلی زیاد' and \
-        #     QMessageBox.question(
-        #         None,
-        #         'risk level',
-        #         'Your are in "High Risk Level Zone", It is not recommended that apply EV individually, Do you want to continue?',
-        #         ) == QMessageBox.No:
-        #     return
         
         from py_widget.edit import edit_frame_sections_props
         win = edit_frame_sections_props.Form(etabs)
         find_etabs.show_win(win, in_mdi=False)
-        # show_warning_about_number_of_use(check)
+        show_warning_about_number_of_use(check)
         
     def IsActive(self):
         return True
