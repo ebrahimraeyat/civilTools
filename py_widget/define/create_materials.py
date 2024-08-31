@@ -22,6 +22,15 @@ class Form(QtWidgets.QWidget):
         self.form.ec1.clicked.connect(self.ec_clicked)
         self.form.ec2.clicked.connect(self.ec_clicked)
         self.form.fc_spinbox.valueChanged.connect(self.set_fc_name)
+        self.form.standard_rebars_groupbox.clicked.connect(self.rebar_group_clicked)
+        self.form.other_rebars_groupbox.clicked.connect(self.rebar_group_clicked)
+
+    def rebar_group_clicked(self, check):
+        sender = self.sender()
+        if sender == self.form.standard_rebars_groupbox:
+            self.form.other_rebars_groupbox.setChecked(not check)
+        elif sender == self.form.other_rebars_groupbox:
+            self.form.standard_rebars_groupbox.setChecked(not check)
 
     def set_fc_name(self, value):
         self.form.fc_name.setText(f"C{value}")
@@ -42,14 +51,43 @@ class Form(QtWidgets.QWidget):
                 ) == QtWidgets.QMessageBox.No:
                 return
             self.etabs.unlock_model()
-        name = self.form.fc_name.text()
-        fc = self.form.fc_spinbox.value()
-        if self.form.ec1.isChecked():
-            weight_for_calculate_ec = self.form.wc.value()
-        else:
-            weight_for_calculate_ec = 0
-        self.etabs.material.add_concrete(name, fc, weight_for_calculate_ec=weight_for_calculate_ec)
-        QtWidgets.QMessageBox.information(None, "Done", f"The Concrete {name} with f'c={fc} MPa added to model.")
+        tab_index = self.form.tabWidget.currentIndex()
+        if tab_index == 0:
+            name = self.form.fc_name.text()
+            fc = self.form.fc_spinbox.value()
+            if self.form.ec1.isChecked():
+                weight_for_calculate_ec = self.form.wc.value()
+            else:
+                weight_for_calculate_ec = 0
+            self.etabs.material.add_concrete(name, fc, weight_for_calculate_ec=weight_for_calculate_ec)
+            QtWidgets.QMessageBox.information(None, "Done", f"The Concrete {name} with f'c={fc} MPa added to model.")
+        elif tab_index == 1: # rebars
+            add_standards = self.form.standard_rebars_groupbox.isChecked()
+            add_others = self.form.other_rebars_groupbox.isChecked()
+            if not add_standards and not add_others:
+                QtWidgets.QMessageBox.warning(None, "Selection", "Please select atleast one rebar to create!")
+                return
+            rebar_names = []
+            if add_standards:
+                checkboxes = (self.form.s340_checkbox, self.form.s400_checkbox, self.form.s420_checkbox)
+                fys = (self.form.s340fy_spinbox, self.form.s400fy_spinbox, self.form.s420fy_spinbox)
+                fus = (self.form.s340fu_spinbox, self.form.s400fu_spinbox, self.form.s420fu_spinbox)
+                names = (self.form.s340_name, self.form.s400_name, self.form.s420_name)
+                for i, checkbox in enumerate(checkboxes):
+                    if checkbox.isChecked:
+                        fy = fys[i].value()
+                        fu = fus[i].value()
+                        name = names[i].text()
+                        self.etabs.material.add_rebar(name, fy, fu)
+                        rebar_names.append(name)
+            if add_others:
+                fy = self.form.other_fy_spinbox.value()
+                fu = self.form.other_fu_spinbox.value()
+                name = self.form.other_name.text()
+                self.etabs.material.add_rebar(name, fy, fu)
+                rebar_names.append(name)
+            QtWidgets.QMessageBox.information(None, "Done", f"The {', '.join(rebar_names)} rebar/s added to model.")
+
 
     def reject(self):
         self.form.reject()
