@@ -24,6 +24,17 @@ class Form(QtWidgets.QWidget):
         self.form.fc_spinbox.valueChanged.connect(self.set_fc_name)
         self.form.standard_rebars_groupbox.clicked.connect(self.rebar_group_clicked)
         self.form.other_rebars_groupbox.clicked.connect(self.rebar_group_clicked)
+        self.form.s340_checkbox.clicked.connect(self.standard_rebar_clicked)
+        self.form.s400_checkbox.clicked.connect(self.standard_rebar_clicked)
+        self.form.s420_checkbox.clicked.connect(self.standard_rebar_clicked)
+
+    def standard_rebar_clicked(self, check):
+        sender = self.sender()
+        name = sender.objectName()
+        fy = name[1:4]
+        exec(f"self.form.s{fy}fy_spinbox.setEnabled(check)")
+        exec(f"self.form.s{fy}fu_spinbox.setEnabled(check)")
+        exec(f"self.form.s{fy}_name.setEnabled(check)")
 
     def rebar_group_clicked(self, check):
         sender = self.sender()
