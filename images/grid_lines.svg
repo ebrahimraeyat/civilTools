@@ -1,44 +1,60 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!-- Generator: Adobe Illustrator 17.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 209 209" style="enable-background:new 0 0 209 209;" xml:space="preserve">
-<path d="M201.5,112c4.143,0,7.5-3.357,7.5-7.5s-3.357-7.5-7.5-7.5H184V43.333h17.5c4.143,0,7.5-3.357,7.5-7.5s-3.357-7.5-7.5-7.5
-	H184V7.5c0-4.143-3.357-7.5-7.5-7.5S169,3.357,169,7.5v20.833h-53.666V7.5c0-4.143-3.357-7.5-7.5-7.5s-7.5,3.357-7.5,7.5v20.833
-	H46.667V7.5c0-4.143-3.357-7.5-7.5-7.5s-7.5,3.357-7.5,7.5v20.833H7.5c-4.143,0-7.5,3.357-7.5,7.5s3.357,7.5,7.5,7.5h24.167V97H7.5
-	c-4.143,0-7.5,3.357-7.5,7.5s3.357,7.5,7.5,7.5h24.167v53.666H7.5c-4.143,0-7.5,3.357-7.5,7.5s3.357,7.5,7.5,7.5h24.167V201.5
-	c0,4.143,3.357,7.5,7.5,7.5s7.5-3.357,7.5-7.5v-20.834h53.667V201.5c0,4.143,3.357,7.5,7.5,7.5s7.5-3.357,7.5-7.5v-20.834H169V201.5
-	c0,4.143,3.357,7.5,7.5,7.5s7.5-3.357,7.5-7.5v-20.834h17.5c4.143,0,7.5-3.357,7.5-7.5s-3.357-7.5-7.5-7.5H184V112H201.5z
-	 M169,43.333V97h-53.666V43.333H169z M46.667,43.333h53.667V97H46.667V43.333z M46.667,165.666V112h53.667v53.666H46.667z
-	 M169,165.666h-53.666V112H169V165.666z"/>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-</svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
+<svg
+   height="800px"
+   width="800px"
+   version="1.1"
+   id="Layer_1"
+   viewBox="0 0 496.819 496.819"
+   xml:space="preserve"
+   sodipodi:docname="grid_lines.svg"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs11" /><sodipodi:namedview
+   id="namedview9"
+   pagecolor="#ffffff"
+   bordercolor="#000000"
+   borderopacity="0.25"
+   inkscape:showpageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="0"
+   inkscape:deskcolor="#d1d1d1"
+   showgrid="false"
+   inkscape:zoom="0.71064232"
+   inkscape:cx="386.97386"
+   inkscape:cy="548.0957"
+   inkscape:window-width="1920"
+   inkscape:window-height="991"
+   inkscape:window-x="-9"
+   inkscape:window-y="-9"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="Layer_1" />
+<path
+   style="fill:#C6D5DB;"
+   d="M480.8,292.41H336v-96h144.8c4,0,8-4,8-8s-3.2-8-8-8H336V71.61c0-4-4-8-8-8s-8,3.2-8,8v108.8H176  V71.61c0-4-4-8-8-8s-8,3.2-8,8v108.8H15.2c-4,0-8,4-8,8s3.2,8,8,8H160v96H15.2c-4,0-8,4-8,8s3.2,8,8,8H160v108.8c0,4,4,8,8,8  s8-3.2,8-8v-108.8h144v108.8c0,4,4,8,8,8s8-3.2,8-8v-108.8h144.8c4,0,8-4,8-8C488,296.41,484.8,292.41,480.8,292.41z M176,292.41  v-96h144v96H176z"
+   id="path2" />
+<path
+   style="fill:#76D1FF;"
+   d="M496,384.41c0,28.8-23.2,52-52,52H52c-28.8,0-52-23.2-52-52v-272c0-28.8,23.2-52,52-52h392.8  c28.8,0,52,23.2,52,52v272H496z M472,112.41c0-15.2-12.8-28-28-28H52c-15.2,0-28,12.8-28,28v272c0,15.2,12.8,28,28,28h392  c15.2,0,28-12.8,28-28V112.41z"
+   id="path4" />
+<path
+   style="fill:#42BAEA;"
+   d="M444,60.41H52c-11.2,0-20,2.4-28,8l17.6,17.6c3.2-0.8,6.4-1.6,10.4-1.6h392.8  c15.2,0,26.4,12.8,28,24.8v270.4c0,15.2-8.8,32.8-28,32.8h-78.4l27.2,24h51.2c28.8,0,52.8-23.2,52-56.8v-270.4  C496,80.41,472.8,60.41,444,60.41z"
+   id="path6" />
+<path
+   style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:15.4244;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-dashoffset:2.02542;paint-order:stroke fill markers"
+   d="M 24.099429,300.93389 H 472.10163"
+   id="path904" /><path
+   style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:15.4244;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-dashoffset:2.02542;paint-order:stroke fill markers"
+   d="M 23.790466,188.46989 H 471.79267"
+   id="path904-1" /><path
+   style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:13.2203;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-dashoffset:2.02542;paint-order:stroke fill markers"
+   d="M 167.66336,413.04496 167.51158,84.799705"
+   id="path904-8" /><path
+   style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:13.2203;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-dashoffset:2.02542;paint-order:stroke fill markers"
+   d="M 328.08737,412.21849 327.93559,83.97319"
+   id="path904-8-5" /></svg>

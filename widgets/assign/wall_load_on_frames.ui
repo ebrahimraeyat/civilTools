@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>479</width>
+    <width>483</width>
     <height>585</height>
    </rect>
   </property>
@@ -18,7 +18,7 @@
     <normaloff>:/assigns/images/brick-wall.svg</normaloff>:/assigns/images/brick-wall.svg</iconset>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color: rgb(239, 239, 239);</string>
+   <string notr="true"/>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_4">
    <item>
