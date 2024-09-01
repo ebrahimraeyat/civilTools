@@ -3,6 +3,9 @@ from pathlib import Path
 
 from PySide2 import  QtWidgets
 from PySide2.QtWidgets import QMessageBox
+from PySide2.QtGui import QIcon
+
+
 import FreeCADGui as Gui
 import FreeCAD
 import civiltools_rc
@@ -55,6 +58,39 @@ class Form(QtWidgets.QWidget):
         self.form.assign_button.clicked.connect(self.assign)
         self.form.cancel_button.clicked.connect(self.reject)
         self.form.refresh_button.clicked.connect(self.refresh_clicked)
+        self.form.interior_wall_radiobutton.clicked.connect(self.wall_type_clicked)
+        self.form.facade_wall_radiobutton.clicked.connect(self.wall_type_clicked)
+        self.form.etabs_button.clicked.connect(self.apply_type_clicked)
+        self.form.freecad_button.clicked.connect(self.apply_type_clicked)
+        self.form.etabs_from_freecad_button.clicked.connect(self.apply_type_clicked)
+
+    def apply_type_clicked(self, check):
+        sender = self.sender()
+        if sender == self.form.etabs_button:
+            self.form.get_from_etabs_draw_on_freecad.setEnabled(not check)
+            self.form.selected_wall.setEnabled(not check)
+            self.form.assign_button.setIcon(QIcon(':/civiltools/images/etabs.png'))
+        if sender == self.form.freecad_button:
+            self.form.get_from_etabs_draw_on_freecad.setEnabled(check)
+            self.form.selected_wall.setEnabled(not check)
+            self.form.assign_button.setIcon(QIcon(':/civiltools/images/freecad.svg'))
+        if sender == self.form.etabs_from_freecad_button:
+            self.form.get_from_etabs_draw_on_freecad.setEnabled(not check)
+            self.form.selected_wall.setEnabled(check)
+            self.form.assign_button.setIcon(QIcon(':/civiltools/images/etabs.png'))
+
+    def wall_type_clicked(self, check):
+        sender = self.sender()
+        if sender == self.form.interior_wall_radiobutton:
+            self.form.mass.setEnabled(check)
+            self.form.facade_wall_mass.setEnabled(not check)
+            self.form.opening_label.setEnabled(not check)
+            self.form.opening_ratio.setEnabled(not check)
+        elif sender == self.form.facade_wall_radiobutton:
+            self.form.mass.setEnabled(not check)
+            self.form.facade_wall_mass.setEnabled(check)
+            self.form.opening_label.setEnabled(check)
+            self.form.opening_ratio.setEnabled(check)
 
     def refresh_clicked(self):
         selected_objects = self.etabs.select_obj.get_selected_objects()
@@ -108,17 +144,29 @@ class Form(QtWidgets.QWidget):
             self.form.dist1.setSuffix(' m')
             self.form.dist2.setSuffix(' m')
 
-    def reset_widget(self):
-        if self.form.auto_height.isChecked():
-            self.form.none_beam_h.setEnabled(True)
-            self.form.user_height.setEnabled(False)
-        elif self.form.override_height.isChecked():
-            self.form.none_beam_h.setEnabled(False)
-            self.form.user_height.setEnabled(True)
+    def reset_widget(self, check):
+        sender = self.sender()
+        if sender == self.form.auto_height:
+            self.form.none_beam_h.setEnabled(check)
+            self.form.none_beam_label.setEnabled(check)
+            self.form.parapet_wall_height_label.setEnabled(check)
+            self.form.parapet_wall_height.setEnabled(check)
+            self.form.user_height.setEnabled(not check)
+        elif sender == self.form.override_height:
+            self.form.none_beam_h.setEnabled(not check)
+            self.form.none_beam_label.setEnabled(not check)
+            self.form.parapet_wall_height_label.setEnabled(not check)
+            self.form.parapet_wall_height.setEnabled(not check)
+            self.form.user_height.setEnabled(check)
 
     def assign(self):
         loadpat = self.form.loadpat.currentText()
-        mass_per_area = self.form.mass.value()
+        if self.form.interior_wall_radiobutton.isChecked():
+            mass_per_area = self.form.mass.value()
+            opening_ratio = 0
+        elif self.form.facade_wall_radiobutton.isChecked():
+            mass_per_area = self.form.facade_wall_mass.value()
+            opening_ratio = self.form.opening_ratio.value()
         if self.form.override_height.isChecked():
             if self.form.etabs_button.isChecked():
                 height = self.form.user_height.value()
@@ -135,7 +183,6 @@ class Form(QtWidgets.QWidget):
         replace = self.form.replace.isChecked()
         parapet_wall_height = self.form.parapet_wall_height.value()
         height_from_below = self.form.height_from_below.isChecked()
-        opening_ratio = self.form.opening_ratio.value()
         names = labels = None
         if self.form.get_from_etabs_draw_on_freecad.isChecked():
             names = []
