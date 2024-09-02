@@ -27,6 +27,7 @@ class Form(QtWidgets.QWidget):
         self.form.s340_checkbox.clicked.connect(self.standard_rebar_clicked)
         self.form.s400_checkbox.clicked.connect(self.standard_rebar_clicked)
         self.form.s420_checkbox.clicked.connect(self.standard_rebar_clicked)
+        self.form.s500_checkbox.clicked.connect(self.standard_rebar_clicked)
 
     def standard_rebar_clicked(self, check):
         sender = self.sender()
@@ -80,10 +81,10 @@ class Form(QtWidgets.QWidget):
                 return
             rebar_names = []
             if add_standards:
-                checkboxes = (self.form.s340_checkbox, self.form.s400_checkbox, self.form.s420_checkbox)
-                fys = (self.form.s340fy_spinbox, self.form.s400fy_spinbox, self.form.s420fy_spinbox)
-                fus = (self.form.s340fu_spinbox, self.form.s400fu_spinbox, self.form.s420fu_spinbox)
-                names = (self.form.s340_name, self.form.s400_name, self.form.s420_name)
+                checkboxes = (self.form.s340_checkbox, self.form.s400_checkbox, self.form.s420_checkbox, self.form.s500_checkbox)
+                fys = (self.form.s340fy_spinbox, self.form.s400fy_spinbox, self.form.s420fy_spinbox, self.form.s500fy_spinbox)
+                fus = (self.form.s340fu_spinbox, self.form.s400fu_spinbox, self.form.s420fu_spinbox, self.form.s500fu_spinbox)
+                names = (self.form.s340_name, self.form.s400_name, self.form.s420_name, self.form.s500_name)
                 for i, checkbox in enumerate(checkboxes):
                     if checkbox.isChecked:
                         fy = fys[i].value()

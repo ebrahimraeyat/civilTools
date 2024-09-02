@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 335 448" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;">
+    <g transform="matrix(1,0,0,1,-3845.32,-2227.42)">
+        <g transform="matrix(4.16667,0,0,4.16667,0,0)">
+            <clipPath id="_clip1">
+                <path d="M927,538.889L927,637.889L999,637.889L999,565.889L972,538.889L927,538.889Z"/>
+            </clipPath>
+            <g clip-path="url(#_clip1)">
+                <path d="M927,637.889L927,538.889L999,538.889L999,637.889L927,637.889Z" style="fill:url(#_Linear2);fill-rule:nonzero;"/>
+            </g>
+        </g>
+        <g transform="matrix(4.16667,0,0,4.16667,0,0)">
+            <path d="M972,538.889L999,565.889L999,637.889L927,637.889L927,538.889L972,538.889Z" style="fill:none;stroke-width:2px;stroke:rgb(0,150,219);"/>
+        </g>
+        <g transform="matrix(4.16667,0,0,4.16667,0,0)">
+            <clipPath id="_clip3">
+                <path d="M972.022,565.705L999.022,565.705L972.022,538.705L972.022,565.705Z"/>
+            </clipPath>
+            <g clip-path="url(#_clip3)">
+                <path d="M999.503,565.206L986.012,579.196L958.531,552.695L972.022,538.705L999.503,565.206Z" style="fill:url(#_Linear4);fill-rule:nonzero;"/>
+            </g>
+        </g>
+        <g transform="matrix(4.16667,0,0,4.16667,0,0)">
+            <path d="M972.022,538.705L999.022,565.705L972.022,565.705L972.022,538.705Z" style="fill:none;stroke-width:2px;stroke-linejoin:bevel;stroke:rgb(0,150,219);"/>
+        </g>
+        <g transform="matrix(4.16667,0,0,4.16667,0,0)">
+            <clipPath id="_clip5">
+                <path d="M960.414,557.146L953.267,551.686L940.518,568.372L947.66,573.829L928.082,598.885L927.978,603.312L950.015,575.642L949.106,574.934L957.205,581.122L962.669,573.972L998.015,600.846L998.032,597.189L964.492,571.586L969.955,564.435L968.764,563.526L962.127,558.455L962.812,558.971L971.062,548.173L971.08,543.079L960.414,557.146ZM944.651,567.973L953.757,556.055L965.674,565.16L956.569,577.078L944.651,567.973ZM928.027,547.525L928.655,547.984L945.987,561.195L947.781,558.837L928.021,543.793L928.027,547.525Z"/>
+            </clipPath>
+            <g clip-path="url(#_clip5)">
+                <path d="M998.032,543.079L998.032,603.312L927.978,603.312L927.978,543.079L998.032,543.079Z" style="fill:url(#_Linear6);fill-rule:nonzero;"/>
+            </g>
+        </g>
+        <g transform="matrix(4.16667,0,0,4.16667,0,0)">
+            <text x="935px" y="628.889px" style="font-family:'Arial-BoldMT', 'Arial', sans-serif;font-weight:700;font-size:28px;fill:white;">DXF</text>
+        </g>
+    </g>
+    <defs>
+        <linearGradient id="_Linear2" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-4.3e-06,-99,99,-4.3e-06,963,637.889)"><stop offset="0%" style="stop-color:rgb(0,166,233);stop-opacity:1"/><stop offset="100%" style="stop-color:rgb(190,231,251);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear4" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-10.0425,10.4141,-10.4141,-10.0425,985.47,552.261)"><stop offset="0%" style="stop-color:rgb(0,158,225);stop-opacity:1"/><stop offset="46%" style="stop-color:rgb(221,238,251);stop-opacity:1"/><stop offset="100%" style="stop-color:white;stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear6" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-2.6e-06,60.2324,-60.2324,-2.6e-06,963.005,543.079)"><stop offset="0%" style="stop-color:rgb(0,154,222);stop-opacity:1"/><stop offset="100%" style="stop-color:rgb(0,189,242);stop-opacity:1"/></linearGradient>
+    </defs>
+</svg>

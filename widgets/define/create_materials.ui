@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>419</width>
-    <height>429</height>
+    <height>458</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,7 +21,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <property name="iconSize">
       <size>
@@ -205,10 +205,19 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="3" colspan="2">
-           <widget class="QLineEdit" name="s340_name">
-            <property name="text">
-             <string>AII</string>
+          <item row="2" column="2">
+           <widget class="QSpinBox" name="s400fu_spinbox">
+            <property name="minimum">
+             <number>200</number>
+            </property>
+            <property name="maximum">
+             <number>700</number>
+            </property>
+            <property name="singleStep">
+             <number>10</number>
+            </property>
+            <property name="value">
+             <number>600</number>
             </property>
            </widget>
           </item>
@@ -219,6 +228,13 @@
             </property>
             <property name="checked">
              <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3" colspan="2">
+           <widget class="QLineEdit" name="s340_name">
+            <property name="text">
+             <string>AII</string>
             </property>
            </widget>
           </item>
@@ -248,36 +264,10 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="2">
-           <widget class="QSpinBox" name="s400fu_spinbox">
-            <property name="minimum">
-             <number>200</number>
-            </property>
-            <property name="maximum">
-             <number>700</number>
-            </property>
-            <property name="singleStep">
-             <number>10</number>
-            </property>
-            <property name="value">
-             <number>600</number>
-            </property>
-           </widget>
-          </item>
           <item row="2" column="3" colspan="2">
            <widget class="QLineEdit" name="s400_name">
             <property name="text">
              <string>AIII</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QCheckBox" name="s420_checkbox">
-            <property name="text">
-             <string>S420</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -304,6 +294,16 @@
             </property>
            </widget>
           </item>
+          <item row="3" column="0">
+           <widget class="QCheckBox" name="s420_checkbox">
+            <property name="text">
+             <string>S420</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
           <item row="1" column="1">
            <widget class="QSpinBox" name="s340fy_spinbox">
             <property name="minimum">
@@ -317,6 +317,13 @@
             </property>
             <property name="value">
              <number>340</number>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>fu (MPa)</string>
             </property>
            </widget>
           </item>
@@ -343,17 +350,59 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="2">
-           <widget class="QLabel" name="label_4">
-            <property name="text">
-             <string>fu (MPa)</string>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="3" colspan="2">
            <widget class="QLabel" name="label_5">
             <property name="text">
              <string>Name</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QCheckBox" name="s500_checkbox">
+            <property name="text">
+             <string>S500</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QSpinBox" name="s500fy_spinbox">
+            <property name="minimum">
+             <number>200</number>
+            </property>
+            <property name="maximum">
+             <number>700</number>
+            </property>
+            <property name="singleStep">
+             <number>10</number>
+            </property>
+            <property name="value">
+             <number>500</number>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="2">
+           <widget class="QSpinBox" name="s500fu_spinbox">
+            <property name="minimum">
+             <number>200</number>
+            </property>
+            <property name="maximum">
+             <number>700</number>
+            </property>
+            <property name="singleStep">
+             <number>10</number>
+            </property>
+            <property name="value">
+             <number>650</number>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="3" colspan="2">
+           <widget class="QLineEdit" name="s500_name">
+            <property name="text">
+             <string>AIV</string>
             </property>
            </widget>
           </item>
