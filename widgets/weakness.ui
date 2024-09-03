@@ -6,20 +6,32 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>471</width>
-    <height>372</height>
+    <width>303</width>
+    <height>427</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Strength in Weakened Structure</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QLabel" name="label">
+       <property name="maximumSize">
+        <size>
+         <width>40</width>
+         <height>40</height>
+        </size>
+       </property>
        <property name="text">
-        <string>Selected Beam</string>
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap resource="../civiltools.qrc">:/civiltools/images/beams.svg</pixmap>
+       </property>
+       <property name="scaledContents">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -47,6 +59,12 @@
        <property name="icon">
         <iconset resource="../civiltools.qrc">
          <normaloff>:/civiltools/images/refresh.svg</normaloff>:/civiltools/images/refresh.svg</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>40</width>
+         <height>40</height>
+        </size>
        </property>
       </widget>
      </item>
@@ -137,21 +155,51 @@
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="run">
-     <property name="text">
-      <string>Run</string>
-     </property>
-     <property name="icon">
-      <iconset resource="../civiltools.qrc">
-       <normaloff>:/civiltools/images/run.svg</normaloff>:/civiltools/images/run.svg</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>60</width>
-       <height>60</height>
-      </size>
-     </property>
-    </widget>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QGroupBox" name="groupBox">
+       <property name="title">
+        <string>Earthquake</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QRadioButton" name="static_radiobutton">
+          <property name="text">
+           <string>Static</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="dynamic_analysis_groupbox">
+          <property name="text">
+           <string>Dynamic</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="run">
+       <property name="text">
+        <string>Run</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../civiltools.qrc">
+         <normaloff>:/civiltools/images/run.svg</normaloff>:/civiltools/images/run.svg</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>90</width>
+         <height>90</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <spacer name="verticalSpacer">

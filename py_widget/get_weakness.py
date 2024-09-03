@@ -10,24 +10,30 @@ import civiltools_rc
 
 civiltools_path = Path(__file__).absolute().parent.parent
 
+from exporter import civiltools_config
+
 
 class Form(QtWidgets.QWidget):
-    def __init__(self, etabs_obj):
+    def __init__(self, etabs_obj, d):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'weakness.ui'))
-        # self.setupUi(self)
-        # self.form = self
         self.etabs = etabs_obj
+        self.d = d
         self.directory = str(Path(self.etabs.SapModel.GetModelFilename()).parent)
         self.fill_selected_beams()
         self.set_filenames()
         self.create_connections()
+        self.load_config(d)
+
+    def load_config(self, d):
+        civiltools_config.load(self.etabs, self.form, d)
 
     def accept(self):
         import table_model
         if not self.etabs.success:
             QMessageBox.warning(None, 'ETABS', 'Please open etabs file!')
             return False
+        dynamic = self.form.dynamic_analysis_groupbox.isChecked()
         use_weakness_file = self.form.file_groupbox.isChecked()
         dir_ = 'x' if self.form.x_radio_button.isChecked() else 'y'
         beam_numbers = self.form.beams_list.count()
@@ -42,10 +48,22 @@ class Form(QtWidgets.QWidget):
         if use_weakness_file:
             weakness_filepath = Path(self.form.weakness_file.text())
             if weakness_filepath.exists():
-                ret = self.etabs.frame_obj.get_beams_columns_weakness_structure(name=name, weakness_filename=weakness_filepath, dir_=dir_)
+                ret = self.etabs.frame_obj.get_beams_columns_weakness_structure(
+                    name=name,
+                    weakness_filename=weakness_filepath,
+                    dir_=dir_,
+                    dynamic=dynamic,
+                    d = self.d,
+                    )
         else:
             weakness_filename = f'weakness_{dir_}.EDB'
-            ret = self.etabs.frame_obj.get_beams_columns_weakness_structure(name=name, weakness_filename=weakness_filename, dir_=dir_)
+            ret = self.etabs.frame_obj.get_beams_columns_weakness_structure(
+                name=name,
+                weakness_filename=weakness_filename,
+                dir_=dir_,
+                dynamic=dynamic,
+                d = self.d,
+                )
         if not ret:
             err = "Please select one beam in ETABS model!"
             QMessageBox.critical(self, "Error", str(err))
