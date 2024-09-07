@@ -29,7 +29,6 @@ class Form(QtWidgets.QWidget):
         civiltools_config.load(self.etabs, self.form, d)
 
     def accept(self):
-        import table_model
         if not self.etabs.success:
             QMessageBox.warning(None, 'ETABS', 'Please open etabs file!')
             return False
@@ -69,6 +68,7 @@ class Form(QtWidgets.QWidget):
             QMessageBox.critical(self, "Error", str(err))
             return None
         df = pd.DataFrame(ret[0], columns=ret[1])
+        import table_model
         table_model.show_results(df, table_model.ColumnsRatioModel,
         etabs=self.etabs,
         json_file_name=f"ColumnsRatio{dir_.upper()}")
@@ -93,6 +93,9 @@ class Form(QtWidgets.QWidget):
         if len(beams) > 0:
             self.form.beams_list.addItems(beams)
             self.form.beams_list.setCurrentRow(len(beams) - 1)
+        name = self.form.beams_list.currentItem().text()
+        dir_ = self.etabs.frame_obj.get_frame_direction(name)
+        exec(f"self.form.{dir_}_radio_button.setChecked(True)")
 
     def set_filenames(self):
         f = Path(self.etabs.SapModel.GetModelFilename())
