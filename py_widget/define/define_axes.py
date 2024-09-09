@@ -349,6 +349,8 @@ class Form(QtWidgets.QWidget):
                     level = self.etabs.SapModel.Story.GetElevation(level_name)[0]
                     next_level = self.etabs.SapModel.Story.GetElevation(next_level_name)[0]
                     name = self.etabs.SapModel.FrameObj.AddByCoord(x, y, level, x, y, next_level)[0]
+                    if name is None:
+                        continue
                     self.etabs.SapModel.FrameObj.SetLocalAxes(name, rot)
                     insertion_point = self.etabs.SapModel.FrameObj.GetInsertionPoint(name)
                     insertion_point[0] = 10
