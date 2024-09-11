@@ -686,7 +686,9 @@ class ResultWidget(QtWidgets.QDialog):
         self.vbox.addLayout(hbox)
         self.result_table_view = QtWidgets.QTableView()
         self.result_table_view.setSortingEnabled(True)
-        self.vbox.addWidget(self.result_table_view)
+        self.table_layout = QtWidgets.QHBoxLayout()
+        self.table_layout.addWidget(self.result_table_view)
+        self.vbox.addLayout(self.table_layout)
         self.setLayout(self.vbox)
         self.function = function
         self.data = data
@@ -914,7 +916,24 @@ class ControlColumnResultWidget(ResultWidget):
                 kwargs: Union[None, dict]=None,
             ):
         super(ControlColumnResultWidget, self).__init__(data, model, function, parent, kwargs)
+        self.result_table_view.setSortingEnabled(False)
+        self.add_legend()
         # self.result_table_view.setItemDelegate(ColumnsControlDelegate(self))
+    
+    def add_legend(self):
+        from qt_models.columns_control_models import CompareTwoColumnsColorEnum
+        from prop_frame import CompareTwoColumnsEnum
+        vgrid = QtWidgets.QVBoxLayout()
+        for color_enum in CompareTwoColumnsColorEnum:
+            text = f"{CompareTwoColumnsEnum(color_enum.value).name}"
+            texts = text.split("_")
+            text = " ".join([t.capitalize() for t in texts])
+            label = QtWidgets.QLabel(text)
+            label.setStyleSheet(f"background-color: {color_enum.name};")
+            label.setAlignment(Qt.AlignCenter)
+            vgrid.insertWidget(color_enum.value, label)
+        self.table_layout.addLayout(vgrid)
+
 
     def row_clicked(self, index):
         row, col = self.get_current_row_col(index)
