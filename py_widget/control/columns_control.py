@@ -24,6 +24,7 @@ class Form(QtWidgets.QWidget):
         # self.form.structure_type_combobox.currentIndexChanged.connect(self.set_open_main_file)
 
     def check(self):
+        self.etabs.set_current_unit('kgf', 'cm')
         columns_type_sections_df, columns_type_names_df = self.etabs.frame_obj.get_columns_type_sections(dataframe=True)
         column_names = self.etabs.frame_obj.concrete_section_names('Column')
         section_areas = self.etabs.frame_obj.get_section_area(column_names)

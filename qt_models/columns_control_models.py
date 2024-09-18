@@ -13,6 +13,7 @@ from table_model import PandasModel
 
 from prop_frame import CompareTwoColumnsEnum
 
+
 civiltools_path = Path(__file__).absolute().parent
 
 
@@ -25,6 +26,7 @@ class CompareTwoColumnsColorEnum(enum.Enum):
     magenta = CompareTwoColumnsEnum.local_axes.value
     firebrick = CompareTwoColumnsEnum.section_dimension.value
     springgreen = CompareTwoColumnsEnum.rebar_number.value
+    yellow = CompareTwoColumnsEnum.rebar_slop.value
     lightskyblue = CompareTwoColumnsEnum.OK.value
     white = CompareTwoColumnsEnum.not_checked.value
     
