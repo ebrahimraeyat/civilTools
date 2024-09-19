@@ -86,7 +86,7 @@ class Form(QtWidgets.QWidget):
                 fus = (self.form.s340fu_spinbox, self.form.s400fu_spinbox, self.form.s420fu_spinbox, self.form.s500fu_spinbox)
                 names = (self.form.s340_name, self.form.s400_name, self.form.s420_name, self.form.s500_name)
                 for i, checkbox in enumerate(checkboxes):
-                    if checkbox.isChecked:
+                    if checkbox.isChecked():
                         fy = fys[i].value()
                         fu = fus[i].value()
                         name = names[i].text()
