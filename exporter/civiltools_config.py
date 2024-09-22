@@ -321,6 +321,7 @@ def load(
 	from PySide2.QtCore import Qt
 	fill_cities(widget)
 	fill_height_and_no_of_stories(etabs, widget)
+	fill_stories(etabs, widget)
 	fill_top_bot_stories(etabs, widget)
 	keys = d.keys()
 	# Static Seismic combobox
@@ -744,6 +745,18 @@ def fill_cities(widget):
 	if hasattr(widget, 'ostan'):
 		ostans = ostanha.ostans.keys()
 		widget.ostan.addItems(ostans)
+
+def fill_stories(etabs, widget):
+	if hasattr(widget, "stories"):
+		stories = etabs.SapModel.Story.GetNameList()[1]
+		widget.stories.addItems(stories)
+		select_all_stories(widget)
+
+def select_all_stories(widget):
+	if hasattr(widget, "stories"):
+		for i in range(widget.stories.count()):
+			item = widget.stories.item(i)
+			item.setSelected(True)
 
 def fill_top_bot_stories(etabs, widget):
 	stories = etabs.SapModel.Story.GetStories()[1]

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>713</width>
-    <height>668</height>
+    <height>591</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -69,6 +69,10 @@
             <widget class="QPushButton" name="static_apply">
              <property name="text">
               <string>Apply</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../civiltools.qrc">
+               <normaloff>:/civiltools/images/etabs.png</normaloff>:/civiltools/images/etabs.png</iconset>
              </property>
             </widget>
            </item>
@@ -162,6 +166,10 @@
              <property name="text">
               <string>Apply</string>
              </property>
+             <property name="icon">
+              <iconset resource="../civiltools.qrc">
+               <normaloff>:/civiltools/images/etabs.png</normaloff>:/civiltools/images/etabs.png</iconset>
+             </property>
             </widget>
            </item>
            <item>
@@ -212,8 +220,17 @@
      </widget>
     </widget>
    </item>
+   <item>
+    <widget class="QListWidget" name="stories">
+     <property name="selectionMode">
+      <enum>QAbstractItemView::MultiSelection</enum>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../civiltools.qrc"/>
+ </resources>
  <connections/>
 </ui>

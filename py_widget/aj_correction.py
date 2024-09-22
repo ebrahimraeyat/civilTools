@@ -27,8 +27,8 @@ class Form(QtWidgets.QWidget):
         story_length = self.etabs.story.get_stories_length()
         self.data = [[key, value[0], value[1]] for key, value in story_length.items()]
         self.headers = ('story', 'x (Cm)', 'y (Cm)')
-        self.form.model = StoryLengthModel(self.data, self.headers)
-        self.form.story_xy_length.setModel(self.form.model)
+        self.form.story_model = StoryLengthModel(self.data, self.headers)
+        self.form.story_xy_length.setModel(self.form.story_model)
         # self.form.story_xy_length.setItemDelegate(StoryLengthDelegate(self))
         df = self.etabs.get_magnification_coeff_aj()
         self.static_df = self.etabs.get_static_magnification_coeff_aj(df)
@@ -51,7 +51,7 @@ class Form(QtWidgets.QWidget):
         self.form.static_apply.clicked.connect(self.apply_static_aj)
         self.form.dynamic_apply.clicked.connect(self.apply_dynamic_aj)
         
-        # self.form.model.dataChanged.connect(self.story_length_changed)
+        # self.form.story_model.dataChanged.connect(self.story_length_changed)
 
     def load_config(self, d):
         civiltools_config.load(self.etabs, self.form, d)
@@ -63,7 +63,8 @@ class Form(QtWidgets.QWidget):
             self.form.x_loadcase_list,
             self.form.y_loadcase_list,
         ))
-        filt = df['OutputCase'].isin(load_patterns)
+        stories = [item.text() for item in self.form.stories.selectedItems()]
+        filt = (df['OutputCase'].isin(load_patterns)) & (df['Story'].isin(stories))
         df = df.loc[filt]
         self.etabs.apply_aj_df(df)
         msg = "Successfully written to Etabs."
@@ -77,7 +78,9 @@ class Form(QtWidgets.QWidget):
             self.form.y_dynamic_loadcase_list,
             self.form.angular_loadcase_list,
         ))
-        filt = df['OutputCase'].isin(loadcases)
+        stories = [item.text() for item in self.form.stories.selectedItems()]
+        filt = (df['OutputCase'].isin(loadcases)) & (df['Story'].isin(stories))
+        # filt = df['OutputCase'].isin(loadcases)
         df = df.loc[filt]
         self.etabs.database.write_daynamic_aj_user_coefficient(df)
         msg = "Successfully written to Etabs."
@@ -86,8 +89,8 @@ class Form(QtWidgets.QWidget):
     # def story_length_changed(self, index):
     #     row = index.row()
     #     col = index.column()
-    #     value = self.form.model.df.iat[row, col]
-    #     story = self.form.model.df.iat[row, 0]
+    #     value = self.form.story_model.df.iat[row, col]
+    #     story = self.form.story_model.df.iat[row, 0]
     #     if col == 1:
     #         dir_ = 'Y'
     #     elif col == 2:
