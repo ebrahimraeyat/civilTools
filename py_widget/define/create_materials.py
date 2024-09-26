@@ -16,12 +16,14 @@ class Form(QtWidgets.QWidget):
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'define' / 'create_materials.ui'))
         self.etabs = etabs_model
         self.create_connections()
+        self.set_ec_label()
 
     def create_connections(self):
         self.form.create_pushbutton.clicked.connect(self.create_materials)
         self.form.ec1.clicked.connect(self.ec_clicked)
         self.form.ec2.clicked.connect(self.ec_clicked)
         self.form.fc_spinbox.valueChanged.connect(self.set_fc_name)
+        self.form.wc.valueChanged.connect(self.set_ec_label)
         self.form.standard_rebars_groupbox.clicked.connect(self.rebar_group_clicked)
         self.form.other_rebars_groupbox.clicked.connect(self.rebar_group_clicked)
         self.form.s340_checkbox.clicked.connect(self.standard_rebar_clicked)
@@ -46,6 +48,7 @@ class Form(QtWidgets.QWidget):
 
     def set_fc_name(self, value):
         self.form.fc_name.setText(f"C{value}")
+        self.set_ec_label()
     
     def ec_clicked(self, check):
         sender = self.sender()
@@ -53,6 +56,17 @@ class Form(QtWidgets.QWidget):
             self.form.wc.setEnabled(check)
         elif sender == self.form.ec2:
             self.form.wc.setEnabled(not check)
+        self.set_ec_label()
+
+    def set_ec_label(self):
+        if self.form.ec1.isChecked():
+            weight_for_calculate_ec = self.form.wc.value()
+            par = 0.043 * weight_for_calculate_ec ** 1.5
+        else:
+            par = 4700
+        fc = self.form.fc_spinbox.value()
+        ec = par * fc ** 0.5
+        self.form.ec_label.setText(f"Ec = {ec:.0f} MPa")
 
     def create_materials(self):
         if self.etabs.SapModel.GetModelIsLocked():
