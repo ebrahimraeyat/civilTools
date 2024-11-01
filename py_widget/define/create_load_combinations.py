@@ -123,11 +123,16 @@ class Form(QtWidgets.QWidget):
             n,
             )
         numbers = set()
+        etabs_load_combinations = self.etabs.load_combinations.get_load_combination_names()
+        removed_combos = []
         for i in range(0, len(self.data), 4):
             progressbar.next(True)
             comb = self.data[i: i+4]
             name = comb[0]
             if name in selected_combos:
+                if name in etabs_load_combinations and name not in removed_combos:
+                    self.etabs.load_combinations.delete_load_combinations([name])
+                    removed_combos.append(name)
                 self.etabs.SapModel.RespCombo.add(name, 0)
                 self.etabs.SapModel.RespCombo.SetCaseList(
                     name,
