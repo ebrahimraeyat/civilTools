@@ -27,6 +27,7 @@ class Form(QtWidgets.QWidget):
         self.angular_model = None
         self.create_connections()
         self.seismic_load_patterns = self.fill_load_cases()
+        self.form.dynamic_analysis_groupbox.setChecked(False)
         # self.fill_angular_fields()
         self.load_config()
 

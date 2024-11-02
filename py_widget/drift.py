@@ -19,6 +19,7 @@ class Form(QtWidgets.QWidget):
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / "widgets" / "drift.ui"))
         self.etabs = etabs_obj
         self.dynamic_tab_clicked = False
+        self.d = d
         self.create_connections()
         self.load_config(d)
 
@@ -57,12 +58,14 @@ class Form(QtWidgets.QWidget):
 
     def accept(self):
         create_t_file = self.form.create_t_file_box.isChecked()
-        modals = self.etabs.load_cases.get_loadcase_withtype(3)
-        if create_t_file and len(modals) == 0:
-            message = 'You must define a Modal Case in your model.'
-            QMessageBox.warning(None,
-                                'Modal LoadCase',
-                                message)
+        modal = self.d.get("modal_combobox", None)
+        if modal is None:
+            modals = self.etabs.load_cases.get_loadcase_withtype(3)
+            if create_t_file and len(modals) == 0:
+                message = 'You must define a Modal Case in your model.'
+                QMessageBox.warning(None,
+                                    'Modal LoadCase',
+                                    message)
             return False
         d = civiltools_config.get_settings_from_etabs(self.etabs)
         tab = self.form.tab_widget.currentIndex()

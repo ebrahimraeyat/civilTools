@@ -1513,7 +1513,7 @@
                <item row="0" column="1">
                 <widget class="QComboBox" name="modal_combobox">
                  <property name="editable">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -1654,6 +1654,9 @@
         <layout class="QVBoxLayout" name="verticalLayout_13">
          <item>
           <widget class="QGroupBox" name="dynamic_analysis_groupbox">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
            <property name="title">
             <string>Dynamic Analysis</string>
            </property>
