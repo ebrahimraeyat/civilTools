@@ -299,7 +299,7 @@ def get_cd(etabs):
 
 def get_settings_from_etabs(etabs):
 	d = {}
-	info = etabs.SapModel.GetProjectInfo()
+	info = etabs.SapModel.GetProjectInfo(0)
 	json_str = info[2][0]
 	try:
 		company_name = json.loads(json_str)
