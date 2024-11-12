@@ -139,6 +139,7 @@ class Form(QtWidgets.QWidget):
         if create_t_file and structure_type == "steel":
             print(f"Opening file {main_file}\n")
             self.etabs.SapModel.File.OpenFile(str(main_file))
+            civiltools_config.save_analytical_periods(self.etabs, tx, ty)
             data = self.get_data_for_apply_earthquakes(building, d)
             self.etabs.apply_cfactors_to_edb(data, d=d)
         if ret is None:
