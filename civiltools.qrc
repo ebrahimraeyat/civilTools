@@ -52,6 +52,9 @@
     <file>images/cancel.svg</file>
     <file>images/Register.png</file>
   </qresource>
+  <qresource prefix="import_export">
+    <file>images/dwg_to_pdf.svg</file>
+  </qresource>
   <qresource prefix="general">
     <file>images/general/Telegram_logo.svg</file>
     <file>images/general/Instagram_logo.svg</file>
