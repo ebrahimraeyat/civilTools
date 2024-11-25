@@ -11,11 +11,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Import DXF Model</string>
+   <string>DWG To PDF</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normaloff>:/safe/Resources/icons/import_dxf.svg</normaloff>:/safe/Resources/icons/import_dxf.svg</iconset>
+   <iconset resource="../../civiltools.qrc">
+    <normaloff>:/import_export/images/dwg_to_pdf.svg</normaloff>:/import_export/images/dwg_to_pdf.svg</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
