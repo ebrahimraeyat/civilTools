@@ -55,10 +55,12 @@ class Form:
             prefer_dir=pref,
             remove_pdfs=remove_pdf,
             )
+        if filename is None:
+            QMessageBox.warning(None, 'Selection', f'Please select some blocks in Autocad File.')
+
         from civiltools_python_functions import open_file
         open_file(filename)
         # else:
-        # QMessageBox.information(None, 'Successful', f'Pdf file {filename} Created.')
 
     def getStandardButtons(self):
         return 0

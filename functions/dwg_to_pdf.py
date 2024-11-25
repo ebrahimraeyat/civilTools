@@ -164,12 +164,10 @@ def export_dwg_to_pdf(
 
     # Check if any objects were selected
     if selected_objects:
-        # Filter for the specific block name "k"
-        # specific_block_name = "k"
         blocks_id = []
 
         for obj in selected_objects:
-            if obj.ObjectName == "AcDbBlockReference": # and obj.Name == specific_block_name:
+            if hasattr(obj, "ObjectName") and obj.ObjectName == "AcDbBlockReference": # and obj.Name == specific_block_name:
                 blocks_id.append(obj.ObjectID)
     else:
         return None
