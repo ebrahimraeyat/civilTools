@@ -25,14 +25,8 @@ class CiviltoosCreatePdfFromAutocad:
 
     def Activated(self):
         import find_etabs
-        etabs, filename = find_etabs.find_etabs(run=False, backup=False)
-        if (
-            etabs is None or
-            filename is None
-            ):
-            return
         from py_widget.import_export import export_dwg_to_pdf
-        win = export_dwg_to_pdf.Form(etabs)
+        win = export_dwg_to_pdf.Form()
         find_etabs.show_win(win, in_mdi=False)
 
     def IsActive(self):

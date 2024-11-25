@@ -9,11 +9,9 @@ civiltools_path = Path(__file__).parent.parent.parent
 
 
 class Form:
-
-    def __init__(self, etabs_model):
+    
+    def __init__(self):
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'import_export' / 'export_dwg_to_pdf.ui'))
-        self.etabs = etabs_model
-        # self.fill_filename()
         self.create_connections()
 
     # def fill_filename(self):
@@ -56,11 +54,12 @@ class Form:
             remove_pdfs=remove_pdf,
             )
         if filename is None:
-            QMessageBox.warning(None, 'Selection', f'Please select some blocks in Autocad File.')
+            QMessageBox.warning(None, 'Selection', 'Please select some blocks in Autocad File.')
+            return
 
         from civiltools_python_functions import open_file
         open_file(filename)
-        # else:
+
 
     def getStandardButtons(self):
         return 0

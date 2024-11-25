@@ -203,6 +203,7 @@ def export_dwg_to_pdf(
 
     if remove_pdfs:
         for pdf_file in pdf_files:
+            pdf_file = str(Path(dwg_prefix) / pdf_file)
             if os.path.isfile(pdf_file):
                 os.remove(pdf_file)
     return pdf_name
