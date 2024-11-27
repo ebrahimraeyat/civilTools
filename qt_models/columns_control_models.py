@@ -1,5 +1,8 @@
 from pathlib import Path
 import enum
+import math
+
+import matplotlib.pyplot as plt
 
 from PySide2.QtCore import (
     QAbstractTableModel,
@@ -12,6 +15,7 @@ from PySide2.QtWidgets import QComboBox, QItemDelegate
 from table_model import PandasModel
 
 from prop_frame import CompareTwoColumnsEnum
+from python_functions import rectangle_vertexes, rebar_centers
 
 
 civiltools_path = Path(__file__).absolute().parent
@@ -136,9 +140,102 @@ class ColumnsControlDelegate(QItemDelegate):
             name = columns_type_names_df.iloc[row, col]
             etabs.SapModel.FrameObj.SetSection(name, selected_section)
             return True
+        
+    def editorEvent(self, event, model, option, index):
+        # Open the dialog when a cell is clicked
+        if event.type() == event.MouseButtonRelease and event.button() == Qt.RightButton:
+            self.draw_sections(index)
+            return True
+        # if event.type() == event.MouseButtonRelease and event.button() == Qt.LeftButton:
+        #     if index.isValid():
+        #         editor = self.createEditor(None, None, index)
+        #         self.setEditorData(editor, index)
+        #         editor.showPopup()
+        #         # self.createEditor(option.widget, option, index)
+        #         return True
+        return super().editorEvent(event, model, option, index)
+
+    def draw_sections(self, index):
+        row = index.row()
+        col = index.column()
+        section_name = index.model().data(index)
+        below_index = index.model().index(row + 1, col)
+        if row == index.model().rowCount() - 1:
+            below_section_name = None
+        else:
+            below_section_name = index.model().data(below_index)
+        if below_section_name == 'None' or section_name == 'None':
+            return
+        print(f'{below_section_name=}')
+        etabs = index.model().sourceModel().etabs
+        etabs.set_current_unit("kgf", "cm")
+        fig, axes = plt.subplots(2, 1)
+        _, mat, height, width, *args = etabs.SapModel.PropFrame.GetRectangle(section_name)
+        ret = etabs.SapModel.propframe.GetRebarColumn_1(section_name)
+        cover = ret[4]
+        N = ret[6]
+        M = ret[7]
+        lon_diameter = math.sqrt(ret[15] * 4 / math.pi)
+        corner_diameter = math.sqrt(ret[16] * 4 / math.pi)
+        print(f"{lon_diameter=}, {corner_diameter=}, {ret[15]}")
+        draw_concrete_section(width, height, N, M, corner_diameter, lon_diameter, 1, cover, ax=axes[0])
+        # Draw Below Section
+        _, mat, height, width, *args = etabs.SapModel.PropFrame.GetRectangle(below_section_name)
+        ret = etabs.SapModel.propframe.GetRebarColumn_1(below_section_name)
+        cover = ret[4]
+        N = ret[6]
+        M = ret[7]
+        lon_diameter = math.sqrt(ret[15] * 4 / math.pi)
+        corner_diameter = math.sqrt(ret[16] * 4 / math.pi)
+        draw_concrete_section(width, height, N, M, corner_diameter, lon_diameter, 1, cover, ax=axes[1])
+        plt.show()
 
     def sizeHint(self, option, index):
         fm = option.fontMetrics
         return QSize(fm.width("2IPE14FPL200X10WP"), fm.height())
 
+
+def draw_concrete_section(
+        width: float,
+        height: float,
+        N: int,
+        M: int,
+        corner_diameter: float,
+        longitudinal_diameter: float,
+        tie_diameter: int = 10,
+        cover: int = 40,
+        center=(0, 0),
+        ax=None,
+        ):
+    # Define the corners of the outer rectangle (concrete section)
+    outer_rectangle = rectangle_vertexes(width, height, center)
+    inner_rectangle = rectangle_vertexes(width - 2 * cover - tie_diameter, height - 2 * cover - tie_diameter, center)
+
+    # Plot the outer (concrete) rectangle
+    ax.plot(*zip(*outer_rectangle), color='black', linewidth=2)  # Concrete section
+    ax.plot(*zip(*inner_rectangle), color='black', linewidth=1)  # Concrete section
+
+    corners, longitudinals = rebar_centers(
+        width,
+        height,
+        N,
+        M,
+        corner_diameter,
+        longitudinal_diameter,
+        tie_diameter,
+        cover,
+        center,
+        )
+    # Draw corner rebars (large dots)
+    for rebar in corners:
+        ax.plot(rebar[0], rebar[1], 'ro', markersize=corner_diameter * 10 / 2)  # Corner rebars
+    for rebar in longitudinals:
+        ax.plot(rebar[0], rebar[1], 'bo', markersize=longitudinal_diameter * 10 / 2)  # Corner rebars
+
+
+    # Set limits
+    ax.set_xlim(-1 - width / 2, width / 2 + 1)
+    ax.set_ylim(-1 - height / 2, height / 2 + 1)
+    ax.set_aspect('equal')
+    ax.set_axis_off()
 
