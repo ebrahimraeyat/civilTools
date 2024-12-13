@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>398</width>
-    <height>259</height>
+    <width>357</width>
+    <height>283</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,78 +19,162 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QFormLayout" name="formLayout">
-     <item row="0" column="0">
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Horizontal</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QComboBox" name="horizontal_combobox">
-       <item>
-        <property name="text">
-         <string>left_to_right</string>
+    <widget class="QGroupBox" name="layout_groupbox">
+     <property name="title">
+      <string>Layout</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="3" column="0" colspan="2">
+       <widget class="Line" name="line">
+        <property name="frameShadow">
+         <enum>QFrame::Plain</enum>
         </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>right_to_left</string>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
         </property>
-       </item>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>Vertical</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QComboBox" name="vertical_combxbox">
-       <item>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QRadioButton" name="left_up_horizontal">
         <property name="text">
-         <string>top_to_bottom</string>
+         <string/>
         </property>
-       </item>
-       <item>
+        <property name="icon">
+         <iconset resource="../../civiltools.qrc">
+          <normaloff>:/general/images/left-up_horizental.svg</normaloff>:/general/images/left-up_horizental.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>30</width>
+          <height>20</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QRadioButton" name="right_down_horizontal">
         <property name="text">
-         <string>bottom_to_top</string>
+         <string/>
         </property>
-       </item>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QLabel" name="label_4">
-       <property name="text">
-        <string>Prefer Dir</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QRadioButton" name="vertical_radiobutton">
-       <property name="text">
-        <string>Vertical</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QRadioButton" name="Horizontal_radioutton">
-       <property name="text">
-        <string>Horizontal</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+        <property name="icon">
+         <iconset resource="../../civiltools.qrc">
+          <normaloff>:/general/images/right-down_horizental.svg</normaloff>:/general/images/right-down_horizental.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>30</width>
+          <height>20</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QRadioButton" name="left_down_horizontal">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../civiltools.qrc">
+          <normaloff>:/general/images/left-down_horizental.svg</normaloff>:/general/images/left-down_horizental.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>30</width>
+          <height>20</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QRadioButton" name="left_up_vertical">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../civiltools.qrc">
+          <normaloff>:/general/images/left-up_vertical.svg</normaloff>:/general/images/left-up_vertical.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>30</width>
+          <height>20</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QRadioButton" name="right_down_vertical">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../civiltools.qrc">
+          <normaloff>:/general/images/right-bottom_vertical.svg</normaloff>:/general/images/right-bottom_vertical.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>30</width>
+          <height>20</height>
+         </size>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QRadioButton" name="right_up_vertical">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../civiltools.qrc">
+          <normaloff>:/general/images/right-up_vertical.svg</normaloff>:/general/images/right-up_vertical.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>30</width>
+          <height>20</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QRadioButton" name="left_down_vertical">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../civiltools.qrc">
+          <normaloff>:/general/images/left-down_vertical.svg</normaloff>:/general/images/left-down_vertical.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>30</width>
+          <height>20</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QRadioButton" name="right_up_horizontal">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../civiltools.qrc">
+          <normaloff>:/general/images/right-up_horizental.svg</normaloff>:/general/images/right-up_horizental.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>30</width>
+          <height>20</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </item>
    <item>
     <widget class="QCheckBox" name="remove_pdf_checkbox">

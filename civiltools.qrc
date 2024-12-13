@@ -56,6 +56,18 @@
     <file>images/dwg_to_pdf.svg</file>
   </qresource>
   <qresource prefix="general">
+    <file>images/left-up_horizental.svg</file>
+    <file>images/right-up_horizental.svg</file>
+    <file>images/right-down_horizental.svg</file>
+    <file>images/left-down_horizental.svg</file>
+    <file>images/left-down_vertical.svg</file>
+    <file>images/left-up_vertical.svg</file>
+    <file>images/right-up_vertical.svg</file>
+    <file>images/left_arrow.svg</file>
+    <file>images/right-arrow.svg</file>
+    <file>images/up_arrow.svg</file>
+    <file>images/down_arrow.svg</file>
+    <file>images/right-bottom_vertical.svg</file>
     <file>images/general/Telegram_logo.svg</file>
     <file>images/general/Instagram_logo.svg</file>
     <file>images/general/Yahoo_Mail_icon.png</file>

@@ -12,8 +12,11 @@ class Form:
     
     def __init__(self):
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'import_export' / 'export_dwg_to_pdf.ui'))
+        # self.fill_plot_styles()
         self.create_connections()
 
+    # def fill_plot_styles(self):
+    #     styles = doc.ActiveLayout.GetPlotStyleTableNames()
     # def fill_filename(self):
     #     try:
     #         name = self.etabs.get_filename().with_suffix('.dxf')
@@ -25,6 +28,26 @@ class Form:
         # self.form.browse.clicked.connect(self.browse)
         self.form.select_blocks_button.clicked.connect(self.export)
         self.form.cancel_pushbutton.clicked.connect(self.reject)
+
+    def get_selected_layout(self):
+        if self.form.left_up_vertical.isChecked():
+            checked_button = self.form.left_up_vertical
+        if self.form.right_up_vertical.isChecked():
+            checked_button = self.form.right_up_vertical
+        if self.form.left_down_vertical.isChecked():
+            checked_button = self.form.left_down_vertical
+        if self.form.right_down_vertical.isChecked():
+            checked_button = self.form.right_down_vertical
+        if self.form.left_up_horizontal.isChecked():
+            checked_button = self.form.left_up_horizontal
+        if self.form.right_up_horizontal.isChecked():
+            checked_button = self.form.right_up_horizontal
+        if self.form.left_down_horizontal.isChecked():
+            checked_button = self.form.left_down_horizontal
+        if self.form.right_down_horizontal.isChecked():
+            checked_button = self.form.right_down_horizontal
+        horizontal, vertical, prefer_dir = checked_button.objectName().split("_")
+        return horizontal, vertical, prefer_dir
 
     # def browse(self):
     #     ext = '.dxf'
@@ -40,17 +63,12 @@ class Form:
 
     def export(self):
         from functions import dwg_to_pdf
-        horizontal_combobox = self.form.horizontal_combobox.currentText()
-        vertical_combobox = self.form.vertical_combxbox.currentText()
-        if self.form.vertical_radiobutton.isChecked():
-            pref = "vertical"
-        else:
-            pref = "horizontal"
+        horizontal, vertical, prefer_dir = self.get_selected_layout()
         remove_pdf = self.form.remove_pdf_checkbox.isChecked()
         filename = dwg_to_pdf.export_dwg_to_pdf(
-            horizontal_combobox,
-            vertical_combobox,
-            prefer_dir=pref,
+            horizontal,
+            vertical,
+            prefer_dir=prefer_dir,
             remove_pdfs=remove_pdf,
             )
         if filename is None:
