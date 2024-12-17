@@ -64,12 +64,14 @@ class Form:
     def export(self):
         from functions import dwg_to_pdf
         horizontal, vertical, prefer_dir = self.get_selected_layout()
+        way = self.form.way_combobox.currentText()
         remove_pdf = self.form.remove_pdf_checkbox.isChecked()
         filename = dwg_to_pdf.export_dwg_to_pdf(
             horizontal,
             vertical,
             prefer_dir=prefer_dir,
             remove_pdfs=remove_pdf,
+            way = int(way),
             )
         if filename is None:
             QMessageBox.warning(None, 'Selection', 'Please select some blocks in Autocad File.')

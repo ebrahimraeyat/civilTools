@@ -131,6 +131,7 @@ def export_dwg_to_pdf(
         vertical: str="up",
         prefer_dir: str='vertical',
         remove_pdfs: bool=True,
+        way=1,
         ):
     """Main function to automate the PDF conversion."""
     # block_name = "kadr"
@@ -170,7 +171,6 @@ def export_dwg_to_pdf(
     dwg_prefix = doc.Path
     os.chdir(dwg_prefix)
     pdf_files = []
-    way = 1
     if way == 1:
         doc.ActiveLayout.ConfigName= "DWG To PDF.pc3"  #se puede cambiar a cualquier pc3 configurado
         doc.ActiveLayout.CanonicalMediaName = "ISO_expand_A4_(297.00_x_210.00_MM)" #debe coincidir exctamente el nombre 

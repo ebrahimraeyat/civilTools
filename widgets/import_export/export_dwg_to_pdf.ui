@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>357</width>
-    <height>283</height>
+    <width>251</width>
+    <height>305</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -175,6 +175,34 @@
       </item>
      </layout>
     </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Way</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="way_combobox">
+       <property name="currentText">
+        <string>2</string>
+       </property>
+       <item>
+        <property name="text">
+         <string>1</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>2</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <widget class="QCheckBox" name="remove_pdf_checkbox">
