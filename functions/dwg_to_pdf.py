@@ -3,6 +3,12 @@ import sys
 from pathlib import Path
 import time
 
+try:
+    import win32com.client
+except ImportError:
+    package = 'pypiwin32'
+    from freecad_funcs import install_package
+    install_package(package_name=package)
 import win32com.client
 
 try:
