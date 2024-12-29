@@ -98,11 +98,25 @@ def plot_block_to_pdf(block_id, pdf_file, way=1):
 
     # First Way
     if way == 1:
+        doc.ActiveLayout.ConfigName= "DWG To PDF.pc3"  #se puede cambiar a cualquier pc3 configurado
+        doc.ActiveLayout.CanonicalMediaName = "ISO_expand_A4_(297.00_x_210.00_MM)" #debe coincidir exctamente el nombre 
         P1=SPOINT(*min_point[:-1])
         P2=SPOINT(*max_point[:-1])
         doc.ActiveLayout.SetWindowToPlot(P1,P2)
+        doc.ActiveLayout.PaperUnits = 1
+        # doc.ActiveLayout.CenterPlot = True
+        doc.Plot.QuietErrorMode = False
+        doc.ActiveLayout.UseStandardScale = False
+        doc.ActiveLayout.SetCustomScale(1, 1) #escala del dibujo
+        doc.SetVariable('BACKGROUNDPLOT', 0)
+        doc.Regen(1)
+        doc.ActiveLayout.CenterPlot = True
+        doc.ActiveLayout.PlotRotation = 0
+        doc.ActiveLayout.StyleSheet = "monochrome.ctb" #plantilla de plumillas
+        doc.ActiveLayout.PlotType = 4 #acWindow
+        doc.ActiveLayout.StandardScale = 0 #acScaleToFit
         doc.Plot.PlotToFile(pdf_file) #nombre del fichero donde se va imprimir
-        time.sleep(.1)
+        time.sleep(.2)
 
 
     # Command to plot
@@ -177,21 +191,6 @@ def export_dwg_to_pdf(
     dwg_prefix = doc.Path
     os.chdir(dwg_prefix)
     pdf_files = []
-    if way == 1:
-        doc.ActiveLayout.ConfigName= "DWG To PDF.pc3"  #se puede cambiar a cualquier pc3 configurado
-        doc.ActiveLayout.CanonicalMediaName = "ISO_expand_A4_(297.00_x_210.00_MM)" #debe coincidir exctamente el nombre 
-        doc.ActiveLayout.PaperUnits = 1
-        doc.ActiveLayout.CenterPlot = True
-        doc.Plot.QuietErrorMode = False
-        doc.ActiveLayout.UseStandardScale = False
-        doc.ActiveLayout.SetCustomScale(1, 1) #escala del dibujo
-        doc.SetVariable('BACKGROUNDPLOT', 0)
-        doc.Regen(1)
-        doc.ActiveLayout.CenterPlot = True
-        doc.ActiveLayout.PlotRotation = 0
-        doc.ActiveLayout.StyleSheet = "monochrome.ctb" #plantilla de plumillas
-        doc.ActiveLayout.PlotType = 4 #acWindow
-        doc.ActiveLayout.StandardScale = 0 #acScaleToFit
 
     for index, block_id in enumerate(sorted_block_id_boundbox, start=1):
         pdf_file = str(Path(dwg_prefix) / f"{index}.pdf")
