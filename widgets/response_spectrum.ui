@@ -214,6 +214,13 @@
                  </property>
                 </widget>
                </item>
+               <item row="1" column="1">
+                <widget class="QComboBox" name="ey_combobox">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
                <item row="0" column="1">
                 <widget class="QListWidget" name="y_dynamic_loadcase_list">
                  <property name="selectionMode">
@@ -227,8 +234,11 @@
                <item row="1" column="0">
                 <widget class="QComboBox" name="ex_combobox"/>
                </item>
-               <item row="1" column="1">
-                <widget class="QComboBox" name="ey_combobox">
+               <item row="2" column="0">
+                <widget class="QComboBox" name="ex1_combobox"/>
+               </item>
+               <item row="2" column="1">
+                <widget class="QComboBox" name="ey1_combobox">
                  <property name="enabled">
                   <bool>true</bool>
                  </property>
@@ -241,6 +251,9 @@
                <string>Drift Loadcase</string>
               </attribute>
               <layout class="QGridLayout" name="gridLayout_4">
+               <item row="1" column="0">
+                <widget class="QComboBox" name="ex_drift_combobox"/>
+               </item>
                <item row="0" column="0">
                 <widget class="QListWidget" name="x_dynamic_drift_loadcase_list">
                  <property name="selectionMode">
@@ -248,6 +261,13 @@
                  </property>
                  <property name="sortingEnabled">
                   <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QComboBox" name="ey_drift_combobox">
+                 <property name="enabled">
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -261,11 +281,11 @@
                  </property>
                 </widget>
                </item>
-               <item row="1" column="0">
-                <widget class="QComboBox" name="ex_drift_combobox"/>
+               <item row="2" column="0">
+                <widget class="QComboBox" name="ex1_drift_combobox"/>
                </item>
-               <item row="1" column="1">
-                <widget class="QComboBox" name="ey_drift_combobox">
+               <item row="2" column="1">
+                <widget class="QComboBox" name="ey1_drift_combobox">
                  <property name="enabled">
                   <bool>true</bool>
                  </property>

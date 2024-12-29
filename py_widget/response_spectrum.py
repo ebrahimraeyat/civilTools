@@ -16,6 +16,7 @@ class Form(QtWidgets.QWidget):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'response_spectrum.ui'))
         self.etabs = etabs_obj
+        self.d = d
         self.angular_model = None
         self.load_config(d)
         self.create_connections()
@@ -27,6 +28,11 @@ class Form(QtWidgets.QWidget):
 
     def load_config(self, d):
         civiltools_config.load(self.etabs, self.form, d)
+        if not d.get('activate_second_system', False):
+            self.form.ex1_combobox.setEnabled(False)
+            self.form.ey1_combobox.setEnabled(False)
+            self.form.ex1_drift_combobox.setEnabled(False)
+            self.form.ey1_drift_combobox.setEnabled(False)
 
     def reset_widget(self, checked):
         sender = self.sender()
@@ -53,10 +59,20 @@ class Form(QtWidgets.QWidget):
         if index == 0 or self.form.angular_response_spectrum_checkbox.isChecked():
             ex_name = self.form.ex_combobox.currentText()
             ey_name = self.form.ey_combobox.currentText()
+            if self.d.get('activate_second_system', False):
+                ex1_name = self.form.ex1_combobox.currentText()
+                ey1_name = self.form.ey1_combobox.currentText()
+                ex_name = [ex_name, ex1_name]
+                ey_name = [ey_name, ey1_name]
             lws = [self.form.x_dynamic_loadcase_list, self.form.y_dynamic_loadcase_list]
         elif index == 1:
             ex_name = self.form.ex_drift_combobox.currentText()
             ey_name = self.form.ey_drift_combobox.currentText()
+            if self.d.get('activate_second_system', False):
+                ex1_name = self.form.ex1_drift_combobox.currentText()
+                ey1_name = self.form.ey1_drift_combobox.currentText()
+                ex_name = [ex_name, ex1_name]
+                ey_name = [ey_name, ey1_name]
             lws = [self.form.x_dynamic_drift_loadcase_list, self.form.y_dynamic_drift_loadcase_list]
         x_scale_factor = float(self.form.x_scalefactor_combobox.currentText())
         y_scale_factor = float(self.form.y_scalefactor_combobox.currentText())
