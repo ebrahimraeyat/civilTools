@@ -33,7 +33,7 @@ class CivilDistance:
             return
         from py_widget.tools import distance_between_two_points
         win = distance_between_two_points.Form(etabs)
-        Gui.Control.showDialog(win)
+        find_etabs.show_win(win, False)
         
     def IsActive(self):
         return True

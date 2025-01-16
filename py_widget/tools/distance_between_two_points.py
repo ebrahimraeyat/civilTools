@@ -13,11 +13,16 @@ class Form(QtWidgets.QWidget):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'tools' / 'distance_between_two_points.ui'))
         self.etabs = etabs_model
-        self.fill_points()
+        self.create_connections()
+        self.calculate()
+
+    def create_connections(self):
         self.form.show_button.clicked.connect(self.show_points)
+        self.form.calculate.clicked.connect(self.calculate)
+
     
     def show_points(self):
-        if len(self.form.point_list) == 0:
+        if self.form.point_list.count() < 2:
             return
         p1 = self.form.point_list.item(0).text()
         p2 = self.form.point_list.item(1).text()
@@ -43,15 +48,18 @@ class Form(QtWidgets.QWidget):
         self.form.point_list.addItems([p1, p2])
         return True
 
-    def accept(self):
+    def calculate(self):
         ret = self.fill_points()
         if ret is None:
             return
         p1 = self.form.point_list.item(0).text()
         p2 = self.form.point_list.item(1).text()
         self.etabs.set_current_unit('N', 'm')
-        distance = self.etabs.points.get_distance_between_two_points_in_XY(p1, p2)
+        dx, dy, dz, distance = self.etabs.points.get_distance_between_two_points(p1, p2)
         self.form.dist.setValue(distance)
+        self.form.dx.setValue(dx)
+        self.form.dy.setValue(dy)
+        self.form.dz.setValue(dz)
         self.etabs.SapModel.SelectObj.ClearSelection()
         self.etabs.SapModel.View.RefreshView()
 
