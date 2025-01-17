@@ -186,7 +186,7 @@
          <item row="6" column="1">
           <widget class="QDoubleSpinBox" name="beam_mass_spinbox">
            <property name="enabled">
-            <bool>false</bool>
+            <bool>true</bool>
            </property>
            <property name="maximum">
             <double>50.000000000000000</double>
@@ -212,7 +212,7 @@
          <item row="7" column="1">
           <widget class="QDoubleSpinBox" name="beam_weight_spinbox">
            <property name="enabled">
-            <bool>false</bool>
+            <bool>true</bool>
            </property>
            <property name="maximum">
             <double>50.000000000000000</double>

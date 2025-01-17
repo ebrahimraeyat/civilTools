@@ -62,6 +62,7 @@ from gui_civiltools.control import (
     gui_check_deflection_of_beams,
     gui_check_deflection_of_slab,
     gui_columns_control,
+    gui_checklist_pdf_control,
 )
 from gui_civiltools.tools import (
     gui_discretize, 
@@ -217,6 +218,7 @@ civiltools_list = [
             "civiltools_100_30",
             "civil_earthquake_factor",
             "civilTools_columns_control",
+            "civilTools_checklist_pdf_control",
             "civiltools_create_spectral",
             "civil_create_period_file",
             "civil_show_weakness",
