@@ -150,6 +150,8 @@ def get_prop_from_widget(etabs, widget):
 		# response spectrum
 		'combination_response_spectrum_checkbox',
 		'angular_response_spectrum_checkbox',
+		# retaining wall
+		"retaining_wall_groupbox",
 		):
 		if hasattr(widget, key):
 			exec(f"new_d['{key}'] = widget.{key}.isChecked()")
@@ -501,6 +503,7 @@ def load(
 		'partition_live_combobox',
 		'mass_combobox',
 		'ev_combobox',
+		# retaining_wall
 		'hxp_combobox',
 		'hxn_combobox',
 		'hyp_combobox',
@@ -619,31 +622,46 @@ def load(
 		if hasattr(widget, "y_dynamic_loadcase_list"):
 			widget.y_dynamic_loadcase_list.setEnabled(not checked)
 	
+	# retaining_wall
+	key = 'retaining_wall_groupbox'
+	if key in keys and hasattr(widget, key):
+		checked = d.get(key, False)
+		widget.retaining_wall_groupbox.setChecked(checked)
+		if checked:
+			for w in (
+				'hxp_combobox',
+				'hxn_combobox',
+				'hyp_combobox',
+				'hyn_combobox',
+				):
+				if hasattr(widget, w):
+					exec(f"widget.{w}.setEnabled(checked)")
 	# Second system
 	key = 'activate_second_system'
 	if key in keys and hasattr(widget, key):
 		checked = d.get(key, False)
 		widget.activate_second_system.setChecked(checked)
-		for w in (
-			'ex1_combobox',
-			'ey1_combobox',
-			'exp1_combobox',
-			'eyp1_combobox',
-			'exn1_combobox',
-			'eyn1_combobox',
-			'x_system_label',
-			'y_system_label',
-			'x_treeview_1',
-			'y_treeview_1',
-			'stories_for_apply_earthquake_groupox',
-			'stories_for_height_groupox',
-			'infill_1',
-			'second_earthquake_properties',
-			'second_earthquake_properties_drifts',
-			'special_case',
-			):
-			if hasattr(widget, w):
-				exec(f"widget.{w}.setEnabled(checked)")
+		if checked:
+			for w in (
+				'ex1_combobox',
+				'ey1_combobox',
+				'exp1_combobox',
+				'eyp1_combobox',
+				'exn1_combobox',
+				'eyn1_combobox',
+				'x_system_label',
+				'y_system_label',
+				'x_treeview_1',
+				'y_treeview_1',
+				'stories_for_apply_earthquake_groupox',
+				'stories_for_height_groupox',
+				'infill_1',
+				'second_earthquake_properties',
+				'second_earthquake_properties_drifts',
+				'special_case',
+				):
+				if hasattr(widget, w):
+					exec(f"widget.{w}.setEnabled(checked)")
 		if hasattr(widget, 'top_story_for_height_checkbox') and checked:
 			widget.top_story_for_height_checkbox.setChecked(False)
 			widget.top_story_for_height_checkbox.setEnabled(False)
