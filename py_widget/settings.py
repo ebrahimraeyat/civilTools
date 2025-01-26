@@ -331,6 +331,7 @@ class Form(QtWidgets.QWidget):
         ret = self.check_dynamic_loadcases()
         if ret is None:
             return
+        self.check_gravity_loadcase()
         d = self.save_config()
         self.write_not_exists_earthquake_loads(building, d)
         self.reject()
@@ -386,6 +387,18 @@ class Form(QtWidgets.QWidget):
             self.form.risk_level.setCurrentIndex(i)
         except KeyError:
             pass
+
+    def check_gravity_loadcase(self):
+        load_patterns = self.etabs.load_patterns.get_load_patterns()
+        # Retaining Wall
+        if self.form.retaining_wall_groupbox.isChecked():
+            hxp = self.form.hxp_combobox.currentText()
+            hxn = self.form.hxn_combobox.currentText()
+            hyp = self.form.hyp_combobox.currentText()
+            hyn = self.form.hyn_combobox.currentText()
+            for h_wall in (hxp, hxn, hyp, hyn):
+                if h_wall and h_wall not in load_patterns:
+                    self.etabs.SapModel.LoadPatterns.Add(h_wall, 8)
 
     def check_inputs(self):
         building = civiltools_config.current_building_from_widget(self.form)
