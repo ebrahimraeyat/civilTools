@@ -257,6 +257,9 @@
         <property name="text">
          <string>Create T.EDB file</string>
         </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item>
@@ -275,7 +278,7 @@
    <item>
     <widget class="QGroupBox" name="structuretype_groupbox">
      <property name="enabled">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <property name="title">
       <string>Structure Type</string>
@@ -283,6 +286,9 @@
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="QRadioButton" name="concrete_radiobutton">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
         <property name="text">
          <string>Concrete</string>
         </property>
@@ -293,6 +299,9 @@
       </item>
       <item>
        <widget class="QRadioButton" name="steel_radiobutton">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
         <property name="text">
          <string>Steel</string>
         </property>
