@@ -191,7 +191,7 @@ def export_dwg_to_pdf(
     if way == 1:
         doc.Plot.QuietErrorMode = False
         doc.SetVariable('BACKGROUNDPLOT', 0)
-        doc.Regen(1)
+        # doc.Regen(1)
     for index, block_id in enumerate(sorted_block_id_boundbox, start=1):
         pdf_file = str(Path(dwg_prefix) / f"{index}.pdf")
         plot_block_to_pdf(block_id, pdf_file, way=way)
