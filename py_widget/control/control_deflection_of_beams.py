@@ -144,34 +144,43 @@ class Form(QtWidgets.QWidget):
 
     def result_table_clicked(self, beam_name):
         self.etabs.view.show_frame(beam_name)
-        units = self.etabs.get_current_unit()
-        self.etabs.set_current_unit('N', 'cm')
         self.draw_beams_columns(beam_name)
         self.check_result()
-        self.etabs.set_current_unit(*units)
+
+    def get_short_and_long_term_numbers(self):
+        ln_str = 'Ln / '
+        console_short_term = int(self.form.console_short_term_combobox.currentText().lstrip(ln_str))
+        console_long_term = int(self.form.console_long_term_combobox.currentText().lstrip(ln_str))
+        continues_short_term = int(self.form.continues_short_term_combobox.currentText().lstrip(ln_str))
+        continues_long_term = int(self.form.continues_long_term_combobox.currentText().lstrip(ln_str))
+        return console_short_term, console_long_term, continues_short_term, continues_long_term
     
     def check_result(self):
         if self.results is None:
             return
+        # units = self.etabs.get_current_unit()
+        # self.etabs.set_current_unit('N', 'cm')
+        # self.etabs.set_current_unit(*units)
         row, _ = self.result_table.get_current_row_col()
         beam_name = str(self.result_table.model.data(self.result_table.model.index(row, 0)))
         self.form.results.setText(self.results[2][row])
         # check results
         is_console = self.result_table.model.df['Console'].iloc[row]
-        ln_str = 'Ln / '
+        console_short_term, console_long_term, continues_short_term, continues_long_term = self.get_short_and_long_term_numbers()
         if is_console:
-            short_term = int(self.form.console_short_term_combobox.currentText().lstrip(ln_str))
-            long_term = int(self.form.console_long_term_combobox.currentText().lstrip(ln_str))
+            short_term = console_short_term
+            long_term = console_long_term
         else:
-            short_term = int(self.form.continues_short_term_combobox.currentText().lstrip(ln_str))
-            long_term = int(self.form.continues_long_term_combobox.currentText().lstrip(ln_str))
+            short_term = continues_short_term
+            long_term = continues_long_term
         def1 = self.results[0][row]
         def2 = self.results[1][row]
         minus_length = self.result_table.model.df['Minus Length'].iloc[row]
-        ln = self.etabs.frame_obj.get_length_of_frame(beam_name) - minus_length
+        ln = self.etabs.frame_obj.get_length_of_frame(beam_name, unit='cm') - minus_length
         text = f"Beam Name = {beam_name}, "
         text += get_deflection_check_result(def1, def2, ln, short_term, long_term)
         self.form.check_results.setText(text)
+        self.notify_view()
     
     def create_report(self):
         if self.results is None:
@@ -187,13 +196,13 @@ class Form(QtWidgets.QWidget):
             text1 = self.results[2][row]
             # check results
             is_console = self.result_table.model.df['Console'].iloc[row]
-            ln_str = 'Ln / '
+            console_short_term, console_long_term, continues_short_term, continues_long_term = self.get_short_and_long_term_numbers()
             if is_console:
-                short_term = int(self.form.console_short_term_combobox.currentText().lstrip(ln_str))
-                long_term = int(self.form.console_long_term_combobox.currentText().lstrip(ln_str))
+                short_term = console_short_term
+                long_term = console_long_term
             else:
-                short_term = int(self.form.continues_short_term_combobox.currentText().lstrip(ln_str))
-                long_term = int(self.form.continues_long_term_combobox.currentText().lstrip(ln_str))
+                short_term = continues_short_term
+                long_term = continues_long_term
             def1 = self.results[0][row]
             def2 = self.results[1][row]
             minus_length = self.result_table.model.df['Minus Length'].iloc[row]
@@ -232,10 +241,31 @@ class Form(QtWidgets.QWidget):
             lives_percentage=live_percentage,
             filename=filename,
         )
+        # Notify view of entire data change
+        self.notify_view()
         self.form.check_button.setEnabled(False)
         # self.emit_row_clicked()
         self.open_main_file()
         QMessageBox.information(None, "Complete", "Beam Deflection Check Complete.")
+    
+    def notify_view(self):
+        self.result_table.model.beginResetModel()
+        try:
+            console_short_term, console_long_term, continues_short_term, continues_long_term = self.get_short_and_long_term_numbers()
+            self.result_table.model.console_short_term = console_short_term
+            self.result_table.model.console_long_term = console_long_term
+            self.result_table.model.continues_short_term = continues_short_term
+            self.result_table.model.continues_long_term = continues_long_term
+            self.result_table.model.etabs = self.etabs
+            self.result_table.model.results = self.results
+        finally:
+            self.result_table.model.endResetModel()
+        # top_left = self.result_table.model.index(0, 0)
+        # bottom_right = self.result_table.model.index(
+        #     self.result_table.model.rowCount() - 1,
+        #     self.result_table.model.columnCount() - 1
+        # )
+        # self.result_table.model.dataChanged.emit(top_left, bottom_right)
 
     def emit_row_clicked(self):
         index = QModelIndex()

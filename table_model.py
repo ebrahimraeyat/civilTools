@@ -603,6 +603,12 @@ class BeamDeflectionTableModel(PandasModel):
         '''
         super().__init__(df, kwargs)
         self.col_function = (0,)
+        self.etabs = None
+        self.results = None
+        self.console_short_term = None
+        self.console_long_term = None
+        self.continues_short_term = None
+        self.continues_long_term = None
         
     def data(self, index, role=Qt.DisplayRole):
         if not index.isValid():
@@ -615,13 +621,50 @@ class BeamDeflectionTableModel(PandasModel):
             return self.check_states_bool.get(bool(value), 1)
         elif role == Qt.DisplayRole and self.df.dtypes[col] != bool:
             return str(self.df.iat[index.row(), index.column()])
-        elif (
-            role == Qt.BackgroundColorRole and
-            col_name in ('Width', 'Height') and
-            self.df.iloc[row, col] <= 0
+        elif role == Qt.BackgroundColorRole:
+            if self.results is not None:
+                beam_name = str(self.df.iat[row, 0])
+                is_console = self.df['Console'].iloc[row]
+                if is_console:
+                    short_term = self.console_short_term
+                    long_term = self.console_long_term
+                else:
+                    short_term = self.continues_short_term
+                    long_term = self.continues_long_term
+                def1 = self.results[0][row]
+                def2 = self.results[1][row]
+                minus_length = self.df['Minus Length'].iloc[row]
+                ln = self.etabs.frame_obj.get_length_of_frame(beam_name) - minus_length
+                short_term, long_term = self.get_deflection_check_result(def1, def2, ln, short_term, long_term)
+                if short_term and long_term:
+                    return QColor(*low)
+                elif not short_term:
+                    return QColor(*high)
+                elif not long_term:
+                    return QColor(*intermediate)
+            elif col_name in ('Width', 'Height') and self.df.iloc[row, col] <= 0:
+                return QColor('yellow')
+            
+    def get_deflection_check_result(self,
+        def1: float,
+        def2: float,
+        ln: float,
+        short_term: float=360,
+        long_term: float=480,
         ):
-            return QColor('yellow')
-        
+        allow_def1 = ln / short_term
+        allow_def2 = ln / long_term
+        if def1 <= allow_def1:
+            short_term = True
+        else:
+            short_term = False
+        # combo 2
+        if def2 <= allow_def2:
+            long_term = True
+        else:
+            long_term = False
+        return short_term, long_term
+
     def flags(self, index):
         if not index.isValid():
             return Qt.ItemIsEnabled
