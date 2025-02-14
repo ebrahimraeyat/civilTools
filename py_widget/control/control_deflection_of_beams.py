@@ -144,8 +144,11 @@ class Form(QtWidgets.QWidget):
 
     def result_table_clicked(self, beam_name):
         self.etabs.view.show_frame(beam_name)
+        units = self.etabs.get_current_unit()
+        self.etabs.set_current_unit('N', 'cm')
         self.draw_beams_columns(beam_name)
         self.check_result()
+        self.etabs.set_current_unit(*units)
 
     def get_short_and_long_term_numbers(self):
         ln_str = 'Ln / '
@@ -158,9 +161,6 @@ class Form(QtWidgets.QWidget):
     def check_result(self):
         if self.results is None:
             return
-        # units = self.etabs.get_current_unit()
-        # self.etabs.set_current_unit('N', 'cm')
-        # self.etabs.set_current_unit(*units)
         row, _ = self.result_table.get_current_row_col()
         beam_name = str(self.result_table.model.data(self.result_table.model.index(row, 0)))
         self.form.results.setText(self.results[2][row])
@@ -176,7 +176,7 @@ class Form(QtWidgets.QWidget):
         def1 = self.results[0][row]
         def2 = self.results[1][row]
         minus_length = self.result_table.model.df['Minus Length'].iloc[row]
-        ln = self.etabs.frame_obj.get_length_of_frame(beam_name, unit='cm') - minus_length
+        ln = self.etabs.frame_obj.get_length_of_frame(beam_name) - minus_length
         text = f"Beam Name = {beam_name}, "
         text += get_deflection_check_result(def1, def2, ln, short_term, long_term)
         self.form.check_results.setText(text)
