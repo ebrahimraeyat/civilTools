@@ -3,19 +3,21 @@ from typing import Union
 from pathlib import Path
 import csv
 import copy
+import math
 
 civiltools_path = Path(__file__).absolute().parent.parent
 
 from building.build import StructureSystem, Building
-# from building import spectral
-# from models import StructureModel
-# from exporter import civiltools_config
+
 from db import ostanha
+
 
 from qt_models.table_models import AngularTableModel, AngularDelegate
 from qt_models.qt_functions import set_children_enabled
 
 from python_functions import has_attribs
+
+from PySide2 import QtGui
 
 def get_prop_from_widget(etabs, widget):
 	new_d = {}
@@ -708,7 +710,29 @@ def load(
 		y_item = d.get('y_system_1', [2, 1])
 		select_treeview_item(widget.x_treeview_1, *x_item)
 		select_treeview_item(widget.y_treeview_1, *y_item)
+	check_set_values(etabs, widget)
 	return d
+
+def check_set_values(
+		etabs,
+		widget,
+):
+	check_heights(etabs, widget)
+
+def check_heights(etabs, widget):
+	if hasattr(widget, 'height_x'):
+		if widget.top_story_for_height_checkbox.isChecked():
+			top_story_x = top_story_y = widget.top_story_for_height.currentText()
+		else:
+			top_story_x = top_story_y = widget.top_x_combo.currentText()
+		bot_story_x = bot_story_y = widget.bot_x_combo.currentText()
+		hx_model, _ = etabs.story.get_heights(bot_story_x, top_story_x, bot_story_y, top_story_y, False)
+		hx_widget = widget.height_x.value()
+		pal = widget.height_x.palette()
+		print(pal.background().color())
+		if not math.isclose(hx_model, hx_widget, abs_tol=.01):
+			pal.setColor(QtGui.QPalette.Base, QtGui.QColor("yellow"))
+			widget.height_x.setPalette(pal)
 
 def select_treeview_item(view, i, n):
 	from PySide2 import QtCore

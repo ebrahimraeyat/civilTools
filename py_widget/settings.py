@@ -1,8 +1,9 @@
 from pathlib import Path
 import copy
+import math
 
 from PySide2 import  QtWidgets
-from PySide2 import QtCore
+from PySide2 import QtGui, QtCore
 
 import FreeCAD
 import FreeCADGui as Gui
@@ -249,6 +250,7 @@ class Form(QtWidgets.QWidget):
         self.form.x_treeview.clicked.connect(self.check_inputs)
         self.form.y_treeview.clicked.connect(self.check_inputs)
         self.form.height_x1.valueChanged.connect(self.check_inputs)
+        self.form.height_x.valueChanged.connect(self.check_heights)
         self.form.no_of_story_x1.valueChanged.connect(self.check_inputs)
         self.form.x_treeview_1.clicked.connect(self.check_inputs)
         self.form.y_treeview_1.clicked.connect(self.check_inputs)
@@ -256,6 +258,23 @@ class Form(QtWidgets.QWidget):
         # self.form.dynamic_analysis_groupbox.clicked.connect(self.fill_angular_fields)
         self.form.combination_response_spectrum_checkbox.clicked.connect(self.reset_response_spectrum_widget)
         self.form.angular_response_spectrum_checkbox.clicked.connect(self.reset_response_spectrum_widget)
+
+    def check_heights(self):
+        if hasattr(self.form, 'height_x'):
+            if self.form.top_story_for_height_checkbox.isChecked():
+                top_story_x = top_story_y = self.form.top_story_for_height.currentText()
+            else:
+                top_story_x = top_story_y = self.form.top_x_combo.currentText()
+            bot_story_x = bot_story_y = self.form.bot_x_combo.currentText()
+            hx_model, _ = self.etabs.story.get_heights(bot_story_x, top_story_x, bot_story_y, top_story_y, False)
+            hx_widget = self.form.height_x.value()
+            if math.isclose(hx_model, hx_widget, abs_tol=.01):
+                color = QtGui.QColor.fromRgbF(1.0, 1.0, 1.0, 1.0)
+            else:
+                color = QtGui.QColor("yellow")
+            pal = self.form.height_x.palette()
+            pal.setColor(QtGui.QPalette.Base, color)
+            self.form.height_x.setPalette(pal)
 
     def partition_dead_clicked(self, checked):
         self.form.partition_live_checkbox.setChecked(not checked)
