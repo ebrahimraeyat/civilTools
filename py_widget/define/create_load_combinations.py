@@ -32,10 +32,15 @@ class Form(QtWidgets.QWidget):
         if self.etabs is None:
             return
         try:
-            etabs_filename = self.etabs.get_filename()
+            self.etabs.get_filename()
         except:
             return
         civiltools_config.load(self.etabs, self.form)
+        if self.form.dynamic_analysis_groupbox.isChecked():
+            if self.form.angular_response_spectrum_checkbox.isChecked():
+                self.form.prefix.setText("ANGULAR-")
+            else:
+                self.form.prefix.setText("DYNAMIC-")
 
     def create(self):
         self.etabs.unlock_model()

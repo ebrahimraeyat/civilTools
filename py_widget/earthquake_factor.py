@@ -360,6 +360,7 @@ class Form(QtWidgets.QWidget):
             return
         msg = "Successfully written to Etabs."
         QMessageBox.information(None, "done", msg)
+        self.reject()
 
     def get_data_for_apply_earthquakes(self, d: dict):
         data = civiltools_config.get_data_for_apply_earthquakes(
