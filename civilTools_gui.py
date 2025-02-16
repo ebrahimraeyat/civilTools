@@ -219,7 +219,6 @@ civiltools_list = [
             "civil_earthquake_factor",
             "civilTools_columns_control",
             "civilTools_checklist_pdf_control",
-            "civiltools_create_spectral",
             "civil_create_period_file",
             "civil_show_weakness",
             "civil_show_story_stiffness",
@@ -257,10 +256,11 @@ civiltools_view = [
 
 civiltools_define = [
             "civilTools_define_axis",
+            "civilTools_create_materials",
             "civiltools_load_combinations",
             "civiltools_frame_sections",
             "civil_create_section_cuts",
-            "civilTools_create_materials",
+            "civiltools_create_spectral",
             ]
 
 civiltools_help = [
