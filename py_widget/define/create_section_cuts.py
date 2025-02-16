@@ -20,9 +20,13 @@ class Form(QtWidgets.QWidget):
         self.create_connections()
 
     def fill_groups(self):
-        groups = self.etabs.group.names()
+        groups = list(self.etabs.group.names())
+        sectioncut_group = "sectioncut"
+        if sectioncut_group not in groups:
+            groups.insert(0, sectioncut_group)
         self.form.group.addItems(groups)
-        self.form.group.setCurrentIndex(self.form.group.count() - 1)
+        i = self.form.group.findText(sectioncut_group)
+        self.form.group.setCurrentIndex(i)
 
     def fill_functions(self):
         funcs = self.etabs.func.response_spectrum_names()
@@ -52,7 +56,10 @@ class Form(QtWidgets.QWidget):
             ecc = self.form.ecc_spinbox.value()
             func = self.form.function_combobox.currentText()
             self.etabs.load_cases.add_angular_load_cases(func, range(0, 180, angles_inc), prefix_name, ecc)
-        QMessageBox.information(None, 'Successfull','Successfully written to etabs file.')
+        QMessageBox.information(
+            None,
+            'Successfull',
+            f'Successfully written to etabs file.\nPlease Update Group assignment in "{group}" Group.')
         self.reject()
 
     def reject(self):
