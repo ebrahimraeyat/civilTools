@@ -205,7 +205,6 @@ Gui.addCommand('civiltools_create_spectral',gui_create_spectral.CivilToolsCreate
 civiltools_list = [
             "civil_automatic_drift",
             "civil_show_torsion",
-            "civil_modify_torsion_stiffness",
             "civilTools_check_deflection_of_beams",
             "civilTools_check_deflection_of_slab",
             "civil_irregularity_of_mass",
@@ -216,7 +215,6 @@ civiltools_list = [
             "civil_scale_response_spec",
             "civilTools_control_joint_shear",
             "civiltools_100_30",
-            "civil_earthquake_factor",
             "civilTools_columns_control",
             "civilTools_checklist_pdf_control",
             "civil_create_period_file",
@@ -226,6 +224,9 @@ civiltools_list = [
             "civil_show_story_forces",
             ]
 civiltools_assign = [
+            "civiltools_settings",
+            "civil_earthquake_factor",
+            "civil_modify_torsion_stiffness",
             "civilTools_assigns",
             "civilTools_assign_modifiers",
             "civiltools_wall_load",
@@ -244,7 +245,6 @@ civiltools_tools = [
             "civil_distance_between_two_points",
             "civil_restore_backups",
             "civil_delete_backups",
-            "civiltools_settings",
             "civiltools_discretize",
             "Draft_Move",
             "Draft_SelectPlane",
