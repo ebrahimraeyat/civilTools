@@ -38,6 +38,8 @@ class Form(QtWidgets.QWidget):
                 "columns_type_names_df": columns_type_names_df,
                 'etabs': self.etabs,
                 },
+            etabs= self.etabs,
+            json_file_name="Column-Sections",
             result_widget = table_model.ControlColumnResultWidget,
             )
         self.reject()
