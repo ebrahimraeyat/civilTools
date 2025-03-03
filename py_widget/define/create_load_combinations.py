@@ -101,9 +101,13 @@ class Form(QtWidgets.QWidget):
             code=code,
             dynamic=dynamic,
         )
+        not_exist_loadcases = set()
+        all_load_cases = self.etabs.load_cases.get_load_cases()
         items=  {}
         for i in range(0, len(self.data), 4):
             comb = self.data[i: i+4]
+            if comb[2] not in all_load_cases:
+                not_exist_loadcases.add(comb[2])
             name = comb[0]
             root = items.get(name, None)
             if root is None:
@@ -113,40 +117,49 @@ class Form(QtWidgets.QWidget):
         model = treeview.CustomModel(list(items.values()), headers=('Combo/Case', 'SF'))
         self.form.load_combinations_view.setModel(model)
         freecad_funcs.show_status_message(f'Created {len(items)} Load Combinations')
-
-
+        if len(not_exist_loadcases) > 0:
+            show_not_exists_loadcases_message(not_exist_loadcases)
+    
+    def get_not_exists_loadcases(self):
+        not_exist_loadcases = set()
+        all_load_cases = self.etabs.load_cases.get_load_cases()
+        for i in range(0, len(self.data), 4):
+            comb = self.data[i: i+4]
+            if comb[2] not in all_load_cases:
+                not_exist_loadcases.add(comb[2])
+        return not_exist_loadcases
+    
     def export_to_etabs(self):
-        selected_combos = set()
-        for ix in self.form.load_combinations_view.selectedIndexes():
-            text = ix.data(Qt.DisplayRole)
-            selected_combos.add(text)
+        # selected_combos = set()
+        # for ix in self.form.load_combinations_view.selectedIndexes():
+        #     text = ix.data(Qt.DisplayRole)
+        #     selected_combos.add(text)
+        not_exist_loadcases = self.get_not_exists_loadcases()
+        if len(not_exist_loadcases) > 0:
+            show_not_exists_loadcases_message(not_exist_loadcases)
+            return
         
-        progressbar = FreeCAD.Base.ProgressIndicator()
-        n = int(len(self.data) / 4)
-        progressbar.start(
-            "Creating Load Combinations...",
-            n,
-            )
+        all_load_cases = self.etabs.load_cases.get_load_cases()
         numbers = set()
         etabs_load_combinations = self.etabs.load_combinations.get_load_combination_names()
         removed_combos = []
         for i in range(0, len(self.data), 4):
-            progressbar.next(True)
             comb = self.data[i: i+4]
+            if comb[2] not in all_load_cases:
+                not_exist_loadcases.add(comb[2])
             name = comb[0]
-            if name in selected_combos:
-                if name in etabs_load_combinations and name not in removed_combos:
-                    self.etabs.load_combinations.delete_load_combinations([name])
-                    removed_combos.append(name)
-                self.etabs.SapModel.RespCombo.add(name, 0)
-                self.etabs.SapModel.RespCombo.SetCaseList(
-                    name,
-                    0, # loadcase=0, loadcombo=1
-                    comb[2],    # cname
-                    comb[3],    # sf
-                    )
-                numbers.add(name)
-        progressbar.stop()
+            # if name in selected_combos:
+            if name in etabs_load_combinations and name not in removed_combos:
+                self.etabs.load_combinations.delete_load_combinations([name])
+                removed_combos.append(name)
+            self.etabs.SapModel.RespCombo.add(name, 0)
+            self.etabs.SapModel.RespCombo.SetCaseList(
+                name,
+                0, # loadcase=0, loadcombo=1
+                comb[2],    # cname
+                comb[3],    # sf
+                )
+            numbers.add(name)
         color = '<span style=" font-size:9pt; font-weight:600; color:#0000ff;">%s</span>'
         number_of_combos = color % str(len(numbers))
         model_filename = color % self.etabs.get_filename_with_suffix()
@@ -533,3 +546,9 @@ class Form(QtWidgets.QWidget):
                     self.etabs.SapModel.LoadPatterns.Add(hyn, 8)
 
         return equivalent_loads
+    
+def show_not_exists_loadcases_message(not_exist_loadcases):
+    if len(not_exist_loadcases) > 0:
+        color = '<span style=" font-size:9pt; font-weight:600; color:#ff0000;">%s</span>'
+        not_exist_loadcases = color % ', '.join(not_exist_loadcases)
+        QMessageBox.warning(None, 'Load Case Error', f"<html>Some loadcases did not exists in the ETABS model! {not_exist_loadcases}</html>")
