@@ -53,6 +53,7 @@
     <file>images/Register.png</file>
   </qresource>
   <qresource prefix="import_export">
+    <file>images/transfer_loads_between_two_files.svg</file>
     <file>images/dwg_to_pdf.svg</file>
   </qresource>
   <qresource prefix="general">

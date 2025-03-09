@@ -76,6 +76,8 @@ from gui_civiltools.import_export import (
     gui_create_report,
     gui_export_plans_to_dxf,
     gui_create_pdf_from_autocad,
+    gui_transfer_loads_between_two_files,
+
 )
 
 from freecad_py import civiltools_views
@@ -275,6 +277,7 @@ civiltools_import_export = [
     "civiltools_create_report",
     "civiltoos_export_plans_to_dxf",
     "civiltoos_dwg_to_pdf",
+    "civiltools_transfer_loads_between_two_files",
 ]
 
 civiltools_edit = [
