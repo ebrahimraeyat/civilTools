@@ -79,7 +79,7 @@ class Form(QtWidgets.QWidget):
             else:
                 self.etabs = etabs
         self.form.levels_list.clear()
-        levels_names = self.etabs.story.get_level_names()
+        levels_names = self.etabs.story.get_sorted_story_name(reverse=True, include_base=True)
         self.form.levels_list.addItems(levels_names)
         lw = self.form.levels_list
         for i in range(lw.count() - 1):
