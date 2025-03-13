@@ -22,7 +22,7 @@ civiltools_path = Path(__file__).absolute().parent.parent
 class Form(QtWidgets.QWidget):
     def __init__(self, etabs_model):
         super(Form, self).__init__()
-        self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'civiltools_project_settings.ui'))
+        self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'edit' / 'civiltools_project_settings.ui'))
         self.etabs = etabs_model
         self.stories = self.etabs.SapModel.Story.GetStories()[1]
         self.angular_model = None
@@ -132,7 +132,7 @@ class Form(QtWidgets.QWidget):
                 ('EX', 'EXN', 'EXP', 'EY', 'EYN', 'EYP',
                  'EX1', 'EXN1', 'EXP1', 'EY1', 'EYN1', 'EYP1',
                  'EX(drift)', 'EXN(drift)', 'EXP(drift)', 'EY(drift)', 'EYN(drift)', 'EYP(drift)',
-                 'EX1(drift)', 'EXN1(drift)', 'EXP1(drift)', 'EY1(drift)', 'EYN1(drift)', 'EYP1(Drift)'),
+                 'EX1(drift)', 'EXN1(drift)', 'EXP1(drift)', 'EY1(drift)', 'EYN1(drift)', 'EYP1(drift)'),
                 seismic_load_patterns * 2 + seismic_load_patterns_drift * 2,
             ):
             s = copy.deepcopy(dir_)
@@ -357,6 +357,10 @@ class Form(QtWidgets.QWidget):
         # self.etabs.check_seismic_names(apply=True)
 
     def write_not_exists_earthquake_loads(self, building, d:dict={}):
+        apply_earthquake = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'edit' / 'apply_earthquake_factors.ui'))
+        apply_earthquake.exec_()
+        if apply_earthquake.dont_update_earthquake.isChecked():
+            return
         data = civiltools_config.get_data_for_apply_earthquakes(building, self.etabs, widget=self.form)
         data2 = civiltools_config.get_data_for_apply_earthquakes_drift(building, self.etabs, widget=self.form)
         if data is None:
@@ -364,13 +368,16 @@ class Form(QtWidgets.QWidget):
         if data2 is None:
             data2 = []
         data.extend(data2)
+        if not d:   
+            d = civiltools_config.get_settings_from_etabs(self.etabs)
+        if apply_earthquake.update_all_earthquakes.isChecked():
+            self.etabs.apply_cfactors_to_edb(data, d=d)
+            return
         loads = [eq for eqs, _ in data for eq in eqs]
         print(f'{self.seismic_load_patterns=}')
         print(f'{loads=}')
         for load in loads:
             if load not in self.seismic_load_patterns:
-                if not d:   
-                    d = civiltools_config.get_settings_from_etabs(self.etabs)
                 self.etabs.apply_cfactors_to_edb(data, d=d)
                 return
 
