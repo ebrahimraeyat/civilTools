@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>483</width>
+    <width>487</width>
     <height>585</height>
    </rect>
   </property>
@@ -243,7 +243,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QGroupBox" name="groupBox_3">
+      <widget class="QGroupBox" name="apply_to_groupbox">
        <property name="styleSheet">
         <string notr="true">border-color: rgb(0, 0, 0);</string>
        </property>

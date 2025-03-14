@@ -21,6 +21,11 @@ class Form(QtWidgets.QWidget):
         self.etabs = etabs_model
         self.fill_widget()
         self.create_connections()
+        self.check_freecad_activedoc()
+
+    def check_freecad_activedoc(self):
+        if FreeCAD.ActiveDocument is None:
+            self.form.apply_to_groupbox.hide()
 
     def fill_widget(self):
         stories = None
@@ -132,15 +137,21 @@ class Form(QtWidgets.QWidget):
     def getStandardButtons(self):
         return 0
 
+    def reset_dists(self):
+        self.set_dists_range()
+        if self.form.relative.isChecked():
+            self.form.dist1.setValue(0.)
+            self.form.dist2.setValue(1.)
+
     def set_dists_range(self):
         if self.form.relative.isChecked():
-            self.form.dist1.setRange(0, 1)
-            self.form.dist2.setRange(0, 1)
+            self.form.dist1.setRange(0., 1.)
+            self.form.dist2.setRange(0., 1.)
             self.form.dist1.setSuffix('')
             self.form.dist2.setSuffix('')
         else:
-            self.form.dist1.setRange(0, 30)
-            self.form.dist2.setRange(0, 30)
+            self.form.dist1.setRange(0., 30.)
+            self.form.dist2.setRange(0., 30.)
             self.form.dist1.setSuffix(' m')
             self.form.dist2.setSuffix(' m')
 
@@ -200,8 +211,6 @@ class Form(QtWidgets.QWidget):
                 labels = None
             if not names:
                 names = None
-            print(names)
-            print(labels)
         item_type = 0
         if self.form.etabs_button.isChecked():
             self.etabs.frame_obj.assign_gravity_load_to_selfs_and_above_beams(
@@ -221,6 +230,7 @@ class Form(QtWidgets.QWidget):
                 height_from_below,
                 opening_ratio,
             )
+            QMessageBox.information(None, 'Applied', 'Wall loads applied in ETABS Model.')
         elif self.form.freecad_button.isChecked():
             from freecad_py.assign import wall_loads
             wall_loads.add_wall_on_beams(
@@ -248,6 +258,10 @@ class Form(QtWidgets.QWidget):
                 walls=walls,
                 )
             QMessageBox.information(None, 'Applied', 'Wall loads applied in ETABS Model.')
+        # deselect all objects
+        Gui.Selection.clearSelection()
+        self.etabs.select_obj.clear_selection()
+        self.reset_dists()
 
     def reject(self):
         Gui.Control.closeDialog()
