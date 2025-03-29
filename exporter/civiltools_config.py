@@ -303,7 +303,10 @@ def get_cd(etabs):
 
 def get_settings_from_etabs(etabs):
 	d = {}
-	info = etabs.SapModel.GetProjectInfo(0)
+	try:
+		info = etabs.SapModel.GetProjectInfo(0)
+	except:
+		return d
 	json_str = info[2][0]
 	try:
 		company_name = json.loads(json_str)
@@ -790,7 +793,7 @@ def fill_cities(widget):
 
 def fill_stories(etabs, widget):
 	if hasattr(widget, "stories"):
-		stories = etabs.SapModel.Story.GetNameList()[1]
+		stories = etabs.story.get_sorted_story_name(reverse=False, include_base=True)
 		widget.stories.addItems(stories)
 		select_all_stories(widget)
 
@@ -801,7 +804,7 @@ def select_all_stories(widget):
 			item.setSelected(True)
 
 def fill_top_bot_stories(etabs, widget):
-	stories = etabs.SapModel.Story.GetStories()[1]
+	stories = etabs.story.get_sorted_story_name(reverse=False, include_base=True)
 	for combo_box in (
 		'bot_x_combo',
 		'top_x_combo',

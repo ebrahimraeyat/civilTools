@@ -24,7 +24,7 @@ class Form(QtWidgets.QWidget):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'edit' / 'civiltools_project_settings.ui'))
         self.etabs = etabs_model
-        self.stories = self.etabs.SapModel.Story.GetStories()[1]
+        self.stories = self.etabs.story.get_sorted_story_name(reverse=False, include_base=True)
         self.angular_model = None
         self.create_connections()
         self.seismic_load_patterns = self.fill_load_cases()
