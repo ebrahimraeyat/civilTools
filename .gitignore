@@ -75,6 +75,7 @@ lib/
 lib64/
 parts/
 sdist/
+help/out/
 var/
 *.egg-info/
 .installed.cfg
