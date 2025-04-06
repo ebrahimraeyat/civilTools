@@ -70,10 +70,12 @@ class Form(QtWidgets.QWidget):
         df = pd.DataFrame(ret[0], columns=ret[1])
         import table_model
         table_model.show_results(df, table_model.ColumnsRatioModel,
+        function=self.etabs.view.show_frame_with_lable_and_story,
         etabs=self.etabs,
         json_file_name=f"ColumnsRatio{dir_.upper()}")
         df = pd.DataFrame(ret[2], columns=ret[3])
         table_model.show_results(df, table_model.BeamsRebarsModel,
+        function=self.etabs.view.show_frame_with_lable_and_story,
         etabs=self.etabs,
         json_file_name=f"BeamsRebars{dir_.upper()}")
         self.form.close()

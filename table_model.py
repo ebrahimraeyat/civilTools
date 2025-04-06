@@ -248,8 +248,11 @@ class ColumnsRatioModel(PandasModel):
         super(ColumnsRatioModel, self).__init__(data, kwargs)
         all_cols = list(self.df)
         self.df[all_cols] = self.df[all_cols].astype(str)
+        headers = tuple(self.df.columns)
+        i_story = headers.index('Story')
+        i_label = headers.index('Label')
+        self.col_function = (i_label, i_story)
 
-        # self.col_function = (0, 4)
     def data(self, index, role=Qt.DisplayRole):
         row = index.row()
         col = index.column()
@@ -276,6 +279,8 @@ class BeamsRebarsModel(PandasModel):
         all_cols = list(self.df)
         self.df[all_cols] = self.df[all_cols].astype(str)
         headers = tuple(self.df.columns)
+        i_story = headers.index('Story')
+        i_label = headers.index('Label')
         self.i_location = headers.index('location')
         self.i_ta1 = headers.index('Top Area1')
         self.i_ta2 = headers.index('Top Area2')
@@ -283,7 +288,7 @@ class BeamsRebarsModel(PandasModel):
         self.i_ba2 = headers.index('Bot Area2')
         self.i_v1 = headers.index('VRebar1')
         self.i_v2 = headers.index('VRebar2')
-        # self.col_function = (0, 4)
+        self.col_function = (i_label, i_story)
 
     def data(self, index, role=Qt.DisplayRole):
         row = index.row()
