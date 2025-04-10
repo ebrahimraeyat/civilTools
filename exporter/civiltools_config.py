@@ -320,6 +320,8 @@ def load(
 		etabs,
 		widget=None,
 		d=None,
+		reverse: bool=False,
+		include_base: bool=True,
 		):
 	if d is None:
 		d = get_settings_from_etabs(etabs)
@@ -328,7 +330,7 @@ def load(
 	from PySide2.QtCore import Qt
 	fill_cities(widget)
 	fill_height_and_no_of_stories(etabs, widget)
-	fill_stories(etabs, widget)
+	fill_stories(etabs, widget, reverse, include_base)
 	fill_top_bot_stories(etabs, widget)
 	keys = d.keys()
 	# Static Seismic combobox
@@ -541,7 +543,7 @@ def load(
 		risk_level = d[key]
 		i = accs.index(risk_level)
 		widget.acc.setCurrentIndex(i)
-	setA(widget)
+	setA(widget, d)
 
 	# Checkboxes
 	key = 'top_story_for_height_checkbox'
@@ -791,9 +793,9 @@ def fill_cities(widget):
 		ostans = ostanha.ostans.keys()
 		widget.ostan.addItems(ostans)
 
-def fill_stories(etabs, widget):
+def fill_stories(etabs, widget, reverse=False, include_base=True):
 	if hasattr(widget, "stories"):
-		stories = etabs.story.get_sorted_story_name(reverse=False, include_base=True)
+		stories = etabs.story.get_sorted_story_name(reverse=reverse, include_base=include_base)
 		widget.stories.addItems(stories)
 		select_all_stories(widget)
 
@@ -845,26 +847,25 @@ def fill_height_and_no_of_stories(etabs, widget):
 
 
 def get_current_ostan(widget):
-	return widget.ostan.currentText()
+	if hasattr(widget, 'ostan'):
+		return widget.ostan.currentText()
 
 def get_current_city(widget):
-	return widget.city.currentText()
+	if hasattr(widget, 'city'):
+		return widget.city.currentText()
 
 def get_citys_of_current_ostan(ostan):
 	'''return citys of ostan'''
 	return ostanha.ostans[ostan].keys()
 
-def setA(widget):
+def setA(widget, d):
 	if hasattr(widget, 'risk_level'):
 		sotoh = ['خیلی زیاد', 'زیاد', 'متوسط', 'کم']
-		ostan = get_current_ostan(widget)
-		city = get_current_city(widget)
-		try:
-			A = int(ostanha.ostans[ostan][city][0])
-			i = widget.risk_level.findText(sotoh[A - 1])
-			widget.risk_level.setCurrentIndex(i)
-		except KeyError:
-			pass
+		widget.risk_level.clear()
+		widget.risk_level.addItems(sotoh)
+		risk_level = d.get('risk_level', None)
+		if risk_level is not None:
+			widget.risk_level.setCurrentText(risk_level)
 
 def current_building_from_etabs(etabs):
 	d = get_settings_from_etabs(etabs)

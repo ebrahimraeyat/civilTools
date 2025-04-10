@@ -63,6 +63,7 @@ from gui_civiltools.control import (
     gui_check_deflection_of_slab,
     gui_columns_control,
     gui_checklist_pdf_control,
+    gui_diaphragm_applied_forces,
 )
 from gui_civiltools.tools import (
     gui_discretize, 
@@ -224,6 +225,7 @@ civiltools_list = [
             "civil_show_story_stiffness",
             "civil_high_pressure_columns",
             "civil_show_story_forces",
+            "civilTools_diaphragm_applied_forces",
             ]
 civiltools_assign = [
             "civiltools_settings",
