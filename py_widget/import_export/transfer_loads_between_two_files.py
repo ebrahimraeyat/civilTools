@@ -89,6 +89,7 @@ class Form:
         import points_functions
         level1 = float(self.form.model1_level_combobox.currentText())
         level2 = float(self.form.model2_level_combobox.currentText())
+        multiply = self.form.multiply_spinbox.value()
         map_dict = self.get_map_loadcase()
         replace = self.form.replace_checkbox.isChecked()
         ret = points_functions.transfer_loads_between_two_models(
@@ -98,6 +99,7 @@ class Form:
             level2,
             map_dict,
             replace,
+            multiply,
             )
         if len(ret) == 0:
             name1 = self.model1.get_file_name_without_suffix()

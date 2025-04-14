@@ -17,7 +17,7 @@
    <iconset resource="../../civiltools.qrc">
     <normaloff>:/import_export/images/transfer_loads_between_two_files.svg</normaloff>:/import_export/images/transfer_loads_between_two_files.svg</iconset>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout_2">
+  <layout class="QHBoxLayout" name="horizontalLayout_4">
    <item>
     <layout class="QVBoxLayout" name="verticalLayout_3">
      <item>
@@ -85,6 +85,27 @@
         </size>
        </property>
       </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="toolTip">
+          <string>Multiply reaction from Model 1 to Model 2</string>
+         </property>
+         <property name="text">
+          <string>Multiply Factor</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QDoubleSpinBox" name="multiply_spinbox">
+         <property name="value">
+          <double>1.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item>
       <widget class="QCheckBox" name="replace_checkbox">
