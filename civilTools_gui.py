@@ -78,7 +78,10 @@ from gui_civiltools.import_export import (
     gui_export_plans_to_dxf,
     gui_create_pdf_from_autocad,
     gui_transfer_loads_between_two_files,
+)
 
+from gui_civiltools.shearwall import (
+    gui_create_25percent_file,
 )
 
 from freecad_py import civiltools_views
@@ -284,4 +287,8 @@ civiltools_import_export = [
 
 civiltools_edit = [
     "civiltools_edit_frame_sections_props",
+]
+
+civiltools_shearwall = [
+    'civilTools_create_25percent_file',
 ]

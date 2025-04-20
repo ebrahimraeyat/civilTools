@@ -6,6 +6,9 @@ from PySide2.QtWidgets import QMessageBox
 
 import FreeCADGui as Gui
 
+import table_model
+from qt_models.columns_pmm_model import ColumnsPMMAll
+
 
 
 class CivilToolsRunAndConcreteFrameDesign:
@@ -32,10 +35,13 @@ class CivilToolsRunAndConcreteFrameDesign:
             filename is None
             ):
             return
-        etabs.run_analysis()
-        etabs.start_design()
-        QMessageBox.information(None, 'Run & Design',
-            'Runnig and Design of Concrete Frame Desing Finished.')
+        df = etabs.design.get_concrete_columns_pmm_table()
+        table_model.show_results(
+            df,
+            model=ColumnsPMMAll,
+            function=etabs.view.show_frame_with_lable_and_story,
+            json_file_name="columns_pmm_ratios",
+            )
         
     def IsActive(self):
         return True

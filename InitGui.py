@@ -25,6 +25,7 @@ class CivilToolsWorkbench(Workbench):
         civiltools_tools = civilTools_gui.civiltools_tools
         civiltools_define = civilTools_gui.civiltools_define
         civiltools_import_export = civilTools_gui.civiltools_import_export
+        civiltools_shearwall = civilTools_gui.civiltools_shearwall
 
         # self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Civil Export")), export_list)
         # self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Civil Draw")), draw_list)
@@ -44,6 +45,7 @@ class CivilToolsWorkbench(Workbench):
         self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("civiltools", "&Help")), civilTools_gui.civiltools_help)
         self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("civiltools", "&View")), civilTools_gui.civiltools_view)
         self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("civiltools", "Import & Export")), civiltools_import_export)
+        self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("civiltools", "Shear Wall")), civiltools_shearwall)
         # self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Export")), export_list)
         # self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Draw")), draw_list)
 
