@@ -28,7 +28,7 @@ class Form(QtWidgets.QWidget):
         mod = self.form.modifier_spinbox.value()
         dynamic = self.form.dynamic_analysis_groupbox.isChecked()
         main_file, filename = self.etabs.shearwall.create_25percent_file(
-            modifiers = 6 * [mod],
+            modifiers = 8 * [mod],
             dynamic=dynamic,
             d=self.d,
             open_main_file=False)
