@@ -357,10 +357,24 @@ class Form(QtWidgets.QWidget):
         # self.etabs.check_seismic_names(apply=True)
 
     def write_not_exists_earthquake_loads(self, building, d:dict={}):
-        apply_earthquake = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'edit' / 'apply_earthquake_factors.ui'))
-        apply_earthquake.exec_()
-        if apply_earthquake.dont_update_earthquake.isChecked():
-            return
+        param_path = "User parameter:BaseApp/Preferences/Mod/civilTools/loads"
+        show = FreeCAD.ParamGet(param_path).GetBool("dont_show_apply_earthquakes_in_save_settings", True)
+        if show:
+            apply_earthquake = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'edit' / 'apply_earthquake_factors.ui'))
+            apply_earthquake.exec_()
+            dont_show_apply_earthquakes_in_save_settings = not apply_earthquake.dont_show_earthquakes_apply_again.isChecked()
+            FreeCAD.ParamGet(param_path).SetBool("dont_show_apply_earthquakes_in_save_settings", dont_show_apply_earthquakes_in_save_settings)
+            if dont_show_apply_earthquakes_in_save_settings:
+                FreeCAD.ParamGet(param_path).SetBool("apply_all_earthquakes", apply_earthquake.update_all_earthquakes.isChecked())
+                FreeCAD.ParamGet(param_path).SetBool("dont_update_earthquakes", apply_earthquake.dont_update_earthquake.isChecked())
+                FreeCAD.ParamGet(param_path).SetBool("update_earthquakes_if_not_exists", apply_earthquake.update_if_not_exists.isChecked())
+            if apply_earthquake.dont_update_earthquake.isChecked():
+                return
+        else:
+            dont_update_earthquakes = FreeCAD.ParamGet(param_path).GetBool("dont_update_earthquakes", True)
+            if dont_update_earthquakes:
+                return
+            apply_all_earthquakes = FreeCAD.ParamGet(param_path).GetBool("apply_all_earthquakes", False)
         data = civiltools_config.get_data_for_apply_earthquakes(building, self.etabs, widget=self.form)
         data2 = civiltools_config.get_data_for_apply_earthquakes_drift(building, self.etabs, widget=self.form)
         if data is None:
@@ -370,7 +384,7 @@ class Form(QtWidgets.QWidget):
         data.extend(data2)
         if not d:   
             d = civiltools_config.get_settings_from_etabs(self.etabs)
-        if apply_earthquake.update_all_earthquakes.isChecked():
+        if (show and apply_earthquake.update_all_earthquakes.isChecked()) or (not show and apply_all_earthquakes):
             self.etabs.apply_cfactors_to_edb(data, d=d)
             return
         loads = [eq for eqs, _ in data for eq in eqs]

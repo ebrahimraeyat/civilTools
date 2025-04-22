@@ -729,6 +729,117 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tab_3">
+      <attribute name="title">
+       <string>Loads</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_6">
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_5">
+         <item>
+          <widget class="Gui::PrefRadioButton" name="apply_all_earthquakes">
+           <property name="font">
+            <font>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="accessibleDescription">
+            <string>sdfsdfsdfds</string>
+           </property>
+           <property name="text">
+            <string>Apply all earthquakes</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../civiltools.qrc">
+             <normaloff>:/civiltools/images/tick.svg</normaloff>:/civiltools/images/tick.svg</iconset>
+           </property>
+           <property name="checked">
+            <bool>false</bool>
+           </property>
+           <property name="prefEntry" stdset="0">
+            <cstring>apply_all_earthquakes</cstring>
+           </property>
+           <property name="prefPath" stdset="0">
+            <cstring>Mod/civilTools/loads</cstring>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="Gui::PrefRadioButton" name="dont_update_earthquakes">
+           <property name="font">
+            <font>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="accessibleDescription">
+            <string>sdfsdfsdfds</string>
+           </property>
+           <property name="text">
+            <string>Don't Apply earthquakes</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../civiltools.qrc">
+             <normaloff>:/civiltools/images/cancel.svg</normaloff>:/civiltools/images/cancel.svg</iconset>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+           <property name="prefEntry" stdset="0">
+            <cstring>dont_update_earthquakes</cstring>
+           </property>
+           <property name="prefPath" stdset="0">
+            <cstring>Mod/civilTools/loads</cstring>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="Gui::PrefRadioButton" name="update_earthquakes_if_not_exists">
+           <property name="font">
+            <font>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="accessibleDescription">
+            <string>sdfsdfsdfds</string>
+           </property>
+           <property name="text">
+            <string>Apply if not exists</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../civiltools.qrc">
+             <normaloff>:/civiltools/images/tick.svg</normaloff>:/civiltools/images/tick.svg</iconset>
+           </property>
+           <property name="checked">
+            <bool>false</bool>
+           </property>
+           <property name="prefEntry" stdset="0">
+            <cstring>update_earthquakes_if_not_exists</cstring>
+           </property>
+           <property name="prefPath" stdset="0">
+            <cstring>Mod/civilTools/loads</cstring>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_4">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
    <item>
@@ -777,7 +888,14 @@
    <extends>QDoubleSpinBox</extends>
    <header>Gui/PrefWidgets.h</header>
   </customwidget>
+  <customwidget>
+   <class>Gui::PrefRadioButton</class>
+   <extends>QRadioButton</extends>
+   <header>Gui/PrefWidgets.h</header>
+  </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../civiltools.qrc"/>
+ </resources>
  <connections/>
 </ui>
