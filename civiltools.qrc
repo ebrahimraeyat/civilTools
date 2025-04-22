@@ -78,6 +78,7 @@
     <file>images/general/Gmail_icon.svg</file>
   </qresource>
   <qresource prefix="creates">
+    <file>images/create_load_combinations_for_nonlinear_deflection.svg</file>
     <file>images/rebars.svg</file>
     <file>images/ec1.svg</file>
     <file>images/concrete-truck.svg</file>
