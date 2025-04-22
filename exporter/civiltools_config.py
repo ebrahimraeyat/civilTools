@@ -438,6 +438,23 @@ def load(
 				item = lw.item(i)
 				item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
 				item.setCheckState(Qt.Checked)
+
+
+	key = 'angular_loadcase_list'
+	if hasattr(widget, key):
+		angles, _, specs, _ = etabs.load_cases.get_angular_response_spectrum_with_section_cuts()
+		dic = d.get("angular_tableview", None)
+		if dic is not None:
+			for angle, cut_spec in dic.items():
+				if float(angle) in angles:
+					specs.append(cut_spec[1])
+			widget.angular_loadcase_list.addItems(set(specs))
+			lw = widget.angular_loadcase_list
+			for i in range(lw.count()):
+				item = lw.item(i)
+				item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
+				item.setCheckState(Qt.Checked)
+
 	# dynamic seismic loadcase drift list
 	if hasattr(widget, 'x_dynamic_drift_loadcase_list') and hasattr(widget, 'y_dynamic_drift_loadcase_list'):
 		sx, sxe, sy, sye = etabs.get_dynamic_drift_loadcases(d)
