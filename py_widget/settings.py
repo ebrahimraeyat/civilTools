@@ -358,11 +358,11 @@ class Form(QtWidgets.QWidget):
 
     def write_not_exists_earthquake_loads(self, building, d:dict={}):
         param_path = "User parameter:BaseApp/Preferences/Mod/civilTools/loads"
-        show = FreeCAD.ParamGet(param_path).GetBool("dont_show_apply_earthquakes_in_save_settings", True)
+        show = not FreeCAD.ParamGet(param_path).GetBool("dont_show_apply_earthquakes_in_save_settings", False)
         if show:
             apply_earthquake = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'edit' / 'apply_earthquake_factors.ui'))
             apply_earthquake.exec_()
-            dont_show_apply_earthquakes_in_save_settings = not apply_earthquake.dont_show_earthquakes_apply_again.isChecked()
+            dont_show_apply_earthquakes_in_save_settings = apply_earthquake.dont_show_earthquakes_apply_again.isChecked()
             FreeCAD.ParamGet(param_path).SetBool("dont_show_apply_earthquakes_in_save_settings", dont_show_apply_earthquakes_in_save_settings)
             if dont_show_apply_earthquakes_in_save_settings:
                 FreeCAD.ParamGet(param_path).SetBool("apply_all_earthquakes", apply_earthquake.update_all_earthquakes.isChecked())
