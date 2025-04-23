@@ -2,6 +2,7 @@
 from pathlib import Path
 
 from PySide2 import QtCore
+from PySide2.QtWidgets import QMessageBox
 
 import FreeCADGui as Gui
 
@@ -31,10 +32,11 @@ class CivilToolsJointShear:
             filename is None
             ):
             return
+        from exporter import civiltools_config
+        d = civiltools_config.get_settings_from_etabs(etabs)
         from py_widget.control import control_joint_shear
-        win = control_joint_shear.Form(etabs)
-        Gui.Control.showDialog(win)
-        # show_warning_about_number_of_use(check)
+        win = control_joint_shear.Form(etabs, d)
+        find_etabs.show_win(win, in_mdi=False)
         
     def IsActive(self):
         return True

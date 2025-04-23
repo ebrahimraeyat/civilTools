@@ -9,50 +9,42 @@ civiltools_path = Path(__file__).absolute().parent.parent.parent
 
 
 class Form(QtWidgets.QWidget):
-    def __init__(self, etabs_model):
+    def __init__(self, etabs_model, d):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'control' / 'control_joint_shear_bc.ui'))
         self.etabs = etabs_model
+        self.d = d
+        self.set_structure_type()
         self.create_connections()
         self.main_file_path = None
 
-    def get_file_name(self):
-        return str(self.etabs.get_filename_path_with_suffix(".EDB"))
+    def set_structure_type(self):
+        ductilities = self.etabs.get_x_and_y_system_ductility(self.d)
+        if "M" in ductilities:
+            self.form.structure_type_combobox.setCurrentIndex(0)
+        elif "H" in ductilities:
+            self.form.structure_type_combobox.setCurrentIndex(1)
+            self.form.show_bc_table.setChecked(True)
 
     def create_connections(self):
         self.form.check.clicked.connect(self.check)
-        self.form.cancel_button.clicked.connect(self.reject)
-        self.form.open_main_file_button.clicked.connect(self.open_main_file)
-        self.form.structure_type_combobox.currentIndexChanged.connect(self.set_open_main_file)
-
-    def set_open_main_file(self, index):
-        st_type = self.form.structure_type_combobox.currentText()
-        if st_type == 'Sway Special':
-            self.form.open_main_file.setEnabled(False)
-            self.form.open_main_file.setChecked(False)
-        else:
-            self.form.open_main_file.setEnabled(True)
-            self.form.open_main_file.setChecked(True)
-
-    def open_main_file(self):
-        self.etabs.SapModel.File.OpenFile(str(self.main_file_path))
-        self.accept()
 
     def check(self):
-        self.main_file_path = self.get_file_name()
         show_js = self.form.show_js_table.isChecked()
         show_bc = self.form.show_bc_table.isChecked()
+        create_js_file = not self.form.only_show_results_checkbox.isChecked()
         filename = ""
         if show_js:
             filename += "js"
         if show_bc:
             filename += "bc"
-        open_main_file = self.form.open_main_file.isChecked()
+        open_main_file = True
         structure_type = self.form.structure_type_combobox.currentText()
         df = self.etabs.create_joint_shear_bcc_file(
             filename,
             structure_type,
             open_main_file=open_main_file,
+            create_file=create_js_file,
             )
         if df is None:
             return
@@ -80,25 +72,12 @@ class Form(QtWidgets.QWidget):
                 etabs=self.etabs,
                 json_file_name="BeamColumnCapcity",
                 )
-        if open_main_file or structure_type == 'Sway Special':
-            self.accept()
-        else:
-            self.form.open_main_file_button.setEnabled(True)
-            self.form.check.setEnabled(False)
+        self.accept()
 
     def accept(self):
-        Gui.Control.closeDialog()
+        self.form.close()
 
     def reject(self):
-        if (
-            self.main_file_path is not None and
-            self.main_file_path != self.get_file_name() and
-            QtWidgets.QMessageBox.question(
-            None,
-            'Open Main File',
-            'Do you want to Open Main File?',)
-            ) == QtWidgets.QMessageBox.Yes:
-            self.open_main_file()
         self.accept()
 
     def getStandardButtons(self):
