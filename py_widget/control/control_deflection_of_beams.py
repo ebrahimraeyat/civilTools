@@ -7,7 +7,7 @@ import pandas as pd
 from PySide2 import QtCore, QtGui, QtWidgets
 from PySide2.QtWidgets import QMessageBox
 from PySide2.QtGui import QPolygonF, QBrush
-from PySide2.QtCore import QPointF, QModelIndex, QItemSelection
+from PySide2.QtCore import QPointF
 
 import FreeCADGui as Gui
 import FreeCAD
@@ -35,6 +35,7 @@ class Form(QtWidgets.QWidget):
         self.etabs = etabs_model
         self.results = None
         self.main_file_path = None
+        self.current_row = -1
         self.fill_load_cases()
         self.load_config(beam_names=beam_names, d=d)
         self.create_connections()
@@ -102,13 +103,14 @@ class Form(QtWidgets.QWidget):
                 'Cover': [6] * n,
                 'Width': [40] * n,
                 'Height': [50] * n,
-                'Result': [''] * n,
+                'Length': [50] * n,
             })
             df = df.append(new_rows, ignore_index=True)
             
         def fill_props(row):
             beam_name = row['Name']
             section_name = self.etabs.SapModel.FrameObj.GetSection(beam_name)[0]
+            length = self.etabs.frame_obj.get_length_of_frame(beam_name)
             try:
                 _, _, h, b, *_ = self.etabs.SapModel.PropFrame.GetRectangle(section_name)
             except:
@@ -118,6 +120,7 @@ class Form(QtWidgets.QWidget):
             row['Story'] = story
             row['Height'] = h
             row['Width'] = b
+            row['Length'] = length
             return row
             
         units = self.etabs.get_current_unit()
@@ -126,6 +129,8 @@ class Form(QtWidgets.QWidget):
         self.etabs.set_current_unit(*units)
         filt = df['Name'].isin(beam_names)
         df = df.loc[filt]
+        types = {'Height': int, 'Width': int, 'Length': int, 'Minus Length': int}
+        df = df.astype(types)
         self.result_table = table_model.ResultWidget(
             df,
             model=table_model.BeamDeflectionTableModel,
@@ -158,11 +163,45 @@ class Form(QtWidgets.QWidget):
         continues_long_term = int(self.form.continues_long_term_combobox.currentText().lstrip(ln_str))
         return console_short_term, console_long_term, continues_short_term, continues_long_term
     
+    def notify_view(self):
+        # Compute colors for rows based on the parameters
+        console_short_term, console_long_term, continues_short_term, continues_long_term = self.get_short_and_long_term_numbers()
+        row_colors = {}
+
+        if self.results is not None:
+            for row in range(self.result_table.model.rowCount()):
+                is_console = self.result_table.model.df['Console'].iloc[row]
+                if is_console:
+                    short_term = console_short_term
+                    long_term = console_long_term
+                else:
+                    short_term = continues_short_term
+                    long_term = continues_long_term
+
+                def1 = self.results[0][row]
+                def2 = self.results[1][row]
+                minus_length = self.result_table.model.df['Minus Length'].iloc[row]
+                length = self.result_table.model.df['Length'].iloc[row]
+                ln = length - minus_length
+
+                # Determine the color based on the deflection check
+                short_term_ok, long_term_ok = get_deflection_check_status(def1, def2, ln, short_term, long_term)
+                if short_term_ok and long_term_ok:
+                    row_colors[row] = QtGui.QColor(*table_model.low)
+                elif not short_term_ok:
+                    row_colors[row] = QtGui.QColor(*table_model.high)
+                elif not long_term_ok:
+                    row_colors[row] = QtGui.QColor(*table_model.intermediate)
+
+        # Send the colors to the model
+        self.result_table.model.update_row_colors(row_colors)
+
     def check_result(self):
         if self.results is None:
             return
         row, _ = self.result_table.get_current_row_col()
-        beam_name = str(self.result_table.model.data(self.result_table.model.index(row, 0)))
+        if row != -1:
+            self.beam_name = str(self.result_table.model.data(self.result_table.model.index(row, 0)))
         self.form.results.setText(self.results[2][row])
         # check results
         is_console = self.result_table.model.df['Console'].iloc[row]
@@ -176,8 +215,9 @@ class Form(QtWidgets.QWidget):
         def1 = self.results[0][row]
         def2 = self.results[1][row]
         minus_length = self.result_table.model.df['Minus Length'].iloc[row]
-        ln = self.etabs.frame_obj.get_length_of_frame(beam_name) - minus_length
-        text = f"Beam Name = {beam_name}, "
+        length = self.result_table.model.df['Length'].iloc[row]
+        ln = length - minus_length
+        text = f"Beam Name = {self.beam_name}, "
         text += get_deflection_check_result(def1, def2, ln, short_term, long_term)
         self.form.check_results.setText(text)
         self.notify_view()
@@ -206,7 +246,8 @@ class Form(QtWidgets.QWidget):
             def1 = self.results[0][row]
             def2 = self.results[1][row]
             minus_length = self.result_table.model.df['Minus Length'].iloc[row]
-            ln = self.etabs.frame_obj.get_length_of_frame(beam_name) - minus_length
+            length = self.result_table.model.df['Length'].iloc[row]
+            ln = length - minus_length
             text2 = get_deflection_check_result(def1, def2, ln, short_term, long_term)
             doc = report.create_report(self.etabs, text1, text2, beam_name, doc=doc)
             doc.add_page_break()
@@ -247,32 +288,6 @@ class Form(QtWidgets.QWidget):
         # self.emit_row_clicked()
         self.open_main_file()
         QMessageBox.information(None, "Complete", "Beam Deflection Check Complete.")
-    
-    def notify_view(self):
-        self.result_table.model.beginResetModel()
-        try:
-            console_short_term, console_long_term, continues_short_term, continues_long_term = self.get_short_and_long_term_numbers()
-            self.result_table.model.console_short_term = console_short_term
-            self.result_table.model.console_long_term = console_long_term
-            self.result_table.model.continues_short_term = continues_short_term
-            self.result_table.model.continues_long_term = continues_long_term
-            self.result_table.model.etabs = self.etabs
-            self.result_table.model.results = self.results
-        finally:
-            self.result_table.model.endResetModel()
-        # top_left = self.result_table.model.index(0, 0)
-        # bottom_right = self.result_table.model.index(
-        #     self.result_table.model.rowCount() - 1,
-        #     self.result_table.model.columnCount() - 1
-        # )
-        # self.result_table.model.dataChanged.emit(top_left, bottom_right)
-
-    def emit_row_clicked(self):
-        index = QModelIndex()
-        selection_model = self.form.table_view.selectionModel()
-        old_selection = selection_model.selection()
-        new_selection = QItemSelection(index, index)  # Replace 'index' with the desired QModelIndex object
-        self.form.table_view.selectionModel().selectionChanged.emit(old_selection, new_selection)
 
     def fill_load_cases(self):
         load_patterns = self.etabs.load_patterns.get_load_patterns()
@@ -423,3 +438,23 @@ def convert5Pointto8Point(cx_, cy_, w_, h_, a_):
         x, y = bbox[0][i], bbox[1][i]
         polygon.append(QPointF(x, y))
     return polygon
+
+def get_deflection_check_status(
+    def1: float,
+    def2: float,
+    ln: float,
+    short_term: float=360,
+    long_term: float=480,
+    ) -> tuple:
+    allow_def1 = ln / short_term
+    allow_def2 = ln / long_term
+    if def1 <= allow_def1:
+        short_term = True
+    else:
+        short_term = False
+    # combo 2
+    if def2 <= allow_def2:
+        long_term = True
+    else:
+        long_term = False
+    return short_term, long_term

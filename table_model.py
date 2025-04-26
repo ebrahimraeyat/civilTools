@@ -607,13 +607,18 @@ class BeamDeflectionTableModel(PandasModel):
         beam_data : dict with keys = beam_name and value is dict of properties
         '''
         super().__init__(df, kwargs)
+        self.row_colors = {}  # Store background colors for rows
         self.col_function = (0,)
-        self.etabs = None
-        self.results = None
-        self.console_short_term = None
-        self.console_long_term = None
-        self.continues_short_term = None
-        self.continues_long_term = None
+
+    def update_row_colors(self, row_colors):
+        """Update the background colors for specific rows."""
+        self.row_colors = row_colors
+
+        # Notify the view about the updated rows
+        for row in row_colors.keys():
+            top_left = self.index(row, 0)
+            bottom_right = self.index(row, self.columnCount() - 1)
+            self.dataChanged.emit(top_left, bottom_right, [Qt.BackgroundColorRole])
         
     def data(self, index, role=Qt.DisplayRole):
         if not index.isValid():
@@ -625,50 +630,11 @@ class BeamDeflectionTableModel(PandasModel):
         if role == Qt.CheckStateRole and self.df.dtypes[col] == bool:
             return self.check_states_bool.get(bool(value), 1)
         elif role == Qt.DisplayRole and self.df.dtypes[col] != bool:
-            return str(self.df.iat[index.row(), index.column()])
+            return str(value)
         elif role == Qt.BackgroundColorRole:
-            if self.results is not None:
-                beam_name = str(self.df.iat[row, 0])
-                is_console = self.df['Console'].iloc[row]
-                if is_console:
-                    short_term = self.console_short_term
-                    long_term = self.console_long_term
-                else:
-                    short_term = self.continues_short_term
-                    long_term = self.continues_long_term
-                def1 = self.results[0][row]
-                def2 = self.results[1][row]
-                minus_length = self.df['Minus Length'].iloc[row]
-                ln = self.etabs.frame_obj.get_length_of_frame(beam_name) - minus_length
-                short_term, long_term = self.get_deflection_check_result(def1, def2, ln, short_term, long_term)
-                if short_term and long_term:
-                    return QColor(*low)
-                elif not short_term:
-                    return QColor(*high)
-                elif not long_term:
-                    return QColor(*intermediate)
-            elif col_name in ('Width', 'Height') and self.df.iloc[row, col] <= 0:
-                return QColor('yellow')
-            
-    def get_deflection_check_result(self,
-        def1: float,
-        def2: float,
-        ln: float,
-        short_term: float=360,
-        long_term: float=480,
-        ):
-        allow_def1 = ln / short_term
-        allow_def2 = ln / long_term
-        if def1 <= allow_def1:
-            short_term = True
-        else:
-            short_term = False
-        # combo 2
-        if def2 <= allow_def2:
-            long_term = True
-        else:
-            long_term = False
-        return short_term, long_term
+            return self.row_colors.get(row, None)  # Use precomputed color
+        elif role == Qt.TextAlignmentRole and col_name not in  ('Name', 'Label', 'Story'):
+            return int(Qt.AlignCenter | Qt.AlignVCenter)
 
     def flags(self, index):
         if not index.isValid():
@@ -681,24 +647,6 @@ class BeamDeflectionTableModel(PandasModel):
                 QAbstractTableModel.flags(self, index) | Qt.ItemIsEditable)
         elif pd.api.types.is_string_dtype(self.df.iloc[:, col]):
             return Qt.ItemIsSelectable | Qt.ItemIsEnabled
-        
-            # if role == Qt.DecorationRole:
-        #     value = self._data[index.row()][index.column()]
-        #     if isinstance(value, float):
-        #         return QtGui.QIcon('calendar.png')
-        # return None
-
-    # def sort(self, col, order):
-    #     """Sort table by given column number."""
-    #     self.layoutAboutToBeChanged.emit()
-    #     self.df.sort_values(
-    #         by=self.df.columns[col],
-    #         ascending = order == Qt.AscendingOrder,
-    #         kind="mergesort",
-    #         inplace=True,
-    #     )
-    #     self.df.reset_index(drop=True, inplace=True)
-    #     self.layoutChanged.emit()
             
 
 class ResultWidget(QtWidgets.QDialog):
