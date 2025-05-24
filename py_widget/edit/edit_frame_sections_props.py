@@ -31,7 +31,7 @@ class Form(QtWidgets.QWidget):
     def concrete_changed(self):
         conc_name = self.form.concrete_mats.currentText()
         suffix = f"_{conc_name}"
-        self.form.concrete_suffix.setText(suffix)
+        self.form.suffix.setText(suffix)
 
     def create_connections(self):
         self.form.assign_pushbutton.clicked.connect(self.assign)
@@ -62,9 +62,17 @@ class Form(QtWidgets.QWidget):
             QtWidgets.QMessageBox.warning(None, 'Selection ', 'Please Select type of frames.')
             return
         conc_name = self.form.concrete_mats.currentText()
-        suffix = self.form.concrete_suffix.text()
+        suffix = self.form.suffix.text()
+        prefix = self.form.prefix.text()
         clean_names = self.form.clean_names_checkbox.isChecked()
-        ret, convert_names, section_that_corner_bars_is_different = self.etabs.prop_frame.change_beams_columns_section_fc(names, conc_name, suffix, clean_names, frame_types)
+        ret, convert_names, section_that_corner_bars_is_different = self.etabs.prop_frame.change_beams_columns_section_fc(
+            names,
+            conc_name,
+            suffix,
+            clean_names,
+            frame_types,
+            prefix,
+            )
         if ret:
             self.etabs.view.refresh_view()
             msg = f"{len(convert_names)} Sections replaced:\n"
