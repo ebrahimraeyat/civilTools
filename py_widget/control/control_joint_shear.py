@@ -40,6 +40,7 @@ class Form(QtWidgets.QWidget):
             filename += "bc"
         open_main_file = True
         structure_type = self.form.structure_type_combobox.currentText()
+        self.etabs.save()
         df = self.etabs.create_joint_shear_bcc_file(
             filename,
             structure_type,
