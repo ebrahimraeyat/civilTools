@@ -82,6 +82,7 @@ from gui_civiltools.import_export import (
 
 from gui_civiltools.shearwall import (
     gui_create_25percent_file,
+    gui_design_shear_walls,
 )
 
 from freecad_py import civiltools_views
@@ -291,4 +292,5 @@ civiltools_edit = [
 
 civiltools_shearwall = [
     'civilTools_create_25percent_file',
+    'civilTools_design_shear_walls',
 ]
