@@ -32,6 +32,8 @@ class Form(QtWidgets.QWidget):
             self.form.sections.addItems(self.beam_names)
         elif self.form.columns.isChecked():
             self.form.sections.addItems(self.column_names)
+        if self.form.sections.count() > 0:
+            self.form.sections.setCurrentRow(0)
 
     def select_all_stories(self):
         for i in range(self.form.stories.count()):
@@ -56,15 +58,30 @@ class Form(QtWidgets.QWidget):
         self.etabs.unlock_model()
         stories = [item.text() for item in self.form.stories.selectedItems()]
         sec_name = self.form.sections.currentItem().text()
+        print(f"{sec_name=}, {stories=}")
         sec_type = 'other'
         if self.form.beams.isChecked():
             sec_type = 'beam'
         elif self.form.columns.isChecked():
             sec_type = 'column'
+        # Get selected frame names
+        selected_frames = self.etabs.select_obj.get_selected_obj_type(2) # 2: frame
+        frame_names = []
+        func = None
+        if sec_type == 'beam':
+            func  = self.etabs.frame_obj.is_beam
+        elif sec_type == 'column':
+            func = self.etabs.frame_obj.is_column
+        for name in selected_frames:
+            if func is None:
+                frame_names.append(name)
+            else:
+                if func(name):
+                    frame_names.append(name)
         self.etabs.frame_obj.assign_sections_stories(
             sec_name = sec_name,
             stories = stories,
-            frame_names = None,
+            frame_names = frame_names,
             sec_type = sec_type,
             )
         
