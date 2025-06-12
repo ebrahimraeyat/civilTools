@@ -104,8 +104,8 @@ class CivilToolsFrameSectionsGroupCommand:
 
     def GetCommands(self):
         return (
-            "civilTools_create_frame_sections",
             "civilTools_assign_frame_sections",
+            "civilTools_create_frame_sections",
         )  # a tuple of command names that you want to group
 
     # def Activated(self, index):
