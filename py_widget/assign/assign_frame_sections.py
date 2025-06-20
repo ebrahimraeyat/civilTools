@@ -18,6 +18,7 @@ class Form(QtWidgets.QWidget):
         self.other_names = self.etabs.frame_obj.other_sections(self.beam_names + self.column_names)
         self.fill_sections()
         self.create_connections()
+        self.etabs.select_obj.get_previous_selection()
 
     def fill_stories(self):
         stories = self.etabs.SapModel.Story.GetNameList()[1]
