@@ -176,3 +176,5 @@ test/functions/test_check_legal.py
 !functions/check_legal.pyc
 !test/functions/test_check_legal.pyc
 
+# Help
+help/*_files/
