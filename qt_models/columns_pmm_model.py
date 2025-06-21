@@ -4,8 +4,11 @@ import pandas as pd
 
 from PySide2.QtCore import (
     Qt,
+    QSize,
+    QAbstractTableModel
 )
 from PySide2.QtGui import QColor #, QIcon
+from PySide2.QtWidgets import QComboBox, QItemDelegate
 
 from table_model import PandasModel
 
@@ -76,17 +79,29 @@ class ColumnsPMMAll(PandasModel):
         del self.df['index']
         i_label = tuple(self.df.columns).index("Label")
         i_story = tuple(self.df.columns).index("Story")
+        self.i_name = tuple(self.df.columns).index("UniqueName")
         self.col_function = (i_label, i_story)
         self.i_section = tuple(self.df.columns).index("DesignSect")
         self.i_pmm = tuple(self.df.columns).index("PMMRatio")
         self.min_pmm = self.df['PMMRatio'].min()
         self.max_pmm = self.df['PMMRatio'].max()
+        self.etabs = self.kwargs['etabs']
+        self.sections = self.kwargs['sections']
         
     def rowCount(self, parent=None):
         return len(self.df.index)
 
     def columnCount(self, parent=None):
         return len(self.df.columns)
+    
+    def flags(self, index):
+        if not index.isValid():
+            return Qt.ItemIsEnabled
+        if index.column() == self.i_section:
+            return Qt.ItemFlags(
+                QAbstractTableModel.flags(self, index) | Qt.ItemIsEditable)
+        return Qt.ItemFlags(
+            QAbstractTableModel.flags(self, index))
 
     def data(self, index, role=Qt.DisplayRole):
         if not index.isValid():
@@ -116,3 +131,44 @@ class ColumnsPMMAll(PandasModel):
                 return str(self.df.columns[section])
             elif orientation == Qt.Vertical:
                 return str(self.df.index[section])
+            
+class ColumnsPMMDelegate(QItemDelegate):
+
+    def __init__(self,
+                 parent=None):
+        super().__init__(parent)
+
+    def createEditor(self, parent, option, index):
+        combobox = QComboBox(parent)
+        sections = index.model().sourceModel().sections
+        combobox.addItems(sections)
+        return combobox
+
+    def setEditorData(self, editor, index):
+        # Set the current value of the editor based on the model's data
+        value = index.model().data(index)
+        if isinstance(editor, QComboBox):
+            editor.setCurrentText(value)
+
+    def setModelData(self, editor, model, index):
+        # Update the model with the current value of the editor
+        col = index.model().sourceModel().i_section
+        if index.column() != col:
+            return
+        if isinstance(editor, QComboBox):
+            selected_section = editor.currentText()
+            model.setData(index, selected_section)  # Update the model with the selected value
+            etabs = index.model().sourceModel().etabs
+            i_name = index.model().sourceModel().i_name
+            row, col = self.parent().get_current_row_col(index)
+            i = index.model().sourceModel().index(row, i_name)
+            name = index.model().sourceModel().data(i)
+            etabs.unlock_model()
+            etabs.SapModel.FrameObj.SetSection(name, selected_section)
+            return True
+        
+    def sizeHint(self, option, index):
+        fm = option.fontMetrics
+        if index.column() == index.model().sourceModel().i_section:
+            return QSize(fm.width("C45X45-16T20-16T25     "), fm.height())
+        return QSize(fm.width("C45X45-16T20"), fm.height())

@@ -7,7 +7,7 @@ from PySide2.QtWidgets import QMessageBox
 import FreeCADGui as Gui
 
 import table_model
-from qt_models.columns_pmm_model import ColumnsPMMAll
+from qt_models.columns_pmm_model import ColumnsPMMAll, ColumnsPMMDelegate
 
 
 
@@ -36,11 +36,18 @@ class CivilToolsRunAndConcreteFrameDesign:
             ):
             return
         df = etabs.design.get_concrete_columns_pmm_table()
+        column_names = etabs.frame_obj.concrete_section_names('Column')
+        kwargs = {
+            'etabs': etabs,
+            'custom_delegate': ColumnsPMMDelegate,
+            'sections': column_names,
+            }
         table_model.show_results(
             df,
             model=ColumnsPMMAll,
             function=etabs.view.show_frame_with_lable_and_story,
             json_file_name="columns_pmm_ratios",
+            kwargs=kwargs,
             )
         
     def IsActive(self):
