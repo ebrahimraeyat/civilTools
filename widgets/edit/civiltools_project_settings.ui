@@ -20,7 +20,7 @@
    <string>Settings</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../civiltools.qrc">
+   <iconset resource="../../civiltools.qrc">
     <normaloff>:/civiltools/images/automatic.svg</normaloff>:/civiltools/images/automatic.svg</iconset>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_13">
@@ -2302,6 +2302,9 @@
          <property name="enabled">
           <bool>false</bool>
          </property>
+         <property name="currentIndex">
+          <number>1</number>
+         </property>
          <item>
           <property name="text">
            <string>خیلی زیاد</string>
@@ -2408,7 +2411,7 @@
         <string>Save</string>
        </property>
        <property name="icon">
-        <iconset resource="../civiltools.qrc">
+        <iconset resource="../../civiltools.qrc">
          <normaloff>:/civiltools/images/save.png</normaloff>:/civiltools/images/save.png</iconset>
        </property>
        <property name="iconSize">
@@ -2425,7 +2428,7 @@
         <string>Cancel</string>
        </property>
        <property name="icon">
-        <iconset resource="../civiltools.qrc">
+        <iconset resource="../../civiltools.qrc">
          <normaloff>:/civiltools/images/cancel.svg</normaloff>:/civiltools/images/cancel.svg</iconset>
        </property>
        <property name="iconSize">
@@ -2487,7 +2490,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../civiltools.qrc"/>
+  <include location="../../civiltools.qrc"/>
  </resources>
  <connections/>
 </ui>
