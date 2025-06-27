@@ -44,8 +44,9 @@ class Form:
         filename = self.form.filename.text()
         if not filename:
             return
+        draw_beam_wide = self.form.draw_beam_wide.isChecked()
         from etabs_api_export import export_plans_to_dxf as ex
-        ex.export_to_dxf(etabs=self.etabs, filename=filename)
+        ex.export_to_dxf(etabs=self.etabs, filename=filename, draw_offset_beam = draw_beam_wide)
         if self.form.open_checkbox.isChecked():
             from civiltools_python_functions import open_file
             open_file(filename)
