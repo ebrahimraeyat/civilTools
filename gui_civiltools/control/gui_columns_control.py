@@ -32,9 +32,7 @@ class CivilToolsControlColumns:
             ):
             return
         from py_widget.control import columns_control
-        win = columns_control.Form(etabs)
-        find_etabs.show_win(win, in_mdi=False)
-        # show_warning_about_number_of_use(check)
+        columns_control.check_column(etabs)
         
     def IsActive(self):
         return True
