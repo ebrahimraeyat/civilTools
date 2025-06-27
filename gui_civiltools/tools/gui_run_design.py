@@ -47,6 +47,7 @@ class CivilToolsRunAndConcreteFrameDesign:
             model=ColumnsPMMAll,
             function=etabs.view.show_frame_with_lable_and_story,
             json_file_name="columns_pmm_ratios",
+            etabs=etabs,
             kwargs=kwargs,
             )
         
