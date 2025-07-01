@@ -880,9 +880,8 @@ def setA(widget, d):
 		sotoh = ['خیلی زیاد', 'زیاد', 'متوسط', 'کم']
 		widget.risk_level.clear()
 		widget.risk_level.addItems(sotoh)
-		risk_level = d.get('risk_level', None)
-		if risk_level is not None:
-			widget.risk_level.setCurrentText(risk_level)
+		risk_level = d.get('risk_level', sotoh[1])
+		widget.risk_level.setCurrentText(risk_level)
 
 def current_building_from_etabs(etabs):
 	d = get_settings_from_etabs(etabs)
