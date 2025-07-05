@@ -4,7 +4,7 @@ from PySide2 import  QtWidgets
 import FreeCADGui as Gui
 
 import table_model
-from qt_models.columns_pmm_model import ColumnsPMMAll
+from qt_models.columns_pmm_model import ColumnsPMMAll, ColumnsPMMDelegate
 
 from exporter import civiltools_config
 
@@ -34,11 +34,19 @@ class Form(QtWidgets.QWidget):
             open_main_file=False)
         df = self.etabs.design.get_concrete_columns_pmm_table()
         self.etabs.open_model(main_file)
+        column_names = self.etabs.frame_obj.concrete_section_names('Column')
+        kwargs = {
+            'etabs': self.etabs,
+            'custom_delegate': ColumnsPMMDelegate,
+            'sections': column_names,
+            }
         table_model.show_results(
             df,
             model=ColumnsPMMAll,
             function=self.etabs.view.show_frame_with_lable_and_story,
             json_file_name="shearwall_25percent_column_ratio",
+            etabs=self.etabs,
+            kwargs=kwargs,
             )
         self.reject()
 
