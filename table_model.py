@@ -933,9 +933,9 @@ class ControlColumnResultWidget(ResultWidget):
 
     def row_clicked(self, index):
         row, col = self.get_current_row_col(index)
-        col_label = self.model.headerData(col, orientation=Qt.Horizontal, role=Qt.DisplayRole)
-        story = self.model.headerData(row, orientation=Qt.Vertical, role=Qt.DisplayRole)
-        args = [col_label, story]
+        columns_type_names_df = index.model().sourceModel().columns_type_names_df
+        col_name = columns_type_names_df.iloc[row, col]
+        args = [col_name,]
         self.function(*args)
 
 class ExpandedLoadSetsResults(ResultWidget):
