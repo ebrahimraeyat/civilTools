@@ -23,14 +23,10 @@ def check_column(etabs, way=2):
             result_widget = table_model.ControlColumnResultWidget,
             )
     elif way == 2:
-        section_areas = etabs.frame_obj.get_section_area()
-        def get_section_area(section_name):
-            return section_areas.get(section_name, 0)
         columns_type_names_df = etabs.frame_obj.stacked_columns_dataframe_by_points()
         columns_type_sections_df = columns_type_names_df.copy(deep=True)
-        # columns_type_sections_df = columns_type_names_df.applymap(get_section_area)
-        print(columns_type_names_df.head())
-        print(columns_type_sections_df.head())
+        etabs.set_current_unit('kgf', 'cm')
+        section_areas = etabs.frame_obj.get_section_area()
         table_model.show_results(
             columns_type_sections_df,
             model=ControlColumns,
