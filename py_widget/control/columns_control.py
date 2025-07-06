@@ -26,7 +26,8 @@ def check_column(etabs, way=2):
         columns_type_names_df = etabs.frame_obj.stacked_columns_dataframe_by_points()
         columns_type_sections_df = columns_type_names_df.copy(deep=True)
         etabs.set_current_unit('kgf', 'cm')
-        section_areas = etabs.frame_obj.get_section_area()
+        column_names = etabs.frame_obj.concrete_section_names('Column')
+        section_areas = etabs.frame_obj.get_section_area(column_names)
         table_model.show_results(
             columns_type_sections_df,
             model=ControlColumns,

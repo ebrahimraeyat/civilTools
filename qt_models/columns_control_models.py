@@ -90,31 +90,33 @@ class ColumnsControlDelegate(QItemDelegate):
         super().__init__(parent)
 
     def createEditor(self, parent, option, index):
+        section_name = index.model().data(index)
+        if section_name is None:
+            return None
         row = index.row()
         col = index.column()
-        if row == index.model().rowCount() - 1:
-            return
-        section_name = index.model().data(index)
-        below_index = index.model().index(row + 1, col)
-        below_section_name = index.model().data(below_index)
-        print(f'{below_section_name=}')
-        if below_section_name == 'None' or section_name == 'None':
-            return
         section_areas = index.model().sourceModel().section_areas
-        section_area = section_areas.get(below_section_name, None)
-        if section_area is None:
-            return
-        etabs = index.model().sourceModel().etabs
-        desired_sections = []
-        columns_type_names_df = index.model().sourceModel().columns_type_names_df
-        above_col = columns_type_names_df.iloc[row, col]
-        below_col = columns_type_names_df.iloc[row + 1, col]
-        for sec in section_areas.keys():
-            ret = etabs.prop_frame.compare_two_columns(below_col, above_col, section_areas, above_sec=sec)
-            if ret is CompareTwoColumnsEnum.OK:
-                desired_sections.append(sec)
-        # desired_sections = [sec for sec in section_areas.keys() if section_areas[sec] <= section_area]
-        combobox = QComboBox(parent)
+        if row == index.model().rowCount() - 1:
+            desired_sections = section_areas.keys()
+            below_section_name = 'None'
+        else:
+            below_index = index.model().index(row + 1, col)
+            below_section_name = index.model().data(below_index)
+            section_area = section_areas.get(below_section_name, None)
+            if section_area is None or below_section_name == 'None':
+                desired_sections = section_areas.keys()
+            else:
+                etabs = index.model().sourceModel().etabs
+                desired_sections = []
+                columns_type_names_df = index.model().sourceModel().columns_type_names_df
+                above_col = columns_type_names_df.iloc[row, col]
+                below_col = columns_type_names_df.iloc[row + 1, col]
+                for sec in section_areas.keys():
+                    ret = etabs.prop_frame.compare_two_columns(below_col, above_col, section_areas, above_sec=sec)
+                    if ret is CompareTwoColumnsEnum.OK:
+                        desired_sections.append(sec)
+        combobox = EscapeCloseComboBox(parent)
+        combobox.setDelegate(self)
         combobox.addItems(desired_sections)
         value_index = combobox.findText(below_section_name)
         if value_index != -1:
@@ -147,13 +149,6 @@ class ColumnsControlDelegate(QItemDelegate):
         if event.type() == event.MouseButtonRelease and event.button() == Qt.RightButton:
             self.draw_sections(index)
             return True
-        # if event.type() == event.MouseButtonRelease and event.button() == Qt.LeftButton:
-        #     if index.isValid():
-        #         editor = self.createEditor(None, None, index)
-        #         self.setEditorData(editor, index)
-        #         editor.showPopup()
-        #         # self.createEditor(option.widget, option, index)
-        #         return True
         return super().editorEvent(event, model, option, index)
 
     def draw_sections(self, index):
@@ -194,6 +189,21 @@ class ColumnsControlDelegate(QItemDelegate):
     def sizeHint(self, option, index):
         fm = option.fontMetrics
         return QSize(fm.width("2IPE14FPL200X10WP"), fm.height())
+    
+class EscapeCloseComboBox(QComboBox):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self._delegate = None
+
+    def setDelegate(self, delegate):
+        self._delegate = delegate
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Escape and self._delegate is not None:
+            # Close editor and revert changes
+            self._delegate.closeEditor.emit(self, QItemDelegate.RevertModelCache)
+        else:
+            super().keyPressEvent(event)
 
 
 def draw_concrete_section(
