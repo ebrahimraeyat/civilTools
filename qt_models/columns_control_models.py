@@ -32,6 +32,7 @@ class CompareTwoColumnsColorEnum(enum.Enum):
     springgreen = CompareTwoColumnsEnum.rebar_number.value
     yellow = CompareTwoColumnsEnum.rebar_slop.value
     lightskyblue = CompareTwoColumnsEnum.OK.value
+    gray = CompareTwoColumnsEnum.material.value
     white = CompareTwoColumnsEnum.not_checked.value
     
 
