@@ -53,6 +53,8 @@ class ControlColumns(PandasModel):
             if role == Qt.DisplayRole:
                 # colors = QColor.colorNames()
                 # return colors[col * self.rowCount() + row]
+                if value is None:
+                    return ""
                 return str(value)
             elif role == Qt.BackgroundColorRole:
                 # colors = QColor.colorNames()
@@ -98,12 +100,12 @@ class ColumnsControlDelegate(QItemDelegate):
         section_areas = index.model().sourceModel().section_areas
         if row == index.model().rowCount() - 1:
             desired_sections = section_areas.keys()
-            below_section_name = 'None'
+            below_section_name = ''
         else:
             below_index = index.model().index(row + 1, col)
             below_section_name = index.model().data(below_index)
             section_area = section_areas.get(below_section_name, None)
-            if section_area is None or below_section_name == 'None':
+            if section_area is None or below_section_name == '':
                 desired_sections = section_areas.keys()
             else:
                 etabs = index.model().sourceModel().etabs
@@ -160,7 +162,7 @@ class ColumnsControlDelegate(QItemDelegate):
             below_section_name = None
         else:
             below_section_name = index.model().data(below_index)
-        if below_section_name == 'None' or section_name == 'None':
+        if below_section_name == '' or section_name == '':
             return
         print(f'{below_section_name=}')
         etabs = index.model().sourceModel().etabs
