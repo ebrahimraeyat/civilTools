@@ -2142,7 +2142,7 @@
             <item>
              <widget class="QGroupBox" name="stiffness_soft_story_groupbox">
               <property name="title">
-               <string>Stiffness — Soft Story</string>
+               <string>Stiffness (Soft Story)</string>
               </property>
               <property name="checkable">
                <bool>true</bool>
@@ -2209,6 +2209,38 @@
               <property name="checked">
                <bool>false</bool>
               </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="lateral_strength_weak_story_groupbox">
+              <property name="title">
+               <string>Strength (Weak Story)</string>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_16">
+               <item>
+                <widget class="QRadioButton" name="strength_irregular_checkbox">
+                 <property name="text">
+                  <string>Irregular</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="extreme_strength_irregular_checkbox">
+                 <property name="text">
+                  <string>Extreme</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </widget>
             </item>
             <item>

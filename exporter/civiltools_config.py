@@ -145,7 +145,10 @@ def get_prop_from_widget(etabs, widget):
 		'weight_mass_checkbox',
 		'geometric_checkbox',
 		'in_plane_discontinuity_checkbox',
-		'lateral_strength_weak_story_checkbox',
+		# weak story
+		'lateral_strength_weak_story_groupbox',
+		'strength_irregular_checkbox',
+		'extreme_strength_irregular_checkbox',
 		# System type
 		'concrete_radiobutton',
 		'steel_radiobutton',
@@ -591,7 +594,10 @@ def load(
 		'weight_mass_checkbox',
 		'geometric_checkbox',
 		'in_plane_discontinuity_checkbox',
-		'lateral_strength_weak_story_checkbox',
+		# weak story
+		'lateral_strength_weak_story_groupbox',
+		'strength_irregular_checkbox',
+		'extreme_strength_irregular_checkbox',
 	):
 		if key in keys and hasattr(widget, key):
 			exec(f'widget.{key}.setChecked(d["{key}"])')
