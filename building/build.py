@@ -34,6 +34,7 @@ class Building(object):
                  tx_an_all: float=4,
                  ty_an_all: float=4,
                  ):
+        self.latex_report = ''
         self.risk_level = risk_level
         self.acc = self.acceleration
         self.city = city
@@ -116,7 +117,17 @@ class Building(object):
                 u'زیاد': 0.3,
                 u'خیلی زیاد': 0.35}
         return accs[self.risk_level]
-
+    
+    def get_latex(self):
+        return [
+            ('kx', self._kx_latex),
+            ('ky', self._ky_latex),
+            ('cx', self.cx_latex),
+            ('cy', self.cy_latex),
+            ('b', self.soil_reflection_prop_x.B_latex),
+            ('nx', self.soil_reflection_prop_x.N_latex),
+        ]
+    
     def period(self,
                system,
                height: float=0,
@@ -153,20 +164,25 @@ class Building(object):
     
     def calculate_k(self, t):
         if t < 0.5:
-            self._kStr = u'T &#60 0.5 '
+            self._kStr = 'T < 0.5 '
+            self._k_latex = 'T_{0} < 0.5 ==> k_{0} = 1.0'
             return 1.0
         elif t > 2.5:
-            self._kStr = u'T &#62 2.5 '
+            self._kStr = 'T  2.5 '
+            self._k_latex = 'T_{0} > 2.5 ==> k_{0} = 2.0'
             return 2.0
         else:
-            self._kStr = u' 0.5 &#60 T &#60 2.5 &#8658 k<sub>{0}</sub> = 0.5 &#215 T + 0.75'
+            self._kStr = ' 0.5 < T < 2.5 => k<sub>{0}</sub> = 0.5 &#215 T + 0.75'
+            self._k_latex = ' 0.5 < T_{0} < 2.5 ==> k_{0} = 0.5T_{0} + 0.75 = 0.5 \\times {2} + 0.75 = {1}'
             return 0.5 * t + 0.75
 
     def get_k(self, tx, ty):
         kx = self.calculate_k(tx)
         self._kxStr = self._kStr.format('x')
+        self._kx_latex = self._k_latex.format('x', kx, tx)
         ky = self.calculate_k(ty)
         self._kyStr = self._kStr.format('y')
+        self._ky_latex = self._k_latex.format('y', ky, ty)
         return kx, ky
 
     def get_engheta(self):
@@ -230,18 +246,16 @@ class Building(object):
         cy_not_approved = self.acc * by * self.importance_factor / y_system.Ru
         if cx_not_approved < self.c_min:
             cx = self.c_min
-            self.cxStr = (u"{0:.4f} &#60 C<sub>min</sub> &#8658 Cx = {1}</p>"
-                          ).format(cx_not_approved, self.c_min)
+            self.cx_latex = (f"{cx_not_approved:.4f} < C_min => C_x = {self.c_min:.4f}")
         else:
             cx = cx_not_approved
-            self.cxStr = (u"{0:.4f} &#62 C<sub>min</sub>  O.K</p>").format(cx_not_approved)
+            self.cx_latex = (f"{cx_not_approved:.4f} > C_{{min}}\t  O.K")
         if cy_not_approved < self.c_min:
             cy = self.c_min
-            self.cyStr = (u" {0:.4f} &#60 C<sub>min</sub> &#8658 Cy = {1}</p>"
-                          ).format(cy_not_approved, self.c_min)
+            self.cy_latex = (f"{cy_not_approved:.4f} < C_min => C_y = {self.c_min:.4f}")
         else:
             cy = cy_not_approved
-            self.cyStr = (u"{0:.4f} &#62 C<sub>min</sub>  O.K</p>").format(cy_not_approved)
+            self.cy_latex = (f"{cy_not_approved:.4f} > C_{{min}}\t  O.K")
         return True, cx, cy
 
 
@@ -333,41 +347,44 @@ class ReflectionFactor(object):
         S0 = self.S0
         # calculating B1
         if 0 < T < T0:
-            self.B1str1 = '0 &#x227A T &#60 T0 &#8658 B1 = S0 + (S - S0 + 1) &#215 (T / T0)'
+            self.b1_latex = f'0 < T < T0 => B1 = S0 + (S - S0 + 1) \times (T / T0)'
             return S0 + (S - S0 + 1) * (T / T0)
         elif T0 <= T < Ts:
-            self.B1str1 = "T0 &#x2264 T &#60 Ts &#8658 B1 = S + 1"
+            self.b1_latex = "T0 <= T < Ts => B1 = S + 1"
             return S + 1
         else:
-            self.B1str1 = 'T &#62 Ts &#8658 B1 = (S + 1) &#215 (Ts / T)'
+            self.b1_latex = 'T > Ts => B1 = (S + 1) \times (Ts / T)'
             return (S + 1) * (Ts / T)
 
     def calculatN(self):
         Ts = self.Ts
         T = self.T
 
-        # calculating N
+        # Calculate N with LaTeX-formatted output
+        self.N_latex = f'A = {self.A:.3f}, \\; T = {T:.3f}, \\; T_s = {Ts:.3f}\n'
+        
         if self.A > 0.27:
+            self.N_latex += f'A = {self.A:.3f} > 0.27, \\; '
             if T < Ts:
-                self.Nstr = ('A = {0}, T &#60 TS ').format(self.A)
+                self.N_latex += f'T = {T:.3f} < T_s = {Ts:.3f} \\; \\Rightarrow \\; N = 1'
                 N = 1
             elif Ts <= T < 4:
-                self.Nstr = ('A = {0}, Ts &#x2264 T &#60 4 &#8658').format(self.A)
-                self.Nstr += 'N = .7 &#215 (T - Ts) / (4 - Ts) + 1'
-                N = .7 * (T - Ts) / (4 - Ts) + 1
+                self.N_latex += f'T_s = {Ts:.3f} \\leq T = {T:.3f} < 4 \\; \\Rightarrow \\; '
+                self.N_latex += f'N = 0.7 \\times \\frac{{{T:.3f} - {Ts:.3f}}}{{4 - {Ts:.3f}}} + 1 = {0.7 * (T - Ts) / (4 - Ts) + 1:.3f}'
+                N = 0.7 * (T - Ts) / (4 - Ts) + 1
             else:
-                self.Nstr = ('A = {0}, T &#62 4 ').format(self.A)
+                self.N_latex += f'T = {T:.3f} \\geq 4 \\; \\Rightarrow \\; N = 1.7'
                 N = 1.7
         else:
             if T < Ts:
-                self.Nstr = ('A = {0}, T &#60 TS ').format(self.A)
+                self.N_latex += f'A = {self.A:.3f} \\leq 0.27, \\; T = {T:.3f} < T_s = {Ts:.3f} \\; \\Rightarrow \\; N = 1'
                 N = 1
             elif Ts <= T < 4:
-                self.Nstr = ('A = {0}, Ts &#x2264 T &#60 4 &#8658').format(self.A)
-                self.Nstr += 'N = 0.4 &#215 (T - Ts) / (4 - Ts) + 1'
-                N = .4 * (T - Ts) / (4 - Ts) + 1
+                self.N_latex += f'A = {self.A:.3f} \\leq 0.27, \\; T_s = {Ts:.3f} \\leq T = {T:.3f} < 4 \\; \\Rightarrow \\; '
+                self.N_latex += f'N = 0.4 \\times \\frac{{{T:.3f} - {Ts:.3f}}}{{4 - {Ts:.3f}}} + 1 = {0.4 * (T - Ts) / (4 - Ts) + 1:.3f}'
+                N = 0.4 * (T - Ts) / (4 - Ts) + 1
             else:
-                self.Nstr = ('A = {0}, T &#62 4 ').format(self.A)
+                self.N_latex += f'A = {self.A:.3f} \\leq 0.27, \\; T = {T:.3f} \\geq 4 \\; \\Rightarrow \\; N = 1.4'
                 N = 1.4
         return N
 
