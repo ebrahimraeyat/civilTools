@@ -8,12 +8,6 @@ import civiltools_rc
 
 from freecad_funcs import add_to_clipboard
 
-try:
-    import wmi
-except ImportError:
-    from freecad_funcs import install_package
-    install_package('wmi')
-    import wmi
 
 civiltools_path = Path(__file__).absolute().parent.parent.parent
 
@@ -40,6 +34,12 @@ class Form(QtWidgets.QWidget):
         except Exception as e:
             print(f"Error retrieving serial number: {e}")
             # Fallback to wmi package if wmic fails
+            try:
+                import wmi
+            except ImportError:
+                from freecad_funcs import install_package
+                install_package('wmi')
+                import wmi
             c = wmi.WMI()
             serial = c.Win32_ComputerSystemProduct()[0].UUID
         self.form.serial.setText(serial)
