@@ -618,6 +618,10 @@ class Ui(QMainWindow, main_window):
                 serial_win.serial.setText(check.serial)
                 serial_win.exec_()
                 return False, check
+            elif text == 'REBOOT':
+                msg = "Please reboot your computer and try again!"
+                QMessageBox.information(None, 'Reboot', str(msg))
+                return False, check
             elif text == 'REGISTERED':
                 msg = "Congrajulation! You are now registered, enjoy using this features!"
                 QMessageBox.information(None, 'Registered', str(msg))

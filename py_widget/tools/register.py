@@ -58,6 +58,8 @@ class Form(QtWidgets.QWidget):
             msg = 'Please connect to the internet!'
         elif text == 'SERIAL':
             msg = 'You are not registered, Please Contact author to buy the software.'
+        elif text == 'REBOOT':
+            msg = "Please reboot your computer and try again!"
         elif text == 'REGISTERED':
             msg = "Congrajulation! You are now registered, enjoy using CivilTools."
         QMessageBox.information(None, 'Registeration', msg)

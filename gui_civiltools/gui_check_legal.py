@@ -32,6 +32,10 @@ def allowed_to_continue(
             serial_win.form.serial.setText(check.serial)
             serial_win.form.exec_()
             return False, check
+        elif text == 'REBOOT':
+            msg = "Please reboot your computer and try again!"
+            QMessageBox.information(None, 'Reboot', str(msg))
+            return False, check
         elif text == 'REGISTERED':
             msg = "Congrajulation! You are now registered, enjoy using this features!"
             QMessageBox.information(None, 'Registered', str(msg))
@@ -75,6 +79,8 @@ def submit():
         msg = 'Please connect to the internet!'
     elif text == 'SERIAL':
         msg = 'You are not registered, Please Contact author to buy the software.'
+    elif text == 'REBOOT':
+        msg = "Please reboot your computer and try again!"
     elif text == 'REGISTERED':
         msg = "Congrajulation! You are now registered, enjoy using CivilTools."
     QMessageBox.information(None, 'Registeration', msg)
