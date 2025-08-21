@@ -65,6 +65,7 @@ class Form(QtWidgets.QWidget):
         suffix = self.form.suffix.text()
         prefix = self.form.prefix.text()
         clean_names = self.form.clean_names_checkbox.isChecked()
+        etabs_main_version = self.etabs.etabs_main_version
         ret, convert_names, section_that_corner_bars_is_different = self.etabs.prop_frame.change_beams_columns_section_fc(
             names,
             conc_name,
@@ -72,6 +73,7 @@ class Form(QtWidgets.QWidget):
             clean_names,
             frame_types,
             prefix,
+            apply_with_tables_if_needed=True if etabs_main_version > 19 else False,
             )
         if ret:
             self.etabs.view.refresh_view()
@@ -83,7 +85,7 @@ class Form(QtWidgets.QWidget):
             msg = "Some Error Occured, Please try againg."
             title = 'Failed'
         QtWidgets.QMessageBox.information(None, title, str(msg))
-        if len(section_that_corner_bars_is_different) > 0:
+        if len(section_that_corner_bars_is_different) > 0 and etabs_main_version < 20:
             print(f"{section_that_corner_bars_is_different=}")
             msg = f"{len(section_that_corner_bars_is_different)} Sections have different Corner Bar Size, Edit those in Etabs Model Manually:\n"
             for i, sec in enumerate(section_that_corner_bars_is_different):
