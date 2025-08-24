@@ -1,14 +1,14 @@
 from pathlib import Path
 from typing import Union
 
-from PySide2.QtCore import (
+from PySide.QtCore import (
     QAbstractTableModel,
     Qt,
     QModelIndex,
     QSize,
 )
-from PySide2.QtGui import QColor #, QIcon
-from PySide2.QtWidgets import QComboBox, QItemDelegate
+from PySide.QtGui import QColor #, QIcon
+from PySide.QtGui import QComboBox, QItemDelegate
 
 from qt_models import table_models
 
@@ -93,7 +93,7 @@ class ConcreteColumnSectionTableModel(QAbstractTableModel):
             if column == NAME:
                 return int(Qt.AlignLeft | Qt.AlignVCenter)
             return int(Qt.AlignCenter | Qt.AlignVCenter)
-        elif role == Qt.BackgroundColorRole:
+        elif role == Qt.ItemDataRole.BackgroundRole:
             # if column == SLENDER:
             #     if section.slender == u'لاغر':
             #         return QColor(250, 40, 0)
@@ -201,7 +201,7 @@ class ConcreteBeamSectionTableModel(QAbstractTableModel):
             if column == NAME:
                 return int(Qt.AlignLeft | Qt.AlignVCenter)
             return int(Qt.AlignCenter | Qt.AlignVCenter)
-        elif role == Qt.BackgroundColorRole:
+        elif role == Qt.ItemDataRole.BackgroundRole:
             if section.B.Value == 350:
                 return QColor(150, 200, 150)
             elif section.B.Value == 400:

@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from PySide2 import  QtWidgets
-from PySide2.QtWidgets import QMessageBox
+from PySide import QtGui
+from PySide.QtGui import QMessageBox
 
 import FreeCADGui as Gui
 
@@ -10,7 +10,7 @@ import FreeCADGui as Gui
 civiltools_path = Path(__file__).absolute().parent.parent.parent
 
 
-class Form(QtWidgets.QWidget):
+class Form(QtGui.QWidget):
     def __init__(self, etabs_model):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'define' / 'create_section_cuts.ui'))

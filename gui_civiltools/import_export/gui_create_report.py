@@ -1,8 +1,9 @@
 
 from pathlib import Path
 
-from PySide2 import QtCore, QtWidgets
-# from PySide2.QtWidgets import QMessageBox
+from PySide import QtCore
+from PySide import QtGui
+# from PySide.QtGui import QMessageBox
 
 import FreeCADGui as Gui
 
@@ -38,7 +39,7 @@ class CiviltoolsCreateReport:
         # d = etabs.get_settings_from_model()
         d = civiltools_config.get_settings_from_etabs(etabs)
         if len(d) == 0:
-            QtWidgets.QMessageBox.warning(None, 'Settings', 'Please Set Options First!')
+            QtGui.QMessageBox.warning(None, 'Settings', 'Please Set Options First!')
             Gui.runCommand("civiltools_settings")
         if len(d) == 0:
             return

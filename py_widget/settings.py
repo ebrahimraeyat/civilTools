@@ -2,8 +2,8 @@ from pathlib import Path
 import copy
 import math
 
-from PySide2 import  QtWidgets
-from PySide2 import QtGui, QtCore
+from PySide import QtGui
+from PySide import QtGui, QtCore
 
 import FreeCAD
 import FreeCADGui as Gui
@@ -19,7 +19,7 @@ from python_functions import flatten_set
 civiltools_path = Path(__file__).absolute().parent.parent
 
 
-class Form(QtWidgets.QWidget):
+class Form(QtGui.QWidget):
     def __init__(self, etabs_model):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'edit' / 'civiltools_project_settings.ui'))
@@ -447,24 +447,24 @@ class Form(QtWidgets.QWidget):
         results = building.results
         if results[0] is False:
             title, err, direction = results[1:]
-            QtWidgets.QMessageBox.critical(self, "ایراد در انتخاب سیستم اول", title % direction + '\n' + str(err))
+            QtGui.QMessageBox.critical(self, "ایراد در انتخاب سیستم اول", title % direction + '\n' + str(err))
             return False
         if building.building2 is not None:
             if self.form.special_case.isChecked():
                 if (building.x_system.Ru != building.building2.x_system.Ru) or (
                     building.y_system.Ru != building.building2.y_system.Ru):
-                    QtWidgets.QMessageBox.critical(self,  "سیستم دوگانه در ارتفاع" , 
+                    QtGui.QMessageBox.critical(self,  "سیستم دوگانه در ارتفاع" , 
                                                 "در حال حاضر نرم افزار نمیتواند سیستم های دوگانه خاص که ضریب رفتار سازه بالا و سازه پایینی برابر نیست را تحلیل کند.")
                     return False
             if (building.x_system.Ru < building.building2.x_system.Ru) or (
                 building.y_system.Ru < building.building2.y_system.Ru):
-                QtWidgets.QMessageBox.critical(self,  "سیستم دوگانه در ارتفاع" , 
+                QtGui.QMessageBox.critical(self,  "سیستم دوگانه در ارتفاع" , 
                                                "در حال حاضر نرم افزار نمیتواند سیستم های دوگانه که ضریب رفتار سازه بالا بیشتر از سازه پایینی است را تحلیل کند.")
                 return False
             results = building.building2.results
             if results[0] is False:
                 title, err, direction = results[1:]
-                QtWidgets.QMessageBox.critical(self, "ایراد در انتخاب سیستم دوم", title % direction + '\n' + str(err))
+                QtGui.QMessageBox.critical(self, "ایراد در انتخاب سیستم دوم", title % direction + '\n' + str(err))
                 return False
         return building
     
@@ -494,7 +494,7 @@ class Form(QtWidgets.QWidget):
         title = 'Dynamic Loadcase'
         warning = 'Dynamic Loadcase names can not be similar, correct the dynamic loadcase names.'
         if len(set(all_names)) != 8:
-            QtWidgets.QMessageBox.warning(None, title, warning)
+            QtGui.QMessageBox.warning(None, title, warning)
             self.form.tabWidget.setCurrentIndex(3)
             return None
         response_spectrum_loadcases = self.etabs.load_cases.get_response_spectrum_loadcase_name()
@@ -505,9 +505,9 @@ class Form(QtWidgets.QWidget):
             if len(funcs) == 0:
                 message = '<html>You must define a spectrum function in your model and then assing it to %s' % loadcases % ', '.join(not_exists)
                 message += " Load Cases, do you want to continue?"
-                if QtWidgets.QMessageBox.question(None,
+                if QtGui.QMessageBox.question(None,
                                               'Response Specturm',
-                                              message) == QtWidgets.QMessageBox.No:
+                                              message) == QtGui.QMessageBox.No:
                     return False
                 func = None
             else:
@@ -540,7 +540,7 @@ class Form(QtWidgets.QWidget):
         modal = self.form.modal_combobox.currentText()
         if modal == "":
             message = 'You must define a Modal Case in your model'
-            QtWidgets.QMessageBox.warning(None,
+            QtGui.QMessageBox.warning(None,
                                             'Modal LoadCase',
                                             message)
             return False
@@ -556,10 +556,10 @@ class Form(QtWidgets.QWidget):
         warning2 = 'Earthquake names can not be similar, correct the  %s earthquake names.'
         for e in first_system_names:
             if e.strip(' ') == '':
-                QtWidgets.QMessageBox.warning(None, title1, warning1%('first system') )
+                QtGui.QMessageBox.warning(None, title1, warning1%('first system') )
                 return None
         if len(set(first_system_names)) != 12:
-            QtWidgets.QMessageBox.warning(None, title2, warning2%('first system'))
+            QtGui.QMessageBox.warning(None, title2, warning2%('first system'))
             return None
         # Second system
         if self.form.activate_second_system.isChecked():
@@ -567,10 +567,10 @@ class Form(QtWidgets.QWidget):
                 civiltools_config.get_second_system_seismic_drift(self.form)
             for e in second_system_names:
                 if e.strip(' ') == '':
-                    QtWidgets.QMessageBox.warning(None, title1, warning1%('second system') )
+                    QtGui.QMessageBox.warning(None, title1, warning1%('second system') )
                     return None
             if len(set(first_system_names + second_system_names)) != 24:
-                QtWidgets.QMessageBox.warning(None, title2, warning2%('second system'))
+                QtGui.QMessageBox.warning(None, title2, warning2%('second system'))
                 return None
         return True
     

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
-from PySide2.QtGui import QWidget, QVBoxLayout, QApplication
+from PySide.QtGui import QWidget, QVBoxLayout, QApplication
 import pyqtgraph as pg
 ## Switch to using white background and black foreground
 pg.setConfigOption('background', 'w')

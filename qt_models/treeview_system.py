@@ -11,10 +11,11 @@ import sys
 import csv
 from pathlib import Path
 
-# from PyQt5 import QtCore, QtWidgets
+# from PyQt5 import QtCore, QtGui
 # from PyQt5.QtCore import Qt
-from PySide2 import QtCore, QtWidgets
-from PySide2.QtCore import Qt
+from PySide import QtCore
+from PySide import QtGui
+from PySide.QtCore import Qt
 
 
 class CustomNode(object):
@@ -162,7 +163,7 @@ class MyTree():
 
                 root.addChild(CustomNode(row))
 
-        self.tw = QtWidgets.QTreeView()
+        self.tw = QtGui.QTreeView()
         headers=('System', 'Ru', 'Omega', 'Cd', 'H_max', 'alpha', 'beta', 'note', 'ID')
         self.tw.setModel(CustomModel(list(self.items.values()), headers=headers))
         self.tw.clicked.connect(self.update_model)
@@ -190,7 +191,7 @@ class MyTree():
 
 if __name__ == "__main__":
     import sys
-    app = QtWidgets.QApplication(sys.argv)
+    app = QtGui.QApplication(sys.argv)
     mytree = MyTree()
     mytree.tw.show()
     sys.exit(app.exec_())

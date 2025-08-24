@@ -1,8 +1,8 @@
 
 from pathlib import Path
 
-import PySide2
-from PySide2 import QtCore
+import PySide
+from PySide import QtCore
 
 
 # import FreeCAD

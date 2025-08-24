@@ -1,13 +1,13 @@
 from pathlib import Path
 
-from PySide2 import  QtWidgets
+from PySide import QtGui
 
 import table_model
 
 civiltools_path = Path(__file__).absolute().parent.parent.parent
 
 
-class Form(QtWidgets.QWidget):
+class Form(QtGui.QWidget):
     def __init__(self, etabs_model):
         super(Form, self).__init__()
         self.etabs = etabs_model
@@ -20,7 +20,7 @@ class Form(QtWidgets.QWidget):
 
     def show_expand_result(self):
         if self.df.empty:
-            QtWidgets.QMessageBox.warning(None, 'Empty Load Sets', 'There is no load sets in this model.')
+            QtGui.QMessageBox.warning(None, 'Empty Load Sets', 'There is no load sets in this model.')
             return
         df = self.df.copy()
         del df['Direction']
@@ -41,8 +41,8 @@ class Form(QtWidgets.QWidget):
     def expand_load_sets(self):
         ret = self.etabs.area.expand_uniform_load_sets_and_apply_to_model(self.df)
         if ret:
-            QtWidgets.QMessageBox.information(None, 'Successful', 'All load sets expanded successfully.')
+            QtGui.QMessageBox.information(None, 'Successful', 'All load sets expanded successfully.')
         else:
-            QtWidgets.QMessageBox.warning(None, 'Failed', "Load sets did not expanded!")
+            QtGui.QMessageBox.warning(None, 'Failed', "Load sets did not expanded!")
         self.reject()
 

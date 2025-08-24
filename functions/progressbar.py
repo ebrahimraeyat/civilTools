@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from PySide2 import uic
+from PySide import uic
 
 civiltools_path = Path(__file__).absolute().parent.parent
 

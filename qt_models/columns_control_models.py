@@ -4,13 +4,13 @@ import math
 
 import matplotlib.pyplot as plt
 
-from PySide2.QtCore import (
+from PySide.QtCore import (
     QAbstractTableModel,
     Qt,
     QSize,
 )
-from PySide2.QtGui import QColor #, QIcon
-from PySide2.QtWidgets import QComboBox, QItemDelegate
+from PySide.QtGui import QColor #, QIcon
+from PySide.QtGui import QComboBox, QItemDelegate
 
 from table_model import PandasModel
 
@@ -56,7 +56,7 @@ class ControlColumns(PandasModel):
                 if value is None:
                     return ""
                 return str(value)
-            elif role == Qt.BackgroundColorRole:
+            elif role == Qt.ItemDataRole.BackgroundRole:
                 # colors = QColor.colorNames()
                 # return QColor(colors[col * self.rowCount() + row])
                 if row != (self.rowCount() - 1) and value is not None:

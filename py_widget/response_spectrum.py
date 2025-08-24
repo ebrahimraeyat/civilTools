@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from PySide2 import  QtWidgets, QtCore
+from PySide import QtGui, QtCore
 import FreeCADGui as Gui
 
 
@@ -11,7 +11,7 @@ from exporter import civiltools_config
 
 
 
-class Form(QtWidgets.QWidget):
+class Form(QtGui.QWidget):
     def __init__(self, etabs_obj, d):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'response_spectrum.ui'))

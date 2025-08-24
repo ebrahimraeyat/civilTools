@@ -2,9 +2,9 @@ from pathlib import Path
 
 import pandas as pd
 
-from PySide2 import  QtWidgets
+from PySide import QtGui
 import FreeCADGui as Gui
-from PySide2.QtWidgets import QMessageBox, QFileDialog
+from PySide.QtGui import QMessageBox, QFileDialog
 
 import civiltools_rc
 
@@ -13,7 +13,7 @@ civiltools_path = Path(__file__).absolute().parent.parent
 from exporter import civiltools_config
 
 
-class Form(QtWidgets.QWidget):
+class Form(QtGui.QWidget):
     def __init__(self, etabs_obj, d):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'weakness.ui'))

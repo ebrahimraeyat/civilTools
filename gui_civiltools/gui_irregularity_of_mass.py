@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from PySide2 import QtCore
+from PySide import QtCore
 
 
 class CivilIrregularityOfMass:

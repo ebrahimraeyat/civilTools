@@ -1,17 +1,17 @@
 from pathlib import Path
 from typing import Union
 
-from PySide2 import  QtWidgets
-from PySide2.QtCore import Qt
+from PySide import QtGui
+from PySide.QtCore import Qt
 import FreeCADGui as Gui
-from PySide2.QtWidgets import QFileDialog
+from PySide.QtGui import QFileDialog
 
 import civiltools_rc
 
 civiltools_path = Path(__file__).absolute().parent.parent.parent
 
 
-class Form(QtWidgets.QWidget):
+class Form(QtGui.QWidget):
     def __init__(self,
                  etabs_obj,
                  d: dict,
@@ -58,7 +58,7 @@ class Form(QtWidgets.QWidget):
         if items:
             name = items[-1].text()
         else:
-            QtWidgets.QMessageBox.warning(None, 'Select Beam', 'Select one beam and press refresh button.')
+            QtGui.QMessageBox.warning(None, 'Select Beam', 'Select one beam and press refresh button.')
             return
         self.etabs.add_prefix_suffix_name(suffix=f'_weakness_torsion_{dir_}', open=True)
         self.etabs.lock_and_unlock_model()

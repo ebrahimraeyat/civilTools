@@ -2,10 +2,10 @@ from pathlib import Path
 import pandas as pd
 
 
-from PySide2.QtCore import (
+from PySide.QtCore import (
     Qt,
 )
-from PySide2.QtGui import QColor #, QIcon
+from PySide.QtGui import QColor #, QIcon
 
 from table_model import PandasModel
 

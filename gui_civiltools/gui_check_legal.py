@@ -1,13 +1,20 @@
 from pathlib import Path
+import sys
 
-from PySide2.QtWidgets import QMessageBox
-from PySide2 import  QtWidgets
-from PySide2 import QtCore
+from PySide.QtGui import QMessageBox
+from PySide import QtGui
+from PySide import QtCore
 import FreeCADGui as Gui
 
 civiltools_path = Path(__file__).absolute().parent.parent
 
 import find_etabs
+
+version = sys.version.split()[0]
+if version == '3.8.6+':
+    from functions import check_legal
+elif version == '3.12.10':
+    from functions import check_legal_12 as check_legal
 
 
 def allowed_to_continue(
@@ -16,7 +23,6 @@ def allowed_to_continue(
                         dir_name,
                         n=5,
                         ):
-    from functions import check_legal
     check = check_legal.CheckLegalUse(
                                 filename,
                                 gist_url,
@@ -58,7 +64,7 @@ def show_warning_about_number_of_use(check):
             QMessageBox.warning(None, 'Not registered!', str(msg))
 
 
-class SerialForm(QtWidgets.QWidget):
+class SerialForm(QtGui.QWidget):
     def __init__(self, parent=None):
         super(SerialForm, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'serial.ui'))
@@ -67,7 +73,6 @@ class SerialForm(QtWidgets.QWidget):
 
 
 def submit():
-    from functions import check_legal
     check = check_legal.CheckLegalUse(
         'civiltools5.bin',
         'https://gist.githubusercontent.com/ebrahimraeyat/b8cbd078eb7b211e3154804a8bb77633/raw',

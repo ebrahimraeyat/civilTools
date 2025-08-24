@@ -1,7 +1,7 @@
-import os
+import sys
 from pathlib import Path
-from PySide2 import QtCore
-from PySide2.QtWidgets import QMessageBox
+from PySide import QtCore
+from PySide.QtGui import QMessageBox
 # import FreeCAD
 import FreeCADGui as Gui
 # import DraftTools
@@ -119,7 +119,7 @@ class CivilHelp:
 
 
 def get_save_filename(ext):
-    from PySide2.QtWidgets import QFileDialog
+    from PySide.QtGui import QFileDialog
     filters = f"{ext[1:]} (*{ext})"
     filename, _ = QFileDialog.getSaveFileName(None, 'select file',
                                               None, filters)
@@ -135,7 +135,11 @@ def allowed_to_continue(
                         dir_name,
                         n = 2,
                         ):
-    from functions import check_legal
+    version = sys.version.split()[0]
+    if version == '3.8.6+':
+        from functions import check_legal
+    elif version == '3.12.10':
+        from functions import check_legal_12 as check_legal
     check = check_legal.CheckLegalUse(
                                 filename,
                                 gist_url,

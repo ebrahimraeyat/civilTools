@@ -1,6 +1,6 @@
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-from PyQt5 import uic, QtWidgets
+from PyQt5 import uic, QtGui
 
 import sys
 import os

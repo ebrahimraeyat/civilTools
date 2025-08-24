@@ -1,7 +1,8 @@
 
 from pathlib import Path
 
-from PySide2 import QtCore, QtWidgets
+from PySide import QtCore
+from PySide import QtGui
 
 import FreeCADGui as Gui
 
@@ -46,7 +47,7 @@ class CivilGetWeakness:
         from exporter import civiltools_config
         d = civiltools_config.get_settings_from_etabs(etabs)
         if len(d) == 0:
-            QtWidgets.QMessageBox.warning(None, 'Settings', 'Please Set Options First!')
+            QtGui.QMessageBox.warning(None, 'Settings', 'Please Set Options First!')
             Gui.runCommand("civiltools_settings")
             d = civiltools_config.get_settings_from_etabs(etabs)
             if len(d) == 0:

@@ -26,7 +26,7 @@
 import sys
 from pathlib import Path
 
-from PySide2.QtCore import Qt
+from PySide.QtCore import Qt
 import FreeCAD, Draft
 
 from CivilToolsTranslateUtils import *

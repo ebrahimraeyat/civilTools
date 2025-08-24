@@ -2,8 +2,8 @@ from pathlib import Path
 
 import pandas as pd
 
-from PySide2 import  QtWidgets
-from PySide2.QtCore import Qt
+from PySide import QtGui
+from PySide.QtCore import Qt
 
 import FreeCADGui as Gui
 
@@ -11,7 +11,7 @@ import FreeCADGui as Gui
 civiltools_path = Path(__file__).absolute().parent.parent.parent
 
 
-class Form(QtWidgets.QWidget):
+class Form(QtGui.QWidget):
     def __init__(self, etabs_obj):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'control' / 'shear_story.ui'))

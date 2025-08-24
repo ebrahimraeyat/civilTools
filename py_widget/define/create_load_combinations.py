@@ -1,9 +1,9 @@
 from pathlib import Path
 
-from PySide2 import  QtWidgets
-from PySide2.QtWidgets import QMessageBox
-from PySide2.QtCore import QModelIndex
-from PySide2.QtCore import Signal, Qt
+from PySide import QtGui
+from PySide.QtGui import QMessageBox
+from PySide.QtCore import QModelIndex
+from PySide.QtCore import Signal, Qt
 
 import FreeCADGui as Gui
 import FreeCAD
@@ -16,7 +16,7 @@ civiltools_path = Path(__file__).absolute().parent.parent.parent
 # from load_combinations import generate_concrete_load_combinations
 from qt_models import treeview
 
-class Form(QtWidgets.QWidget):
+class Form(QtGui.QWidget):
     def __init__(self, etabs_model):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'define' / 'create_load_combinations.ui'))

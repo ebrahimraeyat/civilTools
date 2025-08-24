@@ -1,5 +1,5 @@
-from PySide2.QtCore import QAbstractTableModel, Qt, QModelIndex
-from PySide2.QtGui import QFont, QColor
+from PySide.QtCore import QAbstractTableModel, Qt, QModelIndex
+from PySide.QtGui import QFont, QColor
 
 
 X, Y, X1, Y1 = range(4)
@@ -111,7 +111,7 @@ class StructureModel(QAbstractTableModel):
                     pass
             if row == BTEIF:
                 return f'{b_teif: .4f}'
-        elif role == Qt.BackgroundColorRole:
+        elif role == Qt.ItemDataRole.BackgroundRole:
             if row in (K, CFACTOR):
                 return QColor(100, 255, 100)
             if row in (KDRIFT, CDRIFT):
@@ -152,7 +152,7 @@ class StructureModel(QAbstractTableModel):
             if orientation == Qt.Horizontal:
                 return QVariant(int(Qt.AlignCenter | Qt.AlignVCenter))
             return QVariant(int(Qt.AlignLeft | Qt.AlignVCenter))
-        elif role == Qt.BackgroundColorRole:
+        elif role == Qt.ItemDataRole.BackgroundRole:
             if orientation == Qt.Vertical:
                 if section in (K, CFACTOR):
                     return QColor(120, 255, 120)

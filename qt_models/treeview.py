@@ -8,8 +8,9 @@ TODO: handle changing data.
 """
 
 import sys
-from PySide2 import QtCore, QtWidgets
-from PySide2.QtCore import Qt
+from PySide import QtCore
+from PySide import QtGui
+from PySide.QtCore import Qt
 
 
 class CustomNode(object):
@@ -135,7 +136,7 @@ class MyTree():
                 self.items[i] = root
             root.addChild(CustomNode(['d', 'e', 'f']))
 
-        self.tw = QtWidgets.QTreeView()
+        self.tw = QtGui.QTreeView()
         self.tw.setModel(CustomModel(list(self.items.values()), headers=('Load Case', 'SF')))
 
     def add_data(self, data):
@@ -147,7 +148,7 @@ class MyTree():
 
 
 if __name__ == "__main__":
-    app = QtWidgets.QApplication(sys.argv)
+    app = QtGui.QApplication(sys.argv)
     mytree = MyTree()
     mytree.tw.show()
     sys.exit(app.exec_())

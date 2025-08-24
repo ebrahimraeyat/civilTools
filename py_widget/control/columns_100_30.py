@@ -1,13 +1,13 @@
 from pathlib import Path
 
-from PySide2 import  QtWidgets
+from PySide import QtGui
 import FreeCADGui as Gui
 
 civiltools_path = Path(__file__).absolute().parent.parent.parent
 
 from exporter import civiltools_config 
 
-class Form(QtWidgets.QWidget):
+class Form(QtGui.QWidget):
     def __init__(self, etabs_model, d):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'control' / 'columns_100_30.ui'))
@@ -54,7 +54,7 @@ class Form(QtWidgets.QWidget):
 
     def get_filename(self):
         directory = str(self.etabs.get_filepath())
-        filename, _ = QtWidgets.QFileDialog.getSaveFileName(
+        filename, _ = QtGui.QFileDialog.getSaveFileName(
                     None,
                     'ETABS 100-30 file name',
                     directory,

@@ -2,8 +2,8 @@ from pathlib import Path
 
 import numpy as np
 
-from PySide2 import  QtWidgets
-from PySide2.QtWidgets import QFileDialog
+from PySide import QtGui
+from PySide.QtGui import QFileDialog
 
 try:
     import pyqtgraph as pg
@@ -25,7 +25,7 @@ from building import spectral
 civiltools_path = Path(__file__).absolute().parent.parent.parent
 
 
-class Form(QtWidgets.QWidget):
+class Form(QtGui.QWidget):
     def __init__(self,
         etabs_model,
         d: dict,
@@ -184,7 +184,7 @@ class Form(QtWidgets.QWidget):
 
 if __name__ == "__main__":
     import sys
-    app = QtWidgets.QApplication(sys.argv)
+    app = QtGui.QApplication(sys.argv)
     mytree = Form()
     mytree.show()
     sys.exit(app.exec_())

@@ -1,7 +1,7 @@
 from pathlib import Path
 import sys
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtGui
 
 civiltools_path = Path(__file__).absolute()
 sys.path.insert(0, civiltools_path)
@@ -9,11 +9,11 @@ sys.path.insert(0, civiltools_path)
 from qt_models import treeview_system
 
 
-class MainWindow(QtWidgets.QMainWindow):
+class MainWindow(QtGui.QMainWindow):
     def __init__(self):
         super().__init__()
-        self.centralwidget = QtWidgets.QWidget()
-        self.treeView = QtWidgets.QTreeView(self.centralwidget)
+        self.centralwidget = QtGui.QWidget()
+        self.treeView = QtGui.QTreeView(self.centralwidget)
         self.treeView.setGeometry(QtCore.QRect(220, 40, 291, 151))
         self.setCentralWidget(self.centralwidget)
 
@@ -41,7 +41,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
 import sys
-app = QtWidgets.QApplication(sys.argv)
+app = QtGui.QApplication(sys.argv)
 ui = MainWindow()
 ui.show()
 sys.exit(app.exec_())

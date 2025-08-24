@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from PySide2 import QtCore
+from PySide import QtCore
 
 import FreeCADGui as Gui
 

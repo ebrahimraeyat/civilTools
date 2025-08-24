@@ -1,14 +1,14 @@
 from pathlib import Path
 
-from PySide2 import  QtWidgets
+from PySide import QtGui
 import FreeCADGui as Gui
-from PySide2.QtCore import Qt
+from PySide.QtCore import Qt
 
 
 civiltools_path = Path(__file__).absolute().parent.parent
 
 
-class Form(QtWidgets.QWidget):
+class Form(QtGui.QWidget):
     def __init__(self, etabs_obj, d):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'torsion.ui'))

@@ -3,10 +3,10 @@ from typing import Iterable
 
 import pandas as pd
 
-from PySide2.QtCore import QAbstractTableModel, Qt, QSettings
-from PySide2.QtWidgets import QDoubleSpinBox, QItemDelegate, QComboBox, QMessageBox
-from PySide2.QtGui import QColor
-from PySide2 import  QtWidgets
+from PySide.QtCore import QAbstractTableModel, Qt, QSettings
+from PySide.QtGui import QDoubleSpinBox, QItemDelegate, QComboBox, QMessageBox
+from PySide.QtGui import QColor
+from PySide import QtGui
 import FreeCADGui as Gui
 
 from exporter import civiltools_config
@@ -17,7 +17,7 @@ from python_functions import change_unit
 civiltools_path = Path(__file__).absolute().parent.parent
 
 
-class Form(QtWidgets.QWidget):
+class Form(QtGui.QWidget):
     def __init__(self, etabs_obj, d):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'aj_correction.ui'))
@@ -180,7 +180,7 @@ class AjApplyModel(QAbstractTableModel):
                     return f'{value}'
                 return str(value)
 
-            elif role == Qt.BackgroundColorRole:
+            elif role == Qt.ItemDataRole.BackgroundRole:
                 case = self.df.iloc[row][self.i_case]
                 return QColor(*self.story_colors[case])
             elif role == Qt.TextAlignmentRole:

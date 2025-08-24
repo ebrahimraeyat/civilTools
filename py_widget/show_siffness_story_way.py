@@ -2,14 +2,14 @@ from pathlib import Path
 
 import pandas as pd
 
-from PySide2 import  QtWidgets
+from PySide import QtGui
 import FreeCADGui as Gui
-from PySide2.QtWidgets import QFileDialog, QMessageBox
+from PySide.QtGui import QFileDialog, QMessageBox
 
 civiltools_path = Path(__file__).absolute().parent.parent
 
 
-class Form(QtWidgets.QWidget):
+class Form(QtGui.QWidget):
     def __init__(self, etabs_obj):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'show_siffness_story_way.ui'))

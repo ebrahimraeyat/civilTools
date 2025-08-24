@@ -1,13 +1,13 @@
 from pathlib import Path
 
-from PySide2 import  QtWidgets
+from PySide import QtGui
 import FreeCADGui as Gui
 import civiltools_rc
 
 civiltools_path = Path(__file__).absolute().parent.parent.parent
 
 
-class Form(QtWidgets.QWidget):
+class Form(QtGui.QWidget):
     def __init__(self, etabs_model):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'edit' / 'edit_frame_sections_props.ui'))
@@ -59,7 +59,7 @@ class Form(QtWidgets.QWidget):
         if self.form.beams.isChecked():
             frame_types.append('beam')
         if len(frame_types) == 0:
-            QtWidgets.QMessageBox.warning(None, 'Selection ', 'Please Select type of frames.')
+            QtGui.QMessageBox.warning(None, 'Selection ', 'Please Select type of frames.')
             return
         conc_name = self.form.concrete_mats.currentText()
         suffix = self.form.suffix.text()
@@ -84,19 +84,19 @@ class Form(QtWidgets.QWidget):
         else:
             msg = "Some Error Occured, Please try againg."
             title = 'Failed'
-        QtWidgets.QMessageBox.information(None, title, str(msg))
+        QtGui.QMessageBox.information(None, title, str(msg))
         if len(section_that_corner_bars_is_different) > 0 and etabs_main_version < 20:
             print(f"{section_that_corner_bars_is_different=}")
             msg = f"{len(section_that_corner_bars_is_different)} Sections have different Corner Bar Size, Edit those in Etabs Model Manually:\n"
             for i, sec in enumerate(section_that_corner_bars_is_different):
                 msg += f"{i + 1} ==> \t\t{sec}\n"
                 title = 'Change Corner Bar Size'
-            QtWidgets.QMessageBox.information(None, title, str(msg))
+            QtGui.QMessageBox.information(None, title, str(msg))
 
         # lens = [len(name) for name in convert_names.values()]
         # if max(lens) > 12:
         #     msg = "Some Sections have more than 12 Charachter, maybe error occured in drawing with SAZE 90"
-        #     QtWidgets.QMessageBox.information(None, "Max Section Name", str(msg))
+        #     QtGui.QMessageBox.information(None, "Max Section Name", str(msg))
 
     def getStandardButtons(self):
         return 0

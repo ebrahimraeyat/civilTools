@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# from PySide2.QtGui import *
-# from PySide2.QtCore import *
-from PySide2.QtWidgets import QFileDialog
+# from PySide.QtGui import *
+# from PySide.QtCore import *
+from PySide.QtGui import QFileDialog
 import os
 from functools import reduce
 

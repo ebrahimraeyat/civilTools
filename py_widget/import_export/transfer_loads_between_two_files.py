@@ -2,13 +2,13 @@ import math
 from pathlib import Path
 import copy
 
-from PySide2.QtWidgets import (
+from PySide.QtGui import (
     QMessageBox,
     QFileDialog,
     QComboBox,
     QItemDelegate
 )
-from PySide2.QtCore import (
+from PySide.QtCore import (
     QAbstractTableModel,
     Qt,
     QModelIndex,

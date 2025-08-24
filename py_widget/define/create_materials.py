@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from PySide2 import  QtWidgets
+from PySide import QtGui
 
 import FreeCADGui as Gui
 
@@ -8,7 +8,7 @@ import FreeCADGui as Gui
 civiltools_path = Path(__file__).absolute().parent.parent.parent
 
 
-class Form(QtWidgets.QWidget):
+class Form(QtGui.QWidget):
     def __init__(self,
         etabs_model,
         ):
@@ -70,11 +70,11 @@ class Form(QtWidgets.QWidget):
 
     def create_materials(self):
         if self.etabs.SapModel.GetModelIsLocked():
-            if QtWidgets.QMessageBox.question(
+            if QtGui.QMessageBox.question(
                 None,
                 "Unlock Model?",
                 "The model is lock, do you want to unlock model?",
-                ) == QtWidgets.QMessageBox.No:
+                ) == QtGui.QMessageBox.No:
                 return
             self.etabs.unlock_model()
         tab_index = self.form.tabWidget.currentIndex()
@@ -86,12 +86,12 @@ class Form(QtWidgets.QWidget):
             else:
                 weight_for_calculate_ec = 0
             self.etabs.material.add_concrete(name, fc, weight_for_calculate_ec=weight_for_calculate_ec)
-            QtWidgets.QMessageBox.information(None, "Done", f"The Concrete {name} with f'c={fc} MPa added to model.")
+            QtGui.QMessageBox.information(None, "Done", f"The Concrete {name} with f'c={fc} MPa added to model.")
         elif tab_index == 1: # rebars
             add_standards = self.form.standard_rebars_groupbox.isChecked()
             add_others = self.form.other_rebars_groupbox.isChecked()
             if not add_standards and not add_others:
-                QtWidgets.QMessageBox.warning(None, "Selection", "Please select atleast one rebar to create!")
+                QtGui.QMessageBox.warning(None, "Selection", "Please select atleast one rebar to create!")
                 return
             rebar_names = []
             if add_standards:
@@ -112,7 +112,7 @@ class Form(QtWidgets.QWidget):
                 name = self.form.other_name.text()
                 self.etabs.material.add_rebar(name, fy, fu)
                 rebar_names.append(name)
-            QtWidgets.QMessageBox.information(None, "Done", f"The {', '.join(rebar_names)} rebar/s added to model.")
+            QtGui.QMessageBox.information(None, "Done", f"The {', '.join(rebar_names)} rebar/s added to model.")
 
 
     def reject(self):
@@ -121,7 +121,7 @@ class Form(QtWidgets.QWidget):
     
 if __name__ == "__main__":
     import sys
-    app = QtWidgets.QApplication(sys.argv)
+    app = QtGui.QApplication(sys.argv)
     sys.path.insert(0, r"C:\Users\ebrahim\AppData\Roaming\FreeCAD\Mod\etabs_api")
     import find_etabs
     etabs, filename = find_etabs.find_etabs(run=False, backup=False)

@@ -2,13 +2,13 @@ from pathlib import Path
 
 import numpy as np
 
-from PySide2 import  QtWidgets, QtCore
-from PySide2.QtWidgets import (
+from PySide import QtGui, QtCore
+from PySide.QtGui import (
     QTableWidgetItem,
     QMessageBox,
     QFileDialog,
     )
-from PySide2.QtCore import QSettings, Qt
+from PySide.QtCore import QSettings, Qt
 
 try:
     import pyqtgraph as pg
@@ -33,7 +33,7 @@ import civiltools_rc
 civiltools_path = Path(__file__).absolute().parent.parent
 
 
-class Form(QtWidgets.QWidget):
+class Form(QtGui.QWidget):
     def __init__(self, etabs_model):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'earthquake_factor.ui'))

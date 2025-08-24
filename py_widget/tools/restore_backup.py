@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from PySide2 import  QtWidgets
+from PySide import QtGui
 import FreeCADGui as Gui
 
 import civiltools_rc
@@ -9,7 +9,7 @@ import civiltools_rc
 civiltools_path = Path(__file__).absolute().parent.parent.parent
 
 
-class Form(QtWidgets.QWidget):
+class Form(QtGui.QWidget):
     def __init__(self, etabs_model):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'tools' / 'restore_backup.ui'))

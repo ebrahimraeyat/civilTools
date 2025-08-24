@@ -17,7 +17,7 @@ from qt_models.qt_functions import set_children_enabled
 
 from python_functions import has_attribs
 
-from PySide2 import QtGui
+from PySide import QtGui
 
 def get_prop_from_widget(etabs, widget):
 	new_d = {}
@@ -330,7 +330,7 @@ def load(
 		d = get_settings_from_etabs(etabs)
 	if widget is None:
 		return d
-	from PySide2.QtCore import Qt
+	from PySide.QtCore import Qt
 	fill_cities(widget)
 	fill_height_and_no_of_stories(etabs, widget)
 	fill_stories(etabs, widget, reverse, include_base)
@@ -763,7 +763,7 @@ def check_heights(etabs, widget):
 			widget.height_x.setPalette(pal)
 
 def select_treeview_item(view, i, n):
-	from PySide2 import QtCore
+	from PySide import QtCore
 	root_index = view.model().index(i, 0, QtCore.QModelIndex())
 	child_index = view.model().index(n, 0, root_index)
 	view.clearSelection()

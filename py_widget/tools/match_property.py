@@ -1,5 +1,5 @@
 from pathlib import Path
-from PySide2 import  QtWidgets, QtCore
+from PySide import QtGui, QtCore
 import FreeCADGui as Gui
 
 import civiltools_rc
@@ -8,7 +8,7 @@ UPDATEINTERVAL = 500 # number of milliseconds between  update
 civiltools_path = Path(__file__).absolute().parent.parent.parent
 
 
-class Form(QtWidgets.QWidget):
+class Form(QtGui.QWidget):
     def __init__(self, etabs_model, obj_):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'tools' / 'match_property.ui'))

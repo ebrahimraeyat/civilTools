@@ -9,7 +9,7 @@ import uuid
 
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-from PyQt5.QtWidgets import QItemDelegate, QTextEdit, QLineEdit, QDoubleSpinBox, QMessageBox
+from PyQt5.QtGui import QItemDelegate, QTextEdit, QLineEdit, QDoubleSpinBox, QMessageBox
 abs_path = os.path.dirname(__file__)
 sys.path.insert(0, abs_path)
 import pandas as pd
@@ -1099,7 +1099,7 @@ class SectionTableModel(QAbstractTableModel):
             if column == NAME:
                 return int(Qt.AlignLeft | Qt.AlignVCenter)
             return int(Qt.AlignCenter | Qt.AlignVCenter)
-        elif role == Qt.BackgroundColorRole:
+        elif role == Qt.ItemDataRole.BackgroundRole:
             # if column == SLENDER:
             #     if section.slender == u'لاغر':
             #         return QColor(250, 40, 0)

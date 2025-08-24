@@ -13,7 +13,7 @@ sys.path.insert(0, abs_path)
 civiltools_path = Path(__file__).absolute().parent.parent
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
 from PyQt5 import uic, QtCore
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -598,7 +598,11 @@ class Ui(QMainWindow, main_window):
                             n,
                             ):
         sys.path.insert(0, str(civiltools_path))
-        from functions import check_legal
+        version = sys.version.split()[0]
+        if version == '3.8.6+':
+            from functions import check_legal
+        elif version == '3.12.10':
+            from functions import check_legal_12 as check_legal
         check = check_legal.CheckLegalUse(
                                     filename,
                                     gist_url,

@@ -1,6 +1,8 @@
 from pathlib import Path
-from PySide2 import  QtWidgets
-from PySide2.QtWidgets import QMessageBox
+import sys
+
+from PySide import QtGui
+from PySide.QtGui import QMessageBox
 import FreeCADGui as Gui
 import subprocess
 
@@ -12,7 +14,7 @@ from freecad_funcs import add_to_clipboard
 civiltools_path = Path(__file__).absolute().parent.parent.parent
 
 
-class Form(QtWidgets.QWidget):
+class Form(QtGui.QWidget):
     def __init__(self):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'serial.ui'))
@@ -45,7 +47,11 @@ class Form(QtWidgets.QWidget):
         self.form.serial.setText(serial)
 
     def register(self):
-        from functions import check_legal
+        version = sys.version.split()[0]
+        if version == '3.8.6+':
+            from functions import check_legal
+        elif version == '3.12.10':
+            from functions import check_legal_12 as check_legal
         check = check_legal.CheckLegalUse(
             'civiltools5.bin',
             'https://gist.githubusercontent.com/ebrahimraeyat/b8cbd078eb7b211e3154804a8bb77633/raw',

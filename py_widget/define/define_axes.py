@@ -1,9 +1,9 @@
 from pathlib import Path
 import math
 
-from PySide2 import  QtWidgets
-from PySide2.QtWidgets import QMessageBox, QFileDialog
-from PySide2.QtCore import Qt
+from PySide import QtGui
+from PySide.QtGui import QMessageBox, QFileDialog
+from PySide.QtCore import Qt
 
 
 import FreeCAD
@@ -18,7 +18,7 @@ import civiltools_rc
 civiltools_path = Path(__file__).absolute().parent.parent.parent
 
 
-class Form(QtWidgets.QWidget):
+class Form(QtGui.QWidget):
     def __init__(self, etabs):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'define' / 'create_axes_from_dxf.ui'))

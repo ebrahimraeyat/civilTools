@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from PySide2.QtWidgets import QMessageBox
+from PySide.QtGui import QMessageBox
 
 import FreeCADGui as Gui
 
@@ -51,7 +51,7 @@ class Form:
 
     # def browse(self):
     #     ext = '.dxf'
-    #     from PySide2.QtWidgets import QFileDialog
+    #     from PySide.QtGui import QFileDialog
     #     filters = f"{ext[1:]} (*{ext})"
     #     filename, _ = QFileDialog.getSaveFileName(None, 'select file',
     #                                             None, filters)

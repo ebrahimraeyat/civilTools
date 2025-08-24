@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from PySide2 import  QtWidgets
-from PySide2.QtGui import QIcon
+from PySide import QtGui
+from PySide.QtGui import QIcon
 
 import FreeCADGui as Gui
 
@@ -9,7 +9,7 @@ import FreeCADGui as Gui
 civiltools_path = Path(__file__).absolute().parent.parent.parent
 tick_icon = QIcon(str(civiltools_path / 'images' / 'tick.svg'))
 
-class Form(QtWidgets.QWidget):
+class Form(QtGui.QWidget):
     def __init__(self, etabs_model):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'assign' / 'assigns.ui'))
@@ -31,7 +31,7 @@ class Form(QtWidgets.QWidget):
         if self.etabs.diaphragm.is_diaphragm_assigned():
             self.form.check_diaphragm_pushbutton.setIcon(tick_icon)
         else:
-            QtWidgets.QMessageBox.warning(None, 'Diaphragm', 'Diaphragm did not assigned.')
+            QtGui.QMessageBox.warning(None, 'Diaphragm', 'Diaphragm did not assigned.')
 
     def set_diaphragm(self):
         diaph_name = self.form.diaphragm_combobox.currentText()

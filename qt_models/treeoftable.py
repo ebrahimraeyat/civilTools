@@ -1,7 +1,7 @@
 
 import bisect
-from PySide2.QtCore import (QAbstractItemModel, QModelIndex, Qt)
-# from PySide2.QtCore import Signal
+from PySide.QtCore import (QAbstractItemModel, QModelIndex, Qt)
+# from PySide.QtCore import Signal
 
 KEY, NODE = range(2)
 

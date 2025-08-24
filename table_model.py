@@ -5,9 +5,10 @@ import json
 from typing import Union
 
 import pandas as pd
-from PySide2.QtCore import QAbstractTableModel, Qt, QModelIndex, QItemSelection
-from PySide2.QtGui import QColor, QIcon
-from PySide2 import QtCore, QtWidgets
+from PySide.QtCore import QAbstractTableModel, Qt, QModelIndex, QItemSelection
+from PySide.QtGui import QColor, QIcon
+from PySide import QtCore
+from PySide import QtGui
 
 import civiltools_rc
 # import matplotlib.cm as cm
@@ -125,7 +126,7 @@ class DriftModel(PandasModel):
                 if col in (self.max_i, self.avg_i, self.allow_i):
                     return f"{value:.4f}"
                 return value
-            elif role == Qt.BackgroundColorRole:
+            elif role == Qt.ItemDataRole.BackgroundRole:
                 if col in (self.avg_i, self.max_i):
                     if float(value) > allow_drift:
                         return QColor(*high)
@@ -165,7 +166,7 @@ class TorsionModel(PandasModel):
                 if col in (self.i_max, self.i_avg, self.i_ratio):
                     return f"{value:.4f}"
                 return str(value)
-            elif role == Qt.BackgroundColorRole:
+            elif role == Qt.ItemDataRole.BackgroundRole:
                 value = float(self.df.iloc[row][self.i_ratio])
                 # if col == i_ratio:
                     # value = float(value)
@@ -200,7 +201,7 @@ class BaseShearModel(PandasModel):
                 else:
                     return f"{value:.0f}"
                 
-            elif role == Qt.BackgroundColorRole:
+            elif role == Qt.ItemDataRole.BackgroundRole:
                 return QColor(*low)
             
     def setData(self, index, value, role=Qt.EditRole):
@@ -229,7 +230,7 @@ class StoryForcesModel(PandasModel):
             value = self.df.iloc[row][col]
             if role == Qt.DisplayRole:
                 return str(value)
-            elif role == Qt.BackgroundColorRole:
+            elif role == Qt.ItemDataRole.BackgroundRole:
                 fx_percentage = float(self.df.iloc[row][self.i_vx])
                 fy_percentage = float(self.df.iloc[row][self.i_vy])
                 if max(fx_percentage, fy_percentage) >= .35:
@@ -260,7 +261,7 @@ class ColumnsRatioModel(PandasModel):
             value = self.df.iloc[row][col]
             if role == Qt.DisplayRole:
                 return str(value)
-            elif role == Qt.BackgroundColorRole:
+            elif role == Qt.ItemDataRole.BackgroundRole:
                 ratio = float(self.df.iloc[row]['Ratio'])
                 if ratio > 1:
                     return QColor(*high)
@@ -311,7 +312,7 @@ class BeamsRebarsModel(PandasModel):
                 if col == self.i_location:
                     value = int(float(value))
                 return str(value)
-            elif role == Qt.BackgroundColorRole:
+            elif role == Qt.ItemDataRole.BackgroundRole:
                 if col in (self.i_ta1, self.i_ta2):
                     if float(self.df.iloc[row][self.i_ta2]) > float(self.df.iloc[row][self.i_ta1]) * 1.02:
                         return QColor(*high)
@@ -354,7 +355,7 @@ class IrregularityOfMassModel(PandasModel):
                 if col == self.i_story:
                     return str(value)
                 return f'{float(value):.0f}'
-            elif role == Qt.BackgroundColorRole:
+            elif role == Qt.ItemDataRole.BackgroundRole:
                 if col in (self.i_below, self.i_above):
                     if float(self.df.iloc[row][self.i_mass_x]) > \
                         float(self.df.iloc[row][col]):
@@ -401,7 +402,7 @@ class StoryStiffnessModel(PandasModel):
                     ):
                     return f'{float(value):.0f}'
                 return value
-            elif role == Qt.BackgroundColorRole:
+            elif role == Qt.ItemDataRole.BackgroundRole:
                 if col in (self.i_kx_above, self.i_ky_above):
                     k = self.df.iloc[row][col]
                     return self.get_color(k, .6, .7)
@@ -446,7 +447,7 @@ class BeamsJModel(PandasModel):
                 if col in (self.i_T, self.i_j, self.i_Tcr, self.i_init_j):
                     return f'{value:.2f}'
                 return str(value)
-            elif role == Qt.BackgroundColorRole:
+            elif role == Qt.ItemDataRole.BackgroundRole:
                 j = self.df.iloc[row][self.i_j]
                 j_init = self.df.iloc[row][self.i_init_j]
                 # if col == i_ratio:
@@ -482,7 +483,7 @@ class HighPressureColumnModel(PandasModel):
                 if col in (self.i_p, self.i_t2, self.i_t3, self.i_fc, self.i_Agfc):
                     return f'{value:.0f}'
                 return str(value)
-            elif role == Qt.BackgroundColorRole:
+            elif role == Qt.ItemDataRole.BackgroundRole:
                 if self.df.iloc[row][self.i_hp]:
                     return QColor(*intermediate)
                 else:
@@ -513,7 +514,7 @@ class Column100_30Model(PandasModel):
                 if col in (self.i_p, self.i_ratio):
                     return f'{value:.2f}'
                 return str(value)
-            elif role == Qt.BackgroundColorRole:
+            elif role == Qt.ItemDataRole.BackgroundRole:
                 if self.df.iloc[row][self.i_result]:
                     return QColor(*low)
                 else:
@@ -556,7 +557,7 @@ class JointShearBCC(PandasModel):
                     except (ValueError, TypeError):
                         return str(value)
                 return str(value)
-            elif role == Qt.BackgroundColorRole:
+            elif role == Qt.ItemDataRole.BackgroundRole:
                 if col in (self.i_maj_js, self.i_min_js, self.i_maj_bc, self.i_min_bc):
                     try:
                         value = float(value)
@@ -590,7 +591,7 @@ class ExpandLoadSets(PandasModel):
             value = self.df.iloc[row][col]
             if role == Qt.DisplayRole:
                 return f'{value}'
-            elif role == Qt.BackgroundColorRole:
+            elif role == Qt.ItemDataRole.BackgroundRole:
                 name = self.df.iloc[row][self.i_uniquename]
                 return QColor.fromRgb(*self.colors[name])
             elif role == Qt.TextAlignmentRole:
@@ -618,7 +619,7 @@ class BeamDeflectionTableModel(PandasModel):
         for row in row_colors.keys():
             top_left = self.index(row, 0)
             bottom_right = self.index(row, self.columnCount() - 1)
-            self.dataChanged.emit(top_left, bottom_right, [Qt.BackgroundColorRole])
+            self.dataChanged.emit(top_left, bottom_right, [Qt.ItemDataRole.BackgroundRole])
         
     def data(self, index, role=Qt.DisplayRole):
         if not index.isValid():
@@ -631,7 +632,7 @@ class BeamDeflectionTableModel(PandasModel):
             return self.check_states_bool.get(bool(value), 1)
         elif role == Qt.DisplayRole and self.df.dtypes[col] != bool:
             return str(value)
-        elif role == Qt.BackgroundColorRole:
+        elif role == Qt.ItemDataRole.BackgroundRole:
             return self.row_colors.get(row, None)  # Use precomputed color
         elif role == Qt.TextAlignmentRole and col_name not in  ('Name', 'Label', 'Story'):
             return int(Qt.AlignCenter | Qt.AlignVCenter)
@@ -649,7 +650,7 @@ class BeamDeflectionTableModel(PandasModel):
             return Qt.ItemIsSelectable | Qt.ItemIsEnabled
             
 
-class ResultWidget(QtWidgets.QDialog):
+class ResultWidget(QtGui.QDialog):
     # main widget for user interface
     def __init__(self,
                  data,
@@ -660,17 +661,17 @@ class ResultWidget(QtWidgets.QDialog):
                 ):
         super(ResultWidget, self).__init__(parent)
         self.setObjectName('result_widget')
-        self.push_button_to_excel = QtWidgets.QPushButton()
+        self.push_button_to_excel = QtGui.QPushButton()
         self.push_button_to_excel.setIcon(QIcon(str(civiltools_path / 'images' / 'xlsx.png')))
-        self.push_button_to_word = QtWidgets.QPushButton()
+        self.push_button_to_word = QtGui.QPushButton()
         self.push_button_to_word.setIcon(QIcon(str(civiltools_path / 'images' / 'word.png')))
-        self.open_exported_file = QtWidgets.QCheckBox("Open")
+        self.open_exported_file = QtGui.QCheckBox("Open")
         self.open_exported_file.setChecked(open_results_file)
-        label = QtWidgets.QLabel("Filter")
-        self.lineEdit = QtWidgets.QLineEdit()
-        label2 = QtWidgets.QLabel("By Column:")
-        self.comboBox = QtWidgets.QComboBox()
-        hbox = QtWidgets.QHBoxLayout()
+        label = QtGui.QLabel("Filter")
+        self.lineEdit = QtGui.QLineEdit()
+        label2 = QtGui.QLabel("By Column:")
+        self.comboBox = QtGui.QComboBox()
+        hbox = QtGui.QHBoxLayout()
         hbox.addWidget(label)
         hbox.addWidget(self.lineEdit)
         hbox.addWidget(label2)
@@ -678,11 +679,11 @@ class ResultWidget(QtWidgets.QDialog):
         hbox.addWidget(self.push_button_to_word)
         hbox.addWidget(self.push_button_to_excel)
         hbox.addWidget(self.open_exported_file)
-        self.vbox = QtWidgets.QVBoxLayout()
+        self.vbox = QtGui.QVBoxLayout()
         self.vbox.addLayout(hbox)
-        self.result_table_view = QtWidgets.QTableView()
+        self.result_table_view = QtGui.QTableView()
         self.result_table_view.setSortingEnabled(True)
-        self.table_layout = QtWidgets.QHBoxLayout()
+        self.table_layout = QtGui.QHBoxLayout()
         self.table_layout.addWidget(self.result_table_view)
         self.vbox.addLayout(self.table_layout)
         self.setLayout(self.vbox)
@@ -739,7 +740,7 @@ class ResultWidget(QtWidgets.QDialog):
             for col in range(self.model.columnCount()):
                 index = self.model.index(row, col)
                 text = self.model.data(index)
-                color = self.model.data(index, Qt.BackgroundColorRole)
+                color = self.model.data(index, Qt.ItemDataRole.BackgroundRole)
                 if color is None:
                     color = ""
                 else:
@@ -749,7 +750,7 @@ class ResultWidget(QtWidgets.QDialog):
             json.dump(data, f, indent=4)
 
     def export_to_excel(self):
-        filename, _ = QtWidgets.QFileDialog.getSaveFileName(self, 'export to excel',
+        filename, _ = QtGui.QFileDialog.getSaveFileName(self, 'export to excel',
                                                   '', "excel(*.xlsx)")
         if filename == '':
             return
@@ -776,7 +777,7 @@ class ResultWidget(QtWidgets.QDialog):
                        ali='',
                        doc=None,
                        ):
-        filename, _ = QtWidgets.QFileDialog.getSaveFileName(self, 'export to word',
+        filename, _ = QtGui.QFileDialog.getSaveFileName(self, 'export to word',
                                                   '', "word(*.docx)")
         if filename == '':
             return
@@ -813,7 +814,7 @@ class ResultWidget(QtWidgets.QDialog):
             for col in range(self.model.columnCount()):
                 index = self.model.index(row, col)
                 text = self.model.data(index)
-                color = self.model.data(index, Qt.BackgroundColorRole)
+                color = self.model.data(index, Qt.ItemDataRole.BackgroundRole)
                 cell = table_docx.cell(row + 1, col)
                 cell.text = text
                 if color:
@@ -835,7 +836,7 @@ class ResultWidget(QtWidgets.QDialog):
     # @QtCore.Slot(int)
     # def on_view_horizontalHeader_sectionClicked(self, logicalIndex):
     #     self.logicalIndex   = logicalIndex
-    #     self.menuValues     = QtWidgets.QMenu(self)
+    #     self.menuValues     = QtGui.QMenu(self)
     #     self.signalMapper   = QtCore.QSignalMapper(self)  
 
     #     self.comboBox.blockSignals(True)
@@ -845,13 +846,13 @@ class ResultWidget(QtWidgets.QDialog):
 
     #     valuesUnique = list(self.model.df.iloc[:, self.logicalIndex].unique())
 
-    #     actionAll = QtWidgets.QAction("All", self)
+    #     actionAll = QtGui.QAction("All", self)
     #     actionAll.triggered.connect(self.on_actionAll_triggered)
     #     self.menuValues.addAction(actionAll)
     #     self.menuValues.addSeparator()
 
     #     for actionNumber, actionName in enumerate(sorted(list(set(valuesUnique)))):              
-    #         action = QtWidgets.QAction(actionName, self)
+    #         action = QtGui.QAction(actionName, self)
     #         self.signalMapper.setMapping(action, actionNumber)  
     #         action.triggered.connect(self.signalMapper.map)  
     #         self.menuValues.addAction(action)
@@ -919,12 +920,12 @@ class ControlColumnResultWidget(ResultWidget):
     def add_legend(self):
         from qt_models.columns_control_models import CompareTwoColumnsColorEnum
         from prop_frame import CompareTwoColumnsEnum
-        vgrid = QtWidgets.QVBoxLayout()
+        vgrid = QtGui.QVBoxLayout()
         for color_enum in CompareTwoColumnsColorEnum:
             text = f"{CompareTwoColumnsEnum(color_enum.value).name}"
             texts = text.split("_")
             text = " ".join([t.capitalize() for t in texts])
-            label = QtWidgets.QLabel(text)
+            label = QtGui.QLabel(text)
             label.setStyleSheet(f"background-color: {color_enum.name};")
             label.setAlignment(Qt.AlignCenter)
             vgrid.insertWidget(color_enum.value, label)
@@ -941,14 +942,14 @@ class ControlColumnResultWidget(ResultWidget):
 class ExpandedLoadSetsResults(ResultWidget):
     def __init__(self, data, model, function=None, parent=None):
         super(ExpandedLoadSetsResults, self).__init__(data, model, function, parent)
-        self.cancel_pushbutton = QtWidgets.QPushButton()
+        self.cancel_pushbutton = QtGui.QPushButton()
         self.cancel_pushbutton.setIcon(QIcon(str(civiltools_path / 'images' / 'cancel.svg')))
         self.cancel_pushbutton.setText('&Cancel')
-        self.apply_pushbutton = QtWidgets.QPushButton()
+        self.apply_pushbutton = QtGui.QPushButton()
         self.apply_pushbutton.setIcon(QIcon(str(civiltools_path / 'images' / 'etabs.png')))
         self.apply_pushbutton.setText('&Apply')
 
-        hbox = QtWidgets.QHBoxLayout()
+        hbox = QtGui.QHBoxLayout()
         hbox.addWidget(self.cancel_pushbutton)
         hbox.addWidget(self.apply_pushbutton)
         self.vbox.addLayout(hbox)
@@ -992,13 +993,13 @@ def show_results(
 def get_mdiarea():
     """ Return FreeCAD MdiArea. """
     import FreeCADGui as Gui
-    import PySide2
+    import PySide
     mw = Gui.getMainWindow()
     if not mw:
         return None
     childs = mw.children()
     for c in childs:
-        if isinstance(c, PySide2.QtWidgets.QMdiArea):
+        if isinstance(c, PySide.QtGui.QMdiArea):
             return c
     return None
 
@@ -1020,7 +1021,7 @@ if __name__ == "__main__":
         'width': 40,
         'height': 50,
         'result': ''}
-        app=QtWidgets.QApplication(sys.argv)
+        app=QtGui.QApplication(sys.argv)
         df = pd.DataFrame.from_dict(10*[data])
         new_rows = pd.DataFrame({'Name': ['2', '3'], 'is_console': [False] * 2,
         'Label': ['B12'] * 2,
