@@ -44,7 +44,7 @@ class Form(QtGui.QWidget):
             df,
             model=ColumnsPMMAll,
             function=self.etabs.view.show_frame_with_lable_and_story,
-            json_file_name="shearwall_25percent_column_ratio",
+            json_file_name=f"shearwall_25percent_column_ratio {self.etabs.get_file_name_without_suffix()}",
             etabs=self.etabs,
             kwargs=kwargs,
             )

@@ -35,7 +35,7 @@ class CivilIrregularityOfMass:
         import table_model
         table_model.show_results(df, table_model.IrregularityOfMassModel,
                                  etabs=etabs,
-                                 json_file_name="IrregularityOfMass",
+                                 json_file_name=f"IrregularityOfMass {etabs.get_file_name_without_suffix()}",
                                  )
         
     def IsActive(self):

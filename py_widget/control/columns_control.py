@@ -19,7 +19,7 @@ def check_column(etabs, way=2):
                 'etabs': etabs,
                 },
             etabs= etabs,
-            json_file_name="Column-Sections",
+            json_file_name=f"Column-Sections {etabs.get_file_name_without_suffix()}",
             result_widget = table_model.ControlColumnResultWidget,
             )
     elif way == 2:
@@ -39,6 +39,6 @@ def check_column(etabs, way=2):
                 'etabs': etabs,
                 },
             etabs= etabs,
-            json_file_name="Column-Sections",
+            json_file_name=f"Column-Sections {etabs.get_file_name_without_suffix()}",
             result_widget = table_model.ControlColumnResultWidget,
             )

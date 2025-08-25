@@ -63,7 +63,7 @@ class Form(QtGui.QWidget):
                     table_model.show_results(
                         ret, table_model.BeamsJModel, self.etabs.view.show_frame,
                         etabs=self.etabs,
-                        json_file_name="BeamsJ",
+                        json_file_name=f"BeamsJ {self.etabs.get_file_name_without_suffix()}",
                     )
         except StopIteration:
             self.form.close()

@@ -158,14 +158,14 @@ class Form(QtGui.QWidget):
             filt = df["OutputCase"].isin(x_loadcases)
             df1 = df.loc[filt]
             table_model.show_results(df1, table_model.DriftModel, etabs=self.etabs,
-                                     json_file_name=f"{analysis_type}{model_name}XDir")
+                                     json_file_name=f"{analysis_type}{model_name}XDir {self.etabs.get_file_name_without_suffix()}")
             filt = df["OutputCase"].isin(y_loadcases)
             df1 = df.loc[filt]
             table_model.show_results(df1, table_model.DriftModel, etabs=self.etabs,
-                                     json_file_name=f"{analysis_type}{model_name}YDir")
+                                     json_file_name=f"{analysis_type}{model_name}YDir {self.etabs.get_file_name_without_suffix()}")
         else:
             table_model.show_results(df, table_model.DriftModel, etabs=self.etabs,
-                                     json_file_name=f"{analysis_type}{model_name}")
+                                     json_file_name=f"{analysis_type}{model_name} {self.etabs.get_file_name_without_suffix()}")
         self.form.close()
 
     def get_load_cases(self, tab):

@@ -34,5 +34,5 @@ class Form(QtGui.QWidget):
         df = pd.DataFrame(ret[0], columns=ret[1])
         table_model.show_results(df, table_model.StoryStiffnessModel,
                                  etabs=self.etabs,
-                                 json_file_name=f"StoryStiffness{way.capitalize()}")
+                                 json_file_name=f"StoryStiffness{way.capitalize()} {self.etabs.get_file_name_without_suffix()}")
         self.form.close()

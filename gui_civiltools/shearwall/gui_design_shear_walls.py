@@ -40,7 +40,7 @@ class CivilToolsDesignShearWalls:
             df,
             model=ShearWallsRatio,
             function=etabs.view.show_areas_and_frames_with_pier_and_story,
-            json_file_name="shear_walls_ratios",
+            json_file_name=f"shear_walls_ratios {etabs.get_file_name_without_suffix()}",
             )
         # show_warning_about_number_of_use(check)
         

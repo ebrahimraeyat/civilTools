@@ -123,7 +123,7 @@ class Form(QtGui.QWidget):
         import table_model
         table_model.show_results(df, table_model.BaseShearModel,
                                  etabs=self.etabs,
-                                 json_file_name=f"BaseShear{way.capitalize()}")
+                                 json_file_name=f"BaseShear{way.capitalize()} {self.etabs.get_file_name_without_suffix()}")
         self.form.close()
 
     def get_load_cases(self, lwx, lwy):

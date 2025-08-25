@@ -72,12 +72,12 @@ class Form(QtGui.QWidget):
         table_model.show_results(df, table_model.ColumnsRatioModel,
         function=self.etabs.view.show_frame_with_lable_and_story,
         etabs=self.etabs,
-        json_file_name=f"ColumnsRatio{dir_.upper()}")
+        json_file_name=f"ColumnsRatio{dir_.upper()} {self.etabs.get_file_name_without_suffix()}")
         df = pd.DataFrame(ret[2], columns=ret[3])
         table_model.show_results(df, table_model.BeamsRebarsModel,
         function=self.etabs.view.show_frame_with_lable_and_story,
         etabs=self.etabs,
-        json_file_name=f"BeamsRebars{dir_.upper()}")
+        json_file_name=f"BeamsRebars{dir_.upper()} {self.etabs.get_file_name_without_suffix()}")
         self.form.close()
 
     def fill_selected_beams(self):

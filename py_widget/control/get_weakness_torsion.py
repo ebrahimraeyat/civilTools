@@ -73,7 +73,7 @@ class Form(QtGui.QWidget):
         self.etabs.SapModel.File.OpenFile(str(asli_file_path))
         table_model.show_results(df, table_model.TorsionModel, self.etabs.view.show_point,
                                  etabs=self.etabs,
-                                 json_file_name=f"WeaknessTorsionDir{dir_.upper()}")
+                                 json_file_name=f"WeaknessTorsionDir{dir_.upper()} {self.etabs.get_file_name_without_suffix()}")
         self.form.close()
 
     def fill_selected_beams(self):

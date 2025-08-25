@@ -55,7 +55,7 @@ class Form(QtGui.QWidget):
                 model=table_model.JointShearBCC,
                 function=self.etabs.view.show_frame,
                 etabs=self.etabs,
-                json_file_name="JointShearAndBeamColumnCapcity",
+                json_file_name=f"JointShearAndBeamColumnCapcity {self.etabs.get_file_name_without_suffix()}",
                 )
         elif show_js:
             table_model.show_results(
@@ -63,7 +63,7 @@ class Form(QtGui.QWidget):
                 model=table_model.JointShearBCC,
                 function=self.etabs.view.show_frame,
                 etabs=self.etabs,
-                json_file_name="JointShear",
+                json_file_name=f"JointShear {self.etabs.get_file_name_without_suffix()}",
                 )
         elif show_bc:
             table_model.show_results(
@@ -71,7 +71,7 @@ class Form(QtGui.QWidget):
                 model=table_model.JointShearBCC,
                 function=self.etabs.view.show_frame,
                 etabs=self.etabs,
-                json_file_name="BeamColumnCapcity",
+                json_file_name=f"BeamColumnCapcity {self.etabs.get_file_name_without_suffix()}",
                 )
         self.accept()
 

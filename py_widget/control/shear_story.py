@@ -32,7 +32,7 @@ class Form(QtGui.QWidget):
         import table_model
         table_model.show_results(df, table_model.StoryForcesModel,
                                  etabs=self.etabs,
-                                 json_file_name="StoryForces",
+                                 json_file_name=f"StoryForces {self.etabs.get_file_name_without_suffix()}",
                                  )
     
     def reject(self):

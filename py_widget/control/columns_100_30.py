@@ -88,7 +88,7 @@ class Form(QtGui.QWidget):
             model=table_model.Column100_30Model,
             function=self.etabs.view.show_frame,
             etabs=self.etabs,
-            json_file_name="Column100_30",
+            json_file_name=f"Column100_30 {self.etabs.get_file_name_without_suffix()}",
             )
         def get_100_30_names(ignore_100_30: bool=True):
             filt = data['Result'] == ignore_100_30
