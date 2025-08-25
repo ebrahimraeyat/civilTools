@@ -4,6 +4,7 @@ import pandas as pd
 
 from PySide import QtGui
 import FreeCADGui as Gui
+import FreeCAD
 from PySide.QtGui import QMessageBox, QFileDialog
 
 import civiltools_rc
@@ -68,16 +69,18 @@ class Form(QtGui.QWidget):
             QMessageBox.critical(self, "Error", str(err))
             return None
         df = pd.DataFrame(ret[0], columns=ret[1])
+        p = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools")
+        char_len = int(p.GetFloat('table_max_etabs_model_name_length', 200))
         import table_model
         table_model.show_results(df, table_model.ColumnsRatioModel,
         function=self.etabs.view.show_frame_with_lable_and_story,
         etabs=self.etabs,
-        json_file_name=f"ColumnsRatio{dir_.upper()} {self.etabs.get_file_name_without_suffix()}")
+        json_file_name=f"ColumnsRatio{dir_.upper()} {self.etabs.get_file_name_without_suffix()[:char_len]}")
         df = pd.DataFrame(ret[2], columns=ret[3])
         table_model.show_results(df, table_model.BeamsRebarsModel,
         function=self.etabs.view.show_frame_with_lable_and_story,
         etabs=self.etabs,
-        json_file_name=f"BeamsRebars{dir_.upper()} {self.etabs.get_file_name_without_suffix()}")
+        json_file_name=f"BeamsRebars{dir_.upper()} {self.etabs.get_file_name_without_suffix()[:char_len]}")
         self.form.close()
 
     def fill_selected_beams(self):

@@ -1,8 +1,12 @@
 import table_model
 from qt_models.columns_control_models import ColumnsControlDelegate, ControlColumns
 
+import FreeCAD
+
 
 def check_column(etabs, way=2):
+    p = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools")
+    char_len = int(p.GetFloat('table_max_etabs_model_name_length', 200))
     if way == 1:
         etabs.set_current_unit('kgf', 'cm')
         columns_type_sections_df, columns_type_names_df = etabs.frame_obj.get_columns_type_sections(dataframe=True)
@@ -19,7 +23,7 @@ def check_column(etabs, way=2):
                 'etabs': etabs,
                 },
             etabs= etabs,
-            json_file_name=f"Column-Sections {etabs.get_file_name_without_suffix()}",
+            json_file_name=f"Column-Sections {etabs.get_file_name_without_suffix()[:char_len]}",
             result_widget = table_model.ControlColumnResultWidget,
             )
     elif way == 2:
@@ -39,6 +43,6 @@ def check_column(etabs, way=2):
                 'etabs': etabs,
                 },
             etabs= etabs,
-            json_file_name=f"Column-Sections {etabs.get_file_name_without_suffix()}",
+            json_file_name=f"Column-Sections {etabs.get_file_name_without_suffix()[:char_len]}",
             result_widget = table_model.ControlColumnResultWidget,
             )

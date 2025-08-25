@@ -2,6 +2,7 @@ from pathlib import Path
 
 from PySide import QtGui
 import FreeCADGui as Gui
+import FreeCAD
 
 import table_model
 
@@ -49,13 +50,15 @@ class Form(QtGui.QWidget):
             )
         if df is None:
             return
+        p = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools")
+        char_len = int(p.GetFloat('table_max_etabs_model_name_length', 200))
         if show_js and show_bc:
             table_model.show_results(
                 df,
                 model=table_model.JointShearBCC,
                 function=self.etabs.view.show_frame,
                 etabs=self.etabs,
-                json_file_name=f"JointShearAndBeamColumnCapcity {self.etabs.get_file_name_without_suffix()}",
+                json_file_name=f"JointShearAndBeamColumnCapcity {self.etabs.get_file_name_without_suffix()[:char_len]}",
                 )
         elif show_js:
             table_model.show_results(
@@ -63,7 +66,7 @@ class Form(QtGui.QWidget):
                 model=table_model.JointShearBCC,
                 function=self.etabs.view.show_frame,
                 etabs=self.etabs,
-                json_file_name=f"JointShear {self.etabs.get_file_name_without_suffix()}",
+                json_file_name=f"JointShear {self.etabs.get_file_name_without_suffix()[:char_len]}",
                 )
         elif show_bc:
             table_model.show_results(
@@ -71,7 +74,7 @@ class Form(QtGui.QWidget):
                 model=table_model.JointShearBCC,
                 function=self.etabs.view.show_frame,
                 etabs=self.etabs,
-                json_file_name=f"BeamColumnCapcity {self.etabs.get_file_name_without_suffix()}",
+                json_file_name=f"BeamColumnCapcity {self.etabs.get_file_name_without_suffix()[:char_len]}",
                 )
         self.accept()
 

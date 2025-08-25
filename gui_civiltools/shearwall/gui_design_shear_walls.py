@@ -5,6 +5,7 @@ from PySide import QtCore
 from PySide.QtGui import QMessageBox
 
 import FreeCADGui as Gui
+import FreeCAD
 
 import table_model
 from qt_models.shear_wall_ratio_model import ShearWallsRatio
@@ -36,11 +37,13 @@ class CivilToolsDesignShearWalls:
             ):
             return
         df = etabs.shearwall.get_wall_ratios()
+        p = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools")
+        char_len = int(p.GetFloat('table_max_etabs_model_name_length', 200))
         table_model.show_results(
             df,
             model=ShearWallsRatio,
             function=etabs.view.show_areas_and_frames_with_pier_and_story,
-            json_file_name=f"shear_walls_ratios {etabs.get_file_name_without_suffix()}",
+            json_file_name=f"shear_walls_ratios {etabs.get_file_name_without_suffix()[:char_len]}",
             )
         # show_warning_about_number_of_use(check)
         

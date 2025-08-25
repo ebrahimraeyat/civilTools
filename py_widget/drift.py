@@ -7,6 +7,7 @@ from PySide.QtGui import QMessageBox
 from PySide.QtCore import Qt
 
 import FreeCADGui as Gui
+import FreeCAD
 
 from exporter import civiltools_config
 
@@ -154,18 +155,20 @@ class Form(QtGui.QWidget):
             analysis_type = 'Static'
         df = pd.DataFrame(ret[0], columns=ret[1])
         model_name = "Drift"
+        p = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools")
+        char_len = int(p.GetFloat('table_max_etabs_model_name_length', 200))
         if self.form.show_separate_checkbox.isChecked():
             filt = df["OutputCase"].isin(x_loadcases)
             df1 = df.loc[filt]
             table_model.show_results(df1, table_model.DriftModel, etabs=self.etabs,
-                                     json_file_name=f"{analysis_type}{model_name}XDir {self.etabs.get_file_name_without_suffix()}")
+                                     json_file_name=f"{analysis_type}{model_name}XDir {self.etabs.get_file_name_without_suffix()[:char_len]}")
             filt = df["OutputCase"].isin(y_loadcases)
             df1 = df.loc[filt]
             table_model.show_results(df1, table_model.DriftModel, etabs=self.etabs,
-                                     json_file_name=f"{analysis_type}{model_name}YDir {self.etabs.get_file_name_without_suffix()}")
+                                     json_file_name=f"{analysis_type}{model_name}YDir {self.etabs.get_file_name_without_suffix()[:char_len]}")
         else:
             table_model.show_results(df, table_model.DriftModel, etabs=self.etabs,
-                                     json_file_name=f"{analysis_type}{model_name} {self.etabs.get_file_name_without_suffix()}")
+                                     json_file_name=f"{analysis_type}{model_name} {self.etabs.get_file_name_without_suffix()[:char_len]}")
         self.form.close()
 
     def get_load_cases(self, tab):

@@ -4,6 +4,7 @@ import pandas as pd
 
 from PySide import QtGui
 import FreeCADGui as Gui
+import FreeCAD
 from PySide.QtGui import QMessageBox
 
 import civiltools_rc
@@ -30,9 +31,11 @@ class Form(QtGui.QWidget):
             err = "Please Activate Calculate Diaphragm Center of Rigidity in ETABS!"
             QMessageBox.critical(None, "Error", err)
             return None
+        p = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools")
+        char_len = int(p.GetFloat('table_max_etabs_model_name_length', 200))
         import table_model
         df = pd.DataFrame(ret[0], columns=ret[1])
         table_model.show_results(df, table_model.StoryStiffnessModel,
                                  etabs=self.etabs,
-                                 json_file_name=f"StoryStiffness{way.capitalize()} {self.etabs.get_file_name_without_suffix()}")
+                                 json_file_name=f"StoryStiffness{way.capitalize()} {self.etabs.get_file_name_without_suffix()[:char_len]}")
         self.form.close()

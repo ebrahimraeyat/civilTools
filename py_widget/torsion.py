@@ -2,6 +2,7 @@ from pathlib import Path
 
 from PySide import QtGui
 import FreeCADGui as Gui
+import FreeCAD
 from PySide.QtCore import Qt
 
 
@@ -49,9 +50,11 @@ class Form(QtGui.QWidget):
                 if item.checkState() == Qt.Checked:
                     loadcases.append(item.text())
         df = self.etabs.get_diaphragm_max_over_avg_drifts(loadcases=loadcases)
+        p = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools")
+        char_len = int(p.GetFloat('table_max_etabs_model_name_length', 200))
         table_model.show_results(df, table_model.TorsionModel, self.etabs.view.show_point,
                                  self.etabs,
-                                 json_file_name=f"Torsion {self.etabs.get_file_name_without_suffix()}",
+                                 json_file_name=f"Torsion {self.etabs.get_file_name_without_suffix()[:char_len]}",
                                  )
         self.form.close()
 

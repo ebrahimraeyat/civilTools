@@ -5,6 +5,8 @@ import pandas as pd
 
 from PySide import QtCore
 
+import FreeCAD
+
 
 class CivilIrregularityOfMass:
 
@@ -30,12 +32,14 @@ class CivilIrregularityOfMass:
             filename is None
             ):
             return
+        p = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools")
+        char_len = int(p.GetFloat('table_max_etabs_model_name_length', 200))
         data, headers = etabs.get_irregularity_of_mass()
         df = pd.DataFrame(data, columns=headers)
         import table_model
         table_model.show_results(df, table_model.IrregularityOfMassModel,
                                  etabs=etabs,
-                                 json_file_name=f"IrregularityOfMass {etabs.get_file_name_without_suffix()}",
+                                 json_file_name=f"IrregularityOfMass {etabs.get_file_name_without_suffix()[:char_len]}",
                                  )
         
     def IsActive(self):

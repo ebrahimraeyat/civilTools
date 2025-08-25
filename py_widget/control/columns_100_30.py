@@ -2,6 +2,7 @@ from pathlib import Path
 
 from PySide import QtGui
 import FreeCADGui as Gui
+import FreeCAD
 
 civiltools_path = Path(__file__).absolute().parent.parent.parent
 
@@ -83,12 +84,14 @@ class Form(QtGui.QWidget):
             self.code,
         )
         import table_model
+        p = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools")
+        char_len = int(p.GetFloat('table_max_etabs_model_name_length', 200))
         table_model.show_results(
             data,
             model=table_model.Column100_30Model,
             function=self.etabs.view.show_frame,
             etabs=self.etabs,
-            json_file_name=f"Column100_30 {self.etabs.get_file_name_without_suffix()}",
+            json_file_name=f"Column100_30 {self.etabs.get_file_name_without_suffix()[:char_len]}",
             )
         def get_100_30_names(ignore_100_30: bool=True):
             filt = data['Result'] == ignore_100_30

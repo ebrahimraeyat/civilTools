@@ -2,6 +2,7 @@ from pathlib import Path
 
 from PySide import QtGui
 import FreeCADGui as Gui
+import FreeCAD
 
 import table_model
 from qt_models.columns_pmm_model import ColumnsPMMAll, ColumnsPMMDelegate
@@ -40,11 +41,13 @@ class Form(QtGui.QWidget):
             'custom_delegate': ColumnsPMMDelegate,
             'sections': column_names,
             }
+        p = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools")
+        char_len = int(p.GetFloat('table_max_etabs_model_name_length', 200))
         table_model.show_results(
             df,
             model=ColumnsPMMAll,
             function=self.etabs.view.show_frame_with_lable_and_story,
-            json_file_name=f"shearwall_25percent_column_ratio {self.etabs.get_file_name_without_suffix()}",
+            json_file_name=f"shearwall_25percent_column_ratio {self.etabs.get_file_name_without_suffix()[:char_len]}",
             etabs=self.etabs,
             kwargs=kwargs,
             )
