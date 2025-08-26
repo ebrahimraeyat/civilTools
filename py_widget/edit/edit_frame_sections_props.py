@@ -65,7 +65,6 @@ class Form(QtGui.QWidget):
         suffix = self.form.suffix.text()
         prefix = self.form.prefix.text()
         clean_names = self.form.clean_names_checkbox.isChecked()
-        etabs_main_version = self.etabs.etabs_main_version
         ret, convert_names, section_that_corner_bars_is_different = self.etabs.prop_frame.change_beams_columns_section_fc(
             names,
             conc_name,
@@ -73,8 +72,9 @@ class Form(QtGui.QWidget):
             clean_names,
             frame_types,
             prefix,
-            apply_with_tables_if_needed=True if etabs_main_version > 19 else False,
+            apply_with_tables_if_needed=True,
             )
+        print(f"{section_that_corner_bars_is_different=}")
         if ret:
             self.etabs.view.refresh_view()
             msg = f"{len(convert_names)} Sections replaced:\n"
@@ -85,18 +85,6 @@ class Form(QtGui.QWidget):
             msg = "Some Error Occured, Please try againg."
             title = 'Failed'
         QtGui.QMessageBox.information(None, title, str(msg))
-        if len(section_that_corner_bars_is_different) > 0 and etabs_main_version < 20:
-            print(f"{section_that_corner_bars_is_different=}")
-            msg = f"{len(section_that_corner_bars_is_different)} Sections have different Corner Bar Size, Edit those in Etabs Model Manually:\n"
-            for i, sec in enumerate(section_that_corner_bars_is_different):
-                msg += f"{i + 1} ==> \t\t{sec}\n"
-                title = 'Change Corner Bar Size'
-            QtGui.QMessageBox.information(None, title, str(msg))
-
-        # lens = [len(name) for name in convert_names.values()]
-        # if max(lens) > 12:
-        #     msg = "Some Sections have more than 12 Charachter, maybe error occured in drawing with SAZE 90"
-        #     QtGui.QMessageBox.information(None, "Max Section Name", str(msg))
 
     def getStandardButtons(self):
         return 0
