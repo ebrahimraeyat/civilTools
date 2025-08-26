@@ -5,7 +5,7 @@ import FreeCAD
 # import Part
 import Arch
 import Draft
-test = False
+test = True
 
 def import_model(
         etabs = None,

@@ -11,6 +11,7 @@ from PySide.QtCore import (
 )
 from PySide.QtGui import QColor #, QIcon
 from PySide.QtGui import QComboBox, QItemDelegate
+import PySide
 
 from table_model import PandasModel
 
@@ -148,9 +149,14 @@ class ColumnsControlDelegate(QItemDelegate):
         
     def editorEvent(self, event, model, option, index):
         # Open the dialog when a cell is clicked
-        if event.type() == event.MouseButtonRelease and event.button() == Qt.RightButton:
-            self.draw_sections(index)
-            return True
+        if PySide.__version__.startswith('5'):
+            if event.type() == event.MouseButtonRelease and event.button() == Qt.RightButton:
+                self.draw_sections(index)
+                return True
+        elif PySide.__version__.startswith('6'):
+            if event.type() == event.Type.MouseButtonRelease and event.button() == Qt.RightButton:
+                self.draw_sections(index)
+                return True
         return super().editorEvent(event, model, option, index)
 
     def draw_sections(self, index):
@@ -190,7 +196,10 @@ class ColumnsControlDelegate(QItemDelegate):
 
     def sizeHint(self, option, index):
         fm = option.fontMetrics
-        return QSize(fm.width("2IPE14FPL200X10WP"), fm.height())
+        if PySide.__version__.startswith('5'):
+            return QSize(fm.width("2IPE14FPL200X10WP"), fm.height())
+        elif PySide.__version__.startswith('6'):
+            return QSize(fm.horizontalAdvance("2IPE14FPL200X10WP"), fm.height())
     
 class EscapeCloseComboBox(QComboBox):
     def __init__(self, parent=None):
