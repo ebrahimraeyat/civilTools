@@ -30,7 +30,7 @@ class Form(QtGui.QWidget):
         file_path = self.etabs.get_filepath()
         max_num = 0
         for edb in file_path.glob(f'BACKUP_{filename}*.EDB'):
-            num = edb.name.rstrip('.EDB')[len('BACKUP_') + len(filename) + 1:]
+            num = edb.stem[len('BACKUP_') + len(filename) + 1:]
             try:
                 num = int(num)
                 max_num = max(max_num, num)
