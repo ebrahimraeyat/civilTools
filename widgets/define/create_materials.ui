@@ -252,7 +252,7 @@
           <item row="1" column="3" colspan="2">
            <widget class="QLineEdit" name="s340_name">
             <property name="text">
-             <string>AII</string>
+             <string>A2</string>
             </property>
            </widget>
           </item>
@@ -285,7 +285,7 @@
           <item row="2" column="3" colspan="2">
            <widget class="QLineEdit" name="s400_name">
             <property name="text">
-             <string>AIII</string>
+             <string>A3 (400Mpa)</string>
             </property>
            </widget>
           </item>
@@ -364,7 +364,7 @@
           <item row="3" column="3" colspan="2">
            <widget class="QLineEdit" name="s420_name">
             <property name="text">
-             <string>AIII-2</string>
+             <string>A3 (420Mpa)</string>
             </property>
            </widget>
           </item>
@@ -381,7 +381,7 @@
              <string>S500</string>
             </property>
             <property name="checked">
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
            </widget>
           </item>
@@ -420,7 +420,7 @@
           <item row="4" column="3" colspan="2">
            <widget class="QLineEdit" name="s500_name">
             <property name="text">
-             <string>AIV</string>
+             <string>A4</string>
             </property>
            </widget>
           </item>
