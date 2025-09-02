@@ -238,7 +238,8 @@ class Form(QtGui.QWidget):
                 'متوسط' : 0.25,
                 'کم' : 0.20,
                 }
-        return sotoh[sath]
+        acc = sotoh.get(sath, 0.30)
+        return acc
 
     def get_current_ostan(self):
         return self.form.ostan.currentText()
