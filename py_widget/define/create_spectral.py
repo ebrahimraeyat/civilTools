@@ -73,7 +73,7 @@ class Form(QtGui.QWidget):
         importance_factor = float(self.form.importance_factor.currentText())
         rux = self.form.rux.value()
         ruy = self.form.ruy.value()
-        g = 981
+        g = 9.81
         c_min = 0.12 * A * g * importance_factor
         t = np.array(self.b_curve.xData)
         abir = self.form.abir_groupbox.isChecked()
