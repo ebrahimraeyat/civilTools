@@ -28,29 +28,33 @@ class Form(QtGui.QWidget):
         self.etabs.set_current_unit('kgf', 'cm')
         mod = self.form.modifier_spinbox.value()
         dynamic = self.form.dynamic_analysis_groupbox.isChecked()
+        design = self.form.design_checkbox.isChecked()
+        open_main_model = self.form.open_main_model_checkbox.isChecked()
         main_file, filename = self.etabs.shearwall.create_25percent_file(
             modifiers = 8 * [mod],
             dynamic=dynamic,
             d=self.d,
             open_main_file=False)
-        df = self.etabs.design.get_concrete_columns_pmm_table()
-        self.etabs.open_model(main_file)
-        column_names = self.etabs.frame_obj.concrete_section_names('Column')
-        kwargs = {
-            'etabs': self.etabs,
-            'custom_delegate': ColumnsPMMDelegate,
-            'sections': column_names,
-            }
-        p = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools")
-        char_len = int(p.GetFloat('table_max_etabs_model_name_length', 200))
-        table_model.show_results(
-            df,
-            model=ColumnsPMMAll,
-            function=self.etabs.view.show_frame_with_lable_and_story,
-            json_file_name=f"shearwall_25percent_column_ratio {self.etabs.get_file_name_without_suffix()[:char_len]}",
-            etabs=self.etabs,
-            kwargs=kwargs,
-            )
+        if design:
+            df = self.etabs.design.get_concrete_columns_pmm_table()
+            column_names = self.etabs.frame_obj.concrete_section_names('Column')
+            kwargs = {
+                'etabs': self.etabs,
+                'custom_delegate': ColumnsPMMDelegate,
+                'sections': column_names,
+                }
+            p = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools")
+            char_len = int(p.GetFloat('table_max_etabs_model_name_length', 200))
+            table_model.show_results(
+                df,
+                model=ColumnsPMMAll,
+                function=self.etabs.view.show_frame_with_lable_and_story,
+                json_file_name=f"shearwall_25percent_column_ratio {self.etabs.get_file_name_without_suffix()[:char_len]}",
+                etabs=self.etabs,
+                kwargs=kwargs,
+                )
+        if open_main_model:
+            self.etabs.open_model(main_file)
         self.reject()
 
     def load_config(self, d):

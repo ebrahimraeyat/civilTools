@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>348</width>
-    <height>193</height>
+    <width>490</width>
+    <height>220</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -55,6 +55,26 @@
     <widget class="QCheckBox" name="dynamic_analysis_groupbox">
      <property name="text">
       <string>Scale Dynamic</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="design_checkbox">
+     <property name="text">
+      <string>Design</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="open_main_model_checkbox">
+     <property name="text">
+      <string>Open Main Model</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
