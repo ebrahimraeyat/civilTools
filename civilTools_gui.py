@@ -76,6 +76,7 @@ from gui_civiltools.import_export import (
     gui_dxf,
     gui_create_report,
     gui_export_plans_to_dxf,
+    gui_export_rebar_plans_to_dxf,
     gui_create_pdf_from_autocad,
     gui_transfer_loads_between_two_files,
 )
@@ -290,6 +291,7 @@ civiltools_import_export = [
     "civiltools_import_dxf",
     "civiltools_create_report",
     "civiltoos_export_plans_to_dxf",
+    "civiltoos_export_rebar_plans_to_dxf",
     "civiltoos_dwg_to_pdf",
     "civiltools_transfer_loads_between_two_files",
 ]
