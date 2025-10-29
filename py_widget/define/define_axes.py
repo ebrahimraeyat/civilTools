@@ -25,6 +25,7 @@ class Form(QtGui.QWidget):
         self.dxf_filename = None
         self.etabs = etabs
         self.dxf_content = None
+        self.ezdxf_doc = None
         self.fill_levels()
         self.create_connections()
 
@@ -59,13 +60,11 @@ class Form(QtGui.QWidget):
         read_from = self.form.columns_from.currentText()
         self.form.column_names.clear()
         if read_from == 'Block':
-            blocks = self.get_blocks()
-            self.form.column_names.addItems(blocks)
-            self.form.column_names.setEnabled(True)
+            objects = self.get_blocks()
         elif read_from == 'Hatch':
-            self.form.column_names.setEnabled(False)
-            # hatches = self.get_hatches()
-            # self.form.column_names.addItems(hatches)
+            objects = self.get_hatches()
+        print(objects)
+        self.form.column_names.addItems(objects)
 
     def fill_levels(self):
         if not self.etabs.success:
@@ -110,7 +109,7 @@ class Form(QtGui.QWidget):
         if draw_polyline:
             self.dxf_content.draw_polyline()
         if draw_hatches:
-            pass
+            self.dxf_content.draw_hatches()
         if draw_circle:
             self.dxf_content.draw_circles()
         FreeCAD.ActiveDocument.recompute()
@@ -121,7 +120,7 @@ class Form(QtGui.QWidget):
         if self.form.columns_from.currentText() == 'Block':
             block_name = self.form.column_names.currentText()
         elif self.form.columns_from.currentText() == 'Hatch':
-            block_name = 'column'
+            block_name = self.form.column_names.currentText()
         for obj in FreeCAD.ActiveDocument.Objects:
             if  (hasattr(obj, 'rotation') and
                 hasattr(obj, 'width') and
@@ -257,16 +256,16 @@ class Form(QtGui.QWidget):
         return blocks
     
     def get_hatches(self):
+        if FreeCAD.ActiveDocument is None:
+            return
         hatches = set()
         if self.ezdxf_doc is None:
-            if FreeCAD.ActiveDocument is None:
-                return
-            else:
-                return
+            import ezdxf
+            self.ezdxf_doc = ezdxf.readfile(self.dxf_filename)
         msp = self.ezdxf_doc.modelspace()  
         q = msp.query("HATCH")      
         for hatch in q:
-            hatches.add(hatch.dxf.pattern_name)
+            hatches.add(str(hatch.dxf.pattern_name))
         return hatches
 
     def browse(self):

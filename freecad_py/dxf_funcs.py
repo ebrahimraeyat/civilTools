@@ -510,8 +510,30 @@ class ImportDXF:
         pts.reverse()
         points = []
         for p in pts:
-            points.append(Vector(p[0], p[1], 0))
+            points.append(cls.vec((p[0], p[1], 0)))
         return points
+    
+    @staticmethod
+    def get_hatch_name(entity):
+        """Return the name of the hatch pattern.
+
+        Parameters
+        ----------
+        entity : drawing.entities
+            A DXF entity in the `drawing` data obtained from `processdxf`.
+
+        Returns
+        -------
+        str
+            The name of the hatch pattern.
+            If no name is found, it returns "SOLID".
+        """
+        hatch_name = "SOLID"
+        for pair in entity.data:
+            if pair[0] == 2:
+                hatch_name = pair[1]
+                break
+        return hatch_name
 
     @classmethod
     def rawValue(cls, entity, code):
@@ -1164,19 +1186,49 @@ class ImportDXF:
         if hatches:
             FCC.PrintMessage("drawing " + str(len(hatches)) + " hatches...\n")
         for hatch in hatches:
-            if dxfImportLayouts or (not rawValue(hatch, 67)):
+            if dxfImportLayouts or (not self.rawValue(hatch, 67)):
                 points = self.getMultiplePoints(hatch)
                 if len(points) > 1:
                     lay = self.rawValue(hatch, 8)
-                    points = points[:-1]
+                    points = points[1:-1]
                     newob = None
+                    rot = 0
                     if dxfCreatePart or dxfMakeBlocks:
                         points.append(points[0])
-                        s = Part.makePolygon(points)
+                        shape = Part.makePolygon(points)
+                        if shape:
+                            bb = shape.BoundBox
+                            width = bb.XLength
+                            height = bb.YLength
+                            if self.check_rectangle(shape.Edges):
+                                e = shape.Edges[0]
+                                v = e.tangentAt(0)
+                                if v.x == 0:
+                                    rot = 0
+                                    e = shape.Edges[1]
+                                else:
+                                    rot = math.atan(v.y / v.x)
+                                width = e.Length
+                                height = 0
+                                for e in shape.Edges:
+                                    if e.Length != width:
+                                        height = e.Length
+                                        break
+                                if height == 0:
+                                    height = width
                         if dxfMakeBlocks:
-                            self.addToBlock(s, lay)
+                            self.addToBlock(shape, lay)
                         else:
-                            newob = self.addObject(s, "Hatch", lay)
+                            newob = self.addObject(shape, "Hatch", lay)
+                            newob.addProperty('App::PropertyLength', 'width', 'Geometry')
+                            newob.width = width
+                            newob.addProperty('App::PropertyLength', 'height', 'Geometry')
+                            newob.height = height
+                            newob.addProperty('App::PropertyAngle', 'rotation', 'Geometry')
+                            newob.rotation = math.degrees(rot)
+                            newob.addProperty('App::PropertyString', 'name', 'Base')
+                            newob.name = self.get_hatch_name(hatch)
+
                             if gui:
                                 self.formatObject(newob, hatch)
                     else:
