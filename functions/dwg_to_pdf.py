@@ -96,24 +96,29 @@ def plot_block_to_pdf(block_id, pdf_file, way=1):
     # Get bounding box
     min_point, max_point = block.GetBoundingBox()
 
-    # First Way
+    # First Way - Optimized
     if way == 1:
-        doc.ActiveLayout.ConfigName= "DWG To PDF.pc3"  #se puede cambiar a cualquier pc3 configurado
-        doc.ActiveLayout.CanonicalMediaName = "ISO_expand_A4_(297.00_x_210.00_MM)" #debe coincidir exctamente el nombre 
-        P1=SPOINT(*min_point[:-1])
-        P2=SPOINT(*max_point[:-1])
-        doc.ActiveLayout.SetWindowToPlot(P1,P2)
-        doc.ActiveLayout.PaperUnits = 1
-        # doc.ActiveLayout.CenterPlot = True
-        doc.ActiveLayout.UseStandardScale = False
-        doc.ActiveLayout.SetCustomScale(1, 1) #escala del dibujo
-        doc.ActiveLayout.CenterPlot = True
-        doc.ActiveLayout.PlotRotation = 0
-        doc.ActiveLayout.StyleSheet = "monochrome.ctb" #plantilla de plumillas
-        doc.ActiveLayout.PlotType = 4 #acWindow
-        doc.ActiveLayout.StandardScale = 0 #acScaleToFit
-        doc.Plot.PlotToFile(pdf_file) #nombre del fichero donde se va imprimir
-        time.sleep(.2)
+        layout = doc.ActiveLayout
+        # Set plot configuration once
+        if not hasattr(plot_block_to_pdf, 'configured'):
+            layout.ConfigName = "DWG To PDF.pc3"
+            layout.CanonicalMediaName = "ISO_expand_A4_(297.00_x_210.00_MM)"
+            layout.PaperUnits = 1
+            layout.UseStandardScale = False
+            layout.SetCustomScale(1, 1)
+            layout.CenterPlot = True
+            layout.PlotRotation = 0
+            layout.StyleSheet = "monochrome.ctb"
+            layout.PlotType = 4
+            layout.StandardScale = 0
+            plot_block_to_pdf.configured = True
+
+        P1 = SPOINT(*min_point[:-1])
+        P2 = SPOINT(*max_point[:-1])
+        layout.SetWindowToPlot(P1, P2)
+        doc.Plot.PlotToFile(pdf_file)
+        # Reduced sleep time
+        time.sleep(0.1)
 
 
     # Command to plot
@@ -145,7 +150,7 @@ def plot_block_to_pdf(block_id, pdf_file, way=1):
 
 def export_dwg_to_pdf(
         horizontal: str="left",
-        vertical: str="up",
+        vertical: str="up", 
         prefer_dir: str='vertical',
         remove_pdfs: bool=True,
         way=1,
@@ -200,13 +205,19 @@ def export_dwg_to_pdf(
     pdf_name = doc.FullName[:-4] + '.pdf'
     if os.path.isfile(pdf_name):
         os.remove(pdf_name)
-    print(pdf_name)
-    pdf_cat(pdf_files, pdf_name)
+        
+    # Use a context manager for file handling
+    with open(pdf_name, 'wb') as output_stream:
+        pdf_cat(pdf_files, output_stream)
 
+    # Clean up temporary files
     if remove_pdfs:
         for pdf_file in pdf_files:
-            if os.path.isfile(pdf_file):
+            try:
                 os.remove(pdf_file)
+            except OSError:
+                continue
+
     return pdf_name
 
 
