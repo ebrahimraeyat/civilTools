@@ -36,6 +36,7 @@ from gui_civiltools import (
     gui_check_legal,
     gui_100_30_columns,
     gui_import_model,
+    gui_links,
     )
 
 from gui_civiltools.assign import (
@@ -282,6 +283,7 @@ civiltools_define = [
 
 civiltools_help = [
             "Separator",
+            'civiltoos_aparat_site',
             "civil_registe",
             "civil_help",
             ]
