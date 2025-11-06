@@ -314,14 +314,18 @@ class Form(QtGui.QWidget):
     def partition_dead_clicked(self):
         if self.form.partition_dead_checkbox.isChecked():
             self.form.partition_live_checkbox.setChecked(False)
+            self.form.partition_live_combobox.setEnabled(False)
         else:
             self.form.partition_live_checkbox.setChecked(True)
+            self.form.partition_live_combobox.setEnabled(True)
     
     def partition_live_clicked(self):
         if self.form.partition_live_checkbox.isChecked():
             self.form.partition_dead_checkbox.setChecked(False)
+            self.form.partition_dead_combobox.setEnabled(False)
         else:
             self.form.partition_dead_checkbox.setChecked(True)
+            self.form.partition_dead_combobox.setEnabled(True)
     
     def indexActivated(self, index):
         # self.form.load_combinations_view.index_activated.emit(self.form.load_combinations_view.model().asRecord(index))
