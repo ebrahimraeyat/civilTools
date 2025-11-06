@@ -359,11 +359,12 @@ class Form(QtGui.QWidget):
             deads.append(sdead)
             if sdead not in load_patterns:
                 self.etabs.SapModel.LoadPatterns.Add(sdead, 2)
-        partition_dead = self.form.partition_dead_combobox.currentText()
-        if partition_dead:
-            deads.append(partition_dead)
-            if partition_dead not in load_patterns:
-                self.etabs.SapModel.LoadPatterns.Add(partition_dead, 1)
+        if self.form.partition_dead_checkbox.isChecked():
+            partition_dead = self.form.partition_dead_combobox.currentText()
+            if partition_dead:
+                deads.append(partition_dead)
+                if partition_dead not in load_patterns:
+                    self.etabs.SapModel.LoadPatterns.Add(partition_dead, 1)
         if deads:
             equivalent_loads['Dead'] = deads
         # L
@@ -383,11 +384,12 @@ class Form(QtGui.QWidget):
             lives.append(lred)
             if lred not in load_patterns:
                 self.etabs.SapModel.LoadPatterns.Add(lred, 4)
-        partition_live = self.form.partition_live_combobox.currentText()
-        if partition_live:
-            lives.append(partition_live)
-            if partition_live not in load_patterns:
-                self.etabs.SapModel.LoadPatterns.Add(partition_live, 3)
+        if self.form.partition_live_checkbox.isChecked():
+            partition_live = self.form.partition_live_combobox.currentText()
+            if partition_live:
+                lives.append(partition_live)
+                if partition_live not in load_patterns:
+                    self.etabs.SapModel.LoadPatterns.Add(partition_live, 3)
         if lives:
             equivalent_loads['L'] = lives
         # L_5
