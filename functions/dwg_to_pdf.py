@@ -108,7 +108,7 @@ class DwgToPdf:
             self,
             block_id,
             pdf_file,
-            way=1,
+            way=2,
             config_name: str="DWG To PDF.pc3",
             stylesheet: str="monochrome.ctb",
             paper_size: str="ISO full bleed A3 (420.00 x 297.00 MM)",
@@ -150,29 +150,39 @@ class DwgToPdf:
         # Command to plot
         # Construct the command string
         if way == 2:
-            command = (
-                '-plot Y\n'  # Plotting option
-                'Model\n'  # Layout name
-                f'{config_name}\n'  # Printer name
-                f'{paper_size}\n'  # Paper size
-                'Millimeters\n'  # Units
-                f'{orientation.upper()}\n'  # Orientation
-                'No\n'  # Window option
-                'Window\n'  # Window option
-                f'{min_point[0]},{min_point[1]}\n'  # Plot area
-                f'{max_point[0]},{max_point[1]}\n'  # Plot area
-                'Fit\n'  # Scale option
-                'Center\n'  # Centering option
-                'Y\n'  # Plot to file
-                f'{stylesheet}\n' # Plot style file
-                'yes\n' # plot with lineweight
-                'A\n'
-                f'{pdf_file}\n'  # Output file
-                'Y\n'  # Overwrite option
-                'Y\n' # proceed with plot
-            )
-            # Send the command to AutoCAD
-            self.doc.SendCommand(command)
+                # Ensure path uses forward slashes and is quoted (handles spaces)
+                safe_path = str(pdf_file).replace('\\', '/')
+                quoted_path = f'"{safe_path}"'
+
+                # Build a command-line (note leading '-' to use command-line version)
+                command_lines = [
+                    "-plot", "Y",        # use command-line plot
+                    "Model",             # layout name (or "Layout1" as needed)
+                    config_name,         # printer/pc3
+                    paper_size,          # canonical media name
+                    "Millimeters",       # units
+                    orientation.upper(), # orientation (LANDSCAPE/PORTAIT)
+                    "No",                # plot area (No -> next will be Window)
+                    "Window",
+                    f"{min_point[0]},{min_point[1]}",
+                    f"{max_point[0]},{max_point[1]}",
+                    "Fit",
+                    "Center",
+                    "Y",                 # plot to file? yes
+                    stylesheet or "",    # plot style (may be empty)
+                    "yes",               # plot with lineweight
+                    "A",                 # plot what? (A = All)
+                    quoted_path,         # output filename
+                    "Y",                 # overwrite
+                    "Y",                 # proceed
+                ]
+
+                # Join with newlines and ensure final newline so AutoCAD processes it
+                command = "\n".join(command_lines) + "\n"
+
+                    # SendCommand is asynchronous. Using SendCommand is unavoidable for some versions,
+                    # but we at least avoid the file dialog by FILEDIA=0 and supplying the filename.
+                self.doc.SendCommand(command)
 
     def export_dwg_to_pdf(
             self,
@@ -180,7 +190,7 @@ class DwgToPdf:
             vertical: str="up", 
             prefer_dir: str='vertical',
             remove_pdfs: bool=True,
-            way=1,
+            way=2,
             config_name: str="DWG To PDF.pc3",
             stylesheet: str="monochrome.ctb",
             paper_size: str="ISO full bleed A3 (420.00 x 297.00 MM)",
@@ -214,18 +224,32 @@ class DwgToPdf:
             self.doc.Plot.QuietErrorMode = False
             self.doc.SetVariable('BACKGROUNDPLOT', 0)
             # doc.Regen(1)
-        for index, block_id in enumerate(sorted_block_id_boundbox, start=1):
-            pdf_file = str(Path(self.dwg_prefix) / f"{index}.pdf")
-            self.plot_block_to_pdf(
-                block_id,
-                pdf_file,
-                way=way,
-                config_name=config_name,
-                stylesheet=stylesheet,
-                paper_size=paper_size,
-                orientation=orientation,
-                )
-            pdf_files.append(pdf_file)
+        elif way == 2:
+            # Disable file dialogs so AutoCAD accepts the filename from the command line
+            try:
+                # save and disable FILEDIA (we can't always read original reliably across versions,
+                # so default restore to 1)
+                self.doc.SetVariable('FILEDIA', 0)
+                for index, block_id in enumerate(sorted_block_id_boundbox, start=1):
+                    pdf_file = str(Path(self.dwg_prefix) / f"{index}.pdf")
+                    self.plot_block_to_pdf(
+                        block_id,
+                        pdf_file,
+                        way=way,
+                        config_name=config_name,
+                        stylesheet=stylesheet,
+                        paper_size=paper_size,
+                        orientation=orientation,
+                        )
+                    pdf_files.append(pdf_file)
+            except Exception:
+                pass
+            finally:
+                # restore FILEDIA to 1 (safe default)
+                try:
+                    self.doc.SetVariable('FILEDIA', 1)
+                except Exception:
+                    pass
             
         pdf_name = self.doc.FullName[:-4] + '.pdf'
         if os.path.isfile(pdf_name):

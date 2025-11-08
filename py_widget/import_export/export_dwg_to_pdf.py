@@ -180,6 +180,7 @@ class Form:
             
             # Plot block to PDF
             try:
+                self.dwg_to_pdf.doc.SetVariable('FILEDIA', 0)
                 self.dwg_to_pdf.plot_block_to_pdf(
                     block_id,
                     self.preview_pdf,
@@ -187,10 +188,16 @@ class Form:
                     stylesheet=self.form.plot_style.currentText(),
                     paper_size=self.form.paper_size_combobox.currentText(),
                     orientation=self.form.orientation_combobox.currentText(),
+                    way=2,
                 )
             except Exception as e:
                 print(f"Plot error: {e}")
                 return
+            finally:
+                try:
+                    self.dwg_to_pdf.doc.SetVariable('FILEDIA', 1)
+                except Exception:
+                    pass
 
             # Wait for file to exist and have size > 0
             import time
@@ -259,7 +266,7 @@ class Form:
             return
         # ...existing export code using self.selected_blocks...
         horizontal, vertical, prefer_dir = self.get_selected_layout()
-        way = self.form.way_combobox.currentText()
+        way = 2
         printer = self.form.printers.currentText()
         style = self.form.plot_style.currentText()
         paper_size = self.form.paper_size_combobox.currentText()
