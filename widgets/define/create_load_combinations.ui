@@ -891,7 +891,7 @@
           <item>
            <widget class="QRadioButton" name="asd">
             <property name="text">
-             <string>ASD</string>
+             <string>ASD (Soil)</string>
             </property>
            </widget>
           </item>
@@ -917,7 +917,7 @@
           <item row="0" column="1">
            <widget class="QLineEdit" name="prefix">
             <property name="text">
-             <string>Combo</string>
+             <string>Static-</string>
             </property>
            </widget>
           </item>

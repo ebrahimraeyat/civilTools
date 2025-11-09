@@ -38,9 +38,9 @@ class Form(QtGui.QWidget):
         civiltools_config.load(self.etabs, self.form)
         if self.form.dynamic_analysis_groupbox.isChecked():
             if self.form.angular_response_spectrum_checkbox.isChecked():
-                self.form.prefix.setText("ANGULAR-")
+                self.form.prefix.setText("Angular-")
             else:
-                self.form.prefix.setText("DYNAMIC-")
+                self.form.prefix.setText("Dynamic-")
 
     def create(self):
         self.etabs.unlock_model()
@@ -289,6 +289,25 @@ class Form(QtGui.QWidget):
         self.form.city.currentIndexChanged.connect(self.setA)
         self.form.lrfd.clicked.connect(self.consider_ev)
         self.form.asd.clicked.connect(self.consider_ev)
+        # set prefix name
+        self.form.lrfd.clicked.connect(self.set_prefix_name)
+        self.form.asd.clicked.connect(self.set_prefix_name)
+        self.form.dynamic_analysis_groupbox.clicked.connect(self.set_prefix_name)
+        self.form.angular_response_spectrum_checkbox.clicked.connect(self.set_prefix_name)
+        self.form.combination_response_spectrum_checkbox.clicked.connect(self.set_prefix_name)
+
+    def set_prefix_name(self):
+        prefix = ''
+        if self.form.asd.isChecked():
+            prefix += "Soil-"
+        if self.form.dynamic_analysis_groupbox.isChecked():
+            if self.form.angular_response_spectrum_checkbox.isChecked():
+                prefix += "Angular-"
+            else:
+                prefix += "Dynamic-"
+        else:
+            prefix += "Static-"
+        self.form.prefix.setText(prefix)
     
     def consider_ev(self):
         if self.form.lrfd.isChecked():
