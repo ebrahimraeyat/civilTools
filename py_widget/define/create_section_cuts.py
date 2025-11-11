@@ -43,8 +43,8 @@ class Form(QtGui.QWidget):
     def accept(self):
         angles_inc = self.form.angles_inc.value()
         angles = range(0, 180, angles_inc)
+        group = self.form.group.currentText()
         if self.form.cuts_groupbox.isChecked():
-            group = self.form.group.currentText()
             groups = self.etabs.group.names()
             if group not in groups:
                 self.etabs.group.add(group)
