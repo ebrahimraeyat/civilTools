@@ -142,6 +142,7 @@ class Form(QtGui.QWidget):
         all_load_cases = self.etabs.load_cases.get_load_cases()
         numbers = set()
         etabs_load_combinations = self.etabs.load_combinations.get_load_combination_names()
+        etabs_load_combinations = [combo.lower() for combo in etabs_load_combinations]
         removed_combos = []
         for i in range(0, len(self.data), 4):
             comb = self.data[i: i+4]
@@ -149,9 +150,9 @@ class Form(QtGui.QWidget):
                 not_exist_loadcases.add(comb[2])
             name = comb[0]
             # if name in selected_combos:
-            if name in etabs_load_combinations and name not in removed_combos:
+            if name.lower() in etabs_load_combinations and name.lower() not in removed_combos:
                 self.etabs.load_combinations.delete_load_combinations([name])
-                removed_combos.append(name)
+                removed_combos.append(name.lower())
             self.etabs.SapModel.RespCombo.add(name, 0)
             self.etabs.SapModel.RespCombo.SetCaseList(
                 name,
