@@ -84,7 +84,7 @@ class ColumnsPMMAll(PandasModel):
         self.i_section = tuple(self.df.columns).index("DesignSect")
         self.i_pmm = tuple(self.df.columns).index("PMMRatio")
         self.min_pmm = self.df['PMMRatio'].min()
-        self.max_pmm = self.df['PMMRatio'].max()
+        self.max_pmm = 1.0
         self.etabs = self.kwargs['etabs']
         self.sections = self.kwargs['sections']
         
@@ -117,6 +117,7 @@ class ColumnsPMMAll(PandasModel):
             value = self.df.iloc[row, self.i_pmm]
             if pd.isna(value):
                 return
+            value = min(value, self.max_pmm)
             
             # Normalize the PMM value between 0 and 1
             normalized = (value - self.min_pmm) / (self.max_pmm - self.min_pmm)
