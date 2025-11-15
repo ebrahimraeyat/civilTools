@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>958</width>
-    <height>493</height>
+    <width>850</width>
+    <height>495</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <iconset resource="../../civiltools.qrc">
     <normaloff>:/import_export/images/import_export/PDF_file_icon.svg</normaloff>:/import_export/images/import_export/PDF_file_icon.svg</iconset>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout">
+  <layout class="QHBoxLayout" name="horizontalLayout_2">
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <property name="sizeConstraint">
@@ -235,6 +235,34 @@
         </item>
        </layout>
       </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Way</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="way_combobox">
+         <property name="currentIndex">
+          <number>1</number>
+         </property>
+         <item>
+          <property name="text">
+           <string>1</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>2</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item>
       <widget class="QPushButton" name="select_blocks_button">

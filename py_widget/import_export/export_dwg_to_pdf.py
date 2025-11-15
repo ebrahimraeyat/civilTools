@@ -180,6 +180,7 @@ class Form:
             
             # Plot block to PDF
             try:
+                way = int(self.form.way_combobox.currentText())
                 self.dwg_to_pdf.doc.SetVariable('FILEDIA', 0)
                 self.dwg_to_pdf.plot_block_to_pdf(
                     block_id,
@@ -188,7 +189,7 @@ class Form:
                     stylesheet=self.form.plot_style.currentText(),
                     paper_size=self.form.paper_size_combobox.currentText(),
                     orientation=self.form.orientation_combobox.currentText(),
-                    way=2,
+                    way=way,
                 )
             except Exception as e:
                 print(f"Plot error: {e}")
@@ -266,7 +267,7 @@ class Form:
             return
         # ...existing export code using self.selected_blocks...
         horizontal, vertical, prefer_dir = self.get_selected_layout()
-        way = 2
+        way = int(self.form.way_combobox.currentText())
         printer = self.form.printers.currentText()
         style = self.form.plot_style.currentText()
         paper_size = self.form.paper_size_combobox.currentText()
@@ -278,7 +279,7 @@ class Form:
             vertical,
             prefer_dir=prefer_dir,
             remove_pdfs=remove_pdf,
-            way=int(way),
+            way=way,
             config_name=printer,
             stylesheet=style,
             paper_size=paper_size,

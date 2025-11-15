@@ -223,6 +223,18 @@ class DwgToPdf:
         if way == 1:
             self.doc.Plot.QuietErrorMode = False
             self.doc.SetVariable('BACKGROUNDPLOT', 0)
+            for index, block_id in enumerate(sorted_block_id_boundbox, start=1):
+                pdf_file = str(Path(self.dwg_prefix) / f"{index}.pdf")
+                self.plot_block_to_pdf(
+                    block_id,
+                    pdf_file,
+                    way=way,
+                    config_name=config_name,
+                    stylesheet=stylesheet,
+                    paper_size=paper_size,
+                    orientation=orientation,
+                    )
+                pdf_files.append(pdf_file)
             # doc.Regen(1)
         elif way == 2:
             # Disable file dialogs so AutoCAD accepts the filename from the command line
