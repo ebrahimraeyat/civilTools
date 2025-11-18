@@ -510,6 +510,9 @@
            <property name="enabled">
             <bool>true</bool>
            </property>
+           <property name="minimum">
+            <double>0.000000000000000</double>
+           </property>
            <property name="maximum">
             <double>1.000000000000000</double>
            </property>
@@ -517,7 +520,7 @@
             <double>0.100000000000000</double>
            </property>
            <property name="value">
-            <double>0.010000000000000</double>
+            <double>0.250000000000000</double>
            </property>
           </widget>
          </item>
@@ -536,6 +539,9 @@
            <property name="enabled">
             <bool>true</bool>
            </property>
+           <property name="minimum">
+            <double>0.000000000000000</double>
+           </property>
            <property name="maximum">
             <double>1.000000000000000</double>
            </property>
@@ -543,7 +549,7 @@
             <double>0.100000000000000</double>
            </property>
            <property name="value">
-            <double>0.010000000000000</double>
+            <double>0.250000000000000</double>
            </property>
           </widget>
          </item>
@@ -559,6 +565,9 @@
          </item>
          <item row="5" column="1">
           <widget class="QDoubleSpinBox" name="slabs_m12_spinbox">
+           <property name="minimum">
+            <double>0.000000000000000</double>
+           </property>
            <property name="maximum">
             <double>1.000000000000000</double>
            </property>
@@ -566,7 +575,7 @@
             <double>0.100000000000000</double>
            </property>
            <property name="value">
-            <double>0.010000000000000</double>
+            <double>0.250000000000000</double>
            </property>
           </widget>
          </item>

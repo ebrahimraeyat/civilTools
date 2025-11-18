@@ -21,6 +21,7 @@ class Form(QtGui.QWidget):
         self.form.set_end_length_offset_pushbutton.clicked.connect(self.set_end_length_offset)
         self.form.check_diaphragm_pushbutton.clicked.connect(self.check_diaphragm)
         self.form.set_diaphragm_pushbutton.clicked.connect(self.set_diaphragm)
+        self.form.close_button.clicked.connect(self.reject)
 
     def set_end_length_offset(self):
         value = self.form.end_length_offset_spinbox.value()
