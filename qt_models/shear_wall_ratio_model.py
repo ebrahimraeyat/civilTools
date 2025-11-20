@@ -23,7 +23,7 @@ class ShearWallsRatio(PandasModel):
         self.i_ratio = tuple(self.df.columns).index("DCRatio")
         self.col_function = (i_pier, i_story)
         self.min_ratio = self.df['DCRatio'].min()
-        self.max_ratio = self.df['DCRatio'].max()
+        self.max_ratio = 1
         
     def data(self, index, role=Qt.DisplayRole):
         if not index.isValid():
@@ -39,10 +39,36 @@ class ShearWallsRatio(PandasModel):
             value = self.df.iloc[row, self.i_ratio]
             if pd.isna(value):
                 return
+            value = min(value, self.max_ratio)
+            
             # Normalize the PMM value between 0 and 1
             normalized = (value - self.min_ratio) / (self.max_ratio - self.min_ratio)
-            # Create color gradient from blue (low) to red (high)
-            red = int(255 * normalized)
-            blue = int(255 * (1 - normalized))
-            green = 0
+            
+            # Create color gradient: blue → cyan → green → yellow → red
+            # Split the normalized range into 4 segments
+            if normalized < 0.25:
+                # Blue (0.0) to Cyan (0.25)
+                t = normalized / 0.25
+                red = 0
+                green = int(255 * t)
+                blue = 255
+            elif normalized < 0.5:
+                # Cyan (0.25) to Green (0.5)
+                t = (normalized - 0.25) / 0.25
+                red = 0
+                green = 255
+                blue = int(255 * (1 - t))
+            elif normalized < 0.75:
+                # Green (0.5) to Yellow (0.75)
+                t = (normalized - 0.5) / 0.25
+                red = int(255 * t)
+                green = 255
+                blue = 0
+            else:
+                # Yellow (0.75) to Red (1.0)
+                t = (normalized - 0.75) / 0.25
+                red = 255
+                green = int(255 * (1 - t))
+                blue = 0
+            
             return QColor(red, green, blue)
