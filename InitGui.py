@@ -30,7 +30,7 @@ class CivilToolsWorkbench(Workbench):
         # self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Civil Export")), export_list)
         # self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Civil Draw")), draw_list)
         # self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("Civil", "Civil Assign")), assign_list)
-        self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("civiltools", "Controls")), civiltools_list[:-6])
+        self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("civiltools", "Controls")), civiltools_list[1:-6])
         self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("civiltools", "Assign")), civiltools_assign[:-1])
         self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("civiltools", "civiltools Edit")), civiltools_edit)
         self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("civiltools", "Tools")), civiltools_tools[1:])

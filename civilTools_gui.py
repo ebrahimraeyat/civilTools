@@ -37,6 +37,7 @@ from gui_civiltools import (
     gui_100_30_columns,
     gui_import_model,
     gui_links,
+    gui_connect_to_software,
     )
 
 from gui_civiltools.assign import (
@@ -220,6 +221,7 @@ Gui.addCommand('civiltools_discretize',gui_discretize.CivilToolsDiscretize())
 Gui.addCommand('civiltools_create_spectral',gui_create_spectral.CivilToolsCreateSpectral())
 
 civiltools_list = [
+            "civiltools_connect_to_software",
             "civil_automatic_drift",
             "civil_show_torsion",
             "civilTools_check_deflection_of_beams",
