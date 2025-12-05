@@ -63,11 +63,14 @@
     <file>images/dwg_to_pdf.svg</file>
   </qresource>
   <qresource prefix="general">
+    <file>images/general/find.png</file>
+    <file>images/general/sap2000.png</file>
     <file>images/general/search.svg</file>
     <file>images/general/connect.svg</file>
     <file>images/left-up_horizental.svg</file>
     <file>images/right-up_horizental.svg</file>
     <file>images/right-down_horizental.svg</file>
+    <file>images/general/safe.jpg</file>
     <file>images/left-down_horizental.svg</file>
     <file>images/left-down_vertical.svg</file>
     <file>images/left-up_vertical.svg</file>

@@ -57,7 +57,7 @@ class Form(QtWidgets.QWidget):
             self.form.softwares_layout.setLayout(layout)
         
         # Get executable paths of supported software
-        software_name = self.form.software_name.currentText()
+        software_name = self.get_software_name()
         softwares = far.get_softwares_process([software_name])
         if not softwares:
             QMessageBox.warning(None, "No Software Found", "No supported software is running.")
@@ -128,15 +128,19 @@ class Form(QtWidgets.QWidget):
         
         software = self.selected_software
         
-        # Save the selected software path to FreeCAD parameters
-        param = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools")
-        param.SetString("last_exe_path_software", str(software.exe_path))
-        
         # Restore default window behavior
         self.setWindowFlags(QtCore.Qt.Widget)
         try:
             ret = far.connect_to_software(software)
-            if ret:
+            if isinstance(ret, str):
+                param = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/civilTools")
+                param.SetString("pid_moniker", ret)
+                param.SetString("last_exe_path_software", str(software.exe_path))
+                QMessageBox.information(self,
+                                    "Connected",
+                                    f"Connected to {software}.")
+            
+            if ret is True:
                 QMessageBox.information(self,
                                     "Connected",
                                     f"Connected to {software}."
@@ -145,3 +149,11 @@ class Form(QtWidgets.QWidget):
             self.form.close()
         except Exception as e:
             QMessageBox.critical(self, "Connection Failed", f"Failed to connect to {software.exe_path}.\n{e}")
+
+    def get_software_name(self):
+        if self.form.etabs_radiobutton.isChecked():
+            return "ETABS"
+        elif self.form.sap2000_radiobutton.isChecked():
+            return "SAP2000"
+        elif self.form.safe_radiobutton.isChecked():
+            return "SAFE"

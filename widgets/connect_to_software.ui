@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>384</width>
-    <height>145</height>
+    <width>415</width>
+    <height>232</height>
    </rect>
   </property>
   <property name="maximumSize">
@@ -23,35 +23,78 @@
    <iconset resource="../civiltools.qrc">
     <normaloff>:/general/images/general/connect.svg</normaloff>:/general/images/general/connect.svg</iconset>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Software</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="software_name">
-       <item>
+    <widget class="QFrame" name="frame">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QRadioButton" name="etabs_radiobutton">
         <property name="text">
-         <string>ETABS</string>
+         <string/>
         </property>
-       </item>
-       <item>
+        <property name="icon">
+         <iconset resource="../civiltools.qrc">
+          <normaloff>:/civiltools/images/etabs.png</normaloff>:/civiltools/images/etabs.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>60</width>
+          <height>60</height>
+         </size>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="sap2000_radiobutton">
         <property name="text">
-         <string>SAFE</string>
+         <string/>
         </property>
-       </item>
-       <item>
+        <property name="icon">
+         <iconset resource="../civiltools.qrc">
+          <normaloff>:/general/images/general/sap2000.png</normaloff>:/general/images/general/sap2000.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>60</width>
+          <height>60</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="safe_radiobutton">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="text">
-         <string>SAP2000</string>
+         <string/>
         </property>
-       </item>
-      </widget>
-     </item>
+        <property name="icon">
+         <iconset resource="../civiltools.qrc">
+          <normaloff>:/general/images/general/safe.jpg</normaloff>:/general/images/general/safe.jpg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>60</width>
+          <height>60</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <widget class="QPushButton" name="find_button">
        <property name="text">
@@ -59,12 +102,29 @@
        </property>
        <property name="icon">
         <iconset resource="../civiltools.qrc">
-         <normaloff>:/general/images/general/search.svg</normaloff>:/general/images/general/search.svg</iconset>
+         <normaloff>:/general/images/general/find.png</normaloff>:/general/images/general/find.png</iconset>
        </property>
        <property name="iconSize">
         <size>
-         <width>20</width>
-         <height>20</height>
+         <width>80</width>
+         <height>80</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="connect_button">
+       <property name="text">
+        <string>Conncet</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../civiltools.qrc">
+         <normaloff>:/general/images/general/connect.svg</normaloff>:/general/images/general/connect.svg</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>80</width>
+         <height>80</height>
         </size>
        </property>
       </widget>
@@ -72,26 +132,7 @@
     </layout>
    </item>
    <item>
-    <widget class="QPushButton" name="connect_button">
-     <property name="text">
-      <string>Conncet</string>
-     </property>
-     <property name="icon">
-      <iconset resource="../civiltools.qrc">
-       <normaloff>:/general/images/general/connect.svg</normaloff>:/general/images/general/connect.svg</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>40</width>
-       <height>40</height>
-      </size>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QWidget" name="softwares_layout" native="true">
-     <layout class="QVBoxLayout" name="verticalLayout"/>
-    </widget>
+    <widget class="QWidget" name="softwares_layout" native="true"/>
    </item>
    <item>
     <spacer name="verticalSpacer">
