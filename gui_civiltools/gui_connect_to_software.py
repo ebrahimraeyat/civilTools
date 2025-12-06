@@ -14,7 +14,7 @@ class CivilToolsConnectToSoftware:
     def GetResources(self):
         # Get the last saved software path from FreeCAD parameters
         return {
-            'Pixmap': str(Path(__file__).parent.parent / "images" / 'connect.svg'),
+            'Pixmap': str(Path(__file__).parent.parent / "images" / 'general' / 'connect.svg'),
             'MenuText': "Connect to Software",
             'ToolTip': "Connect to ETABS, SAP2000, or SAFE software",
         }
