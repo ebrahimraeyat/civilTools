@@ -119,7 +119,7 @@ class Form(QtWidgets.QWidget):
         # Store selected software
         self.selected_software = software
         button.setChecked(True)
-        print(f"Selected: {software.exe_path.parent.name}")
+        print(f"Selected: {software.title}")
 
     def connect_selected_software(self):
         """Connect to the selected software and save the path"""

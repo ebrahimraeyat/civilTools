@@ -27,7 +27,9 @@ class CivilToolsConnectToSoftware:
         if win.require_restart:
             import freecad_funcs
             freecad_funcs.restart_freecad(check_test=False)
-        Gui.getMainWindow().statusBar().showMessage(f"Connected to {win.title}")
+        msg = f"Connected to {win.title}"
+        Gui.getMainWindow().statusBar().showMessage(msg)
+        print(msg)
 
     def IsActive(self):
         return True
