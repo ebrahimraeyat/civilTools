@@ -24,10 +24,10 @@ class CivilToolsConnectToSoftware:
         from py_widget.connect_to_software import Form
         win = Form()
         win.form.exec_()
-        print(win.require_restart)
         if win.require_restart:
             import freecad_funcs
             freecad_funcs.restart_freecad(check_test=False)
+        Gui.getMainWindow().statusBar().showMessage(f"Connected to {win.title}")
 
     def IsActive(self):
         return True

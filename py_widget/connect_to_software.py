@@ -18,6 +18,7 @@ class Form(QtWidgets.QWidget):
         super(Form, self).__init__()
         self.form = Gui.PySideUic.loadUi(str(civiltools_path / 'widgets' / 'connect_to_software.ui'))
         self.require_restart = False
+        self.title = ''
         self.selected_software = None
         self.software_buttons = []  # Track buttons for cleanup
         self.create_connections()
@@ -129,6 +130,7 @@ class Form(QtWidgets.QWidget):
         software = self.selected_software
         
         # Restore default window behavior
+        self.title = software.title
         self.setWindowFlags(QtCore.Qt.Widget)
         try:
             ret = far.connect_to_software(software)
@@ -139,7 +141,6 @@ class Form(QtWidgets.QWidget):
                 QMessageBox.information(self,
                                     "Connected",
                                     f"Connected to {software}.")
-            
             if ret is True:
                 QMessageBox.information(self,
                                     "Connected",
