@@ -56,7 +56,10 @@
     <file>images/create_25percent_file.svg</file>
   </qresource>
   <qresource prefix="import_export">
+    <file>images/import_export/bot_rebars.svg</file>
+    <file>images/import_export/tor_rebars.svg</file>
     <file>images/import_export/PDF_file_icon.svg</file>
+    <file>images/import_export/top_rebars.svg</file>
     <file>images/beam_rebar.svg</file>
     <file>images/phi_rebar.svg</file>
     <file>images/transfer_loads_between_two_files.svg</file>
