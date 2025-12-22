@@ -106,6 +106,7 @@ class Form:
         top_rebars = self.form.top_rebars.text()
         bot_rebars = self.form.bot_rebars.text()
         torsion_rebars = self.form.torsion_rebars.text()
+        ignore_area = self.form.ignore_area.value()
         if not torsion_rebars:
             torsion_rebars = '0~16'
         if not filename:
@@ -143,6 +144,7 @@ class Form:
             filename=filename,
             moment_redistribution_positive_coefficient = moment_redistribution_positive_coefficient,
             moment_redistribution_negative_coefficient = moment_redistribution_negative_coefficient,
+            ignore_rebar_area=ignore_area,
                     )
         if self.form.open_checkbox.isChecked():
             from civiltools_python_functions import open_file
