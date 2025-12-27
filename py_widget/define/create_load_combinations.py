@@ -288,8 +288,8 @@ class Form(QtGui.QWidget):
         self.form.load_combinations_view.expanded.connect(self.treeExpanded)
         self.form.ostan.currentIndexChanged.connect(self.set_citys_of_current_ostan)
         self.form.city.currentIndexChanged.connect(self.setA)
-        self.form.lrfd.clicked.connect(self.consider_ev)
-        self.form.asd.clicked.connect(self.consider_ev)
+        self.form.lrfd.clicked.connect(self.design_type_clicked)
+        self.form.asd.clicked.connect(self.design_type_clicked)
         # set prefix name
         self.form.lrfd.clicked.connect(self.set_prefix_name)
         self.form.asd.clicked.connect(self.set_prefix_name)
@@ -310,15 +310,18 @@ class Form(QtGui.QWidget):
             prefix += "Static-"
         self.form.prefix.setText(prefix)
     
-    def consider_ev(self):
+    def design_type_clicked(self):
         if self.form.lrfd.isChecked():
             self.form.ev_negative.setChecked(True)
         else:
             self.form.ev_negative.setChecked(False)
         if self.form.asd.isChecked():
             self.form.ev_negative.setChecked(False)
+            self.form.add_notional.setChecked(False)
+            self.form.add_notional.setEnabled(False)
         else:
             self.form.ev_negative.setChecked(True)
+            self.form.add_notional.setEnabled(True)
 
     def setA(self):
         sotoh = ['خیلی زیاد', 'زیاد', 'متوسط', 'کم']
