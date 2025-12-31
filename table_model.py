@@ -340,7 +340,7 @@ class IrregularityOfMassModel(PandasModel):
         super(IrregularityOfMassModel, self).__init__(data, kwargs)
         headers = list(self.df.columns)
         self.df[headers] = self.df[headers].astype(str)
-        self.i_mass_x = headers.index('Mass X')
+        self.i_mass_x = headers.index('Mass (tonf)')
         self.i_below = headers.index('1.5 * Below')
         self.i_above = headers.index('1.5 * Above')
         self.i_story = headers.index('Story')
@@ -354,7 +354,7 @@ class IrregularityOfMassModel(PandasModel):
             if role == Qt.DisplayRole:
                 if col == self.i_story:
                     return str(value)
-                return f'{float(value):.0f}'
+                return f'{float(value):.2f}'
             elif role == Qt.ItemDataRole.BackgroundRole:
                 if col in (self.i_below, self.i_above):
                     if float(self.df.iloc[row][self.i_mass_x]) > \
