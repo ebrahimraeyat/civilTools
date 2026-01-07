@@ -97,6 +97,50 @@ class DwgToPdf:
         # # Initialize AutoCAD
         # acad = Autocad(create_if_not_exists=True)
 
+    def get_selected_blocks(self):
+        """
+        Prompt user to select objects using the SelectionSets API.
+        Returns a list of block ObjectIDs.
+        """
+        block_ids = []
+        selection_name = "Temp_Selection"
+
+        try:
+            # Get the SelectionSets collection
+            selection_sets = self.doc.SelectionSets
+
+            # Delete the temporary selection set if it already exists
+            for i in range(selection_sets.Count):
+                if selection_sets.Item(i).Name == selection_name:
+                    selection_sets.Item(i).Delete()
+                    break
+
+            # Create a new, empty selection set
+            selection = selection_sets.Add(selection_name)
+
+            # Let the user select objects on screen
+            print("Please select blocks in the drawing and press Enter...")
+            selection.SelectOnScreen()  # This waits for user input
+
+            # Process the selected objects
+            for i in range(selection.Count):
+                obj = selection.Item(i)
+                if obj.ObjectName == "AcDbBlockReference":
+                    block_ids.append(obj.ObjectID)
+
+            # Clean up the selection set
+            selection.Delete()
+
+        except Exception as e:
+            print(f"Selection error: {e}")
+            # Ensure cleanup even if an error occurs
+            try:
+                self.doc.SelectionSets.Item(selection_name).Delete()
+            except:
+                pass
+
+        return block_ids
+
 
 
     def get_blocks_by_name(self, name):

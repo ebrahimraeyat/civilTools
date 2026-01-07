@@ -11,7 +11,7 @@ import os
 import FreeCADGui as Gui
 
 from functions.list_autocad_printers import list_autocad_plot_devices, list_windows_printers, get_autocad_plot_resources, get_printer_media_names
-from functions.dwg_to_pdf import DwgToPdf, get_selected_blocks
+from functions.dwg_to_pdf import DwgToPdf
 
 try:
     from pdf2image import convert_from_path
@@ -145,7 +145,7 @@ class Form:
     def select_blocks(self):
         """Select blocks and show preview of first block"""
         # Clear previous selection
-        self.selected_blocks = get_selected_blocks()
+        self.selected_blocks = self.dwg_to_pdf.get_selected_blocks()
         if len(self.selected_blocks) == 0:
             self.form.preview_label.clear()
             self.form.select_blocks_button.setText("Select Blocks")
