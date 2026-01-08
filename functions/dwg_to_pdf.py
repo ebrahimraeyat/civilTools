@@ -84,18 +84,53 @@ class DwgToPdf:
         # Start AutoCAD
         self.acad = win32com.client.Dispatch("AutoCAD.Application")
         self.acad.Visible = True
-
         # Get the active document
-        self.doc = self.acad.ActiveDocument
-        self.model_space = self.doc.ModelSpace
+        self.get_doc_according_to_drawing_name()
 
-        # # Iterate through block references in model space
+    def get_doc_according_to_drawing_name(self, target_drawing_name=None):
+        self.doc = None
+        if target_drawing_name is None:
+            self.doc = self.acad.ActiveDocument
+        else:
+            # Search through all open documents
+            for doc in self.acad.Documents:
+                if doc.Name == target_drawing_name:
+                    self.doc = doc
+                    self.doc.Activate()
+                    print(f"Found drawing: {self.doc.Name}")
+                    break
+        if self.doc is not None:
+            self.dwg_name = self.doc.Name
+            self.dwg_prefix = self.doc.Path
+        else:
+            print(f"Drawing '{target_drawing_name}' not found in open documents.")
 
-        self.dwg_name = self.doc.Name
-        self.dwg_prefix = self.doc.Path
-
-        # # Initialize AutoCAD
-        # acad = Autocad(create_if_not_exists=True)
+    def get_all_open_drawing_names(self):
+        # List all open documents
+        return [doc.Name for doc in self.acad.Documents]
+    
+    def get_all_block_definitions(self): # -> List[str]:
+        """Get all block definition names in the drawing"""
+        try:
+            block_names = []
+            block_table = self.doc.Database.Blocks
+            
+            for block in block_table:
+                # Skip *Model_Space, *Paper_Space, and layouts
+                if not block.Name.startswith('*') and not block.IsLayout:
+                    block_names.append(block.Name)
+            
+            print(f"Found {len(block_names)} block definitions")
+            return block_names
+            
+        except Exception as e:
+            print(f"Error getting block definitions: {e}")
+            return []
+        
+    def get_all_blocks_probable_to_be_sheet(self):
+        block_names = self.get_all_block_definitions()
+        for b_name in block_names:
+            block = self.doc
 
     def get_selected_blocks(self):
         """
@@ -140,12 +175,56 @@ class DwgToPdf:
                 pass
 
         return block_ids
-
-
-
-    def get_blocks_by_name(self, name):
-        """Retrieve all blocks with the specified name."""
-        return [obj for obj in self.model_space if obj.ObjectName == "AcDbBlockReference" and obj.Name == name]
+    
+    def select_block_by_name(self, block_name: str):
+        """Select all instances of a block by name in model space"""
+        try:
+            # Switch to model space
+            self.doc.ActiveLayout = self.doc.Layouts.Item("Model")
+            
+            # Create selection set
+            selection_sets = self.doc.SelectionSets
+            temp_ss_name = f"TempSelect_{int(time.time())}"
+            
+            # Delete if exists
+            for i in range(selection_sets.Count):
+                if selection_sets.Item(i).Name == temp_ss_name:
+                    selection_sets.Item(i).Delete()
+                    break
+            
+            # Create new selection set
+            ss = selection_sets.Add(temp_ss_name)
+            
+            # Filter for block references with specific name
+            filter_type = win32com.client.VARIANT(pythoncom.VT_ARRAY | pythoncom.VT_I2, [0])
+            filter_data = win32com.client.VARIANT(pythoncom.VT_ARRAY | pythoncom.VT_VARIANT, ["INSERT"])
+            
+            # First select all block references
+            ss.Select(5)  # 5 = acSelectionSetAll
+            
+            # Now filter by block name
+            filtered_blocks = []
+            for i in range(ss.Count):
+                try:
+                    entity = ss.Item(i)
+                    if hasattr(entity, 'Name') and entity.Name == block_name:
+                        filtered_blocks.append(entity)
+                except:
+                    continue
+            
+            # Clear selection set
+            ss.Delete()
+            
+            if filtered_blocks:
+                print(f"Selected {len(filtered_blocks)} instances of block '{block_name}'")
+            else:
+                print(f"No instances found for block '{block_name}'")
+            
+            return filtered_blocks
+            
+        except Exception as e:
+            print(f"Error selecting block {block_name}: {e}")
+            return []
 
 
     def plot_block_to_pdf(

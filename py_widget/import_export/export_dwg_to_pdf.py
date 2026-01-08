@@ -38,6 +38,21 @@ class Form:
         self.fill_styles()
         self.create_connections()
         self.dwg_to_pdf = DwgToPdf()
+        # self.fill_block_names()
+        # self.fill_drawing_names()
+
+    def fill_drawing_names(self):
+        drawing_names = self.dwg_to_pdf.get_all_open_drawing_names()
+        self.form.drawing_names.addItems(drawing_names)
+        if self.dwg_to_pdf.dwg_name in drawing_names:
+            i = self.form.drawing_names.findText (self.dwg_to_pdf.dwg_name)
+            self.form.drawing_names.setCurrentIndex(i)
+            
+
+    def fill_block_names(self):
+        blocks = self.dwg_to_pdf.get_all_block_definitions()
+        self.form.block_names.addItems(blocks)
+
 
     def setup_pdf_viewer(self):
         """Setup PDF viewer widget"""
@@ -101,8 +116,16 @@ class Form:
         self.form.export_button.clicked.connect(self.export)  # Separate export button
         self.form.cancel_pushbutton.clicked.connect(self.reject)
         self.form.printers.currentIndexChanged.connect(self.fill_paper_sizes)
+        self.form.drawing_names.currentIndexChanged.connect(self.on_change_drawing_name)
         # self.form.paper_size_combobox.currentIndexChanged.connect(self.create_preview)
         # self.form.plot_style.currentIndexChanged.connect(self.create_preview)
+
+    def on_change_drawing_name(self):
+        drawing_name = self.form.drawing_names.currentText()
+        self.dwg_to_pdf.get_doc_according_to_drawing_name(drawing_name)
+        self.selected_blocks = []
+        self.form.select_blocks_button.setText("Select Blocks")
+
 
     def fill_paper_sizes(self):
         device = self.form.printers.currentText()
@@ -143,9 +166,12 @@ class Form:
     #     self.form.filename.setText(filename)
 
     def select_blocks(self):
-        """Select blocks and show preview of first block"""
-        # Clear previous selection
-        self.selected_blocks = self.dwg_to_pdf.get_selected_blocks()
+        if self.form.select_block_by_name.isChecked():
+            block_name = self.form.block_names.currentText()
+            self.selected_blocks = self.dwg_to_pdf.select_block_by_name(block_name)
+        else:
+            """Select blocks and show preview of first block"""
+            self.selected_blocks = self.dwg_to_pdf.get_selected_blocks()
         if len(self.selected_blocks) == 0:
             self.form.preview_label.clear()
             self.form.select_blocks_button.setText("Select Blocks")

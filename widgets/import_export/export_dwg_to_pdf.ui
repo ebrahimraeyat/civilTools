@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>850</width>
-    <height>495</height>
+    <width>816</width>
+    <height>480</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <iconset resource="../../civiltools.qrc">
     <normaloff>:/import_export/images/import_export/PDF_file_icon.svg</normaloff>:/import_export/images/import_export/PDF_file_icon.svg</iconset>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout_2">
+  <layout class="QHBoxLayout" name="horizontalLayout_4">
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <property name="sizeConstraint">
@@ -265,55 +265,21 @@
       </layout>
      </item>
      <item>
-      <widget class="QPushButton" name="select_blocks_button">
-       <property name="text">
-        <string>Select Blocks</string>
-       </property>
-       <property name="icon">
-        <iconset resource="../../civiltools.qrc">
-         <normaloff>:/import_export/images/dwg_to_pdf.svg</normaloff>:/import_export/images/dwg_to_pdf.svg</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>40</width>
-         <height>40</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
-        <widget class="QPushButton" name="export_button">
+        <widget class="QLabel" name="label_6">
          <property name="text">
-          <string>Create PDF</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../../civiltools.qrc">
-           <normaloff>:/import_export/images/import_export/PDF_file_icon.svg</normaloff>:/import_export/images/import_export/PDF_file_icon.svg</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>40</width>
-           <height>40</height>
-          </size>
+          <string>Drawing</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="cancel_pushbutton">
-         <property name="text">
-          <string>Cancel</string>
+        <widget class="QComboBox" name="drawing_names">
+         <property name="enabled">
+          <bool>false</bool>
          </property>
-         <property name="icon">
-          <iconset resource="../../civiltools.qrc">
-           <normaloff>:/civiltools/images/cancel.svg</normaloff>:/civiltools/images/cancel.svg</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>40</width>
-           <height>40</height>
-          </size>
+         <property name="currentIndex">
+          <number>-1</number>
          </property>
         </widget>
        </item>
@@ -345,17 +311,147 @@
     </layout>
    </item>
    <item>
-    <widget class="QLabel" name="preview_label">
-     <property name="minimumSize">
-      <size>
-       <width>600</width>
-       <height>300</height>
-      </size>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
+    <layout class="QVBoxLayout" name="verticalLayout_3">
+     <item>
+      <widget class="QLabel" name="preview_label">
+       <property name="minimumSize">
+        <size>
+         <width>600</width>
+         <height>300</height>
+        </size>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
+          <string>Block Selection</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="5" column="0" colspan="2">
+           <widget class="QPushButton" name="select_blocks_button">
+            <property name="text">
+             <string>Select Blocks</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../../civiltools.qrc">
+              <normaloff>:/import_export/images/dwg_to_pdf.svg</normaloff>:/import_export/images/dwg_to_pdf.svg</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>40</width>
+              <height>40</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QRadioButton" name="select_block_by_name">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>Select By Block Name</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QComboBox" name="block_names">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="currentIndex">
+             <number>-1</number>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QRadioButton" name="select_in_autocad">
+            <property name="text">
+             <string>Select in Autocad</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="selection_way">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="currentIndex">
+             <number>0</number>
+            </property>
+            <item>
+             <property name="text">
+              <string>Selected</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Previous</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>By Mouse</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <widget class="QPushButton" name="cancel_pushbutton">
+           <property name="text">
+            <string>Cancel</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../../civiltools.qrc">
+             <normaloff>:/civiltools/images/cancel.svg</normaloff>:/civiltools/images/cancel.svg</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>40</width>
+             <height>40</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="export_button">
+           <property name="text">
+            <string>Create PDF</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../../civiltools.qrc">
+             <normaloff>:/import_export/images/import_export/PDF_file_icon.svg</normaloff>:/import_export/images/import_export/PDF_file_icon.svg</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>40</width>
+             <height>40</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
