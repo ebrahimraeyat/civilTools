@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>816</width>
-    <height>480</height>
+    <height>496</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -353,7 +353,7 @@
           <item row="1" column="0">
            <widget class="QRadioButton" name="select_block_by_name">
             <property name="enabled">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="text">
              <string>Select By Block Name</string>
@@ -366,7 +366,7 @@
           <item row="1" column="1">
            <widget class="QComboBox" name="block_names">
             <property name="enabled">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="currentIndex">
              <number>-1</number>

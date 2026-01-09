@@ -38,7 +38,7 @@ class Form:
         self.fill_styles()
         self.create_connections()
         self.dwg_to_pdf = DwgToPdf()
-        # self.fill_block_names()
+        self.fill_block_names()
         # self.fill_drawing_names()
 
     def fill_drawing_names(self):
@@ -128,7 +128,7 @@ class Form:
     def on_change_drawing_name(self):
         drawing_name = self.form.drawing_names.currentText()
         self.dwg_to_pdf.get_doc_according_to_drawing_name(drawing_name)
-        self.selected_blocks = []
+        self.dwg_to_pdf.block_ids = []
         self.form.select_blocks_button.setText("Select Blocks")
 
 
@@ -173,18 +173,18 @@ class Form:
     def select_blocks(self):
         if self.form.select_block_by_name.isChecked():
             block_name = self.form.block_names.currentText()
-            self.selected_blocks = self.dwg_to_pdf.select_block_by_name(block_name)
+            self.dwg_to_pdf.select_block_by_name(block_name)
         else:
             """Select blocks and show preview of first block"""
-            self.selected_blocks = self.dwg_to_pdf.get_selected_blocks()
-        if len(self.selected_blocks) == 0:
+            self.dwg_to_pdf.get_selected_blocks()
+        if len(self.dwg_to_pdf.block_ids) == 0:
             self.form.preview_label.clear()
             self.form.select_blocks_button.setText("Select Blocks")
             QMessageBox.warning(None, 'Selection', 'Please select some blocks in AutoCAD File.')
         else:
             # Create preview of first block
-            self.create_preview(self.selected_blocks[0])
-            self.form.select_blocks_button.setText(f"{len(self.selected_blocks)} blocks selected")
+            self.create_preview(self.dwg_to_pdf.block_ids[0])
+            self.form.select_blocks_button.setText(f"{len(self.dwg_to_pdf.block_ids)} blocks selected")
             self.form.auto_numbering.setEnabled(True)
             self.form.export_button.setEnabled(True)
             
@@ -199,8 +199,8 @@ class Form:
                 except:
                     pass
 
-            if block_id is None and self.selected_blocks:
-                block_id = self.selected_blocks[0]
+            if block_id is None and self.dwg_to_pdf.block_ids:
+                block_id = self.dwg_to_pdf.block_ids[0]
             
             if not block_id:
                 return
@@ -295,10 +295,10 @@ class Form:
 
     def export(self):
         """Export selected blocks to PDF"""
-        if not self.selected_blocks:
+        if not self.dwg_to_pdf.block_ids:
             QMessageBox.warning(None, 'Selection', 'Please select some blocks in AutoCAD File.')
             return
-        # ...existing export code using self.selected_blocks...
+        # ...existing export code using self.dwg_to_pdf.block_ids...
         horizontal, vertical, prefer_dir = self.get_selected_layout()
         way = int(self.form.way_combobox.currentText())
         printer = self.form.printers.currentText()
@@ -316,7 +316,6 @@ class Form:
             config_name=printer,
             stylesheet=style,
             paper_size=paper_size,
-            blocks_id=self.selected_blocks,  # Pass selected blocks,
             orientation=orientation,
         )
 

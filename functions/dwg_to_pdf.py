@@ -80,11 +80,11 @@ def get_selected_blocks():
 
 class DwgToPdf:
 
-    def __init__(self):
+    def __init__(self, block_ids=None):
         # Start AutoCAD
         self.acad = win32com.client.Dispatch("AutoCAD.Application")
         self.acad.Visible = True
-        self.blocks_id = None
+        self.block_ids = block_ids
         # Get the active document
         self.get_doc_according_to_drawing_name()
 
@@ -98,9 +98,9 @@ class DwgToPdf:
                 if doc.Name == target_drawing_name:
                     self.doc = doc
                     self.doc.Activate()
-                    print(f"Found drawing: {self.doc.Name}")
                     break
         if self.doc is not None:
+            print(f"Found drawing: {self.doc.Name}")
             self.dwg_name = self.doc.Name
             self.dwg_prefix = self.doc.Path
         else:
@@ -197,36 +197,35 @@ class DwgToPdf:
             ss = selection_sets.Add(temp_ss_name)
             
             # Filter for block references with specific name
-            filter_type = win32com.client.VARIANT(pythoncom.VT_ARRAY | pythoncom.VT_I2, [0])
-            filter_data = win32com.client.VARIANT(pythoncom.VT_ARRAY | pythoncom.VT_VARIANT, ["INSERT"])
+            filter_types = [2] # Block name filter type
+            filter_values = [block_name]
+            filter_types.append(0)  # Entity type
+            filter_values.append("INSERT")
+            filter_type_array = win32com.client.VARIANT(pythoncom.VT_ARRAY | pythoncom.VT_I2, filter_types)
+            filter_data_array = win32com.client.VARIANT(pythoncom.VT_ARRAY | pythoncom.VT_VARIANT, filter_values)
             
             # First select all block references
-            ss.Select(5)  # 5 = acSelectionSetAll
+            # Select all with filter
+            ss.Select(5, None, None, filter_type_array, filter_data_array)
             
-            # Now filter by block name
-            filtered_blocks = []
+            # Get selected blocks
+            block_ids = []
             for i in range(ss.Count):
-                try:
-                    entity = ss.Item(i)
-                    if hasattr(entity, 'Name') and entity.Name == block_name:
-                        filtered_blocks.append(entity)
-                except:
-                    continue
+                block = ss.Item(i)
+                block_ids.append(block.ObjectID)
             
             # Clear selection set
             ss.Delete()
             
-            if filtered_blocks:
-                print(f"Selected {len(filtered_blocks)} instances of block '{block_name}'")
+            if block_ids:
+                print(f"Selected {len(block_ids)} instances of block '{block_name}'")
             else:
                 print(f"No instances found for block '{block_name}'")
             
-            return filtered_blocks
-            
         except Exception as e:
             print(f"Error selecting block {block_name}: {e}")
-            return []
-
+        self.block_ids = block_ids
+        return block_ids
 
     def plot_block_to_pdf(
             self,
@@ -318,6 +317,11 @@ class DwgToPdf:
             for block_id in self.block_ids:
                 block = self.doc.ObjectIdToObject(block_id)
                 min_point, max_point = block.GetBoundingBox()
+                x1, y1 = min_point[0], min_point[1]
+                x2, y2 = max_point[0], max_point[1]
+                dx = abs(x2 - x1)
+                dy = abs(y2 - y1)
+                # min_point = []
                 block_boundbox[block.ObjectID] = min_point
             # Sort keys based on (x, -y) to sort y in descending order when x is the same
             # Determine sign for x and y based on the direction
@@ -328,24 +332,25 @@ class DwgToPdf:
             else:
                 sorted_block_id_boundbox = sorted(block_boundbox.keys(), key=lambda k: (y_sign * int(block_boundbox[k][1]), x_sign * block_boundbox[k][0]))
 
-        self.block_ids = sorted_block_id_boundbox
+        return sorted_block_id_boundbox
 
     def export_dwg_to_pdf(
             self,
+            horizontal: str="left",
+            vertical: str="up", 
+            prefer_dir: str='vertical',
             remove_pdfs: bool=True,
             way=2,
             config_name: str="DWG To PDF.pc3",
             stylesheet: str="monochrome.ctb",
             paper_size: str="ISO full bleed A3 (420.00 x 297.00 MM)",
-            block_ids=None,
             orientation: str="Landscape",
             ):
         """Main function to automate the PDF conversion."""
-        # block_name = "kadr"
-        if block_ids is None:
-            block_ids = self.block_ids
-        if len(block_ids) == 0:
+        if len(self.block_ids) == 0:
             return None
+        block_ids = self.sort_blocks(horizontal, vertical, prefer_dir)
+        print(f"{block_ids=}")
         
         # change the path
         os.chdir(self.dwg_prefix)
@@ -392,7 +397,7 @@ class DwgToPdf:
                     self.doc.SetVariable('FILEDIA', 1)
                 except Exception:
                     pass
-            
+        
         pdf_name = self.doc.FullName[:-4] + '.pdf'
         if os.path.isfile(pdf_name):
             os.remove(pdf_name)
@@ -420,8 +425,7 @@ class DwgToPdf:
                                     ):
         """Add attributes to blocks and number them sequentially"""
         if block_ids is None:
-            self.sort_blocks(horizontal, vertical, prefer_dir)
-            block_ids = self.block_ids
+            block_ids = self.sort_blocks(horizontal, vertical, prefer_dir)
         for i, block_id in enumerate(block_ids):
             block = self.doc.ObjectIdToObject(block_id)
             block_name = block.Name
