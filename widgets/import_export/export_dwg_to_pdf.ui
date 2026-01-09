@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>816</width>
-    <height>496</height>
+    <width>819</width>
+    <height>536</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <iconset resource="../../civiltools.qrc">
     <normaloff>:/import_export/images/import_export/PDF_file_icon.svg</normaloff>:/import_export/images/import_export/PDF_file_icon.svg</iconset>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout_4">
+  <layout class="QHBoxLayout" name="horizontalLayout_5">
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <property name="sizeConstraint">
@@ -313,16 +313,31 @@
    <item>
     <layout class="QVBoxLayout" name="verticalLayout_3">
      <item>
-      <widget class="QLabel" name="preview_label">
-       <property name="minimumSize">
-        <size>
-         <width>600</width>
-         <height>300</height>
-        </size>
+      <widget class="QGroupBox" name="preview_groupbox">
+       <property name="title">
+        <string>Preview</string>
        </property>
-       <property name="text">
-        <string/>
+       <property name="checkable">
+        <bool>true</bool>
        </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <widget class="QLabel" name="preview_label">
+          <property name="minimumSize">
+           <size>
+            <width>600</width>
+            <height>300</height>
+           </size>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </item>
      <item>

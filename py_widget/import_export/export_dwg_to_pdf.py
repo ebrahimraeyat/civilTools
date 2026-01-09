@@ -183,7 +183,10 @@ class Form:
             QMessageBox.warning(None, 'Selection', 'Please select some blocks in AutoCAD File.')
         else:
             # Create preview of first block
-            self.create_preview(self.dwg_to_pdf.block_ids[0])
+            if self.form.preview_groupbox.isChecked():
+                self.create_preview(self.dwg_to_pdf.block_ids[0])
+            else:
+                self.form.preview_label.clear()
             self.form.select_blocks_button.setText(f"{len(self.dwg_to_pdf.block_ids)} blocks selected")
             self.form.auto_numbering.setEnabled(True)
             self.form.export_button.setEnabled(True)
