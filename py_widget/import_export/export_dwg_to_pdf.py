@@ -117,8 +117,13 @@ class Form:
         self.form.cancel_pushbutton.clicked.connect(self.reject)
         self.form.printers.currentIndexChanged.connect(self.fill_paper_sizes)
         self.form.drawing_names.currentIndexChanged.connect(self.on_change_drawing_name)
+        self.form.auto_numbering.clicked.connect(self.set_auto_numbering)
         # self.form.paper_size_combobox.currentIndexChanged.connect(self.create_preview)
         # self.form.plot_style.currentIndexChanged.connect(self.create_preview)
+
+    def set_auto_numbering(self):
+        no_blocks = self.dwg_to_pdf.add_and_number_attributes(*self.get_selected_layout())
+        QMessageBox.information(None, "Auto Numbering", f"{no_blocks} Sheets get numbered in {self.dwg_to_pdf.dwg_name} drawing.")
 
     def on_change_drawing_name(self):
         drawing_name = self.form.drawing_names.currentText()
@@ -180,6 +185,8 @@ class Form:
             # Create preview of first block
             self.create_preview(self.selected_blocks[0])
             self.form.select_blocks_button.setText(f"{len(self.selected_blocks)} blocks selected")
+            self.form.auto_numbering.setEnabled(True)
+            self.form.export_button.setEnabled(True)
             
     def create_preview(self, block_id=None):
         """Create preview image of the first selected block"""

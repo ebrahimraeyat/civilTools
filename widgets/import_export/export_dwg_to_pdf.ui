@@ -414,13 +414,16 @@
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
-          <widget class="QPushButton" name="cancel_pushbutton">
+          <widget class="QPushButton" name="export_button">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="text">
-            <string>Cancel</string>
+            <string>Create PDF</string>
            </property>
            <property name="icon">
             <iconset resource="../../civiltools.qrc">
-             <normaloff>:/civiltools/images/cancel.svg</normaloff>:/civiltools/images/cancel.svg</iconset>
+             <normaloff>:/import_export/images/import_export/PDF_file_icon.svg</normaloff>:/import_export/images/import_export/PDF_file_icon.svg</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -431,13 +434,33 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="export_button">
+          <widget class="QPushButton" name="auto_numbering">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="text">
-            <string>Create PDF</string>
+            <string>Auto Number</string>
            </property>
            <property name="icon">
             <iconset resource="../../civiltools.qrc">
-             <normaloff>:/import_export/images/import_export/PDF_file_icon.svg</normaloff>:/import_export/images/import_export/PDF_file_icon.svg</iconset>
+             <normaloff>:/import_export/images/import_export/123.svg</normaloff>:/import_export/images/import_export/123.svg</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>40</width>
+             <height>40</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="cancel_pushbutton">
+           <property name="text">
+            <string>Cancel</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../../civiltools.qrc">
+             <normaloff>:/civiltools/images/cancel.svg</normaloff>:/civiltools/images/cancel.svg</iconset>
            </property>
            <property name="iconSize">
             <size>

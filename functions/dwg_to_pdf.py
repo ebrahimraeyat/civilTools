@@ -26,7 +26,7 @@ except ImportError:
     package = 'pyautocad'
     from freecad_funcs import install_package
     install_package(package_name=package)
-from pyautocad import Autocad
+from pyautocad import Autocad, APoint
 
 try:
     import pythoncom
@@ -84,6 +84,7 @@ class DwgToPdf:
         # Start AutoCAD
         self.acad = win32com.client.Dispatch("AutoCAD.Application")
         self.acad.Visible = True
+        self.blocks_id = None
         # Get the active document
         self.get_doc_according_to_drawing_name()
 
@@ -173,7 +174,7 @@ class DwgToPdf:
                 self.doc.SelectionSets.Item(selection_name).Delete()
             except:
                 pass
-
+        self.block_ids = block_ids
         return block_ids
     
     def select_block_by_name(self, block_name: str):
@@ -307,46 +308,52 @@ class DwgToPdf:
                     # but we at least avoid the file dialog by FILEDIA=0 and supplying the filename.
                 self.doc.SendCommand(command)
 
-    def export_dwg_to_pdf(
-            self,
+    def sort_blocks(self,
             horizontal: str="left",
             vertical: str="up", 
             prefer_dir: str='vertical',
+    ):
+        if isinstance(self.block_ids, list) and len(self.block_ids) > 0:
+            block_boundbox = {}
+            for block_id in self.block_ids:
+                block = self.doc.ObjectIdToObject(block_id)
+                min_point, max_point = block.GetBoundingBox()
+                block_boundbox[block.ObjectID] = min_point
+            # Sort keys based on (x, -y) to sort y in descending order when x is the same
+            # Determine sign for x and y based on the direction
+            x_sign = 1 if horizontal == "right" else -1
+            y_sign = -1 if vertical == "down" else 1
+            if prefer_dir == "vertical":
+                sorted_block_id_boundbox = sorted(block_boundbox.keys(), key=lambda k: (x_sign * int(block_boundbox[k][0]), y_sign * block_boundbox[k][1]))
+            else:
+                sorted_block_id_boundbox = sorted(block_boundbox.keys(), key=lambda k: (y_sign * int(block_boundbox[k][1]), x_sign * block_boundbox[k][0]))
+
+        self.block_ids = sorted_block_id_boundbox
+
+    def export_dwg_to_pdf(
+            self,
             remove_pdfs: bool=True,
             way=2,
             config_name: str="DWG To PDF.pc3",
             stylesheet: str="monochrome.ctb",
             paper_size: str="ISO full bleed A3 (420.00 x 297.00 MM)",
-            blocks_id=None,
+            block_ids=None,
             orientation: str="Landscape",
             ):
         """Main function to automate the PDF conversion."""
         # block_name = "kadr"
-        if blocks_id is None:
-            blocks_id = get_selected_blocks()
-        if len(blocks_id) == 0:
+        if block_ids is None:
+            block_ids = self.block_ids
+        if len(block_ids) == 0:
             return None
-        # blocks = get_blocks_by_name(block_name)
-        block_boundbox = {}
-        for block_id in blocks_id:
-            block = self.doc.ObjectIdToObject(block_id)
-            min_point, max_point = block.GetBoundingBox()
-            block_boundbox[block.ObjectID] = min_point
-        # Sort keys based on (x, -y) to sort y in descending order when x is the same
-        # Determine sign for x and y based on the direction
-        x_sign = 1 if horizontal == "right" else -1
-        y_sign = -1 if vertical == "down" else 1
-        if prefer_dir == "vertical":
-            sorted_block_id_boundbox = sorted(block_boundbox.keys(), key=lambda k: (x_sign * int(block_boundbox[k][0]), y_sign * block_boundbox[k][1]))
-        else:
-            sorted_block_id_boundbox = sorted(block_boundbox.keys(), key=lambda k: (y_sign * int(block_boundbox[k][1]), x_sign * block_boundbox[k][0]))
+        
         # change the path
         os.chdir(self.dwg_prefix)
         pdf_files = []
         if way == 1:
             self.doc.Plot.QuietErrorMode = False
             self.doc.SetVariable('BACKGROUNDPLOT', 0)
-            for index, block_id in enumerate(sorted_block_id_boundbox, start=1):
+            for index, block_id in enumerate(block_ids, start=1):
                 pdf_file = str(Path(self.dwg_prefix) / f"{index}.pdf")
                 self.plot_block_to_pdf(
                     block_id,
@@ -365,7 +372,7 @@ class DwgToPdf:
                 # save and disable FILEDIA (we can't always read original reliably across versions,
                 # so default restore to 1)
                 self.doc.SetVariable('FILEDIA', 0)
-                for index, block_id in enumerate(sorted_block_id_boundbox, start=1):
+                for index, block_id in enumerate(block_ids, start=1):
                     pdf_file = str(Path(self.dwg_prefix) / f"{index}.pdf")
                     self.plot_block_to_pdf(
                         block_id,
@@ -403,6 +410,88 @@ class DwgToPdf:
                     continue
 
         return pdf_name
+    
+    def add_and_number_attributes(self,
+                                    horizontal: str="left",
+                                    vertical: str="up", 
+                                    prefer_dir: str='vertical',
+                                    block_ids=None,
+                                    attribute_tag="SHEET_NO",
+                                    ):
+        """Add attributes to blocks and number them sequentially"""
+        if block_ids is None:
+            self.sort_blocks(horizontal, vertical, prefer_dir)
+            block_ids = self.block_ids
+        for i, block_id in enumerate(block_ids):
+            block = self.doc.ObjectIdToObject(block_id)
+            block_name = block.Name
+            
+            # Check if block has attributes
+            if block.HasAttributes:
+                attrs = block.GetAttributes()
+                attribute_found = False
+                
+                # Look for existing attribute
+                for attr in attrs:
+                    if attr.TagString == attribute_tag:
+                        attr.TextString = str(i + 1)
+                        attr.Update()
+                        attribute_found = True
+                        print(f"Updated {attribute_tag} to {i+1} in block {block_name}")
+                        break
+                
+                # If attribute doesn't exist, add it to the block definition
+                if not attribute_found:
+                    self._add_attribute_to_definition(block_name, attribute_tag, i+1, block)
+            else:
+                # Block has no attributes at all
+                self._add_attribute_to_definition(block_name, attribute_tag, i+1, block)
+        return i+1
+    
+    def _add_attribute_to_definition(self, block_name, attribute_tag, number, block_instance):
+        """Add attribute to block definition and update instance"""
+        try:
+            # Access block definition
+            block_def = self.doc.Blocks.Item(block_name)
+            
+            # Define attribute position relative to block insertion point
+            # You can adjust these coordinates based on your needs
+            insert_point = block_instance.InsertionPoint
+            attr_position = (insert_point[0] + 5, insert_point[1] + 5, insert_point[2])
+            
+            # Add attribute definition to block
+            attr_def = block_def.AddAttribute(
+                2.5,  # Text height
+                0,    # Mode (0=visible, editable)
+                "Sheet Number:",  # Prompt
+                attr_position,    # Insertion point
+                attribute_tag,    # Tag
+                str(number)       # Default value
+            )
+            
+            # Sync attributes to update all instances
+            self.doc.SendCommand(f"_-ATTSYNC _N {block_name} ")
+            print(f"Added {attribute_tag} attribute to block {block_name} with value {number}")
+            
+        except Exception as e:
+            print(f"Error adding attribute to {block_name}: {e}")
+            # Fallback: add text near the block if attribute fails
+            self._add_text_as_fallback(block_instance, number)
+    
+    def _add_text_as_fallback(self, block, number):
+        """Add plain text as fallback if attribute creation fails"""
+        try:
+            insert_point = block.InsertionPoint
+            text_point = APoint(insert_point[0] + 5, insert_point[1] + 5)
+            
+            # Use pyautocad for text creation (if available)
+            from pyautocad import Autocad
+            pyacad = Autocad(create_if_not_exists=True)
+            text = pyacad.model.AddText(str(number), text_point, 2.5)
+            text.Layer = "SHEET_NUMBERS"
+            print(f"Added text {number} near block as fallback")
+        except:
+            print(f"Could not add text near block {block.ObjectID}")
 
 
 if __name__ == '__main__':
