@@ -15,7 +15,7 @@ class CivilToolsMatchPropery:
             "Match Property")
         tooltip = QtCore.QT_TRANSLATE_NOOP(
             "civiltools_match_property",
-            "Assign Ev Automatically to ETABS Model")
+            "Match the Section of selected frame with some other selecting frames.")
         path = str(
                    Path(__file__).parent.absolute().parent.parent / "images" / "match_property.svg"
                    )
