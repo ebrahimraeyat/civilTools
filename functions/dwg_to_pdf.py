@@ -39,6 +39,8 @@ import pythoncom
 civiltools_path = Path(__file__).parent.parent
 sys.path.insert(0, str(civiltools_path))
 
+import civiltools_python_functions as cpf
+
 
 def pdf_cat(input_files, output_stream):
     # pdf_name = sys.stdout
@@ -103,6 +105,10 @@ class DwgToPdf:
             print(f"Found drawing: {self.doc.Name}")
             self.dwg_name = self.doc.Name
             self.dwg_prefix = self.doc.Path
+            if hasattr(self.doc, 'FullName'):
+                self.full_name = self.doc.FullName
+            else:
+                self.full_name = None
         else:
             print(f"Drawing '{target_drawing_name}' not found in open documents.")
 
@@ -397,8 +403,10 @@ class DwgToPdf:
                     self.doc.SetVariable('FILEDIA', 1)
                 except Exception:
                     pass
-        
-        pdf_name = self.doc.FullName[:-4] + '.pdf'
+        if self.full_name:
+            pdf_name = self.full_name[:-4] + '.pdf'
+        else:
+            pdf_name = cpf.get_temp_filepath('pdf', 'civiltools_plot_to_dwg')
         if os.path.isfile(pdf_name):
             os.remove(pdf_name)
             
