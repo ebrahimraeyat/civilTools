@@ -119,8 +119,9 @@ class Form:
                 if lc1 in lc_model.all_left_loadcases:
                     index = lc_model.index(row, 1)
                     lc2 = lc_model.data(index)
-                    if lc2 in lc_model.all_right_loadcases:
-                        map_dict[lc1] = lc2
+                    if lc2 == 'None':
+                        lc2 = None
+                    map_dict[lc1] = lc2
         return map_dict
 
     def getStandardButtons(self):
